@@ -1,5 +1,6 @@
 # Clang Tidy Action
 
+[![Version](https://img.shields.io/github/release-pre/muxee/clang-tidy-action.svg?label=Version)](https://github.com/muxee/clang-tidy-action)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 A GitHub action to automatically execute a Clang Tidy linter on C/C++ files changed in a pull request.
