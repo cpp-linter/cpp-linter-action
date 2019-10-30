@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
+FILES_LINK="https://api.github.com/repos/smay1613/CITest/pulls/1/files"
 echo "Files = $FILES_LINK"
 
 curl $FILES_LINK > files.json
@@ -20,5 +20,5 @@ done
 
 echo "Files downloaded!"
 echo "Performing checkup:"
-
+clang-tidy --version
 clang-tidy *.cpp -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-#*,clang-analyzer-*,cppcoreguidelines-*
