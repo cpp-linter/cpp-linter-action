@@ -15,4 +15,4 @@ RUN apt-get -y -qq install gcc g++ clang-tidy cmake jq git
 
 ADD runchecks.sh /entrypoint.sh
 COPY . .
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["sh, "/entrypoint.sh"]
