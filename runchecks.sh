@@ -1,6 +1,6 @@
-FILES=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
-echo "Files = $FILES"
-echo "Workspace: $GITHUB_WORKSPACE"
+#FILES=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
+#echo "Files = $FILES"
+echo $GITHUB_WORKSPACE
 cd $GITHUB_WORKSPACE
 ls
 
