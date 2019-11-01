@@ -35,7 +35,11 @@ PAYLOAD_CPPCHECK=`cat cppcheck-report.txt`
 COMMENTS_URL=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.comments_url)
   
 echo $COMMENTS_URL
+echo "Clang errors:"
 echo $PAYLOAD_CLANG
+echo "Cppcheck errors:"
 echo $PAYLOAD_CPPCHECK
 
-curl -s -S -H "Authorization: token $GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD_CLANG" "$COMMENTS_URL"
+PAYLOAD=$(echo '{}' | jq --arg body "Clang errors: $PALYLOAD_CLANG CPPCHECK ERRORS: $PAYLOAD_CPPCHECK" '.body = $body')
+
+curl -s -S -H "Authorization: token $GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
