@@ -11,7 +11,7 @@ LABEL maintainer="smay1613 <dimaafa0@gmail.com>"
 WORKDIR /build
 RUN apt-get update
 RUN apt-get -qq -y install curl
-RUN apt-get -y -qq install clang-tidy cmake jq clang
+RUN apt-get -y -qq install clang-tidy cmake jq clang cppcheck
 
 ADD runchecks.sh /entrypoint.sh
 COPY . .
