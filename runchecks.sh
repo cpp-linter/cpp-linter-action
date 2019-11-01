@@ -39,7 +39,16 @@ echo "Clang errors:"
 echo $PAYLOAD_CLANG
 echo "Cppcheck errors:"
 echo $PAYLOAD_CPPCHECK
+OUTPUT=$'**CLANG WARNINGS**:\n'
+OUTPUT+=$'\n```\n'
+OUTPUT+="$PAYLOAD_CLANG"
+OUTPUT+=$'\n```\n'
 
-PAYLOAD=$(echo '{}' | jq --arg body "${**CLANG WARNINGS**: \`\`\`cpp $PAYLOAD_CLANG\`\`\` **CPPCHECK WARNINGS**: \`\`\`cpp $PAYLOAD_CPPCHECK\`\`\`}@E" '.body = $body")
+OUTPUT+=$'\n**CPPCHECK WARNINGS**:\n'
+OUTPUT+=$'\n```\n'
+OUTPUT+="$PAYLOAD_CPPCHECK"
+OUTPUT+=$'\n```\n' 
+
+PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 
 curl -s -S -H "Authorization: token $GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
