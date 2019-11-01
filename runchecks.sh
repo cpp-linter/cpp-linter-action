@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ -z "$GITHUB_TOKEN" ]]; then
+	echo "The GITHUB_TOKEN is required."
+	exit 1
+fi
+
 FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
 echo "Files = $FILES_LINK"
 
