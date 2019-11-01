@@ -40,6 +40,6 @@ echo $PAYLOAD_CLANG
 echo "Cppcheck errors:"
 echo $PAYLOAD_CPPCHECK
 
-PAYLOAD=$(echo '{}' | jq --arg body "Clang errors: $PALYLOAD_CLANG CPPCHECK ERRORS: $PAYLOAD_CPPCHECK" '.body = $body')
+PAYLOAD=$(echo '{}' | jq --arg body "*CLANG WARNINGS*: $PAYLOAD_CLANG \n\n\n*CPPCHECK WARNINGS*: $PAYLOAD_CPPCHECK" '.body = $body')
 
 curl -s -S -H "Authorization: token $GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
