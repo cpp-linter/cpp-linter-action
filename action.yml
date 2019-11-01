@@ -1,8 +1,0 @@
-name: "cpp-linter"
-version": "0.0.1"
-author": "smay1613 <dimaafa0@gmail.com>"
-inputs: 
-  repo-token:
-    description: 'The GITHUB_TOKEN secret'
-runs:
-  main: 'runchecks.sh'
