@@ -1,0 +1,11 @@
+name: C++ code linter (clang-tidy and cppcheck)
+description: Automatically checks pull requests changes with clang-tidy and cppcheck and posts the comment with result.
+author: Dmitry Berkut
+branding:
+  icon: alert-circle
+  color: green
+inputs:
+  env: You must provide GITHUB_TOKEN for this action
+runs:
+  using: bash
+  main: runchecks.sh
