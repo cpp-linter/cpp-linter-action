@@ -4,8 +4,6 @@ author: Dmitry Berkut
 branding:
   icon: alert-circle
   color: green
-inputs:
-  env: You must provide GITHUB_TOKEN for this action
 runs:
   using: bash
   main: runchecks.sh
