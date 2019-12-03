@@ -5,5 +5,5 @@ branding:
   icon: alert-circle
   color: green
 runs:
-  using: docker
-  main: runchecks.sh
+  using: 'docker'
+  image: 'Dockerfile'
