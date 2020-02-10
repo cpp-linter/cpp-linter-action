@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: c-linter
-        uses: smay1613/clang-tidy-action@master
+        uses: ArtificialAmateur/clang-tidy-action@master
     env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
