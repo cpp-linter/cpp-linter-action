@@ -1,6 +1,6 @@
 name: C++ code linter (clang-tidy and cppcheck)
-description: Automatically checks pull requests changes with clang-tidy and cppcheck and posts the comment with result.
-author: Dmitry Berkut
+description: Automatically checks pull requests changes with clang-tidy, clang-format, and cppcheck and posts the comment with result.
+author: ArtificialAmateur
 branding:
   icon: alert-circle
   color: green
