@@ -1,17 +1,17 @@
-Github action for linting the C++ code.
-Uses clang-tidy and cppcheck.
+Github action for linting the C code.
+Uses clang-tidy, clang-format, and cppcheck.
 
 Example of usage:
 ```
-name: lint
+name: c-linter
 
 on: [pull_request]
 jobs:
-  clang-tidy:
-    name: clang-tidy
+  c-linter:
+    name: c-linter
     runs-on: ubuntu-latest
     steps:
-      - name: clang-tidy check
+      - name: c-linter
         uses: smay1613/clang-tidy-action@master
     env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
