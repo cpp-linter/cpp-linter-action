@@ -26,11 +26,9 @@ done
 echo "Files downloaded!"
 echo "Performing checkup:"
 clang-tidy --version
-clang-tidy *.c -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* > clang-tidy-report.txt
-clang-tidy *.h -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* >> clang-tidy-report.txt
+clang-tidy **/*.c **/*.h **/*.cpp **/*.hpp **/*.C **/*.cc **/*.CPP **/*.c++ **/*.cp **/*.cxx -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* > clang-tidy-report.txt
 
-clang-format --style=llvm -i *.c > clang-format-report.txt
-clang-format --style=llvm -i *.h >> clang-format-report.txt
+clang-format --style=llvm -i **/*.c **/*.h **/*.cpp **/*.hpp **/*.C **/*.cc **/*.CPP **/*.c++ **/*.cp **/*.cxx > clang-format-report.txt
 
 cppcheck --enable=all --std=c++11 --language=c++ --output-file=cppcheck-report.txt *
 
@@ -46,6 +44,7 @@ echo "Clang-format errors:"
 echo $PAYLOAD_FORMAT
 echo "Cppcheck errors:"
 echo $PAYLOAD_CPPCHECK
+
 OUTPUT=$'**CLANG-TIDY WARNINGS**:\n'
 OUTPUT+=$'\n```\n'
 OUTPUT+="$PAYLOAD_TIDY"
@@ -53,7 +52,7 @@ OUTPUT+=$'\n```\n'
 
 OUTPUT=$'**CLANG-FORMAT WARNINGS**:\n'
 OUTPUT+=$'\n```\n'
-OUTPUT+="$PAYLOAD_FORMAT"
+OUTPUT+="$PAYLOAD_FORMAT"eCTF20/mb/drm_audio_fw/src on
 OUTPUT+=$'\n```\n'
 
 OUTPUT+=$'\n**CPPCHECK WARNINGS**:\n'
