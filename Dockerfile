@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-LABEL com.github.actions.name="c-linter check"
+LABEL com.github.actions.name="cpp-linter check"
 LABEL com.github.actions.description="Lint your code with clang-tidy in parallel to your builds"
 LABEL com.github.actions.icon="code"
 LABEL com.github.actions.color="gray-dark"
