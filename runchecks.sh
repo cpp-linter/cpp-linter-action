@@ -50,20 +50,28 @@ echo $PAYLOAD_FORMAT
 echo "Cppcheck errors:"
 echo $PAYLOAD_CPPCHECK
 
-OUTPUT=$'**CLANG-TIDY WARNINGS**:\n'
-OUTPUT+=$'\n```\n'
-OUTPUT+="$PAYLOAD_TIDY"
-OUTPUT+=$'\n```\n'
+if [ "$PAYLOAD_TIDY" != ""]; then
+   OUTPUT=$'**CLANG-TIDY WARNINGS**:\n'
+   OUTPUT+=$'\n```\n'
+   OUTPUT+="$PAYLOAD_TIDY"
+   OUTPUT+=$'\n```\n'
+fi
 
-OUTPUT=$'**CLANG-FORMAT WARNINGS**:\n'
-OUTPUT+=$'\n```\n'
-OUTPUT+="$PAYLOAD_FORMAT"eCTF20/mb/drm_audio_fw/src on
-OUTPUT+=$'\n```\n'
+if [ "$PAYLOAD_FORMAT" != "" ]; then
+   OUTPUT=$'**CLANG-FORMAT WARNINGS**:\n'
+   OUTPUT+=$'\n```\n'
+   OUTPUT+="$PAYLOAD_FORMAT"eCTF20/mb/drm_audio_fw/src on
+   OUTPUT+=$'\n```\n'
+fi
 
-OUTPUT+=$'\n**CPPCHECK WARNINGS**:\n'
-OUTPUT+=$'\n```\n'
-OUTPUT+="$PAYLOAD_CPPCHECK"
-OUTPUT+=$'\n```\n' 
+if [ "$PAYLOAD_CPPCHECK" != "" ]; then
+   OUTPUT+=$'\n**CPPCHECK WARNINGS**:\n'
+   OUTPUT+=$'\n```\n'
+   OUTPUT+="$PAYLOAD_CPPCHECK"
+   OUTPUT+=$'\n```\n'
+fi
+
+echo "OUTPUT = $OUTPUT"
 
 PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 
