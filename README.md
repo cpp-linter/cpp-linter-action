@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: c-linter
-        uses: shenxianpeng/clang-tidy-action@master
+        uses: shenxianpeng/cpp-linter-action@master
     env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
