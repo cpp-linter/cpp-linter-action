@@ -50,7 +50,7 @@ echo $PAYLOAD_FORMAT
 echo "Cppcheck errors:"
 echo $PAYLOAD_CPPCHECK
 
-if [ "$PAYLOAD_TIDY" != ""]; then
+if [ "$PAYLOAD_TIDY" != "" ]; then
    OUTPUT=$'**CLANG-TIDY WARNINGS**:\n'
    OUTPUT+=$'\n```\n'
    OUTPUT+="$PAYLOAD_TIDY"
@@ -60,7 +60,7 @@ fi
 if [ "$PAYLOAD_FORMAT" != "" ]; then
    OUTPUT=$'**CLANG-FORMAT WARNINGS**:\n'
    OUTPUT+=$'\n```\n'
-   OUTPUT+="$PAYLOAD_FORMAT"eCTF20/mb/drm_audio_fw/src on
+   OUTPUT+="$PAYLOAD_FORMAT"
    OUTPUT+=$'\n```\n'
 fi
 
@@ -71,7 +71,7 @@ if [ "$PAYLOAD_CPPCHECK" != "" ]; then
    OUTPUT+=$'\n```\n'
 fi
 
-echo "OUTPUT = $OUTPUT"
+echo "OUTPUT is: \n $OUTPUT"
 
 PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 
