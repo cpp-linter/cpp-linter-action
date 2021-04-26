@@ -1,6 +1,6 @@
 name: C/C++ code linter (clang-tidy, clang-format, and cppcheck)
 description: Automatically checks pull requests changes with clang-tidy, clang-format, and cppcheck and posts the comment with result.
-author: ArtificialAmateur
+author: shenxianpeng
 branding:
   icon: alert-circle
   color: green
