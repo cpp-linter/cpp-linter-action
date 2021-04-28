@@ -1,4 +1,4 @@
-# cpp-linter-action
+# C/C++ Lint Action
 
 Github Actions for linting the C/C++ code. Uses clang-tidy, clang-format, and cppcheck.
 
