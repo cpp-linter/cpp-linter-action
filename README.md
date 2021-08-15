@@ -1,6 +1,6 @@
 # C/C++ Lint Action
 
-Github Actions for linting the C/C++ code. Integrated clang-tidy, clang-format, and Cppcheck checks.
+Github Actions for linting the C/C++ code. Integrated clang-tidy, clang-format checks.
 
 ## Integration with GitHub Actions
 
@@ -15,7 +15,7 @@ jobs:
     name: cpp-linter
     runs-on: ubuntu-latest
     steps:
-      - name: cpp-linter
+      - name: C/C++ Lint Action
         uses: shenxianpeng/cpp-linter-action@master
         with:
           fetch-depth: 0
