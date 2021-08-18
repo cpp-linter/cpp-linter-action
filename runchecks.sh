@@ -23,7 +23,6 @@ do
   is_supported=0
   for i in "${FILE_EXT_LIST[@]}"
   do
-    echo "testing ${URLS[index]} vs *$i"
     if [[ ${URLS[index]} == *".$i" ]]
     then
       is_supported=1
