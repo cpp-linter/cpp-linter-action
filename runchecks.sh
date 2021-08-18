@@ -4,7 +4,8 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
 	echo "The GITHUB_TOKEN is required."
 	exit 1
 fi
-
+args=("$@")
+FMT_STYLE=${args[0]}
 FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
 echo "Files = $FILES_LINK"
 
@@ -31,7 +32,7 @@ for i in "${URLS[@]}"
 do
    filename=`basename $i`
    clang-tidy $filename -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* >> clang-tidy-report.txt
-   clang-format -style=$INPUT_STYLE--dry-run -Werror $filename || echo "File: $filename not formatted!" >> clang-format-report.txt
+   clang-format -style=$FMT_STYLE --dry-run -Werror $filename || echo "File: $filename not formatted!" >> clang-format-report.txt
 done
 
 PAYLOAD_TIDY=`cat clang-tidy-report.txt`
