@@ -5,6 +5,10 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
 	exit 1
 fi
 
+args=("$@")
+FMT_STYLE=${args[0]}
+IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
+
 FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
 echo "Files = $FILES_LINK"
 
@@ -13,14 +17,30 @@ FILES_URLS_STRING=`jq -r '.[].raw_url' files.json`
 
 readarray -t URLS <<<"$FILES_URLS_STRING"
 
-echo "File names: $URLS"
+# exclude undesired files
+for index in "${!URLS[@]}"
+do
+  is_supported=0
+  for i in "${FILE_EXT_LIST[@]}"
+  do
+    if [[ ${URLS[index]} == *".$i" ]]
+    then
+      is_supported=1
+    fi
+  done
+  if [ $is_supported == 0 ]
+  then
+    unset -v "URLS[index]"
+  fi
+done
 
+echo "File names: ${URLS[*]}"
 mkdir files
 cd files
 for i in "${URLS[@]}"
 do
    echo "Downloading $i"
-   curl -LOk --remote-name $i 
+   curl -LOk --remote-name $i
 done
 
 echo "Files downloaded!"
@@ -31,13 +51,13 @@ for i in "${URLS[@]}"
 do
    filename=`basename $i`
    clang-tidy $filename -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* >> clang-tidy-report.txt
-   clang-format --dry-run -Werror $filename || echo "File: $filename not formatted!" >> clang-format-report.txt
+   clang-format -style="$FMT_STYLE" --dry-run -Werror "$filename" || echo "File: $filename not formatted!" >> clang-format-report.txt
 done
 
 PAYLOAD_TIDY=`cat clang-tidy-report.txt`
 PAYLOAD_FORMAT=`cat clang-format-report.txt`
 COMMENTS_URL=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.comments_url)
-  
+
 echo $COMMENTS_URL
 echo "Clang-tidy errors:"
 echo $PAYLOAD_TIDY

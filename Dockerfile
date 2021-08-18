@@ -8,10 +8,10 @@ LABEL com.github.actions.color="gray-dark"
 LABEL repository="https://github.com/shenxianpeng/cpp-linter-action"
 LABEL maintainer="shenxianpeng <20297606+shenxianpeng@users.noreply.github.com>"
 
-WORKDIR /build
+# WORKDIR /build
 RUN apt-get update
-RUN apt-get -qq -y install curl clang-tidy cmake jq clang clang-format
+RUN apt-get -y install curl clang-tidy cmake jq clang clang-format
 
-ADD runchecks.sh /entrypoint.sh
-COPY . .
-CMD ["bash", "/entrypoint.sh"]
+COPY runchecks.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]

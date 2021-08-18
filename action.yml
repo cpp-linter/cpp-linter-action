@@ -4,6 +4,18 @@ author: shenxianpeng
 branding:
   icon: 'check-circle'
   color: 'green'
+inputs:
+  style: # the specific style rules
+    description: "The style rules to use (defaults to 'llvm'). Set this to 'file' to have clang-format use the closest relative .clang-format file."
+    required: false
+    default: 'llvm'
+  extensions:
+    description: "The file extensions to run the action against. This comma-separated string defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'."
+    required: false
+    default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - ${{ inputs.style }}
+    - ${{ inputs.extensions }}
