@@ -4,6 +4,13 @@ author: shenxianpeng
 branding:
   icon: 'check-circle'
   color: 'green'
+inputs:
+  style: # the specific style rules
+  description: "The style rules to use (defaults to 'LLVM'). Set this to file to make 'file' to have clang-format use the closest relative '.clang-format' file."
+  required: false
+  default: 'llvm'
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  args:
+    - ${{ inputs.style }}

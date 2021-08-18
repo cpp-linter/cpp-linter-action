@@ -20,7 +20,7 @@ cd files
 for i in "${URLS[@]}"
 do
    echo "Downloading $i"
-   curl -LOk --remote-name $i 
+   curl -LOk --remote-name $i
 done
 
 echo "Files downloaded!"
@@ -31,13 +31,13 @@ for i in "${URLS[@]}"
 do
    filename=`basename $i`
    clang-tidy $filename -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* >> clang-tidy-report.txt
-   clang-format --dry-run -Werror $filename || echo "File: $filename not formatted!" >> clang-format-report.txt
+   clang-format -style=$INPUT_STYLE--dry-run -Werror $filename || echo "File: $filename not formatted!" >> clang-format-report.txt
 done
 
 PAYLOAD_TIDY=`cat clang-tidy-report.txt`
 PAYLOAD_FORMAT=`cat clang-format-report.txt`
 COMMENTS_URL=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.comments_url)
-  
+
 echo $COMMENTS_URL
 echo "Clang-tidy errors:"
 echo $PAYLOAD_TIDY
