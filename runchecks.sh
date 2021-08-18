@@ -7,7 +7,7 @@ fi
 
 args=("$@")
 FMT_STYLE=${args[0]}
-IFS=',' read -a FILE_EXT_LIST <<< ${args[1]}
+IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
 
 FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
 echo "Files = $FILES_LINK"
@@ -51,7 +51,7 @@ for i in "${URLS[@]}"
 do
    filename=`basename $i`
    clang-tidy $filename -checks=boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-* >> clang-tidy-report.txt
-   clang-format -style=$FMT_STYLE --dry-run -Werror $filename || echo "File: $filename not formatted!" >> clang-format-report.txt
+   clang-format -style="$FMT_STYLE" --dry-run -Werror "$filename" || echo "File: $filename not formatted!" >> clang-format-report.txt
 done
 
 PAYLOAD_TIDY=`cat clang-tidy-report.txt`
