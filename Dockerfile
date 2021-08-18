@@ -13,5 +13,5 @@ RUN apt-get update
 RUN apt-get -y install curl clang-tidy cmake jq clang clang-format
 
 COPY runchecks.sh /entrypoint.sh
-RUN chmod +x /entrypoint.ch
-CMD ["bash", "/entrypoint.sh", "$@"]
+RUN chmod +x /entrypoint.sh
+CMD ["bash", "/entrypoint.sh"]
