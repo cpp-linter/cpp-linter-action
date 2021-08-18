@@ -6,8 +6,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: 2bndy5/cpp-linter-action@add-inputs
+      # - uses: actions/checkout@v2
+      - uses: shenxianpeng/cpp-linter-action@master
         with:
           style: file
           extensions: 'cpp'
