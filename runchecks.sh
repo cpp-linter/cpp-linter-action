@@ -34,7 +34,7 @@ do
   fi
 done
 
-echo "File names: $URLS"
+echo "File names: ${URLS[*]}"
 mkdir files
 cd files
 for i in "${URLS[@]}"
