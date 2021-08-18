@@ -9,8 +9,13 @@ inputs:
     description: "The style rules to use (defaults to 'llvm'). Set this to file to make 'file' to have clang-format use the closest relative .clang-format file."
     required: false
     default: 'llvm'
+  extensions:
+    desciption: "The file extensions to run the action against. This defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'".
+    required: false
+    default: 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.style }}
+    - ${{ inputs.extensions }}

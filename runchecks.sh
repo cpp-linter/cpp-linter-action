@@ -4,8 +4,11 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
 	echo "The GITHUB_TOKEN is required."
 	exit 1
 fi
+
 args=("$@")
 FMT_STYLE=${args[0]}
+IFS=',' read -a FILE_EXT_LIST <<< ${args[1]}
+
 FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
 echo "Files = $FILES_LINK"
 
@@ -14,8 +17,25 @@ FILES_URLS_STRING=`jq -r '.[].raw_url' files.json`
 
 readarray -t URLS <<<"$FILES_URLS_STRING"
 
-echo "File names: $URLS"
+# exclude undesired files
+for index in "${!URLS[@]}"
+do
+  is_supported=0
+  for i in "${FILE_EXT_LIST[@]}"
+  do
+    echo "testing ${URLS[index]} vs *$i"
+    if [[ ${URLS[index]} == *".$i" ]]
+    then
+      is_supported=1
+    fi
+  done
+  if [ $is_supported == 0 ]
+  then
+    unset -v "URLS[index]"
+  fi
+done
 
+echo "File names: $URLS"
 mkdir files
 cd files
 for i in "${URLS[@]}"
