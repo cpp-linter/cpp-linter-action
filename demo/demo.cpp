@@ -1,4 +1,4 @@
-/** This is an very ugly test code (doomed to fail linting) */
+/** This is a very ugly test code (doomed to fail linting) */
 
 #include <stdio.h>
 
