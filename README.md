@@ -11,7 +11,8 @@ Just create a `yml` file under your GitHub repository. For example `.github/work
 ```yml
 name: cpp-linter
 
-on: [pull_request]
+# Triggers the workflow on push or pull request events
+on: [push, pull_request]
 jobs:
   cpp-linter:
     name: cpp-linter
