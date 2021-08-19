@@ -9,12 +9,11 @@ function set_exit_code () {
    then
       EXIT_CODE="$1"
    else
-      if [ "$PAYLOAD_FORMAT" != "" && "$PAYLOAD_TIDY" != "" ]
+      if [[ "$PAYLOAD_FORMAT" != "" || "$PAYLOAD_TIDY" != "" ]]
       then
          EXIT_CODE="1"
       fi
    fi
-   echo "exit code = $EXIT_CODE"
    echo "::set-output name=checks-failed::$(echo $EXIT_CODE)"
 }
 
