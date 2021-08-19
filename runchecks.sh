@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXIT_CODE=0
+EXIT_CODE="0"
 PAYLOAD_FORMAT=""
 PAYLOAD_TIDY=""
 
@@ -11,7 +11,7 @@ function set_exit_code () {
    else
       if [ "$PAYLOAD_FORMAT" != "" && "$PAYLOAD_TIDY" != "" ]
       then
-         EXIT_CODE=1
+         EXIT_CODE="1"
       fi
    fi
    echo "exit code = $EXIT_CODE"
