@@ -32,8 +32,8 @@ IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
 
 echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
 echo "GH_EVENT_NAME = $GITHUB_EVENT_NAME"
-event="$GITHUB_EVENT_PATH" | `jq '.'`
-echo "$event"
+cat "$GITHUB_EVENT_PATH" | `jq '.'`
+
 # use git API payload
 FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
 echo "Files = $FILES_LINK"
