@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # - uses: actions/checkout@v2
-      - uses: shenxianpeng/cpp-linter-action@master
+      # - uses: shenxianpeng/cpp-linter-action@master
+      - uses: 2bndy5/cpp-linter-action@output-exit-code
         id: linter
         with:
           style: file
@@ -15,5 +16,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: steps.linter.checks-failed > 0
+      - name: Fail fast!
+        if: steps.linter.checks-failed > 0
         run: exit 1
