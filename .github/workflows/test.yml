@@ -8,8 +8,12 @@ jobs:
     steps:
       # - uses: actions/checkout@v2
       - uses: shenxianpeng/cpp-linter-action@master
+        id: linter
         with:
           style: file
           extensions: 'cpp'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: steps.linter.checks-failed > 0
+        run: exit 1
