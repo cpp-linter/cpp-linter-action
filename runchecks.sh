@@ -116,3 +116,11 @@ echo "OUTPUT is: \n $OUTPUT"
 PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 
 curl -s -S -H "Authorization: token $GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
+
+EXIT_CODE=0
+if [ "$PAYLOAD_FORMAT" != "" && "$PAYLOAD_TIDY" != "" ]
+then
+  EXIT_CODE=1
+fi
+
+echo "::set-output name=checks-failed::$(echo $EXIT_CODE)"
