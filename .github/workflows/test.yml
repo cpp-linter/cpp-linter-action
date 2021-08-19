@@ -8,7 +8,7 @@ jobs:
     steps:
       # - uses: actions/checkout@v2
       # - uses: shenxianpeng/cpp-linter-action@master
-      - uses: 2bndy5/cpp-linter-action@output-exit-code
+      - uses: 2bndy5/cpp-linter-action@push-capable
         id: linter
         with:
           style: file
