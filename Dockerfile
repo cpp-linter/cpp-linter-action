@@ -1,5 +1,4 @@
-# FROM xianpengshen/clang-tool
-FROM alpine:3.14
+FROM xianpengshen/clang-tool
 
 LABEL com.github.actions.name="cpp-linter check"
 LABEL com.github.actions.description="Lint your code with clang-tidy in parallel to your builds"
