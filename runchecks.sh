@@ -14,7 +14,7 @@ function set_exit_code () {
          EXIT_CODE="1"
       fi
    fi
-   echo "::set-output name=checks-failed::$(echo $EXIT_CODE)"
+   echo "::set-output name=checks-failed::$EXIT_CODE"
 }
 
 # check for access token (ENV VAR needed for git API calls)
