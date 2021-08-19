@@ -29,6 +29,7 @@ fi
 args=("$@")
 FMT_STYLE=${args[0]}
 IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
+CLANG_VERSION="${args[2]}"
 
 echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
 echo "GH_EVENT_NAME = $GITHUB_EVENT_NAME"
@@ -51,8 +52,8 @@ curl $FILES_LINK > files.json
 # extract info from json
 if [[ "$GITHUB_EVENT_NAME" == "push" ]]
 then
-   FILES_URLS_STRING=`jq -r '.files.[].raw_url' files.json`
-   FILES_NAMES_STRING=`jq -r '.files.[].filename' files.json`
+   FILES_URLS_STRING=`jq -r '.files[].raw_url' files.json`
+   FILES_NAMES_STRING=`jq -r '.files[].filename' files.json`
 elif [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]
 then
    FILES_URLS_STRING=`jq -r '.[].raw_url' files.json`
@@ -113,11 +114,11 @@ do
    then
       filename="$GITHUB_WORKSPACE/${PATHNAMES[index]}"
    fi
-   clang-tidy "$filename" -checks="boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*" --export-fixes="tidy-report.$filename.yml"
-   clang-format -style="$FMT_STYLE" --dry-run -Werror "$filename" || echo "File: $filename not formatted!" >> clang-format-report.txt
+   clang-tidy-"$CLANG_VERSION" "$filename" -checks="boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*" --export-fixes="tidy-report.$filename.yml"
+   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run -Werror "$filename" || echo "File: $filename not formatted!" >> clang-format-report.txt
 done
 
-PAYLOAD_TIDY=`cat clang-tidy-report.txt`
+# PAYLOAD_TIDY=`cat clang-tidy-report.txt`
 PAYLOAD_FORMAT=`cat clang-format-report.txt`
 COMMENTS_URL=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.comments_url)
 if [[ "$GITHUB_EVENT_NAME" == "push" ]]
@@ -126,8 +127,8 @@ then
 fi
 
 echo $COMMENTS_URL
-echo "Clang-tidy errors:"
-echo $PAYLOAD_TIDY
+# echo "Clang-tidy errors:"
+# echo $PAYLOAD_TIDY
 echo "Clang-format errors:"
 echo $PAYLOAD_FORMAT
 
