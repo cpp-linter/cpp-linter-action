@@ -5,7 +5,7 @@ PAYLOAD_FORMAT=""
 PAYLOAD_TIDY=""
 
 function set_exit_code () {
-   if [ $# > 0 ]
+   if [[ $# -gt 0 ]]
    then
       EXIT_CODE="$1"
    else
@@ -23,7 +23,7 @@ if [[ -z "$GITHUB_TOKEN" ]]
 then
 	echo "The GITHUB_TOKEN is required."
    set_exit_code "1"
-	exit $EXIT_CODE
+	exit "$EXIT_CODE"
 fi
 
 # parse CLI args
