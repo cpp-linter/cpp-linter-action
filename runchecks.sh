@@ -30,8 +30,9 @@ args=("$@")
 FMT_STYLE=${args[0]}
 IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
 
+echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH\nGH_EVENT_NAME = $GITHUB_EVENT_NAME"
 # use git API payload
-FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
+FILES_LINK=`jq -r '.$GITHUB_EVENT_NAME._links.self.href' "$GITHUB_EVENT_PATH"`/files
 echo "Files = $FILES_LINK"
 
 # setup download URLS
