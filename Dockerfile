@@ -1,4 +1,4 @@
-FROM xianpengshen/clang-tools:11
+FROM xianpengshen/clang-tool
 
 LABEL com.github.actions.name="cpp-linter check"
 LABEL com.github.actions.description="Lint your code with clang-tidy in parallel to your builds"
