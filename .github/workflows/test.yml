@@ -18,6 +18,6 @@ jobs:
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
         run: |
-          echo "Some files failed the linging checks!"
+          echo "Some files failed the linting checks!"
         # for actual deployment
         # run: exit 1
