@@ -4,7 +4,7 @@ EXIT_CODE=0
 PAYLOAD_FORMAT=""
 PAYLOAD_TIDY=""
 
-function set_exit_code {
+function set_exit_code () {
    if [ $# > 1 ]
    then
       EXIT_CODE="$1"
@@ -22,7 +22,7 @@ function set_exit_code {
 if [[ -z "$GITHUB_TOKEN" ]]
 then
 	echo "The GITHUB_TOKEN is required."
-   set_exit_code(1)
+   set_exit_code "1"
 	exit $EXIT_CODE
 fi
 
@@ -60,7 +60,7 @@ done
 # exit early if nothing to do
 if [ "${URLS[#]}" == 0 ]
 then
-   set_exit_code(0)
+   set_exit_code "0"
    echo "No source files need checking!"
    exit $EXIT_CODE
 else
@@ -115,4 +115,5 @@ echo "OUTPUT is: \n $OUTPUT"
 PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 
 curl -s -S -H "Authorization: token $GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
-set_exit_code()
+
+set_exit_code
