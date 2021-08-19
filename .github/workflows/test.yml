@@ -17,7 +17,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fail fast?!
-        if: steps.linter.checks-failed > 0
+        if: steps.linter.outputs.checks-failed > 0
         run: |
           echo "Some files failed the linging checks!"
         # for actual deployment
