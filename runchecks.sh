@@ -33,7 +33,7 @@ CLANG_VERSION="${args[2]}"
 
 echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
 echo "GH_EVENT_NAME = $GITHUB_EVENT_NAME"
-cat "$GITHUB_EVENT_PATH" | jq '.'
+# cat "$GITHUB_EVENT_PATH" | jq '.'
 
 if [[ "$GITHUB_EVENT_NAME" == "push" ]]
 then
