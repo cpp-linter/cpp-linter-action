@@ -5,7 +5,7 @@ PAYLOAD_FORMAT=""
 PAYLOAD_TIDY=""
 
 function set_exit_code () {
-   if [ $# > 1 ]
+   if [ $# > 0 ]
    then
       EXIT_CODE="$1"
    else
@@ -110,10 +110,10 @@ if [ "$PAYLOAD_FORMAT" != "" ]; then
    OUTPUT+=$'\n```\n'
 fi
 
+set_exit_code
+
 echo "OUTPUT is: \n $OUTPUT"
 
 PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 
 curl -s -S -H "Authorization: token $GITHUB_TOKEN" --header "Content-Type: application/vnd.github.VERSION.text+json" --data "$PAYLOAD" "$COMMENTS_URL"
-
-set_exit_code
