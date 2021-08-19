@@ -115,7 +115,7 @@ do
       filename="$GITHUB_WORKSPACE/${PATHNAMES[index]}"
    fi
    clang-tidy-"$CLANG_VERSION" "$filename" -checks="boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*" --export-fixes="tidy-report.$filename.yml"
-   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run -Werror "$filename" || echo "File: $filename not formatted!" >> clang-format-report.txt
+   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run -Werror "$filename" || echo "File: $(basename ${URLS[index]}) not formatted!" >> clang-format-report.txt
 done
 
 # PAYLOAD_TIDY=`cat clang-tidy-report.txt`
