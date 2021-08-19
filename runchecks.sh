@@ -58,7 +58,7 @@ do
 done
 
 # exit early if nothing to do
-if [ "${URLS[#]}" == 0 ]
+if [ ${#URLS[@]} == 0 ]
 then
    set_exit_code "0"
    echo "No source files need checking!"
