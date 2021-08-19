@@ -23,7 +23,7 @@ outputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
+  # from: 'xianpengshen/clang-tools:clang-tools:${{ inputs.version }}'
   args:
     - ${{ inputs.style }}
     - ${{ inputs.extensions }}
-    - ${{ inputs.version }}
