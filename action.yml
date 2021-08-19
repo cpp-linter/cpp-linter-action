@@ -15,7 +15,7 @@ inputs:
     default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
 outputs:
   checks-failed:
-    description: A an integer that can be used as a boolean value to indicate if all checks failed.
+    description: An integer that can be used as a boolean value to indicate if all checks failed.
 runs:
   using: 'docker'
   image: 'Dockerfile'
