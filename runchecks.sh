@@ -3,7 +3,7 @@
 EXIT_CODE="0"
 PAYLOAD_FORMAT=""
 PAYLOAD_TIDY=""
-FENCES=$'```\n'
+FENCES=$'\n```\n'
 OUTPUT=""
 
 function set_exit_code () {
@@ -113,7 +113,7 @@ clang-tidy --version
 for index in "${!URLS[@]}"
 do
    filename=`basename ${URLS[index]}`
-   CWD=$(pwd)
+   CWD="$(pwd)"
    if [[ -f "$GITHUB_WORKSPACE/${PATHNAMES[index]}" ]]
    then
       filename="$GITHUB_WORKSPACE/${PATHNAMES[index]}"
@@ -127,7 +127,9 @@ do
    then
       CLANG_CONFIG="--config"
    fi
+
    clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" >> clang_tidy_report.txt
+
    clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" >> clang_format_report.txt
 
    echo "Current Working Directory = $CWD"
@@ -135,9 +137,8 @@ do
    then
       BLOCK_HEADER="### ${PATHNAMES[index]} (clang-tidy output)"
       echo "$BLOCK_HEADER"
-      PAYLOAD_TIDY+=$BLOCK_HEADER$'\n'
-      PAYLOAD_TIDY+="$FENCES"
-      PAYLOAD_TIDY+=$"`sed 's;$CWD;;' clang_tidy_report.txt`"
+      PAYLOAD_TIDY+="$BLOCK_HEADER$FENCES"
+      PAYLOAD_TIDY+=`sed 's;$CWD;;' clang_tidy_report.txt`
       PAYLOAD_TIDY+="$FENCES"
    fi
 
@@ -145,9 +146,8 @@ do
    then
       BLOCK_HEADER="### ${PATHNAMES[index]} (clang-format output)"
       echo "$BLOCK_HEADER"
-      PAYLOAD_FORMAT+=$BLOCK_HEADER$'\n'
-      PAYLOAD_FORMAT+="$FENCES"
-      PAYLOAD_FORMAT+=$"`sed 's;$CWD;;' clang_format_report.txt`"
+      PAYLOAD_FORMAT+="$BLOCK_HEADER$FENCES"
+      PAYLOAD_FORMAT+=`sed 's;$CWD;;' clang_format_report.txt`
       PAYLOAD_FORMAT+="$FENCES"
    fi
 done
