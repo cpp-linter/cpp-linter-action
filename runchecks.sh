@@ -49,7 +49,7 @@ then
 fi
 
 # download files' name & URLS
-echo "Files = $FILES_LINK"
+echo "Fetching files list from $FILES_LINK"
 curl $FILES_LINK > files.json
 
 # extract info from json
