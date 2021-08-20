@@ -31,4 +31,4 @@ runs:
     - ${{ inputs.style }}
     - ${{ inputs.extensions }}
     - ${{ inputs.tidy-checks }}
-    - ${{ inputs.version }}
+    - TAG=${{ inputs.version }}

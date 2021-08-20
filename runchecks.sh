@@ -32,7 +32,7 @@ args=("$@")
 FMT_STYLE=${args[0]}
 IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
 TIDY_CHECKS="${args[2]}"
-CLANG_VERSION="${args[3]}"
+# CLANG_VERSION="${args[3]}"
 
 echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
 echo "processing $GITHUB_EVENT_NAME event"
@@ -128,9 +128,8 @@ do
       CLANG_CONFIG="--config"
    fi
 
-   clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" >> clang_tidy_report.txt
-
-   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" >> clang_format_report.txt
+   clang-tidy "$filename" "$CLANG_CONFIG" >> clang_tidy_report.txt
+   clang-format -style="$FMT_STYLE" --dry-run "$filename" >> clang_format_report.txt
 
    echo "Current Working Directory = $CWD"
    if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]
