@@ -1,20 +1,42 @@
 #!/bin/bash
 
-if [[ -z "$GITHUB_TOKEN" ]]; then
+EXIT_CODE="0"
+PAYLOAD_FORMAT=""
+PAYLOAD_TIDY=""
+
+function set_exit_code () {
+   if [[ $# -gt 0 ]]
+   then
+      EXIT_CODE="$1"
+   else
+      if [[ "$PAYLOAD_FORMAT" != "" || "$PAYLOAD_TIDY" != "" ]]
+      then
+         EXIT_CODE="1"
+      fi
+   fi
+   echo "::set-output name=checks-failed::$EXIT_CODE"
+}
+
+# check for access token (ENV VAR needed for git API calls)
+if [[ -z "$GITHUB_TOKEN" ]]
+then
 	echo "The GITHUB_TOKEN is required."
-	exit 1
+   set_exit_code "1"
+	exit "$EXIT_CODE"
 fi
 
+# parse CLI args
 args=("$@")
 FMT_STYLE=${args[0]}
 IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
 
+# use git API payload
 FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
 echo "Files = $FILES_LINK"
 
+# setup download URLS
 curl $FILES_LINK > files.json
 FILES_URLS_STRING=`jq -r '.[].raw_url' files.json`
-
 readarray -t URLS <<<"$FILES_URLS_STRING"
 
 # exclude undesired files
@@ -34,7 +56,16 @@ do
   fi
 done
 
-echo "File names: ${URLS[*]}"
+# exit early if nothing to do
+if [ ${#URLS[@]} == 0 ]
+then
+   set_exit_code "0"
+   echo "No source files need checking!"
+   exit $EXIT_CODE
+else
+   echo "File names: ${URLS[*]}"
+fi
+
 mkdir files
 cd files
 for i in "${URLS[@]}"
@@ -77,6 +108,8 @@ if [ "$PAYLOAD_FORMAT" != "" ]; then
    OUTPUT+="$PAYLOAD_FORMAT"
    OUTPUT+=$'\n```\n'
 fi
+
+set_exit_code
 
 echo "OUTPUT is: \n $OUTPUT"
 

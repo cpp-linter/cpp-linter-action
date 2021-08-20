@@ -8,8 +8,16 @@ jobs:
     steps:
       # - uses: actions/checkout@v2
       - uses: shenxianpeng/cpp-linter-action@master
+        id: linter
         with:
           style: file
           extensions: 'cpp'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail fast?!
+        if: steps.linter.outputs.checks-failed > 0
+        run: |
+          echo "Some files failed the linting checks!"
+        # for actual deployment
+        # run: exit 1

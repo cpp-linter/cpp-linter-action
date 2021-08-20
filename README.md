@@ -31,6 +31,9 @@ jobs:
 | style | 'llvm' | The style rules to use. Set this to 'file' to have clang-format use the closest relative .clang-format file. |
 | extensions | 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx' | The file extensions to run the action against. This is a comma-separated string. |
 
+### Outputs
+
+This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
 ## Results of GitHub Actions
 
 Here is a test repository [cpp-linter-action-demo](https://github.com/shenxianpeng/cpp-linter-action-demo) which has added `cpp-linter.yml`. when an unformatted C/C++ source file was committed and create a Pull Request will automatically recognize and add warning comments.
