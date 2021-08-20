@@ -122,10 +122,10 @@ do
 
    > clang-format-report.txt
    > clang-tidy-report.txt
-   CLANG_CONFIG="--config"
-   if [[ $TIDY_CHECKS != ""]]
+   CLANG_CONFIG="-checks=$TIDY_CHECKS"
+   if [[ "$TIDY_CHECKS" == "" ]]
    then
-      CLANG_CONFIG="-checks=$TIDY_CHECKS"
+      CLANG_CONFIG="--config"
    fi
    clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" >> clang-tidy-report.txt
    clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" >> clang-format-report.txt
