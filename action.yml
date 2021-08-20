@@ -26,9 +26,10 @@ outputs:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'docker://xianpengshen/clang-tools:${{ inputs.version }}'
+  pre-entrypoint: 'setup.sh'
+  entrypoint: 'run_checks.sh'
   args:
     - ${{ inputs.style }}
     - ${{ inputs.extensions }}
     - ${{ inputs.tidy-checks }}
-    - TAG=${{ inputs.version }}
