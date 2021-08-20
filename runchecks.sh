@@ -120,35 +120,34 @@ do
       CWD="$GITHUB_WORKSPACE"
    fi
 
-   > clang-format-report.txt
-   > clang-tidy-report.txt
+   > clang_format_report.txt
+   > clang_tidy_report.txt
    CLANG_CONFIG="-checks=$TIDY_CHECKS"
    if [[ "$TIDY_CHECKS" == "" ]]
    then
       CLANG_CONFIG="--config"
    fi
-   clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" >> clang-tidy-report.txt
-   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" >> clang-format-report.txt
+   clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" >> clang_tidy_report.txt
+   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" >> clang_format_report.txt
 
-   if [[ $(wc -l < clang-tidy-report.txt) -gt 0 ]]
+   echo "Current Working Directory = $CWD"
+   if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]
    then
       BLOCK_HEADER="### ${PATHNAMES[index]} (clang-tidy output)"
       echo "$BLOCK_HEADER"
       PAYLOAD_TIDY+=$BLOCK_HEADER$'\n'
       PAYLOAD_TIDY+="$FENCES"
-      sed -i 's;$CWD;;' clang-tidy-report.txt
-      PAYLOAD_TIDY+=`cat clang-tidy-report.txt`
+      PAYLOAD_TIDY+=`sed 's;$CWD;;' clang_tidy_report.txt`
       PAYLOAD_TIDY+="$FENCES"
    fi
 
-   if [[ $(wc -l < clang-format-report.txt) -gt 0 ]]
+   if [[ $(wc -l < clang_format_report.txt) -gt 0 ]]
    then
       BLOCK_HEADER="### ${PATHNAMES[index]} (clang-format output)"
       echo "$BLOCK_HEADER"
       PAYLOAD_FORMAT+=$BLOCK_HEADER$'\n'
       PAYLOAD_FORMAT+="$FENCES"
-      sed -i 's;$CWD;;' clang-format-report.txt
-      PAYLOAD_FORMAT+=`cat clang-format-report.txt`
+      PAYLOAD_FORMAT+=`sed 's;$CWD;;' clang_format_report.txt`
       PAYLOAD_FORMAT+="$FENCES"
    fi
 done
@@ -159,11 +158,7 @@ then
    COMMENTS_URL="$FILES_LINK/comments"
 fi
 
-echo $COMMENTS_URL
-echo "Clang-tidy errors:"
-echo $PAYLOAD_TIDY
-echo "Clang-format errors:"
-echo $PAYLOAD_FORMAT
+echo "COMMENTS_URL: $COMMENTS_URL"
 
 if [ "$PAYLOAD_TIDY" != "" ]; then
    OUTPUT+="$PAYLOAD_TIDY"

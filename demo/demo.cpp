@@ -7,7 +7,8 @@
 int main(){
 
     for (;;)
-        break;
+
+    break;
 
     printf("Hello world!\n");
 
