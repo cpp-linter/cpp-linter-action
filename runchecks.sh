@@ -137,7 +137,7 @@ do
       echo "$BLOCK_HEADER"
       PAYLOAD_TIDY+=$BLOCK_HEADER$'\n'
       PAYLOAD_TIDY+="$FENCES"
-      PAYLOAD_TIDY+=`sed 's;$CWD;;' clang_tidy_report.txt`
+      PAYLOAD_TIDY+=$"`sed 's;$CWD;;' clang_tidy_report.txt`"
       PAYLOAD_TIDY+="$FENCES"
    fi
 
@@ -147,7 +147,7 @@ do
       echo "$BLOCK_HEADER"
       PAYLOAD_FORMAT+=$BLOCK_HEADER$'\n'
       PAYLOAD_FORMAT+="$FENCES"
-      PAYLOAD_FORMAT+=`sed 's;$CWD;;' clang_format_report.txt`
+      PAYLOAD_FORMAT+=$"`sed 's;$CWD;;' clang_format_report.txt`"
       PAYLOAD_FORMAT+="$FENCES"
    fi
 done
@@ -170,7 +170,8 @@ fi
 
 set_exit_code
 
-echo "OUTPUT is: \n $OUTPUT"
+echo "OUTPUT is:"
+echo "$OUTPUT"
 
 PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 

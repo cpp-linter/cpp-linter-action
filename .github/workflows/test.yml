@@ -15,7 +15,7 @@ jobs:
         with:
           style: file
           extensions: 'cpp'
-          tidy-checks: ''
+          # tidy-checks: ''
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
