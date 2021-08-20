@@ -129,7 +129,7 @@ do
    fi
 
    clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" >> clang_tidy_report.txt
-   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" >> clang_format_report.txt
+   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
 
    echo "Current Working Directory = $CWD"
    if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]

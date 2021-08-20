@@ -6,15 +6,22 @@ branding:
   color: 'green'
 inputs:
   style: # the specific style rules
-    description: "The style rules to use (defaults to 'llvm'). Set this to 'file' to have clang-format use the closest relative .clang-format file."
+    description: >
+      The style rules to use (defaults to 'llvm').
+      Set this to 'file' to have clang-format use the closest relative .clang-format file.
     required: false
     default: 'llvm'
   extensions:
-    description: "The file extensions to run the action against. This comma-separated string defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'."
+    description: >
+      The file extensions to run the action against.
+      This comma-separated string defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'.
     required: false
     default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
   tidy-checks:
-    description: "A string of regex-like patterns specifying what checks clang-tidy will use. This defaults to 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*'. See also clang-tidy docs for more info. Set this to '' (a blank string) to force clang-tidy to use a `.clang-tidy` config file"
+    description: >
+      A string of regex-like patterns specifying what checks clang-tidy will use.
+      This defaults to 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*'. See also clang-tidy docs for more info.
+      Set this to '' (a blank string) to force clang-tidy to use a `.clang-tidy` config file
     required: false
     default: 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*'
   version:
