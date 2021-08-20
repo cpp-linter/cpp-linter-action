@@ -3,6 +3,8 @@
 EXIT_CODE="0"
 PAYLOAD_FORMAT=""
 PAYLOAD_TIDY=""
+FENCES=$'```\n'
+OUTPUT=""
 
 function set_exit_code () {
    if [[ $# -gt 0 ]]
@@ -29,10 +31,11 @@ fi
 args=("$@")
 FMT_STYLE=${args[0]}
 IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
-CLANG_VERSION="${args[2]}"
+TIDY_CHECKS="${args[2]}"
+CLANG_VERSION="${args[3]}"
 
 echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
-echo "GH_EVENT_NAME = $GITHUB_EVENT_NAME"
+echo "processing $GITHUB_EVENT_NAME event"
 # cat "$GITHUB_EVENT_PATH" | jq '.'
 
 if [[ "$GITHUB_EVENT_NAME" == "push" ]]
@@ -110,16 +113,46 @@ clang-tidy --version
 for index in "${!URLS[@]}"
 do
    filename=`basename ${URLS[index]}`
+   CWD=$(pwd)
    if [[ -f "$GITHUB_WORKSPACE/${PATHNAMES[index]}" ]]
    then
       filename="$GITHUB_WORKSPACE/${PATHNAMES[index]}"
+      CWD="$GITHUB_WORKSPACE"
    fi
-   clang-tidy-"$CLANG_VERSION" "$filename" -checks="boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*" --export-fixes="tidy-report.$filename.yml"
-   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run -Werror "$filename" || echo "File: $(basename ${URLS[index]}) not formatted!" >> clang-format-report.txt
+
+   > clang-format-report.txt
+   > clang-tidy-report.txt
+   CLANG_CONFIG="--config"
+   if [[ $TIDY_CHECKS != ""]]
+   then
+      CLANG_CONFIG="-checks=$TIDY_CHECKS"
+   fi
+   clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" >> clang-tidy-report.txt
+   clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" >> clang-format-report.txt
+
+   if [[ $(wc -l < clang-tidy-report.txt) -gt 0 ]]
+   then
+      BLOCK_HEADER="### ${PATHNAMES[index]} (clang-tidy output)"
+      echo "$BLOCK_HEADER"
+      PAYLOAD_TIDY+=$BLOCK_HEADER$'\n'
+      PAYLOAD_TIDY+="$FENCES"
+      sed -i 's;$CWD;;' clang-tidy-report.txt
+      PAYLOAD_TIDY+=`cat clang-tidy-report.txt`
+      PAYLOAD_TIDY+="$FENCES"
+   fi
+
+   if [[ $(wc -l < clang-format-report.txt) -gt 0 ]]
+   then
+      BLOCK_HEADER="### ${PATHNAMES[index]} (clang-format output)"
+      echo "$BLOCK_HEADER"
+      PAYLOAD_FORMAT+=$BLOCK_HEADER$'\n'
+      PAYLOAD_FORMAT+="$FENCES"
+      sed -i 's;$CWD;;' clang-format-report.txt
+      PAYLOAD_FORMAT+=`cat clang-format-report.txt`
+      PAYLOAD_FORMAT+="$FENCES"
+   fi
 done
 
-# PAYLOAD_TIDY=`cat clang-tidy-report.txt`
-PAYLOAD_FORMAT=`cat clang-format-report.txt`
 COMMENTS_URL=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.comments_url)
 if [[ "$GITHUB_EVENT_NAME" == "push" ]]
 then
@@ -127,23 +160,17 @@ then
 fi
 
 echo $COMMENTS_URL
-# echo "Clang-tidy errors:"
-# echo $PAYLOAD_TIDY
+echo "Clang-tidy errors:"
+echo $PAYLOAD_TIDY
 echo "Clang-format errors:"
 echo $PAYLOAD_FORMAT
 
-# if [ "$PAYLOAD_TIDY" != "" ]; then
-#    OUTPUT+=$'**CLANG-TIDY WARNINGS**:\n'
-#    OUTPUT+=$'\n```\n'
-#    OUTPUT+="$PAYLOAD_TIDY"
-#    OUTPUT+=$'\n```\n'
-# fi
+if [ "$PAYLOAD_TIDY" != "" ]; then
+   OUTPUT+="$PAYLOAD_TIDY"
+fi
 
 if [ "$PAYLOAD_FORMAT" != "" ]; then
-   OUTPUT=$'**CLANG-FORMAT WARNINGS**:\n'
-   OUTPUT+=$'\n```\n'
    OUTPUT+="$PAYLOAD_FORMAT"
-   OUTPUT+=$'\n```\n'
 fi
 
 set_exit_code

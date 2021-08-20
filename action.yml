@@ -13,6 +13,10 @@ inputs:
     description: "The file extensions to run the action against. This comma-separated string defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'."
     required: false
     default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
+  tidy-checks:
+    description: "A string of regex-like patterns specifying what checks clang-tidy will use. This defaults to 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*'. See also clang-tidy docs for more info. Set this to '' (a blank string) to force clang-tidy to use a `.clang-tidy` config file"
+    required: false
+    default: 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-cplusplus-*,clang-analyzer-*,cppcoreguidelines-*'
   version:
     description: "The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11. Defaults to 10."
     required: false
@@ -26,4 +30,5 @@ runs:
   args:
     - ${{ inputs.style }}
     - ${{ inputs.extensions }}
+    - ${{ inputs.tidy-checks }}
     - ${{ inputs.version }}
