@@ -128,7 +128,7 @@ do
 
    if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]
    then
-      PAYLOAD_TIDY+=$'### ${PATHNAMES[index]}**'
+      PAYLOAD_TIDY+=$"### ${PATHNAMES[index]}"
       PAYLOAD_TIDY+="$FENCES"
       sed -i "s|$(pwd)||g" clang_tidy_report.txt
       cat clang_tidy_report.txt
