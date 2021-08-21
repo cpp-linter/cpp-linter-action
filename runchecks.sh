@@ -227,10 +227,10 @@ post_results() {
 # The main body of this script (all function calls)
 ###################################################
 
-# get_list_of_changed_files
+get_list_of_changed_files
 extract_changed_files_info
 filter_out_non_source_files
 verify_files_are_present
 capture_clang_tools_output
 set_exit_code
-# post_results
+post_results
