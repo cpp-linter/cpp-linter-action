@@ -50,17 +50,17 @@ fi
 
 # download files' name & URLS
 echo "Fetching files list from $FILES_LINK"
-curl $FILES_LINK > files.json
+curl $FILES_LINK > .cpp_linter_action_changed_files.json
 
 # extract info from json
 if [[ "$GITHUB_EVENT_NAME" == "push" ]]
 then
-   FILES_URLS_STRING=`jq -r '.files[].raw_url' files.json`
-   FILES_NAMES_STRING=`jq -r '.files[].filename' files.json`
+   FILES_URLS_STRING=`jq -r '.files[].raw_url' .cpp_linter_action_changed_files.json`
+   FILES_NAMES_STRING=`jq -r '.files[].filename' .cpp_linter_action_changed_files.json`
 elif [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]
 then
-   FILES_URLS_STRING=`jq -r '.[].raw_url' files.json`
-   FILES_NAMES_STRING=`jq -r '.[].filename' files.json`
+   FILES_URLS_STRING=`jq -r '.[].raw_url' .cpp_linter_action_changed_files.json`
+   FILES_NAMES_STRING=`jq -r '.[].filename' .cpp_linter_action_changed_files.json`
 fi
 
 # convert json info to arrays
@@ -96,8 +96,6 @@ else
    echo "File names: ${PATHNAMES[*]}"
 fi
 
-mkdir git_changed_files
-cd git_changed_files
 for index in "${!URLS[@]}"
 do
    if [[ ! -f "$GITHUB_WORKSPACE/${PATHNAMES[index]}" ]]

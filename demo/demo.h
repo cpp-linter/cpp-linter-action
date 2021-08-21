@@ -1,5 +1,6 @@
 #pragma once // this is bad practice
 
+
 class Dummy {
     char* useless;
     int numb;
