@@ -10,3 +10,32 @@ class Dummy {
     public:
     void *not_usefull(char &str){useless = str;}
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+struct LongDiff
+{
+    long diff;
+};
