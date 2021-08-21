@@ -142,7 +142,7 @@ do
    fi
    if [[ $(wc -l < clang_format_report.txt) -gt 0 ]]
    then
-      OUTPUT+=$'\n'"- [ ] _${PATHNAMES[index]}_ should be clang-formatted"$'\n'
+      OUTPUT+="- [ ] _${PATHNAMES[index]}_ should be clang-formatted"$'\n'
    fi
 done
 
