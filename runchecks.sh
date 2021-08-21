@@ -110,11 +110,9 @@ clang-tidy --version
 for index in "${!URLS[@]}"
 do
    filename=`basename ${URLS[index]}`
-   CWD="$(pwd)"
    if [[ -f "$GITHUB_WORKSPACE/${PATHNAMES[index]}" ]]
    then
       filename="$GITHUB_WORKSPACE/${PATHNAMES[index]}"
-      CWD="$GITHUB_WORKSPACE"
    fi
 
    > clang_format_report.txt
@@ -128,18 +126,18 @@ do
    clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" -format-style="$FMT_STYLE" >> clang_tidy_report.txt
    clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
 
-   echo "Current Working Directory = $CWD"
    if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]
    then
-      BLOCK_HEADER="### ${PATHNAMES[index]} (clang-tidy output)"
-      echo "$BLOCK_HEADER"
-      PAYLOAD_TIDY+="$BLOCK_HEADER$FENCES"
-      PAYLOAD_TIDY+=`sed 's;$CWD;;' clang_tidy_report.txt`
+      PAYLOAD_TIDY+=$'### ${PATHNAMES[index]}**'
+      PAYLOAD_TIDY+="$FENCES"
+      sed -i "s|$(pwd)||g" clang_tidy_report.txt
+      cat clang_tidy_report.txt
+      PAYLOAD_TIDY+=`cat clang_tidy_report.txt`
       PAYLOAD_TIDY+="$FENCES"
    fi
    if [[ $(wc -l < clang_format_report.txt) -gt 0 ]]
    then
-      OUTPUT+="   - [ ] _${PATHNAMES[index]}_"$'\n'
+      OUTPUT+="- [ ] ${PATHNAMES[index]}"$'\n'
    fi
 done
 

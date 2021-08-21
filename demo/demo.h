@@ -1,6 +1,7 @@
 #pragma once
 
 
+
 class Dummy {
     char* useless;
     int numb;
