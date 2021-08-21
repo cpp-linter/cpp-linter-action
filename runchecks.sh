@@ -128,7 +128,7 @@ do
       CLANG_CONFIG="--config"
    fi
 
-   clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" >> clang_tidy_report.txt
+   clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" -format-style="$FMT_STYLE" >> clang_tidy_report.txt
    clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
 
    echo "Current Working Directory = $CWD"
@@ -140,14 +140,9 @@ do
       PAYLOAD_TIDY+=`sed 's;$CWD;;' clang_tidy_report.txt`
       PAYLOAD_TIDY+="$FENCES"
    fi
-
    if [[ $(wc -l < clang_format_report.txt) -gt 0 ]]
    then
-      BLOCK_HEADER="### ${PATHNAMES[index]} (clang-format output)"
-      echo "$BLOCK_HEADER"
-      PAYLOAD_FORMAT+="$BLOCK_HEADER$FENCES"
-      PAYLOAD_FORMAT+=`sed 's;$CWD;;' clang_format_report.txt`
-      PAYLOAD_FORMAT+="$FENCES"
+      OUTPUT+=$'\n'"- [ ] ${PATHNAMES[index]} should be clang-formatted."
    fi
 done
 
@@ -157,15 +152,16 @@ then
    COMMENTS_URL="$FILES_LINK/comments"
 fi
 
-echo "COMMENTS_URL: $COMMENTS_URL"
+echo "COMMENTS_URL = $COMMENTS_URL"
+
+# if [ "$PAYLOAD_FORMAT" != "" ]; then
+#    OUTPUT+="$PAYLOAD_FORMAT"
+# fi
 
 if [ "$PAYLOAD_TIDY" != "" ]; then
    OUTPUT+="$PAYLOAD_TIDY"
 fi
 
-if [ "$PAYLOAD_FORMAT" != "" ]; then
-   OUTPUT+="$PAYLOAD_FORMAT"
-fi
 
 set_exit_code
 
