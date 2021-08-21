@@ -2,6 +2,7 @@
 
 
 
+
 class Dummy {
     char* useless;
     int numb;
@@ -38,4 +39,5 @@ class Dummy {
 struct LongDiff
 {
     long diff;
+
 };
