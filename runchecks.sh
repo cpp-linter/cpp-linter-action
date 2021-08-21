@@ -1,10 +1,9 @@
 #!/bin/bash
 
 EXIT_CODE="0"
-PAYLOAD_FORMAT=""
 PAYLOAD_TIDY=""
 FENCES=$'\n```\n'
-OUTPUT=""
+OUTPUT=$'## Run `clang-format` on the following files\n'
 
 function set_exit_code () {
    if [[ $# -gt 0 ]]
@@ -140,9 +139,11 @@ do
    fi
    if [[ $(wc -l < clang_format_report.txt) -gt 0 ]]
    then
-      OUTPUT+="- [ ] _${PATHNAMES[index]}_ should be clang-formatted"$'\n'
+      OUTPUT+="   - [ ] _${PATHNAMES[index]}_"$'\n'
    fi
 done
+
+OUTPUT+=$'\n---\n## Output from `clang-tidy`\n'
 
 COMMENTS_URL=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.comments_url)
 if [[ "$GITHUB_EVENT_NAME" == "push" ]]
@@ -151,10 +152,6 @@ then
 fi
 
 echo "COMMENTS_URL = $COMMENTS_URL"
-
-# if [ "$PAYLOAD_FORMAT" != "" ]; then
-#    OUTPUT+="$PAYLOAD_FORMAT"
-# fi
 
 if [ "$PAYLOAD_TIDY" != "" ]; then
    OUTPUT+="$PAYLOAD_TIDY"

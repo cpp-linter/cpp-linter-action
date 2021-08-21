@@ -1,4 +1,4 @@
-#pragma once // this is bad practice
+#pragma once
 
 
 class Dummy {
