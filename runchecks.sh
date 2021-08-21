@@ -125,12 +125,12 @@ do
 
    clang-tidy-"$CLANG_VERSION" "$filename" "$CLANG_CONFIG" -format-style="$FMT_STYLE" >> clang_tidy_report.txt
    clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
-
+   echo "Current work dir: $(pwd)"
    if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]
    then
       PAYLOAD_TIDY+=$"### ${PATHNAMES[index]}"
       PAYLOAD_TIDY+="$FENCES"
-      sed -i "s|$(pwd)||g" clang_tidy_report.txt
+      sed -i "s|$GITHUB_WORKSPACE||g" clang_tidy_report.txt
       cat clang_tidy_report.txt
       PAYLOAD_TIDY+=`cat clang_tidy_report.txt`
       PAYLOAD_TIDY+="$FENCES"
