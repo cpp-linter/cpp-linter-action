@@ -15,9 +15,9 @@ args=("$@")
 FMT_STYLE=${args[0]}
 IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
 TIDY_CHECKS="${args[2]}"
-CLANG_VERSION="${args[3]}"
+cd "${args[3]}"
+# CLANG_VERSION="${args[3]}"
 
-cd "${args[4]}"
 
 ###################################################
 # Set the exit code (for expected exit calls).
@@ -186,8 +186,9 @@ capture_clang_tools_output() {
       echo "Performing checkup on $filename"
       # echo "incoming changed lines: $(get_patch_info $index)"
 
-      clang-tidy-"$CLANG_VERSION" "$filename" -checks="$TIDY_CHECKS" >> clang_tidy_report.txt
-      clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
+      # append the executables' name with `-"$CLANG_VERSION" for a specific version that's installed
+      clang-tidy "$filename" -checks="$TIDY_CHECKS" >> clang_tidy_report.txt
+      clang-format -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
 
       if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]
       then
