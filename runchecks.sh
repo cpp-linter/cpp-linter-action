@@ -7,7 +7,6 @@ FENCES=$'\n```\n'
 OUTPUT=""
 URLS=""
 PATHNAMES=""
-PATCHES=""
 declare -a JSON_INDEX
 
 # alias CLI args
@@ -15,7 +14,7 @@ args=("$@")
 FMT_STYLE=${args[0]}
 IFS=',' read -r -a FILE_EXT_LIST <<< "${args[1]}"
 TIDY_CHECKS="${args[2]}"
-cd "${args[3]}"
+cd "${args[3]}" || exit "1"
 # CLANG_VERSION="${args[3]}"
 
 
@@ -52,12 +51,12 @@ get_list_of_changed_files() {
    then
       # FILES_LINK="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/<PR ID number>/files"
       # Get PR ID number from the event's JSON located in the runner's GITHUB_EVENT_PATH
-      FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
+      FILES_LINK="$(jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH")/files"
    fi
 
    # Download files list (another JSON containing files' names, URLS, statuses, & diffs/patches)
    echo "Fetching files list from $FILES_LINK"
-   curl $FILES_LINK > .cpp_linter_action_changed_files.json
+   curl "$FILES_LINK" > .cpp_linter_action_changed_files.json
 }
 
 ###################################################
@@ -65,13 +64,13 @@ get_list_of_changed_files() {
 ###################################################
 extract_changed_files_info() {
    # pull_request events have a slightly different JSON format than push events
-   JSON_FILES="."
+   JSON_FILES=".["
    if [[ "$GITHUB_EVENT_NAME" == "push" ]]
    then
-      JSON_FILES=".files"
+      JSON_FILES=".files["
    fi
-   FILES_URLS_STRING=`jq -r "$JSON_FILES[].raw_url" .cpp_linter_action_changed_files.json`
-   FILES_NAMES_STRING=`jq -r "$JSON_FILES[].filename" .cpp_linter_action_changed_files.json`
+   FILES_URLS_STRING=$(jq -r "$JSON_FILES].raw_url" .cpp_linter_action_changed_files.json)
+   FILES_NAMES_STRING=$(jq -r "$JSON_FILES].filename" .cpp_linter_action_changed_files.json)
 
    # convert json info to arrays
    readarray -t URLS <<<"$FILES_URLS_STRING"
@@ -79,7 +78,7 @@ extract_changed_files_info() {
 
    # Initialize the `JSON_INDEX` array. This helps us keep track of the
    # source files' index in the JSON after calling `filter_out_source_files()` function.
-   for index in ${!URLS[@]}
+   for index in "${!URLS[@]}"
    do
       # this will only be used when parsing diffs from the JSON
       JSON_INDEX[$index]=$index
@@ -128,7 +127,7 @@ filter_out_non_source_files() {
 ###################################################
 verify_files_are_present() {
    # URLS, PATHNAMES, & PATCHES are parallel arrays
-   for index in ${!PATHNAMES[@]}
+   for index in "${!PATHNAMES[@]}"
    do
       if [[ ! -f "${PATHNAMES[index]}" ]]
       then
@@ -150,11 +149,11 @@ get_patch_info() {
    # A positive sign indicates the incoming changes, while a negative sign indicates existing code that was changed
    # Any changed lines will also have a prefixed `-` or `+`.
 
-   file_status=`jq -r "$JSON_FILES[${JSON_INDEX[$1]}].status" .cpp_linter_action_changed_files.json`
+   file_status=$(jq -r "$JSON_FILES${JSON_INDEX[$1]}].status" .cpp_linter_action_changed_files.json)
 
    # we only need the first line stating the line numbers changed (ie "@@ -1,5 +1,5 @@"")
-   patched_lines=$(jq -r -c "$JSON_FILES[${JSON_INDEX[$1]}].patch" .cpp_linter_action_changed_files.json)
-   patches=`echo "$patched_lines" | grep -o "@@ \-[1-9]*,[1-9]* +[1-9]*,[1-9]* @@" | grep -o " +[1-9]*,[1-9]*" | tr -d "\n" | sed 's; +;;; s;+;;g'`
+   patched_lines=$(jq -r -c "$JSON_FILES${JSON_INDEX[$1]}].patch" .cpp_linter_action_changed_files.json)
+   patches=$(echo "$patched_lines" | grep -o "@@ \-[1-9]*,[1-9]* +[1-9]*,[1-9]* @@" | grep -o " +[1-9]*,[1-9]*" | tr -d "\n" | sed 's; +;;; s;+;;g')
 
    # if there is no patch field, we need to handle 'renamed' as an edgde case
    if [[ "$patches" == "" ]]
@@ -174,7 +173,7 @@ capture_clang_tools_output() {
 
    for index in "${!URLS[@]}"
    do
-      filename=`basename ${URLS[index]}`
+      filename=$(basename ${URLS[index]})
       if [[ -f "${PATHNAMES[index]}" ]]
       then
          filename="${PATHNAMES[index]}"
@@ -201,7 +200,7 @@ capture_clang_tools_output() {
          PAYLOAD_TIDY+="$FENCES"
          sed -i "s|$GITHUB_WORKSPACE/||g" clang_tidy_report.txt
          # cat clang_tidy_report.txt
-         PAYLOAD_TIDY+=`cat clang_tidy_report.txt`
+         PAYLOAD_TIDY+=$(cat clang_tidy_report.txt)
          PAYLOAD_TIDY+="$FENCES"
       fi
 
@@ -236,7 +235,7 @@ post_results() {
       exit "$EXIT_CODE"
    fi
 
-   COMMENTS_URL=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.comments_url)
+   COMMENTS_URL=$(jq -r .pull_request.comments_url "$GITHUB_EVENT_PATH")
    if [[ "$GITHUB_EVENT_NAME" == "push" ]]
    then
       COMMENTS_URL="$FILES_LINK/comments"
