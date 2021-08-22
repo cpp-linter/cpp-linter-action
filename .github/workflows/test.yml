@@ -7,14 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # - uses: shenxianpeng/cpp-linter-action@master
-      - uses: 2bndy5/cpp-linter-action@push-capable
+      - uses: shenxianpeng/cpp-linter-action@master
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file
-          # tidy-checks: ''
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
