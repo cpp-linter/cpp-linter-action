@@ -4,10 +4,11 @@
 EXIT_CODE="0"
 PAYLOAD_TIDY=""
 FENCES=$'\n```\n'
-OUTPUT=$'## Run `clang-format` on the following files\n'
+OUTPUT=""
 URLS=""
 PATHNAMES=""
-declare -a PATCHES
+PATCHES=""
+declare -a JSON_INDEX
 
 # alias CLI args
 args=("$@")
@@ -43,16 +44,18 @@ get_list_of_changed_files() {
    echo "processing $GITHUB_EVENT_NAME event"
    # cat "$GITHUB_EVENT_PATH" | jq '.'
 
-   # use git REST API payload
+   # Use git REST API payload
    if [[ "$GITHUB_EVENT_NAME" == "push" ]]
    then
       FILES_LINK="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA"
    elif [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]
    then
+      # FILES_LINK="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/<PR ID number>/files"
+      # Get PR ID number from the event's JSON located in the runner's GITHUB_EVENT_PATH
       FILES_LINK=`jq -r '.pull_request._links.self.href' "$GITHUB_EVENT_PATH"`/files
    fi
 
-   # download files list (another json containing files' names, URLS, & diffs/patches)
+   # Download files list (another JSON containing files' names, URLS, statuses, & diffs/patches)
    echo "Fetching files list from $FILES_LINK"
    curl $FILES_LINK > .cpp_linter_action_changed_files.json
 }
@@ -69,32 +72,17 @@ extract_changed_files_info() {
    fi
    FILES_URLS_STRING=`jq -r "$JSON_FILES[].raw_url" .cpp_linter_action_changed_files.json`
    FILES_NAMES_STRING=`jq -r "$JSON_FILES[].filename" .cpp_linter_action_changed_files.json`
-   PATCHED_STATUS_STRING=`jq -r "$JSON_FILES[].status" .cpp_linter_action_changed_files.json`
 
    # convert json info to arrays
    readarray -t URLS <<<"$FILES_URLS_STRING"
    readarray -t PATHNAMES <<<"$FILES_NAMES_STRING"
-   readarray -t FILE_STATUS <<<"$PATCHED_STATUS_STRING"
 
-   # patches are multiline strings. Thus they need special attention because of the '\n' used within.
+   # Initialize the `JSON_INDEX` array. This helps us keep track of the
+   # source files' index in the JSON after calling `filter_out_source_files()` function.
    for index in ${!URLS[@]}
    do
-      # we only need the first line stating the line numbers changed (ie "@@ -1,5 +1,5 @@"")
-      patched_lines=$(jq -r -c "$JSON_FILES[$index].patch" .cpp_linter_action_changed_files.json)
-      PATCHES[$index]=$(echo "$patched_lines" | sed '1,1!d' | sed 's;@@ ;;' | sed 's; @@;;')
-      # if there is no patch field, then jq returns null
-      if [[ "${PATCHES[index]}" == "null" ]]
-      then
-         # Fetch the status of the file in the commit. Handle 'renamed' & 'deleted' as edgde cases
-         echo "${PATHNAMES[index]} was ${FILE_STATUS[index]}"
-         if [[ "${FILE_STATUS[index]}" == "renamed" ]]
-         then
-            PATCHES[$index]="*"
-         elif [[ "${FILE_STATUS[index]}" == "deleted" ]]
-         then
-            PATCHES[$index]="0"
-         fi
-      fi
+      # this will only be used when parsing diffs from the JSON
+      JSON_INDEX[$index]=$index
    done
 }
 
@@ -118,8 +106,7 @@ filter_out_non_source_files() {
       then
          unset -v "URLS[index]"
          unset -v "PATHNAMES[index]"
-         unset -v "FILE_STATUS[index]"
-         unset -v "PATCHES[index]"
+         unset -v "JSON_INDEX[index]"
       fi
    done
 
@@ -135,9 +122,9 @@ filter_out_non_source_files() {
 }
 
 ###################################################
-# Download the files if not present
+# Download the files if not present.
 # This function assumes that the working directory is the root of the invoking repo.
-# Note that all github actions are run in the environment variable GITHUB_WORKSPACE
+# Note that all github actions are run in path specified by the environment variable GITHUB_WORKSPACE.
 ###################################################
 verify_files_are_present() {
    # URLS, PATHNAMES, & PATCHES are parallel arrays
@@ -149,6 +136,34 @@ verify_files_are_present() {
          curl --location --insecure --remote-name "${URLS[index]}"
       fi
    done
+}
+
+###################################################
+# get the patch info from the JSON.
+# required parameter is the index in the JSON_INDEX array
+###################################################
+get_patch_info() {
+   # patches are multiline strings. Thus, they need special attention because of the '\n' used within.
+   #
+   # a git diff (aka "patch" in the REST API) can have multiple "hunks" for a single file.
+   # hunks start with `@@ -<start-line>,<number of lines> +<start-line>,<number of lines> @@`
+   # A positive sign indicates the incoming changes, while a negative sign indicates existing code that was changed
+   # Any changed lines will also have a prefixed `-` or `+`.
+
+   file_status=`jq -r "$JSON_FILES[${JSON_INDEX[$1]}].status" .cpp_linter_action_changed_files.json`
+
+   # we only need the first line stating the line numbers changed (ie "@@ -1,5 +1,5 @@"")
+   patched_lines=$(jq -r -c "$JSON_FILES[${JSON_INDEX[$1]}].patch" .cpp_linter_action_changed_files.json)
+   patches=`echo "$patched_lines" | grep -o "@@ \-[1-9]*,[1-9]* +[1-9]*,[1-9]* @@" | grep -o " +[1-9]*,[1-9]*" | tr -d "\n" | sed 's; +;;; s;+;;g'`
+
+   # if there is no patch field, we need to handle 'renamed' as an edgde case
+   if [[ "$patches" == "" ]]
+   then
+      echo "${PATHNAMES[$1]} was $file_status"
+      # don't bother checking renamed files with no changes to file's content
+      patches="0,0"
+   fi
+   echo "$patches"
 }
 
 ###################################################
@@ -164,11 +179,12 @@ capture_clang_tools_output() {
       then
          filename="${PATHNAMES[index]}"
       fi
-      echo "Performing checkup on $filename"
-      echo "Patched: ${PATCHES[index]}"
 
       > clang_format_report.txt
       > clang_tidy_report.txt
+
+      echo "Performing checkup on $filename"
+      # echo "incoming changed lines: $(get_patch_info $index)"
 
       clang-tidy-"$CLANG_VERSION" "$filename" -checks="$TIDY_CHECKS" >> clang_tidy_report.txt
       clang-format-"$CLANG_VERSION" -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
@@ -182,8 +198,13 @@ capture_clang_tools_output() {
          PAYLOAD_TIDY+=`cat clang_tidy_report.txt`
          PAYLOAD_TIDY+="$FENCES"
       fi
+
       if [[ $(wc -l < clang_format_report.txt) -gt 0 ]]
       then
+         if [ "$OUTPUT" == "" ]
+         then
+            OUTPUT=$'## Run `clang-format` on the following files\n'
+         fi
          OUTPUT+="- [ ] ${PATHNAMES[index]}"$'\n'
       fi
    done
@@ -225,6 +246,14 @@ post_results() {
 
 ###################################################
 # The main body of this script (all function calls)
+###################################################
+# for local testing (without docker):
+#  1. Set the env var GITHUB_EVENT_NAME to "push" or "pull_request"
+#  2. Download and save the event's payload (in JSON) to a file named ".cpp_linter_action_changed_files.json".
+#       See the FILES_LINK variable in the get_list_of_changed_files() function for the event's payload.
+#  3. Comment out the following calls to `get_list_of_changed_files` & `post_results` functions
+#  4. Run this script using `./run_checks.sh <style> <extensions> <tidy checks> <version> <relative working Dir>`
+#       It is advised that each parameter (identified with `<>`) be enclosed in double quotes.
 ###################################################
 
 get_list_of_changed_files

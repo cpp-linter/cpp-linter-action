@@ -5,7 +5,7 @@ branding:
   icon: 'check-circle'
   color: 'green'
 inputs:
-  style: # the specific style rules
+  style:
     description: >
       The style rules to use (defaults to 'llvm').
       Set this to 'file' to have clang-format use the closest relative .clang-format file.
