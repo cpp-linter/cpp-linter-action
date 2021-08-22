@@ -185,9 +185,13 @@ capture_clang_tools_output() {
 
       echo "Performing checkup on $filename"
       # echo "incoming changed lines: $(get_patch_info $index)"
-
+      tidy_config=" -checks="$TIDY_CHECKS""
+      if [ "$TIDY_CHECKS" == "" ]
+      then
+         tidy_config=""
+      fi
       # append the executables' name with `-"$CLANG_VERSION" for a specific version that's installed
-      clang-tidy "$filename" -checks="$TIDY_CHECKS" >> clang_tidy_report.txt
+      clang-tidy "$filename""$tidy_config" >> clang_tidy_report.txt
       clang-format -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
 
       if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]
