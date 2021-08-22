@@ -1,4 +1,4 @@
-FROM xianpengshen/clang-tools:10
+FROM xianpengshen/clang-tools:all
 
 # WORKDIR option is set by the github action to the environment variable GITHUB_WORKSPACE.
 # See https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#workdir
