@@ -153,7 +153,7 @@ get_patch_info() {
 
    # we only need the first line stating the line numbers changed (ie "@@ -1,5 +1,5 @@"")
    patched_lines=$(jq -r -c "$JSON_FILES${JSON_INDEX[$1]}].patch" .cpp_linter_action_changed_files.json)
-   patches=$(echo "$patched_lines" | grep -o "@@ \-[1-9]*,[1-9]* +[1-9]*,[1-9]* @@" | grep -o " +[1-9]*,[1-9]*" | tr -d "\n" | sed 's; +;;; s;+;;g')
+   patches=$(echo "$patched_lines" | grep -o "@@ \\-[1-9]*,[1-9]* +[1-9]*,[1-9]* @@" | grep -o " +[1-9]*,[1-9]*" | tr -d "\\n" | sed 's; +;;; s;+;;g')
 
    # if there is no patch field, we need to handle 'renamed' as an edgde case
    if [[ "$patches" == "" ]]
@@ -179,8 +179,8 @@ capture_clang_tools_output() {
          filename="${PATHNAMES[index]}"
       fi
 
-      > clang_format_report.txt
-      > clang_tidy_report.txt
+      true > clang_format_report.txt
+      true > clang_tidy_report.txt
 
       echo "Performing checkup on $filename"
       # echo "incoming changed lines: $(get_patch_info $index)"
@@ -219,8 +219,8 @@ capture_clang_tools_output() {
       OUTPUT+="$PAYLOAD_TIDY"
    fi
 
-   # echo "OUTPUT is:"
-   # echo "$OUTPUT"
+   echo "OUTPUT is:"
+   echo "$OUTPUT"
 }
 
 ###################################################

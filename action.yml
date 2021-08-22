@@ -28,10 +28,10 @@ inputs:
       The relative path to the repository root directory. The default value '.' is relative to the runner's GITHUB_WORKSPACE environment variable.
     required: false
     default: '.'
-  # version:
-  #   description: "The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11. Defaults to 10."
-  #   required: false
-  #   default: '10'
+    # version:
+    #   description: "The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11. Defaults to 10."
+    #   required: false
+    #   default: '10'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
