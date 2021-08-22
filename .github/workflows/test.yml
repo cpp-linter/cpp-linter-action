@@ -1,6 +1,8 @@
 name: Test action
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request: [opened]
 
 jobs:
   test:
