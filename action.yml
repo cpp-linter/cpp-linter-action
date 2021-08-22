@@ -5,14 +5,33 @@ branding:
   icon: 'check-circle'
   color: 'green'
 inputs:
-  style: # the specific style rules
-    description: "The style rules to use (defaults to 'llvm'). Set this to 'file' to have clang-format use the closest relative .clang-format file."
+  style:
+    description: >
+      The style rules to use (defaults to 'llvm').
+      Set this to 'file' to have clang-format use the closest relative .clang-format file.
     required: false
     default: 'llvm'
   extensions:
-    description: "The file extensions to run the action against. This comma-separated string defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'."
+    description: >
+      The file extensions to run the action against.
+      This comma-separated string defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'.
     required: false
     default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
+  tidy-checks:
+    description: >
+      A string of regex-like patterns specifying what checks clang-tidy will use.
+      This defaults to 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*'. See also clang-tidy docs for more info.
+    required: false
+    default: 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*'
+  repo-root:
+    description: >
+      The relative path to the repository root directory. The default value '.' is relative to the runner's GITHUB_WORKSPACE environment variable.
+    required: false
+    default: '.'
+  version:
+    description: "The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to 10."
+    required: false
+    default: '10'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
@@ -22,3 +41,6 @@ runs:
   args:
     - ${{ inputs.style }}
     - ${{ inputs.extensions }}
+    - ${{ inputs.tidy-checks }}
+    - ${{ inputs.repo-root }}
+    - ${{ inputs.version }}

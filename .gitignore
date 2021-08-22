@@ -1,2 +1,3 @@
-clang-format-report.txt
-clang-tidy-report.txt
+.cpp_linter_action_changed_files.json
+clang_format_report.txt
+clang_tidy_report.txt
