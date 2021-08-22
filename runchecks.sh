@@ -185,13 +185,14 @@ capture_clang_tools_output() {
 
       echo "Performing checkup on $filename"
       # echo "incoming changed lines: $(get_patch_info $index)"
-      tidy_config=" -checks="$TIDY_CHECKS""
+
+      # append the executables' name with `-"$CLANG_VERSION" for a specific version that's installed
       if [ "$TIDY_CHECKS" == "" ]
       then
-         tidy_config=""
+         clang-tidy "$filename" >> clang_tidy_report.txt
+      else
+         clang-tidy -checks="$TIDY_CHECKS" "$filename" >> clang_tidy_report.txt
       fi
-      # append the executables' name with `-"$CLANG_VERSION" for a specific version that's installed
-      clang-tidy "$filename""$tidy_config" >> clang_tidy_report.txt
       clang-format -style="$FMT_STYLE" --dry-run "$filename" 2> clang_format_report.txt
 
       if [[ $(wc -l < clang_tidy_report.txt) -gt 0 ]]
@@ -257,8 +258,7 @@ post_results() {
 #  2. Download and save the event's payload (in JSON) to a file named ".cpp_linter_action_changed_files.json".
 #       See the FILES_LINK variable in the get_list_of_changed_files() function for the event's payload.
 #  3. Comment out the following calls to `get_list_of_changed_files` & `post_results` functions
-#  4. Run this script using `./run_checks.sh <style> <extensions> <tidy checks> <version> <relative working Dir>`
-#       It is advised that each parameter (identified with `<>`) be enclosed in double quotes.
+#  4. Run this script using `./run_checks.sh <style> <extensions> <tidy checks> <relative working Dir>`
 ###################################################
 
 get_list_of_changed_files

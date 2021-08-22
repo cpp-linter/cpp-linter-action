@@ -2,7 +2,6 @@
 
 
 
-
 class Dummy {
     char* useless;
     int numb;
