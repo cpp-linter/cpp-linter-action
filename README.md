@@ -6,7 +6,7 @@ Github Actions for linting the C/C++ code. Integrated clang-tidy, clang-format c
 
 Just create a `yml` file under your GitHub repository. For example `.github/workflows/cpp-linter.yml`
 
-!!! Requires `secrets.GITHUB_TOKEN` set to an environment variable name "GITHUB_TOKEN".
+!!! Requires `secrets.GITHUB_TOKEN` set to an environment variable named `GITHUB_TOKEN`.
 
 ```yml
 name: cpp-linter
@@ -30,6 +30,8 @@ jobs:
 |------------|---------------|-------------|
 | style | 'llvm' | The style rules to use. Set this to 'file' to have clang-format use the closest relative .clang-format file. |
 | extensions | 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx' | The file extensions to run the action against. This is a comma-separated string. |
+| tidy-checks | 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*' | A string of regex-like patterns specifying what checks clang-tidy will use.|
+| repo-root | '.' | The relative path to the repository root directory. This path is relative to path designated by the runner's GITHUB_WORKSPACE environment variable. |
 
 ### Outputs
 
