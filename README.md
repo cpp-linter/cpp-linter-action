@@ -39,17 +39,16 @@ jobs:
 
 This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
 
-### Outputs
-
-This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
 ## Results of GitHub Actions
 
-Here is a test repository [cpp-linter-action-demo](https://github.com/shenxianpeng/cpp-linter-action-demo) which has added `cpp-linter.yml`. when an unformatted C/C++ source file was committed and create a Pull Request will automatically recognize and add warning comments.
+![github-actions bot](./demo/result.png)
 
-For example, this PR [#7](https://github.com/shenxianpeng/cpp-linter-action-demo/pull/7), and warning message like below:
+Behind the scenes, this is because this repository has added `test.yml` under `.github/workflows/`. When an unformatted C/C++ source file was committed and create a Pull Request will automatically recognize and add warning comments.
 
-![github-actions bot](https://github.com/shenxianpeng/cpp-linter-action-demo/blob/master/img/result.png?raw=true)
+Please feel free to commit code to the `test` branch of this repository or create a Pull Request to see how the process works. 
 
-Please feel free to commit code to the [demo](https://github.com/shenxianpeng/cpp-linter-action-demo) repository and create a Pull Request to see how the process works.
+For example, this test PR [#6](https://github.com/shenxianpeng/cpp-linter-action/pull/5) and github-actions bot comments [link](https://github.com/shenxianpeng/cpp-linter-action/pull/5#commitcomment-55252014). 
+
+## Contribution
 
 If you have any suggestions or contributions, welcome to PR [here](https://github.com/shenxianpeng/cpp-linter-action).
