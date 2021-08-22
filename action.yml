@@ -1,5 +1,5 @@
-name: C/C++ code linter (clang-tidy and clang-format)
-description: Automatically checks pull requests changes with clang-tidy, clang-format and posts the comment with result.
+name: C/C++ Lint Action
+description: Automatically checks pull/pull_request changes with clang-format, clang-tidy and posts the comment with result.
 author: shenxianpeng
 branding:
   icon: 'check-circle'
