@@ -1,5 +1,5 @@
 name: C/C++ Lint Action
-description: Automatically checks pull/pull_request changes with clang-format, clang-tidy and posts the comment with result.
+description: Automatically checks push & pull request changes with clang-format & clang-tidy, then posts a comment with faulty results.
 author: shenxianpeng
 branding:
   icon: 'check-circle'
