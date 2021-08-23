@@ -2,8 +2,7 @@ name: Test action
 
 on:
   push:
-  pull_request:
-    types: [opened]
+  pull_request: [opened]
 
 jobs:
   test:

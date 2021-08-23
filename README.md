@@ -10,10 +10,9 @@ Just create a `yml` file under your GitHub repository. For example `.github/work
 
 ```yml
 name: cpp-linter
-on:
+
   push:
-  pull_request:
-    types: [opened]
+  pull_request: [opened]
 jobs:
   cpp-linter:
     name: cpp-linter
