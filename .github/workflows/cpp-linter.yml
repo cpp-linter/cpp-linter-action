@@ -1,4 +1,4 @@
-name: Test action
+name: cpp-linter
 
 on:
   push:
@@ -6,11 +6,12 @@ on:
     types: [opened]
 
 jobs:
-  test:
+  cpp-linter:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: shenxianpeng/cpp-linter-action@master
+      - name: C/C++ Lint Action
+        uses: shenxianpeng/cpp-linter-action@master
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
