@@ -18,7 +18,7 @@ RUN apt-get -y install python3-pip
 RUN python3 -m pip install --upgrade pip pyyaml requests
 
 # COPY runchecks.sh /entrypoint.sh
-COPY run_checks.py /runchecks.py
+COPY run_checks.py /run_checks.py
 COPY parse_out/ /parse_out/
 # RUN chmod +x /entrypoint.sh
 
