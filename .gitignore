@@ -1,3 +1,6 @@
 .cpp_linter_action_changed_files.json
-clang_format_report.txt
-clang_tidy_report.txt
+clang_format*.txt
+clang_tidy*.txt
+act.exe
+clang_tidy_output.yml
+clang_format_output.xml
