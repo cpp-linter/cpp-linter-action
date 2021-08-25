@@ -266,7 +266,7 @@ post_results() {
 #  4. Run this script using `./run_checks.sh <style> <extensions> <tidy checks> <relative working Dir>`
 ###################################################
 
-python3 -m pip list
+echo $(python3 -m pip list)
 get_list_of_changed_files
 extract_changed_files_info
 filter_out_non_source_files
