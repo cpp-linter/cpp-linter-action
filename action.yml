@@ -39,8 +39,8 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.style }}
-    - ${{ inputs.extensions }}
-    - ${{ inputs.tidy-checks }}
-    - ${{ inputs.repo-root }}
-    - ${{ inputs.version }}
+    - --style=${{ inputs.style }}
+    - --extensions=${{ inputs.extensions }}
+    - --tidy-checks=${{ inputs.tidy-checks }}
+    - --repo-root=${{ inputs.repo-root }}
+    - --version=${{ inputs.version }}
