@@ -1,14 +1,22 @@
-# C/C++ Lint Action
+<p align="center">
+ <img src="demo/image/logo.png" alt="icon">
+</p>
 
-Github Actions for linting the C/C++ code. Integrated clang-tidy, clang-format checks.
+# C/C++ Lint Action <sub><sup>| clang-format & clang-tidy</sup></sub>
 
-## Integration with GitHub Actions
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shenxianpeng/cpp-linter-action)
+[![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
+![GitHub](https://img.shields.io/github/license/shenxianpeng/cpp-linter-action)
 
-Just create a `yml` file under your GitHub repository. For example `.github/workflows/cpp-linter.yml`
+Github Actions for linting C/C++ code. Integrated clang-tidy, clang-format check.
 
-!!! Requires `secrets.GITHUB_TOKEN` set to an environment variable named `GITHUB_TOKEN`.
+## Usage
 
-```yml
+Create a new GitHub Actions workflow in your project, e.g. at `.github/workflows/cpp-linter.yml` 
+
+The conetent of the file should be in the following format.
+
+```yaml
 name: cpp-linter
 
 # Triggers the workflow on push or pull request events
@@ -28,30 +36,34 @@ jobs:
         with:
           style: 'file'
 ```
-## Optional Inputs
 
-| Input name | default value | Description |
+`GITHUB_TOKEN` - Provided by Github (see [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow))
+
+### Optional Inputs
+
+| Name | Default | Description |
 |------------|---------------|-------------|
-| style | 'llvm' | The style rules to use. Set this to 'file' to have clang-format use the closest relative .clang-format file. |
-| extensions | 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx' | The file extensions to run the action against. This is a comma-separated string. |
-| tidy-checks | 'boost-\*,bugprone-\*,performance-\*,<br>readability-\*,portability-\*,<br>modernize-\*,clang-analyzer-\*,<br>cppcoreguidelines-\*' | A string of regex-like patterns specifying what checks clang-tidy will use.|
-| repo-root | '.' | The relative path to the repository root directory. This path is relative to path designated by the runner's GITHUB_WORKSPACE environment variable. |
-| version | '10' | The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, 12. |
+| `style` | 'llvm' | The style rules to use. Set this to 'file' to have clang-format use the closest relative .clang-format file. |
+| `extensions` | 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx' | The file extensions to run the action against. This is a comma-separated string. |
+| `tidy-checks` | 'boost-\*,bugprone-\*,performance-\*,<br>readability-\*,portability-\*,<br>modernize-\*,clang-analyzer-\*,<br>cppcoreguidelines-\*' | A string of regex-like patterns specifying what checks clang-tidy will use.|
+| `repo-root` | '.' | The relative path to the repository root directory. This path is relative to path designated by the runner's GITHUB_WORKSPACE environment variable. |
+| `version` | '10' | The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, 12. |
 
 ### Outputs
 
 This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
 
-## Results of GitHub Actions
+## Example
 
-![github-actions bot](./demo/result.png)
+![github-actions bot](./demo/image/result.png)
 
-Behind the scenes, this is because this repository has added `test.yml` under `.github/workflows/`. When an unformatted C/C++ source file was committed and create a Pull Request will automatically recognize and add warning comments.
+Example comment is [here](https://github.com/shenxianpeng/cpp-linter-action/pull/5#commitcomment-55252014).
 
-Please feel free to commit code to the `test` branch of this repository or create a Pull Request to see how the process works.
+## Have question or feedback?
 
-For example, this test PR [#6](https://github.com/shenxianpeng/cpp-linter-action/pull/5) and github-actions bot comments [link](https://github.com/shenxianpeng/cpp-linter-action/pull/5#commitcomment-55252014).
+To provide feedback (requesting a feature or reporting a bug) please post to [issues](https://github.com/shenxianpeng/cpp-linter-action/issues).
 
-## Contribution
 
-If you have any suggestions or contributions, welcome to PR [here](https://github.com/shenxianpeng/cpp-linter-action).
+## License
+
+The scripts and documentation in this project are released under the [MIT License](LICENSE)
