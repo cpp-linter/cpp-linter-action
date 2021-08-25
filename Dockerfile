@@ -14,8 +14,7 @@ LABEL maintainer="shenxianpeng <20297606+shenxianpeng@users.noreply.github.com>"
 
 RUN apt-get update
 RUN apt-get -y install curl jq python3-pip
-RUN python3 -m pip install --upgrade pip
-RUN python3 -m pip list
+RUN python3 -m pip install --upgrade pip pyyaml requests
 
 COPY runchecks.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
