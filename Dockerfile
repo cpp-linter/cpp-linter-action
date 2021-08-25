@@ -26,4 +26,4 @@ COPY parse_out/ /parse_out/
 # See https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsargs
 # also https://docs.docker.com/engine/reference/builder/#cmd
 # ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "python3", "/run_checks.py" ]
+ENTRYPOINT [ "python3", "/run_checks.py" ]
