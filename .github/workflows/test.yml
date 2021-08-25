@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: shenxianpeng/cpp-linter-action@master
+      # - uses: shenxianpeng/cpp-linter-action@master
+      - uses: 2bndy5/cpp-linter-action@parse-better
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
