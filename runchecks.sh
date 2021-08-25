@@ -40,9 +40,9 @@ set_exit_code () {
 # Fetch JSON of event's changed files
 ###################################################
 get_list_of_changed_files() {
-   echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
+   # echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
    echo "processing $GITHUB_EVENT_NAME event"
-   # cat "$GITHUB_EVENT_PATH" | jq '.'
+   cat "$GITHUB_EVENT_PATH" | jq '.'
 
    # Use git REST API payload
    if [[ "$GITHUB_EVENT_NAME" == "push" ]]
@@ -266,6 +266,7 @@ post_results() {
 #  4. Run this script using `./run_checks.sh <style> <extensions> <tidy checks> <relative working Dir>`
 ###################################################
 
+python3 -m pip list
 get_list_of_changed_files
 extract_changed_files_info
 filter_out_non_source_files
