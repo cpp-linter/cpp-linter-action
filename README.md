@@ -6,7 +6,7 @@
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shenxianpeng/cpp-linter-action)
 [![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
-![GitHub](https://img.shields.io/github/license/shenxianpeng/cpp-linter-action)
+![GitHub](https://img.shields.io/github/license/shenxianpeng/cpp-linter-action?label=license)
 
 Github Actions for linting C/C++ code. Integrated clang-tidy, clang-format check.
 
