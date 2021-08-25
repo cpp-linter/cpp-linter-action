@@ -19,7 +19,7 @@ RUN python3 -m pip install --upgrade pip pyyaml requests
 
 # COPY runchecks.sh /entrypoint.sh
 COPY run_checks.py /runchecks.py
-COPY parse_out/* /parse_out/*
+COPY parse_out/ /parse_out/
 # RUN chmod +x /entrypoint.sh
 
 # github action args use the CMD option
