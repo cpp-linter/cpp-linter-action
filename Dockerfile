@@ -13,17 +13,17 @@ LABEL repository="https://github.com/shenxianpeng/cpp-linter-action"
 LABEL maintainer="shenxianpeng <20297606+shenxianpeng@users.noreply.github.com>"
 
 RUN apt-get update
-# curl jq
 RUN apt-get -y install python3-pip
-RUN python3 -m pip install pyyaml requests
+# curl jq
 
 # COPY runchecks.sh /entrypoint.sh
-COPY run_checks.py /run_checks.py
-COPY parse_out/ /parse_out/
 # RUN chmod +x /entrypoint.sh
+COPY python_action/ /python_action/
+COPY setup.py /setup.py
+RUN python3 /setup.py install
 
 # github action args use the CMD option
 # See https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsargs
 # also https://docs.docker.com/engine/reference/builder/#cmd
 # ENTRYPOINT [ "/entrypoint.sh" ]
-ENTRYPOINT [ "python3", "/run_checks.py" ]
+ENTRYPOINT [ "python3", "-m", "python_action.run" ]

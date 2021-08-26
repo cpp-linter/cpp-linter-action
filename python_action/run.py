@@ -225,16 +225,21 @@ def post_results():
     )
 
 
-if __name__ == "__main__":
+def main():
+    """The main script."""
 
     args = cli_arg_parser.parse_args()
     Logger.setLevel(int(args.verbose))
 
     os.chdir(args.repo_root)
     get_list_of_changed_files()
-    # extract_changed_files_info()
     filter_out_non_source_files(args.extensions)
     verify_files_are_present()
     capture_clang_tools_output(args.version, args.tidy_checks, args.style)
     set_exit_code(0)
     post_results()
+    return 0
+
+
+if __name__ == "__main__":
+    main()
