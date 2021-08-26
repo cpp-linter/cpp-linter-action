@@ -217,10 +217,11 @@ def post_results():
     payload = {"body": Globals.OUTPUT}
     requests.post(
         comments_url,
-        headers=[
-            f"Authorization: token {GITHUB_TOKEN}",
-            "Content-Type: application/vnd.github.VERSION.text+json",
-        ],
+        headers={
+            "Authorization": f"token {GITHUB_TOKEN}",
+            "Content-Type": "application/vnd.github.v3.text+json",
+            # "Accept": "application/vnd.github.v3.diff",
+        },
         data=payload,
     )
 
