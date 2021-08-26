@@ -21,7 +21,7 @@ RUN python3 -m pip install --upgrade pip pyyaml setuptools>=42.0 wheel setuptool
 # RUN chmod +x /entrypoint.sh
 COPY python_action/ /pkg/python_action/
 COPY setup.py /pkg/setup.py
-RUN python3 /pkg/setup.py install
+RUN python3 -m pip install /pkg/
 
 # github action args use the CMD option
 # See https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsargs
