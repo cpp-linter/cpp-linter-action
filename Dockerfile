@@ -14,13 +14,14 @@ LABEL maintainer="shenxianpeng <20297606+shenxianpeng@users.noreply.github.com>"
 
 RUN apt-get update
 RUN apt-get -y install python3-pip
+RUN python3 install --upgrade pyyaml setuptools wheel
 # curl jq
 
 # COPY runchecks.sh /entrypoint.sh
 # RUN chmod +x /entrypoint.sh
-COPY python_action/ /python_action/
-COPY setup.py /setup.py
-RUN python3 /setup.py install
+COPY python_action/ /pkg/python_action/
+COPY setup.py /pkg/setup.py
+RUN python3 /pkg/setup.py install
 
 # github action args use the CMD option
 # See https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsargs
