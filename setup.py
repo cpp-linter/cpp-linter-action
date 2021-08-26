@@ -12,11 +12,11 @@ if repo is None:
     REPO += "2bndy5/cpp-linter"
 
 version = "v1.2.1"
-with open("clang-tidy_output.json", "w", encoding="utf-8") as std_out:
-    subprocess.run(["git", "describe", "--tags", "--abbrev=0"], stdout=std_out)
-with open("clang-tidy_output.json", "r", encoding="utf-8") as std_out:
-    version = std_out.readline().strip("\n")
-    # print("Version: ", version)
+# with open("clang-tidy_output.json", "w", encoding="utf-8") as std_out:
+#     subprocess.run(["git", "describe", "--tags", "--abbrev=0"], stdout=std_out)
+# with open("clang-tidy_output.json", "r", encoding="utf-8") as std_out:
+#     version = std_out.readline().strip("\n")
+#     # print("Version: ", version)
 
 setup(
     name="python_action",
