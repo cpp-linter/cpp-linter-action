@@ -10,13 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-<<<<<<< HEAD:.github/workflows/test.yml
       # - uses: shenxianpeng/cpp-linter-action@master
       - uses: 2bndy5/cpp-linter-action@parse-better
-=======
-      - name: C/C++ Lint Action
-        uses: shenxianpeng/cpp-linter-action@master
->>>>>>> main:.github/workflows/cpp-linter.yml
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
