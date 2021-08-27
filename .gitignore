@@ -6,6 +6,7 @@ act.exe
 clang_tidy_output.yml
 clang_format_output.xml
 event_payload.json
+comments.json
 
 #### ignores for Python
 # Byte-compiled / optimized / DLL files

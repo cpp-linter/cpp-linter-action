@@ -26,9 +26,6 @@ class Dummy {
 
 
 
-
-
-
 struct LongDiff
 {
 

@@ -13,8 +13,9 @@ import requests
 GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "event_payload.json")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "2bndy5/cpp-linter-action")
-GITHUB_SHA = os.getenv("GITHUB_SHA", "610c763c603291f7a88489a3c00358e7d0a0c240")
-GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "push")
+GITHUB_SHA = os.getenv("GITHUB_SHA", "ed98bc095b286c3f29f9a27d423ad5eb13040ebc")
+GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "pull_request")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", None))
 FENCES = "\n```\n"
 FILES_LIST_JSON = ".cpp_linter_action_changed_files.json"
 
@@ -26,9 +27,9 @@ Logger = logging.getLogger("CPP LINTER")
 cli_arg_parser = argparse.ArgumentParser(description=__doc__)
 
 cli_arg_parser.add_argument(
-    "--verbose",
-    default="10",
-    help="The logging level. Defaults to level 10 (aka 'logging.DEBUG')."
+    "--verbosity",
+    default="20",
+    help="The logging level. Defaults to level 20 (aka 'logging.INFO')."
 )
 
 cli_arg_parser.add_argument(
@@ -102,7 +103,7 @@ def get_list_of_changed_files():
         sys.exit(set_exit_code(0))
     Logger.info("Fetching files list from %s", Globals.FILES_LINK)
     Globals.FILES = requests.get(Globals.FILES_LINK).json()
-    # print(json.dumps(Globals.FILES, indent=2))
+    Logger.debug("files json:\n%s", json.dumps(Globals.FILES, indent=2))
 
 
 def filter_out_non_source_files(ext_list):
@@ -143,6 +144,42 @@ def verify_files_are_present():
                 os.path.split(file["filename"])[1], "w", encoding="utf-8"
             ) as temp:
                 temp.write(download)
+
+
+def remove_duplicate_comments(comments_url: str, user_id: int):
+    """Traverse the list of comments made by a specific user
+    and remove all but the 1st."""
+    first_comment_id = 0
+    comments = json.loads(requests.get(comments_url).text)
+    for comment in comments:
+        # only serach for comments from the user's ID and
+        # whose comment body begins with a specific html comment
+        if (
+            int(comment["user"]["id"]) == user_id
+            # the specific html comment is our action's name
+            and comment["body"].startswith("<!-- cpp linter action -->")
+        ):
+            if not first_comment_id:
+                # capture id and don't remove the first comment
+                first_comment_id = comment["id"]
+            else:
+                # remove othre outdated comments
+                response = requests.delete(
+                    comment["url"],
+                    headers={
+                        "Authorization": f"token {GITHUB_TOKEN}",
+                        "Accept": "application/vnd.github.v3.text+json",
+                    },
+                )
+                Logger.info(f"Got {response.status_code} from DELETE {comment['url']}")
+        Logger.debug(
+            f'comment id {comment["id"]} from user {comment["user"]["login"]}'
+            f' ({comment["user"]["id"]})'
+        )
+    # print("Comments:", comments)
+    with open("comments.json", "w", encoding="utf-8") as json_comments:
+        json.dump(comments, json_comments, indent=4)
+    return first_comment_id
 
 
 def capture_clang_tools_output(version, checks, style):
@@ -192,13 +229,14 @@ def capture_clang_tools_output(version, checks, style):
         Globals.OUTPUT += "\n---\n## Output from `clang-tidy`\n"
         Globals.OUTPUT += Globals.PAYLOAD_TIDY
 
-    Logger.info("OUTPUT is \n%s", Globals.OUTPUT)
+    Logger.debug("OUTPUT is \n%s", Globals.OUTPUT)
 
 
 def post_results():
     """POST action's results using REST API."""
     comments_url = ""
     comments_cnt = 0
+    comment_id = 0
     if GITHUB_EVENT_NAME == "pull_request":
         comments_url = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
         comments_url += f'issues/{Globals.EVENT_PAYLOAD["number"]}/comments'
@@ -206,24 +244,37 @@ def post_results():
     elif GITHUB_EVENT_NAME == "push":
         comments_url = Globals.FILES_LINK + "/comments"
         comments_cnt = int(Globals.FILES["commit"]["comment_count"])
-    Logger.info("COMMENTS_URL: %s", comments_url)
     Logger.info("Number of Comments = %d", comments_cnt)
+    if comments_cnt:
+        # 41898282 is the bot's ID (used for all github actions' generic bot)
+        comment_id = remove_duplicate_comments(comments_url, 41898282)
 
-    GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", None)
     if GITHUB_TOKEN is None:
         Logger.error("The GITHUB_TOKEN is required!")
         sys.exit(set_exit_code(1))
 
-    payload = {"body": Globals.OUTPUT}
-    requests.post(
-        comments_url,
-        headers={
-            "Authorization": f"token {GITHUB_TOKEN}",
-            "Content-Type": "application/vnd.github.v3.text+json",
-            # "Accept": "application/vnd.github.v3.diff",
-        },
-        data=payload,
-    )
+    payload = json.dumps({"body": Globals.OUTPUT})
+    # print(json.dumps({"body": Globals.OUTPUT}, indent=2))
+
+    commit_url = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/comments/{comment_id}"
+    headers={
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3.text+json",
+        # "Accept": "application/vnd.github.v3.diff",
+    }
+    # print("type: ", type(headers), headers)
+    Logger.info("comments_url: %s", comments_url)
+    response = None
+    if comment_id:
+        Logger.debug("commit_url = %s", commit_url)
+        response = requests.patch(commit_url, headers=headers, data=payload)
+    else:
+        response = requests.post(comments_url, headers=headers, data=payload)
+    Logger.info(
+        "Got %d response from %sing comment",
+        response.status_code,
+        "PATCH" if comment_id else "POST"
+        )
 
 
 def main():
@@ -239,7 +290,6 @@ def main():
     capture_clang_tools_output(args.version, args.tidy_checks, args.style)
     set_exit_code(0)
     post_results()
-    return 0
 
 
 if __name__ == "__main__":
