@@ -281,7 +281,7 @@ def main():
     """The main script."""
 
     args = cli_arg_parser.parse_args()
-    Logger.setLevel(int(args.verbose))
+    Logger.setLevel(int(args.verbosity))
 
     os.chdir(args.repo_root)
     get_list_of_changed_files()
