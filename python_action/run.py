@@ -380,7 +380,7 @@ def main():
     # override log level if this workflow has run more than once
     RUN_NUMBER = os.getenv("GITHUB_RUN_NUMBER", "0")
     logger.setLevel(int(args.verbosity) if int(RUN_NUMBER) > 1 else 8)
-
+    logger.info("processing run number %d", int(RUN_NUMBER))
     # change working directory
     os.chdir(args.repo_root)
 
