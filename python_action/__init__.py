@@ -13,6 +13,7 @@ class Globals:
     FILES = []  #: The reponding payload containing info about changed files.
     EVENT_PAYLOAD = {}  #: The parsed JSON of the event payload.
     DIFF = None
+    response_buffer = None
 
 class GlobalParser:
     """Global variables specific to YML/XML parser."""

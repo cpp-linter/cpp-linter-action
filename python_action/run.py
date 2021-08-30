@@ -32,7 +32,7 @@ logger = logging.getLogger("CPP Linter")
 GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "event_payload.json")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "2bndy5/cpp-linter-action")
-GITHUB_SHA = os.getenv("GITHUB_SHA", "0f216e2909e05f85d132b0896127e3026c13f27d")
+GITHUB_SHA = os.getenv("GITHUB_SHA", "21feaddcdc5a4d79d7315a3c2c88de49e4b129e2")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "pull_request")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", None))
 API_HEADERS = {
@@ -97,29 +97,28 @@ def get_list_of_changed_files():
         logger.log(9, json.dumps(Globals.EVENT_PAYLOAD))
 
     Globals.FILES_LINK = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
-    response = None
     if GITHUB_EVENT_NAME == "pull_request":
         Globals.FILES_LINK += f"pulls/{Globals.EVENT_PAYLOAD['number']}/files"
-        response = requests.get(
+        Globals.response_buffer = requests.get(
             Globals.FILES_LINK.replace("/files", ""),
             headers={"Accept": "application/vnd.github.v3.diff"},
         )
         logger.info(
-            f"Got {response.status_code} from diff request for PR #"
+            f"Got {Globals.response_buffer.status_code} from diff request for PR #"
             f"{Globals.EVENT_PAYLOAD['number']}"
         )
-        Globals.DIFF = unidiff.PatchSet(response.text)
+        Globals.DIFF = unidiff.PatchSet(Globals.response_buffer.text)
 
     elif GITHUB_EVENT_NAME == "push":
         Globals.FILES_LINK += f"commits/{GITHUB_SHA}"
-        response = requests.get(
+        Globals.response_buffer = requests.get(
             Globals.FILES_LINK,
             headers={"Accept": "application/vnd.github.v3.diff"},
         )
         logger.info(
-            f"Got {response.status_code} from diff request for commit {GITHUB_SHA}"
+            f"Got {Globals.response_buffer.status_code} from diff request for commit {GITHUB_SHA}"
         )
-        Globals.DIFF = unidiff.PatchSet(response.text)
+        Globals.DIFF = unidiff.PatchSet(Globals.response_buffer.text)
     else:
         logger.warn("triggered on unsupported event.")
         sys.exit(set_exit_code(0))
@@ -187,11 +186,11 @@ def remove_duplicate_comments(comments_url: str, user_id: int):
                 first_comment_id = comment["id"]
             else:
                 # remove othre outdated comments
-                response = requests.delete(
+                Globals.response_buffer = requests.delete(
                     comment["url"],
                     headers=API_HEADERS,
                 )
-                logger.info(f"Got {response.status_code} from DELETE {comment['url']}")
+                logger.info(f"Got {Globals.response_buffer.status_code} from DELETE {comment['url']}")
         logger.debug(
             f'comment id {comment["id"]} from user {comment["user"]["login"]}'
             f' ({comment["user"]["id"]})'
@@ -199,18 +198,18 @@ def remove_duplicate_comments(comments_url: str, user_id: int):
     # print("Comments:", comments)
     with open("comments.json", "w", encoding="utf-8") as json_comments:
         json.dump(comments, json_comments, indent=4)
-    return first_comment_id
+    return (first_comment_id, len(comments))
 
 
 def dismiss_stale_reviews(reviews_url: str, user_id: int):
     """Dismiss all stale reviews (only the ones made by our bot)."""
     logger.info(f"  review_url: {reviews_url}")
-    response = requests.get(reviews_url)
+    Globals.response_buffer = requests.get(reviews_url)
     review_id = 0
-    reviews = response.json()
+    reviews = Globals.response_buffer.json()
     if not reviews:
         # create a PR review
-        response = requests.post(
+        Globals.response_buffer = requests.post(
             reviews_url,
             headers=API_HEADERS,
             data=json.dumps(
@@ -220,8 +219,8 @@ def dismiss_stale_reviews(reviews_url: str, user_id: int):
                 }
             ),
         )
-        logger.info("Got %d from POSTing new(/temp) PR review", response.status_code)
-        response = requests.get(reviews_url)
+        logger.info("Got %d from POSTing new(/temp) PR review", Globals.response_buffer.status_code)
+        Globals.response_buffer = requests.get(reviews_url)
 
     for i, review in enumerate(reviews):
         if int(review["user"]["id"]) == user_id and review["body"].startswith(
@@ -229,14 +228,14 @@ def dismiss_stale_reviews(reviews_url: str, user_id: int):
         ):
             review_id = int(review["id"])
             if i < len(reviews) - 1:
-                response = requests.put(
+                Globals.response_buffer = requests.put(
                     f'{reviews_url}/{review["id"]}',
                     headers=API_HEADERS,
                     data=json.dumps({"body": "This outdated comment has been edited."}),
                 )
                 logger.info(
                     "Got {} from PATCHing review {} by {}".format(
-                        response.status_code,
+                        Globals.response_buffer.status_code,
                         review["id"],
                         review["user"]["login"],
                     )
@@ -313,20 +312,17 @@ def post_results(user_id=41898282):
     comments_url = ""
     reviews_url = ""
     review_id = 0
-    comments_cnt = 0
     comment_id = 0
+    commit_url = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
-        comments_url = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
-        reviews_url = comments_url + f'pulls/{Globals.EVENT_PAYLOAD["number"]}/reviews'
-        comments_url += f'issues/{Globals.EVENT_PAYLOAD["number"]}/comments'
-        comments_cnt = int(Globals.EVENT_PAYLOAD["comments"])
+        comments_url = commit_url + f'issues/{Globals.EVENT_PAYLOAD["number"]}/comments'
+        reviews_url = commit_url + f'pulls/{Globals.EVENT_PAYLOAD["number"]}/reviews'
     elif GITHUB_EVENT_NAME == "push":
-        comments_url = Globals.FILES_LINK + "/comments"
-        comments_cnt = int(Globals.FILES["commit"]["comment_count"])
+        comments_url = commit_url + f"commits/{GITHUB_SHA}" + "/comments"
+
+    # 41898282 is the bot's ID (used for all github actions' generic bot)
+    comment_id, comments_cnt = remove_duplicate_comments(comments_url, user_id)
     logger.info(f"Number of Comments = {comments_cnt}")
-    if comments_cnt:
-        # 41898282 is the bot's ID (used for all github actions' generic bot)
-        comment_id = remove_duplicate_comments(comments_url, user_id)
 
     if GITHUB_TOKEN is None:
         logger.error("The GITHUB_TOKEN is required!")
@@ -335,38 +331,36 @@ def post_results(user_id=41898282):
     payload = json.dumps({"body": Globals.OUTPUT})
     # logger.log(9, "payload body:\n" + json.dumps({"body": Globals.OUTPUT}, indent=2))
 
-    commit_url = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}"
     if GITHUB_EVENT_NAME == "push":
-        commit_url += f"/comments/{comment_id}"
+        commit_url += f"comments/{comment_id}"
     else:
-        commit_url += f"/issues/comments/{comment_id}"
+        commit_url += f"issues/comments/{comment_id}"
     logger.info("comments_url: " + comments_url)
 
-    response = None
     if reviews_url:
         review_id = dismiss_stale_reviews(reviews_url, user_id)
 
         if comment_id:
-            response = requests.delete(
+            Globals.response_buffer = requests.delete(
                 commit_url,
                 headers=API_HEADERS,
             )
-            logger.info(f"Got {response.status_code} from DELETE {comments_url}")
+            logger.info(f"Got {Globals.response_buffer.status_code} from DELETE {comments_url}")
 
-        response = requests.put(
+        Globals.response_buffer = requests.put(
             reviews_url + f"/{review_id}", headers=API_HEADERS, data=payload
         )
-        logger.info(f"Got {response.status_code} from PUT review {review_id} update")
+        logger.info(f"Got {Globals.response_buffer.status_code} from PUT review {review_id} update")
     else:
         if comment_id:
             logger.info("  commit_url: " + commit_url)
-            response = requests.patch(commit_url, headers=API_HEADERS, data=payload)
+            Globals.response_buffer = requests.patch(commit_url, headers=API_HEADERS, data=payload)
         else:
-            response = requests.post(comments_url, headers=API_HEADERS, data=payload)
+            Globals.response_buffer = requests.post(comments_url, headers=API_HEADERS, data=payload)
 
         logger.info(
             "Got %d response from %sing comment",
-            response.status_code,
+            Globals.response_buffer.status_code,
             "PATCH" if comment_id else "POST",
         )
 
@@ -377,10 +371,9 @@ def main():
     # parse cli args
     args = cli_arg_parser.parse_args()
 
-    # override log level if this workflow has run more than once
-    RUN_NUMBER = os.getenv("GITHUB_RUN_NUMBER", "0")
-    logger.setLevel(int(args.verbosity) if int(RUN_NUMBER) > 1 else 8)
-    logger.info("processing run number %d", int(RUN_NUMBER))
+    logger.setLevel(int(args.verbosity))
+    logger.info("processing run number %d", int(os.getenv("GITHUB_RUN_NUMBER", "0")))
+
     # change working directory
     os.chdir(args.repo_root)
 
