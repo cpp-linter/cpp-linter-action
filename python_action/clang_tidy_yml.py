@@ -1,6 +1,7 @@
 """parse output from clang-tidy and clang-format"""
 import os
 import yaml
+from . import GlobalParser, get_line_cnt_from_cols
 
 CWD_HEADER_GAURD = bytes(
     os.getcwd().upper().replace("/", "_").replace("-", "_"), encoding="utf-8"
@@ -33,24 +34,6 @@ class YMLFixin:
         self.diagnostics = []
 
 
-class GlobalParser:
-    """Globaal variables specific to XML parser for 1 file."""
-    fixits = []
-
-def get_line_cnt_from_cols(file_path, offset):
-    """gets a line count and columns offsaet from a file's absolute offset."""
-    line_cnt = 1
-    last_lf_pos = 0
-    with open(file_path, "r", encoding="utf-8") as src_file:
-        while src_file.tell() != offset:
-            char = src_file.read(1)
-            if char == "\n":
-                line_cnt += 1
-                last_lf_pos = src_file.tell() - 1  # -1 because LF is part of offset
-        cols = src_file.tell() - last_lf_pos
-    return (line_cnt, cols)
-
-
 def parse_tidy_suggestions_yml():
     """Read a YAML file from clang-tidy and create a list of suggestions from it."""
     with open("clang_tidy_output.yml", "r", encoding="utf-8") as yml_file:
@@ -72,27 +55,28 @@ def parse_tidy_suggestions_yml():
                 fix.text = bytes(replacement["ReplacementText"], encoding="utf-8")
                 diag.replacements.append(fix)
             fixit.diagnostics.append(diag)
-        GlobalParser.fixits.append(fixit)
+        GlobalParser.advice.append(fixit)
 
     # print results
-    for j, fix in enumerate(GlobalParser.fixits):
-        for i, diag in enumerate(fix.diagnostics):
-            # filter out absolute header gaurds
-            if diag.message.startswith("header is missing header guard"):
-                print("filtering header guard suggestion (making relative to repo root)")
-                GlobalParser.fixits[j].diagnostics[i].replacements[0].text = diag.replacements[0].text.replace(
-                    CWD_HEADER_GAURD, b""
-                )
-            print(
-                f"diagnostic name: {diag.name}\n    message: {diag.message}\n"
-                f"    @ line {diag.line} cols: {diag.cols}"
-            )
-            for replac in diag.replacements:
-                print(
-                    f"    replace @ line {replac.line} cols {replac.cols} "
-                    f"for length {replac.null_len} of original\n"
-                    f"\treplace text: {replac.text}"
-                )
+    for j, fix in enumerate(GlobalParser.advice):
+        if isinstance(fix, YMLFixin):
+            for i, diag in enumerate(fix.diagnostics):
+                # filter out absolute header gaurds
+                if diag.message.startswith("header is missing header guard"):
+                    print("filtering header guard suggestion (making relative to repo root)")
+                    GlobalParser.advice[j].diagnostics[i].replacements[0].text = diag.replacements[0].text.replace(
+                        CWD_HEADER_GAURD, b""
+                    )
+                # print(
+                #     f"diagnostic name: {diag.name}\n    message: {diag.message}\n"
+                #     f"    @ line {diag.line} cols: {diag.cols}"
+                # )
+                # for replac in diag.replacements:
+                #     print(
+                #         f"    replace @ line {replac.line} cols {replac.cols} "
+                #         f"for length {replac.null_len} of original\n"
+                #         f"\treplace text: {replac.text}"
+                #     )
 
 
 if __name__ == "__main__":

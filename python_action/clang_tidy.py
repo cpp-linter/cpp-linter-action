@@ -1,6 +1,7 @@
 """parse output from clang-tidy and clang-format"""
 import os
 import re
+from . import GlobalParser
 
 
 class TidyNotification:
@@ -10,8 +11,8 @@ class TidyNotification:
     def __init__(self, notification_line):
         (
             self.filename,
-            self.line_number,
-            self.line_columns,
+            self.line,
+            self.cols,
             self.note_type,
             self.note_info,
         ) = notification_line.split(":")
@@ -19,33 +20,40 @@ class TidyNotification:
         self.note_info = self.note_info.replace(self.diagnostic, "").strip()
         self.note_type = self.note_type.strip()
         self.diagnostic = self.diagnostic[1:-2]
-        self.line_number = int(self.line_number)
-        self.line_columns = int(self.line_columns)
+        self.line = int(self.line)
+        self.cols = int(self.cols)
         self.filename = self.filename.replace(os.getcwd() + os.sep, "")
         self.fixit_lines = []
 
     def __repr__(self) -> str:
+        file_ext = re.search("\.\w+", self.filename)
         return (
-            f"{self.filename}:{self.line_number}:{self.line_columns}:"
-            f" {self.note_type}: {self.note_info} [{self.diagnostic}]"
-        )
-
+            "<details open>\n<summary><strong>{}:{}:{}:</strong> {}: [{}]"
+            "\n\n> {}\n</summary><p>\n\n```{}\n{}```\n</p>\n</details>\n\n".format(
+                self.filename,
+                self.line,
+                self.cols,
+                self.note_type,
+                self.diagnostic,
+                self.note_info,
+                "" if file_ext is None else file_ext.group(0)[1:],
+                "".join(self.fixit_lines),
+            )
+)
 
 def parse_tidy_output():
     """Parse clang-tidy output in a file created from stdout"""
-    tidy_notifications = []
-    with open("clang_tidy_output.txt", "r", encoding="utf-8") as tidy_out:
+    notification = None
+    with open("clang_tidy_report.txt", "r", encoding="utf-8") as tidy_out:
         for line in tidy_out.readlines():
             if re.search("^.*:\d+:\d+:\s\w+:.*\[.*\]$", line) is not None:
-                tidy_notifications.append(TidyNotification(line))
-            else:
-                if tidy_notifications:
-                    tidy_notifications[len(tidy_notifications) - 1].fixit_lines.append(
-                        line
-                    )
-    for notification in tidy_notifications:
-        print(repr(notification))
-        print("".join(notification.fixit_lines))
+                notification = TidyNotification(line)
+                GlobalParser.fixits.append(notification)
+            elif notification is not None:
+                notification.fixit_lines.append(line)
+    # for notification in GlobalParser.fixits:
+    #     print("found", len(GlobalParser.fixits), "fixits")
+    #     print(repr(notification))
 
 
 if __name__ == "__main__":
