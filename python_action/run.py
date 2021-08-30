@@ -94,6 +94,7 @@ def get_list_of_changed_files():
     logger.info(f"processing {GITHUB_EVENT_NAME} event")
     with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
         Globals.EVENT_PAYLOAD = json.load(payload)
+        logger.log(9, json.dumps(Globals.EVENT_PAYLOAD))
 
     Globals.FILES_LINK = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     response = None
@@ -124,7 +125,7 @@ def get_list_of_changed_files():
         sys.exit(set_exit_code(0))
     logger.info("Fetching files list from url: " + Globals.FILES_LINK)
     Globals.FILES = requests.get(Globals.FILES_LINK).json()
-    logger.log(9, "files json:\n" + json.dumps(Globals.FILES, indent=2))
+    # logger.log(9, "files json:\n" + json.dumps(Globals.FILES, indent=2))
 
 
 def filter_out_non_source_files(ext_list):
@@ -332,7 +333,7 @@ def post_results(user_id=41898282):
         sys.exit(set_exit_code(1))
 
     payload = json.dumps({"body": Globals.OUTPUT})
-    logger.log(9, "payload body:\n" + json.dumps({"body": Globals.OUTPUT}, indent=2))
+    # logger.log(9, "payload body:\n" + json.dumps({"body": Globals.OUTPUT}, indent=2))
 
     commit_url = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}"
     if GITHUB_EVENT_NAME == "push":
@@ -373,10 +374,16 @@ def post_results(user_id=41898282):
 def main():
     """The main script."""
 
+    # parse cli args
     args = cli_arg_parser.parse_args()
-    logger.setLevel(int(args.verbosity))
 
-    os.chdir(args.repo_root)  # change working directory
+    # override log level if this workflow has run more than once
+    RUN_NUMBER = os.getenv("GITHUB_RUN_NUMBER", "0")
+    logger.setLevel(int(args.verbosity) if int(RUN_NUMBER) > 1 else 8)
+
+    # change working directory
+    os.chdir(args.repo_root)
+
     get_list_of_changed_files()
     filter_out_non_source_files(args.extensions)
     verify_files_are_present()
