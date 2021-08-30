@@ -53,31 +53,32 @@ def parse_tidy_suggestions_yml():
                 )
                 fix = TidyReplacement(line_cnt, cols, replacement["Length"])
                 fix.text = bytes(replacement["ReplacementText"], encoding="utf-8")
+                if fix.text.startswith(b"header is missing header guard"):
+                    print("filtering header guard suggestion (making relative to repo root)")
+                    fix.text = fix.text.replace(CWD_HEADER_GAURD, b"")
                 diag.replacements.append(fix)
             fixit.diagnostics.append(diag)
+            # filter out absolute header gaurds
         GlobalParser.advice.append(fixit)
 
-    # print results
-    for j, fix in enumerate(GlobalParser.advice):
+
+def print_fixits():
+    """Print results."""
+    for fix in GlobalParser.advice:
         if isinstance(fix, YMLFixin):
-            for i, diag in enumerate(fix.diagnostics):
-                # filter out absolute header gaurds
-                if diag.message.startswith("header is missing header guard"):
-                    print("filtering header guard suggestion (making relative to repo root)")
-                    GlobalParser.advice[j].diagnostics[i].replacements[0].text = diag.replacements[0].text.replace(
-                        CWD_HEADER_GAURD, b""
+            for diag in fix.diagnostics:
+                print(
+                    f"diagnostic name: {diag.name}\n    message: {diag.message}\n"
+                    f"    @ line {diag.line} cols: {diag.cols}"
+                )
+                for replac in diag.replacements:
+                    print(
+                        f"    replace @ line {replac.line} cols {replac.cols} "
+                        f"for length {replac.null_len} of original\n"
+                        f"\treplace text: {replac.text}"
                     )
-                # print(
-                #     f"diagnostic name: {diag.name}\n    message: {diag.message}\n"
-                #     f"    @ line {diag.line} cols: {diag.cols}"
-                # )
-                # for replac in diag.replacements:
-                #     print(
-                #         f"    replace @ line {replac.line} cols {replac.cols} "
-                #         f"for length {replac.null_len} of original\n"
-                #         f"\treplace text: {replac.text}"
-                #     )
 
 
 if __name__ == "__main__":
     parse_tidy_suggestions_yml()
+    print_fixits()

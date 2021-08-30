@@ -382,8 +382,8 @@ def main():
     verify_files_are_present()
     capture_clang_tools_output(args.version, args.tidy_checks, args.style)
     set_exit_code(0)
-    # post_results()  # leave param blank to look for the generic github action bot
-    post_results(14963867)  # 14963867 is user id for 2bndy5
+    post_results()  # leave param blank to look for the generic github action bot
+    # post_results(14963867)  # 14963867 is user id for 2bndy5
 
 
 if __name__ == "__main__":
