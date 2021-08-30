@@ -35,7 +35,7 @@ inputs:
   verbosity:
     descruption: hidden option to control the action's log verbosity. This is the `logging` level (degaults to DEBUG)
     required: false
-    default: '10'
+    default: '9'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
