@@ -3,7 +3,7 @@ name: cpp-linter
 on:
   push:
   pull_request:
-    types: [opened]
+    # types: [opened]
 
 jobs:
   cpp-linter:
