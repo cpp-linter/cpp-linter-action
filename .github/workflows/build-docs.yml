@@ -35,7 +35,7 @@ jobs:
       - name: Install doc's deps
         run: |
           python3 -m pip install -r docs/requirements.txt
-          python3 pip install .
+          python3 -m pip install .
       - name: Build docs
         run: mkdocs build
       - name: Save artifact
