@@ -1,5 +1,12 @@
 """Run clang-tidy and clang-format on a list of changed files provided by GitHub's
-REST API."""
+REST API. If executed from command-line, then [`main()`][python_action.run.main] is
+the entrypoint.
+
+!!! info "See Also"
+    - [github rest API reference for pulls](https://docs.github.com/en/rest/reference/pulls)
+    - [github rest API reference for repos](https://docs.github.com/en/rest/reference/repos)
+    - [github rest API reference for issues](https://docs.github.com/en/rest/reference/issues)
+"""
 import subprocess
 import os
 import sys
@@ -26,23 +33,25 @@ except ImportError:
     print("rich module not found")
     logging.basicConfig()
 
+#: The logging.Logger object used for outputing data.
 logger = logging.getLogger("CPP Linter")
 
 # global constant variables
 GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "event_payload.json")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "2bndy5/cpp-linter-action")
-GITHUB_SHA = os.getenv("GITHUB_SHA", "21feaddcdc5a4d79d7315a3c2c88de49e4b129e2")
+GITHUB_SHA = os.getenv("GITHUB_SHA", "293af27ec15d6094a5308fe655a7e111e5b8721a")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "pull_request")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", None))
 API_HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}",
     "Accept": "application/vnd.github.v3+json",
-    # "Accept": "application/vnd.github.v3.diff",
 }
 
 # setup CLI args
-cli_arg_parser = argparse.ArgumentParser(description=__doc__)
+cli_arg_parser = argparse.ArgumentParser(
+    description=__doc__[: __doc__.find("If executed from")]
+)
 cli_arg_parser.add_argument(
     "--verbosity",
     default="10",
@@ -82,15 +91,20 @@ cli_arg_parser.add_argument(
 )
 
 
-def set_exit_code(override=None):
-    """Set the action's exit code."""
+def set_exit_code(override: int=None):
+    """Set the action's exit code.
+
+    Args:
+        override: The number to use when overriding the action's logic."""
     exit_code = override if override is not None else bool(Globals.OUTPUT)
     print(f"::set-output name=checks-failed::{exit_code}")
     return exit_code
 
 
 def get_list_of_changed_files():
-    """Fetch the JSON payload of the event's changed files."""
+    """Fetch the JSON payload of the event's changed files. Sets the
+    [`FILES`][python_action.__init__.Globals.FILES] &
+    [`DIFF`][python_action.__init__.Globals.DIFF] attributes."""
     logger.info(f"processing {GITHUB_EVENT_NAME} event")
     with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
         Globals.EVENT_PAYLOAD = json.load(payload)
@@ -98,9 +112,9 @@ def get_list_of_changed_files():
 
     Globals.FILES_LINK = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
-        Globals.FILES_LINK += f"pulls/{Globals.EVENT_PAYLOAD['number']}/files"
+        Globals.FILES_LINK += f"pulls/{Globals.EVENT_PAYLOAD['number']}"
         Globals.response_buffer = requests.get(
-            Globals.FILES_LINK.replace("/files", ""),
+            Globals.FILES_LINK,
             headers={"Accept": "application/vnd.github.v3.diff"},
         )
         logger.info(
@@ -108,6 +122,7 @@ def get_list_of_changed_files():
             f"{Globals.EVENT_PAYLOAD['number']}"
         )
         Globals.DIFF = unidiff.PatchSet(Globals.response_buffer.text)
+        Globals.FILES_LINK += "/files"
 
     elif GITHUB_EVENT_NAME == "push":
         Globals.FILES_LINK += f"commits/{GITHUB_SHA}"
@@ -127,8 +142,17 @@ def get_list_of_changed_files():
     # logger.log(9, "files json:\n" + json.dumps(Globals.FILES, indent=2))
 
 
-def filter_out_non_source_files(ext_list):
-    """exclude undesired files (specified by user input 'extensions')"""
+def filter_out_non_source_files(ext_list: str):
+    """Exclude undesired files (specified by user input 'extensions'). This filter
+    applies to the event's [`FILES`][python_action.__init__.Globals.FILES] &
+    [`DIFF`][python_action.__init__.Globals.DIFF] attributes.
+
+    Args:
+        ext_list: A comma-separated `str` of extensions that are concerned.
+
+    !!! note
+        This will exit early when nothing left to do.
+    """
     ext_list = ext_list.split(",")
     files = []
     for file in (
@@ -137,6 +161,13 @@ def filter_out_non_source_files(ext_list):
         extension = re.search("\.\w+$", file["filename"])
         if extension is not None and extension.group(0)[1:] in ext_list:
             files.append(file)
+        else:
+            # remove this file from the diff also
+            for i, diff in enumerate(Globals.DIFF):
+                if diff.target_file[2:] == file["filename"]:
+                    del Globals.DIFF[i]
+                    break
+
     if not files:
         # exit early if no changed files are source files
         logger.info("No source files need checking!")
@@ -154,8 +185,13 @@ def filter_out_non_source_files(ext_list):
 
 
 def verify_files_are_present():
-    """Download the files if not present. This function assumes the working directory
-    is the root of the invoking repository."""
+    """Download the files if not present.
+
+    !!! hint
+        This function assumes the working directory is the root of the invoking
+        repository. If files are not found, then they are downloaded to the working
+        directory. This may be bad for files with the same name from different folders.
+    """
     for file in (
         Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
     ):
@@ -170,10 +206,15 @@ def verify_files_are_present():
 
 def remove_duplicate_comments(comments_url: str, user_id: int):
     """Traverse the list of comments made by a specific user
-    and remove all but the 1st."""
+    and remove all but the 1st.
+
+    Args:
+        comments_url: The url used to fetch the comments.
+        user_id: The user's account id number.
+    """
     first_comment_id = 0
     comments = json.loads(requests.get(comments_url).text)
-    for comment in comments:
+    for i, comment in enumerate(comments):
         # only serach for comments from the user's ID and
         # whose comment body begins with a specific html comment
         if (
@@ -181,16 +222,17 @@ def remove_duplicate_comments(comments_url: str, user_id: int):
             # the specific html comment is our action's name
             and comment["body"].startswith("<!-- cpp linter action -->")
         ):
-            if not first_comment_id:
-                # capture id and don't remove the first comment
-                first_comment_id = comment["id"]
-            else:
-                # remove othre outdated comments
+            first_comment_id = comment["id"]  # capture id
+            if i < len(comments) - 1:
+                # remove other outdated comments but don't remove the last comment
                 Globals.response_buffer = requests.delete(
                     comment["url"],
                     headers=API_HEADERS,
                 )
-                logger.info(f"Got {Globals.response_buffer.status_code} from DELETE {comment['url']}")
+                logger.info(
+                    f"Got {Globals.response_buffer.status_code} from DELETE "
+                    f"{comment['url']}"
+                )
         logger.debug(
             f'comment id {comment["id"]} from user {comment["user"]["login"]}'
             f' ({comment["user"]["id"]})'
@@ -202,7 +244,12 @@ def remove_duplicate_comments(comments_url: str, user_id: int):
 
 
 def dismiss_stale_reviews(reviews_url: str, user_id: int):
-    """Dismiss all stale reviews (only the ones made by our bot)."""
+    """Dismiss all stale reviews (only the ones made by our bot).
+
+    Args:
+        reviews_url: The url used to fetch the review comments.
+        user_id: The user's account id number.
+    """
     logger.info(f"  review_url: {reviews_url}")
     Globals.response_buffer = requests.get(reviews_url)
     review_id = 0
@@ -219,8 +266,12 @@ def dismiss_stale_reviews(reviews_url: str, user_id: int):
                 }
             ),
         )
-        logger.info("Got %d from POSTing new(/temp) PR review", Globals.response_buffer.status_code)
+        logger.info(
+            "Got %d from POSTing new(/temp) PR review",
+            Globals.response_buffer.status_code,
+        )
         Globals.response_buffer = requests.get(reviews_url)
+        reviews = Globals.response_buffer.json()
 
     for i, review in enumerate(reviews):
         if int(review["user"]["id"]) == user_id and review["body"].startswith(
@@ -245,8 +296,17 @@ def dismiss_stale_reviews(reviews_url: str, user_id: int):
     return review_id
 
 
-def capture_clang_tools_output(version, checks, style):
-    """execute and capture all output from clang-tidy and clang-format."""
+def capture_clang_tools_output(version: str, checks: str, style: str):
+    """Execute and capture all output from clang-tidy and clang-format. This aggregates
+    results in the [`OUTPUT`][python_action.__init__.Globals.OUTPUT].
+
+    Args:
+        version: The version of clang-tidy to run.
+        checks: The `str` of comma-separated regulate expressions that describe
+            the desired clang-tidy checks to be enabled/configured.
+        style: The clang-format style rules to adhere. Set this to 'file' to
+            use the relative-most .clang-format configuration file.
+    """
     for file in (
         Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
     ):
@@ -270,17 +330,12 @@ def capture_clang_tools_output(version, checks, style):
         cmds = [
             f"clang-format-{version}",
             f"-style={style}",
-            "--dry-run",
+            "--output-replacements-xml",
             filename,
         ]
-        with open("clang_format_report.txt", "w", encoding="utf-8") as f_out:
-            subprocess.run(cmds, stderr=f_out, stdout=f_out)
 
-        # parse format suggestions from clang-format (exported in XML file)
-        cmds[2] = "--output-replacements-xml"
         with open("clang_format_output.xml", "w", encoding="utf-8") as f_out:
             subprocess.run(cmds, stderr=f_out, stdout=f_out)
-        parse_fmt_advice(filename)
 
         if os.path.getsize("clang_tidy_report.txt"):
             # get clang-tidy fixes from stout
@@ -288,16 +343,16 @@ def capture_clang_tools_output(version, checks, style):
             if Globals.PAYLOAD_TIDY:
                 Globals.PAYLOAD_TIDY += "<hr></details>"
             Globals.PAYLOAD_TIDY += f"<details><summary>{filename}</summary><br>\n"
-            for fix in GlobalParser.fixits:
+            for fix in GlobalParser.tidy_notes:
                 Globals.PAYLOAD_TIDY += repr(fix)
-            GlobalParser.fixits.clear()
+            GlobalParser.tidy_notes.clear()
 
-        if os.path.getsize("clang_format_report.txt"):
+        if os.path.getsize("clang_format_output.xml"):
+            # parse format suggestions from clang-format (exported in XML file)
+            parse_fmt_advice(filename)
             if not Globals.OUTPUT:
-                Globals.OUTPUT = "<!-- cpp linter action -->\n"
-                Globals.OUTPUT += (
-                    "## :scroll: Run `clang-format` on the following files\n"
-                )
+                Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
+                Globals.OUTPUT += "Run `clang-format` on the following files\n"
             Globals.OUTPUT += f"- [ ] {file['filename']}\n"
 
     if Globals.PAYLOAD_TIDY:
@@ -307,8 +362,12 @@ def capture_clang_tools_output(version, checks, style):
     logger.log(9, "OUTPUT is \n" + Globals.OUTPUT)
 
 
-def post_results(user_id=41898282):
-    """POST action's results using REST API."""
+def post_results(user_id: int=41898282):
+    """POST action's results using REST API.
+
+    Args:
+        user_id: The user's account ID number. Defaults to the generic bot's ID.
+    """
     comments_url = ""
     reviews_url = ""
     review_id = 0
@@ -345,18 +404,26 @@ def post_results(user_id=41898282):
                 commit_url,
                 headers=API_HEADERS,
             )
-            logger.info(f"Got {Globals.response_buffer.status_code} from DELETE {comments_url}")
+            logger.info(
+                f"Got {Globals.response_buffer.status_code} from DELETE {comments_url}"
+            )
 
         Globals.response_buffer = requests.put(
             reviews_url + f"/{review_id}", headers=API_HEADERS, data=payload
         )
-        logger.info(f"Got {Globals.response_buffer.status_code} from PUT review {review_id} update")
+        logger.info(
+            f"Got {Globals.response_buffer.status_code} from PUT review {review_id} update"
+        )
     else:
         if comment_id:
             logger.info("  commit_url: " + commit_url)
-            Globals.response_buffer = requests.patch(commit_url, headers=API_HEADERS, data=payload)
+            Globals.response_buffer = requests.patch(
+                commit_url, headers=API_HEADERS, data=payload
+            )
         else:
-            Globals.response_buffer = requests.post(comments_url, headers=API_HEADERS, data=payload)
+            Globals.response_buffer = requests.post(
+                comments_url, headers=API_HEADERS, data=payload
+            )
 
         logger.info(
             "Got %d response from %sing comment",
@@ -368,7 +435,7 @@ def post_results(user_id=41898282):
 def main():
     """The main script."""
 
-    # parse cli args
+    # The parsed CLI args
     args = cli_arg_parser.parse_args()
 
     logger.setLevel(int(args.verbosity))
@@ -382,8 +449,8 @@ def main():
     verify_files_are_present()
     capture_clang_tools_output(args.version, args.tidy_checks, args.style)
     set_exit_code(0)
-    post_results()  # leave param blank to look for the generic github action bot
-    # post_results(14963867)  # 14963867 is user id for 2bndy5
+    # post_results()  # leave param blank to look for the generic github action bot
+    post_results(14963867)  # 14963867 is user id for 2bndy5
 
 
 if __name__ == "__main__":

@@ -1,0 +1,44 @@
+name: build-dev-docs
+
+on:
+  push:
+  pull_request:
+    types: [opened]
+
+  jobs:
+    # build-sphinx-docs:
+    #   runs-on: ubuntu-latest
+    #   steps:
+    #     - uses: actions/checkout@v2
+    #     - uses: actions/setup-python@v1
+    #       with:
+    #         python-version: 3.7
+    #     - name: Install doc's deps
+    #       working-directory: ${{ github.workspace }}/docs
+    #       run: python3 -m pip install -r requirements.txt
+    #     - name: Build docs
+    #       working-directory: ${{ github.workspace }}/docs
+    #       run: sphinx-build -E -W -b html . _build/html
+    #     - name: Save artifact
+    #       uses: actions/upload-artifact@v2
+    #       with:
+    #         name: "dev docs"
+    #         path: |
+    #           ${{ github.workspace }}/docs/_build/html/**
+    build-mkdocs-docs:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-python@v1
+          with:
+            python-version: 3.7
+        - name: Install doc's deps
+          run: python3 -m pip install -r docs/requirements.txt
+        - name: Build docs
+          run: mkdocs build
+        - name: Save artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: "cpp linter action dev docs"
+            path: |
+              site/**
