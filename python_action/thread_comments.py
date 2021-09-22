@@ -1,8 +1,8 @@
 """A module to house the various functions for traversing/adjusting comments"""
-import enum
+import os
 import requests
 import json
-from . import Globals, GlobalParser, logger, API_HEADERS
+from . import Globals, GlobalParser, logger, API_HEADERS, GITHUB_SHA, log_response_msg
 
 
 def remove_bot_comments(comments_url: str, user_id: int):
@@ -44,6 +44,65 @@ def remove_bot_comments(comments_url: str, user_id: int):
         json.dump(comments, json_comments, indent=4)
 
 
+def list_diff_comments():
+    """Aggregate list of comments for use in the event's diff. This function assumes
+    that the CLI option `--diff-only` is set to True.
+
+    Returns:
+        A list of comments (each element as json content).
+    """
+    results = []
+    for index, fixit in enumerate(GlobalParser.tidy_advice):
+        for diag in fixit.diagnostics:
+            # base body of comment
+            body = "<!-- cpp linter action -->\n**" + diag.name + "**\n>" + diag.message
+
+            # assemble a suggestion (only if for a single line)
+            fix_lines = []  # a list of line numbers for the suggested fixes
+            suggestion = "\n```suggestion\n"
+            is_multiline_fix = False
+            # get original code
+            filename = Globals.FILES[index]["filename"].replace("/", os.sep)
+            if not os.path.exists(filename):
+                # the file had to be downloaded (no git checkout).
+                # thus use only the filename (without the path to the file)
+                filename = os.path.split(filename)[1]
+            lines = []  # the list of lines in a file
+            line = ""  # the line that concerns the fix/comment
+            with open(filename) as temp:
+                lines = temp.readlines()
+
+            for i, fix in enumerate(diag.replacements):
+                line = lines[fix.line - 1]
+                if not fix_lines:
+                    fix_lines.append(fix.line)
+                elif fix.line not in fix_lines:
+                    is_multiline_fix = True
+                    break
+                if i:  # if this isn't the first fix for the same line
+                    last_fix = diag.replacements[i - 1]
+                    suggestion += line[
+                        last_fix.cols + last_fix.null_len - 1 : fix.cols - 1
+                    ] + fix.text.decode()
+                else:
+                    suggestion += line[: fix.cols - 1] + fix.text.decode()
+            if not is_multiline_fix and diag.replacements:
+                last_fix = diag.replacements[len(diag.replacements) - 1]
+                suggestion += line[last_fix.cols + last_fix.null_len - 1: -1] + "\n```"
+                body += suggestion
+
+            results.append(
+                {
+                    "body": body,
+                    "commit_id": GITHUB_SHA,
+                    "line": diag.line,
+                    "path": fixit.filename,
+                    "side": "RIGHT",
+                }
+            )
+    return results
+
+
 def get_review_id(reviews_url: str, user_id: int):
     """Dismiss all stale reviews (only the ones made by our bot).
 
@@ -55,9 +114,8 @@ def get_review_id(reviews_url: str, user_id: int):
     """
     logger.info(f"  review_url: {reviews_url}")
     Globals.response_buffer = requests.get(reviews_url)
-    review_id = None
-    reviews = Globals.response_buffer.json()
-    if not reviews:  # create a PR review
+    review_id = find_review(json.loads(Globals.response_buffer.text), user_id)
+    if review_id is None:  # create a PR review
         Globals.response_buffer = requests.post(
             reviews_url,
             headers=API_HEADERS,
@@ -74,9 +132,18 @@ def get_review_id(reviews_url: str, user_id: int):
             Globals.response_buffer.status_code,
         )
         Globals.response_buffer = requests.get(reviews_url)
-        reviews = Globals.response_buffer.json()
+        if Globals.response_buffer.status_code != 200:
+            log_response_msg()
+            raise RuntimeError("could not create a review for commemts")
+        reviews = json.loads(Globals.response_buffer.text)
         reviews.reverse()  # traverse the list in reverse
+        review_id = find_review(reviews, user_id)
+    return review_id
 
+
+def find_review(reviews: dict, user_id: int):
+    """Find a review created by a certain user ID."""
+    review_id = None
     for review in reviews:
         if int(review["user"]["id"]) == user_id and review["body"].startswith(
             "<!-- cpp linter action -->"
@@ -86,43 +153,3 @@ def get_review_id(reviews_url: str, user_id: int):
 
     logger.info(f"   review_id: {review_id}")
     return review_id
-
-
-def list_diff_comments():
-    """Aggregate list of comments for use in the event's diff. This function assumes
-    that the CLI option `--diff-only` is set to True.
-
-    Returns:
-        A list of comments (each element as json content).
-    """
-    results = []
-    for index, fixit in enumerate(GlobalParser.tidy_advice):
-        for diag in fixit.diagnostics:
-            results.append(
-                {
-                    "body": "<!-- cpp linter action -->\n" + diag.name,
-                    "position": Globals.FILES[index]["diff_line_map"][diag.line],
-                    "path": fixit.filename,
-                    "side": "RIGHT",
-                }
-            )
-    return results
-
-def outdate_review_comment(url: str, review_id: str, review_author: str):
-    """Edit an outdated a comment.
-
-    Args:
-        url: The URL to the comment to be edited.
-    """
-    Globals.response_buffer = requests.put(
-        url,
-        headers=API_HEADERS,
-        data=json.dumps({"body": "This outdated comment has been edited."}),
-    )
-    logger.info(
-        "Got {} from editing review comment {} by {}".format(
-            Globals.response_buffer.status_code,
-            review_id,
-            review_author,
-        )
-    )

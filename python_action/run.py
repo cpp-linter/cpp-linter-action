@@ -14,18 +14,25 @@ import re
 import argparse
 import json
 import requests
-from . import Globals, GlobalParser, logger, GITHUB_TOKEN, API_HEADERS
+from . import (
+    Globals,
+    GlobalParser,
+    logger,
+    GITHUB_TOKEN,
+    GITHUB_SHA,
+    API_HEADERS,
+    log_response_msg,
+)
 from .clang_tidy_yml import parse_tidy_suggestions_yml as parse_tidy_advice
 from .clang_tidy import parse_tidy_output
 from .clang_format_xml import parse_format_replacements_xml as parse_fmt_advice
-from .thread_comments import remove_bot_comments, get_review_id, list_diff_comments
+from .thread_comments import remove_bot_comments, list_diff_comments  # , get_review_id
 
 
 # global constant variables
 GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "event_payload.json")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "2bndy5/cpp-linter-action")
-GITHUB_SHA = os.getenv("GITHUB_SHA", "293af27ec15d6094a5308fe655a7e111e5b8721a")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "pull_request")
 
 # setup CLI args
@@ -100,7 +107,6 @@ def get_list_of_changed_files():
     files_link = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
         files_link += f"pulls/{Globals.EVENT_PAYLOAD['number']}/files"
-
     elif GITHUB_EVENT_NAME == "push":
         files_link += f"commits/{GITHUB_SHA}"
     else:
@@ -221,6 +227,7 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
         if checks:
             cmds.append(f"-checks={checks}")
         cmds.append("--export-fixes=clang_tidy_output.yml")
+        cmds.append(f"--format-style={style}")
         if diff_only:
             cmds.append(f"--line-filter={json.dumps([line_filter])}")
         cmds.append(filename.replace("/", os.sep))
@@ -254,7 +261,6 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
             for fix in GlobalParser.tidy_notes:
                 Globals.PAYLOAD_TIDY += repr(fix)
             GlobalParser.tidy_notes.clear()
-            Globals.PAYLOAD_TIDY += "</details>"
 
         if os.path.getsize("clang_format_output.xml"):
             parse_fmt_advice(filename.replace("/", os.sep))  # parse clang-format fixes
@@ -310,36 +316,56 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
     comments_url = base_url + f'issues/{Globals.EVENT_PAYLOAD["number"]}/comments'
     remove_bot_comments(comments_url, user_id)
     reviews_url = base_url + f'pulls/{Globals.EVENT_PAYLOAD["number"]}/'
-    review_id = get_review_id(reviews_url + "reviews", user_id)
+    # if diff_only:
+    #     review_id = get_review_id(reviews_url + "reviews", user_id)
 
-    payload = None  # scoped placeholder for posted output
     if not diff_only:
         payload = json.dumps({"body": Globals.OUTPUT})
         logger.debug("payload body:\n" + json.dumps({"body": Globals.OUTPUT}, indent=2))
+        Globals.response_buffer = requests.post(
+            comments_url, headers=API_HEADERS, data=payload
+        )
+        logger.info(
+            f"Got {Globals.response_buffer.status_code} from " f"POSTing comment"
+        )
+        if Globals.response_buffer.status_code > 400:
+            log_response_msg()
     else:
         payload = list_diff_comments()
-    if review_id is not None:
-        if not diff_only:
-            Globals.response_buffer = requests.put(
-                reviews_url + f"reviews/{review_id}", headers=API_HEADERS, data=payload
+        logger.info(f"Posting {len(payload)} comments")
+        # get existing review comments
+        Globals.response_buffer = requests.get(reviews_url + "comments")
+        existing_comments = json.loads(Globals.response_buffer.text)
+        # filter out comments not made by our bot
+        for index, comment in enumerate(existing_comments):
+            if not comment["body"].startswith("<!-- cpp linter action -->"):
+                del existing_comments[index]
+
+        # conditionally post new comments in the diff
+        for i, body in enumerate(payload):
+            # check if comment is already there
+            already_posted = False
+            for comment in existing_comments:
+                if (
+                    int(comment["user"]["id"]) == user_id
+                    and comment["body"].find(body["body"]) >= 0
+                    and comment["path"] == payload[i]["path"]
+                ):
+                    already_posted = True
+                    break
+            if already_posted:
+                logger.info(f"comment {i} already posted")
+                continue  # don't bother reposting the same comment
+            logger.debug(json.dumps(body))
+            Globals.response_buffer = requests.post(
+                reviews_url + "comments", headers=API_HEADERS, data=json.dumps(body)
             )
             logger.info(
                 f"Got {Globals.response_buffer.status_code} from "
-                f"PUT review {review_id} update"
+                f"POSTing review comment {i}"
             )
-        else:
-            logger.info(f"Posting {len(payload)} comments")
-            for i, body in enumerate(payload):
-                Globals.response_buffer = requests.post(
-                    reviews_url + "comments", headers=API_HEADERS, data=json.dumps(body)
-                )
-                logger.info(
-                    f"Got {Globals.response_buffer.status_code} from "
-                    f"PUT review comment {i}"
-                )
-                logger.debug(json.dumps(body))
-    else:
-        raise RuntimeError("Could not create or find a review made by the bot")
+            if Globals.response_buffer.status_code != 201:
+                log_response_msg()
 
 
 def post_results(diff_only: bool, user_id: int = 41898282):
@@ -377,13 +403,10 @@ def main():
     filter_out_non_source_files(args.extensions, args.diff_only)
     verify_files_are_present()
     capture_clang_tools_output(
-        args.version,
-        args.tidy_checks,
-        args.style,
-        args.diff_only
+        args.version, args.tidy_checks, args.style, args.diff_only
     )
     set_exit_code(0)
-    post_results(args.diff_only)  # 14963867 is user id for 2bndy5
+    post_results(args.diff_only, 14963867)  # 14963867 is user id for 2bndy5
 
 
 if __name__ == "__main__":

@@ -20,10 +20,11 @@ except ImportError:
 logger = logging.getLogger("CPP Linter")
 
 # global constant variables
+GITHUB_SHA = os.getenv("GITHUB_SHA", "293af27ec15d6094a5308fe655a7e111e5b8721a")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", None))
 API_HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}",
-    "Accept": "application/vnd.github.v3+json",
+    "Accept": "application/vnd.github.v3.text+json",
 }
 
 
@@ -88,3 +89,11 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
         cols = src_file.tell() - last_lf_pos
         src_file.newlines
     return (line_cnt, cols)
+
+
+def log_response_msg():
+    """Output the response buffer's message on failed request"""
+    logger.error(
+        "response returned message: %s",
+        Globals.response_buffer.text
+    )
