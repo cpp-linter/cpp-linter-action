@@ -10,8 +10,6 @@
 
 .md-typeset table:not([class]) tbody tr:hover,
 tr:hover {
-    font-weight: 400;
-    vertical-align: top;
     background-color: var(--md-accent-fg-color--transparent);
 }
 
@@ -19,12 +17,11 @@ th {
     background-color: var(--md-primary-fg-color--light);
 }
 
-
-/* main.802231af.min.css | http://127.0.0.1:8000/gh-py-action-template/assets/stylesheets/main.802231af.min.css */
-
 .md-typeset table:not([class]) {
     /* border-radius: .1rem; */
-    border-radius: .5rem;
+    border-radius: 0 1rem 1rem 0;
+    border-left: .2rem solid;
+    border-left-color: var(--md-default-fg-color);
 }
 
 .md-typeset details:not([open])>summary {
@@ -32,7 +29,10 @@ th {
     border-radius: 0 1rem 1rem 0;
 }
 
-.md-typeset summary,
+.md-typeset summary {
+    border-top-right-radius: 1rem;
+}
+
 .md-typeset .admonition,
 .md-typeset details {
     /* border-top-right-radius: .1rem; */

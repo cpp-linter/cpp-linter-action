@@ -3,7 +3,7 @@
 </p>
 <!--intro-start-->
 
-# C/C++ Lint Action |<sub><sup> clang-format & clang-tidy</sup></sub>
+# C/C++ Lint Action <sub><sup>| clang-format & clang-tidy</sup></sub>
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shenxianpeng/cpp-linter-action)
 [![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)

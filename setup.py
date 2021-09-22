@@ -27,7 +27,7 @@ setup(
     long_description=".. warning:: this is not meant for PyPi (yet)",
     author="Brendan Doherty",
     author_email="2bndy5@gmail.com",
-    install_requires=["requests", "pyyaml", "unidiff"],
+    install_requires=["requests", "pyyaml"],
     license="MIT",
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[

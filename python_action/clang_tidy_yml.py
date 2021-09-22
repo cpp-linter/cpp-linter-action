@@ -43,6 +43,7 @@ class TidyDiagnostic:
             f"{len(self.replacements)} replacements>"
         )
 
+
 class TidyReplacement:
     """Create an object representing a clang-tidy suggested replacement.
 
@@ -71,25 +72,27 @@ class TidyReplacement:
             f"added lines {len(self.text)} discarded bytes {self.null_len}>"
         )
 
-class YMLFixin:
+
+class YMLFixit:
     """A single object to represent each suggestion.
 
     Attributes:
         filename (str): The source file's name concerning the suggestion.
         diagnostics (list): The `list` of
-            [`TidyDiagnostic`][python_action.clang_tidy_yml.TidyDiagnostic] objects
+            [`TidyDiagnostic`][python_action.clang_tidy_yml.TidyDiagnostic] objects.
     """
+
     def __init__(self, filename: str) -> None:
         """
         Args:
             filename: The source file's name (with path) concerning the suggestion.
         """
-        self.filename = filename
+        self.filename = filename.replace(os.getcwd() + os.sep, "").replace(os.sep, "/")
         self.diagnostics = []
 
     def __repr__(self) -> str:
         return (
-            f"<YMLFixin ({len(self.diagnostics)} diagnostics) for file "
+            f"<YMLFixit ({len(self.diagnostics)} diagnostics) for file "
             f"{self.filename}>"
         )
 
@@ -98,34 +101,35 @@ def parse_tidy_suggestions_yml():
     """Read a YAML file from clang-tidy and create a list of suggestions from it.
     Output is saved to [`tidy_advice`][python_action.__init__.GlobalParser.tidy_advice].
     """
+    yml = {}
     with open("clang_tidy_output.yml", "r", encoding="utf-8") as yml_file:
-        yml = yaml.load(yml_file, Loader=yaml.CLoader)
-        fixit = YMLFixin(yml["MainSourceFile"])
-        for diag_results in yml["Diagnostics"]:
-            # print(diag_results)
-            diag = TidyDiagnostic(diag_results["DiagnosticName"])
-            diag.message = diag_results["DiagnosticMessage"]["Message"]
+        yml = yaml.safe_load(yml_file)
+    fixit = YMLFixit(yml["MainSourceFile"])
+    for diag_results in yml["Diagnostics"]:
+        diag = TidyDiagnostic(diag_results["DiagnosticName"])
+        diag.message = diag_results["DiagnosticMessage"]["Message"]
+        diag.line, diag.cols = get_line_cnt_from_cols(
+            yml["MainSourceFile"], diag_results["DiagnosticMessage"]["FileOffset"]
+        )
+        for replacement in diag_results["DiagnosticMessage"]["Replacements"]:
             line_cnt, cols = get_line_cnt_from_cols(
-                yml["MainSourceFile"], diag_results["DiagnosticMessage"]["FileOffset"]
+                yml["MainSourceFile"], replacement["Offset"]
             )
-            diag.line, diag.cols = (line_cnt, cols)
-            for replacement in diag_results["DiagnosticMessage"]["Replacements"]:
-                line_cnt, cols = get_line_cnt_from_cols(
-                    yml["MainSourceFile"], replacement["Offset"]
+            fix = TidyReplacement(line_cnt, cols, replacement["Length"])
+            fix.text = bytes(replacement["ReplacementText"], encoding="utf-8")
+            if fix.text.startswith(b"header is missing header guard"):
+                print(
+                    "filtering header guard suggestion (making relative to repo root)"
                 )
-                fix = TidyReplacement(line_cnt, cols, replacement["Length"])
-                fix.text = bytes(replacement["ReplacementText"], encoding="utf-8")
-                if fix.text.startswith(b"header is missing header guard"):
-                    print("filtering header guard suggestion (making relative to repo root)")
-                    fix.text = fix.text.replace(CWD_HEADER_GAURD, b"")
-                diag.replacements.append(fix)
-            fixit.diagnostics.append(diag)
-            # filter out absolute header gaurds
-        GlobalParser.tidy_advice.append(fixit)
+                fix.text = fix.text.replace(CWD_HEADER_GAURD, b"")
+            diag.replacements.append(fix)
+        fixit.diagnostics.append(diag)
+        # filter out absolute header gaurds
+    GlobalParser.tidy_advice.append(fixit)
 
 
 def print_fixits():
-    """Print all [`YMLFixin`][python_action.clang_tidy_yml.YMLFixin] objects in
+    """Print all [`YMLFixit`][python_action.clang_tidy_yml.YMLFixit] objects in
     [`tidy_advice`][python_action.__init__.GlobalParser.tidy_advice]."""
     for fix in GlobalParser.tidy_advice:
         for diag in fix.diagnostics:

@@ -1,5 +1,6 @@
 """Parse output from clang-tidy's stdout"""
 import os
+import sys
 import re
 from . import GlobalParser
 
@@ -17,22 +18,28 @@ class TidyNotification:
         note_info (str): The rationale of the notification.
         fixit_lines (list): A `list` of lines (`str`) for the code-block in the notification.
     """
+
     def __init__(self, notification_line: str):
         """
         Args:
             notification_line: The first line in the notification.
         """
+        sliced_line = notification_line.split(":")
+        if sys.platform.startswith("win32") and len(sliced_line) > 5:
+            # sliced_list items 0 & 1 are the path seperated at the ":".
+            # we need to re-assemble the path for correct list expansion (see below)
+            sliced_line = [sliced_line[0] + ":" + sliced_line[1]] + sliced_line[2:]
         (
             self.filename,
             self.line,
             self.cols,
             self.note_type,
             self.note_info,
-        ) = notification_line.split(":")
+        ) = sliced_line
 
         self.diagnostic = re.search("\[.*\]", self.note_info).group(0)
         self.note_info = self.note_info.replace(self.diagnostic, "").strip()
-        self.diagnostic = self.diagnostic[1:-2]
+        self.diagnostic = self.diagnostic[1:-1]
         self.note_type = self.note_type.strip()
         self.line = int(self.line)
         self.cols = int(self.cols)

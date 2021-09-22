@@ -1,7 +1,30 @@
 """The Base module of the `python_action` package. This holds the objects shared by
 multiple modules."""
 import io
-from os import SEEK_SET
+import os
+import logging
+
+try:
+    from rich.logging import RichHandler
+
+    logging.basicConfig(
+        format="%(name)s: %(message)s",
+        handlers=[RichHandler(show_time=False)],
+    )
+
+except ImportError:
+    print("rich module not found")
+    logging.basicConfig()
+
+#: The logging.Logger object used for outputing data.
+logger = logging.getLogger("CPP Linter")
+
+# global constant variables
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", None))
+API_HEADERS = {
+    "Authorization": f"token {GITHUB_TOKEN}",
+    "Accept": "application/vnd.github.v3+json",
+}
 
 
 class Globals:
@@ -11,30 +34,25 @@ class Globals:
     """The accumulated output of clang-tidy (gets appended to OUTPUT)"""
     OUTPUT = ""
     """The accumulated body of the resulting comment that gets posted."""
-    FILES_LINK = ""
-    """The URL used to fetch the list of changed files."""
     FILES = []
     """The reponding payload containing info about changed files."""
     EVENT_PAYLOAD = {}
     """The parsed JSON of the event payload."""
-    DIFF = None
-    """The unified diff for the event. This will be a `unidiff.PatchSet`
-    (`list`) of `unidiff.PatchedFile` objects. Each `unidiff.PatchedFile`
-    object is a `list` of hunks."""
     response_buffer = None
     """A shared response object for `requests` module."""
+
 
 class GlobalParser:
     """Global variables specific to output parsers. Each element in each of the
     following attributes represents a clang-tool's output for 1 source file.
-
     """
+
     tidy_notes = []
     """This can only be a `list` of type [`TidyNotification`][python_action.clang_tidy.TidyNotification]"""
     tidy_advice = []
-    """This can only be a `list` of type [`YMLFixin`][python_action.clang_tidy_yml.YMLFixin]"""
+    """This can only be a `list` of type [`YMLFixit`][python_action.clang_tidy_yml.YMLFixit]"""
     format_advice = []
-    """This can only be a `list` of type [`XMLFixin`][python_action.clang_format_xml.XMLFixin]"""
+    """This can only be a `list` of type [`XMLFixit`][python_action.clang_format_xml.XMLFixit]"""
 
 
 def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
@@ -53,6 +71,7 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
     line_cnt = 1
     last_lf_pos = 0
     cols = 1
+    file_path = file_path.replace("/", os.sep)
     with io.open(file_path, "r", encoding="utf-8", newline="\n") as src_file:
         src_file.seek(0, io.SEEK_END)
         max_len = src_file.tell()
