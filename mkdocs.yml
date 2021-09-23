@@ -19,6 +19,7 @@ theme:
   logo: images/icon_large.png
   features:
     - navigation.top
+  favicon: images/icon_large.png
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
