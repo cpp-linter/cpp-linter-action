@@ -1,5 +1,5 @@
 <p align="center">
- <img src="docs/images/logo.png" alt="icon">
+<img src="docs/images/logo_nobg.png" alt="icon">
 </p>
 <!--intro-start-->
 

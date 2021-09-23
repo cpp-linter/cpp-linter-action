@@ -1,9 +1,9 @@
 site_name: C/C++ Linter Action's Docs
 site_description: "Developer documentation from sources."
-site_url: "https://2bndy5.github.io/cpp-linter-action"
-repo_url: "https://github.com/2bndy5/cpp-linter-action"
+site_url: "https://shenxianpeng.github.io/cpp-linter-action"
+repo_url: "https://github.com/shenxianpeng/cpp-linter-action"
 edit_uri: "blob/master/docs/"
-repo_name: "2bndy5/cpp-linter-action"
+repo_name: "shenxianpeng/cpp-linter-action"
 nav:
   - index.md
   - "Dev Docs":

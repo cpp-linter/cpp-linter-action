@@ -23,10 +23,10 @@ from . import (
     API_HEADERS,
     log_response_msg,
 )
-from .clang_tidy_yml import parse_tidy_suggestions_yml as parse_tidy_advice
+# from .clang_tidy_yml import parse_tidy_suggestions_yml
+# from .clang_format_xml import parse_format_replacements_xml
 from .clang_tidy import parse_tidy_output
-from .clang_format_xml import parse_format_replacements_xml as parse_fmt_advice
-from .thread_comments import remove_bot_comments, list_diff_comments  # , get_review_id
+from .thread_comments import remove_bot_comments, list_diff_comments  #, get_review_id
 
 
 # global constant variables
@@ -242,7 +242,7 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
         with open("clang_tidy_report.txt", "w", encoding="utf-8") as f_out:
             subprocess.run(cmds, stdout=f_out)
         # if os.path.getsize("clang_tidy_output.yml"):
-        #     parse_tidy_advice()  # get clang-tidy fixes from yml
+        #     parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
 
         # run clang-format
         cmds = [
@@ -269,8 +269,7 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
             GlobalParser.tidy_notes.clear()
 
         if os.path.getsize("clang_format_output.xml"):
-            # parse clang-format fixes from YML
-            # parse_fmt_advice(filename.replace("/", os.sep))
+            # parse_format_replacements_xml(filename.replace("/", os.sep))
             if not Globals.OUTPUT:
                 Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
                 Globals.OUTPUT += "Run `clang-format` on the following files\n"
