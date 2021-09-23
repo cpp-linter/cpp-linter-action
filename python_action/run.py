@@ -330,7 +330,7 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
             f"Got {Globals.response_buffer.status_code} from " f"POSTing comment"
         )
         log_response_msg()
-    elif diff_only:
+    if diff_only:
         comments_url = base_url + "pulls/comments/"  # for use with comment_id
         payload = list_diff_comments()
         logger.info(f"Posting {len(payload)} comments")
@@ -390,10 +390,10 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
 
 
 def post_results(diff_only: bool, user_id: int = 41898282):
-    """POST action's results using REST API.
+    """Post action's results using REST API.
 
     Args:
-        diff_only: A flag that forces focus on only changes in the event's diff info.
+        diff_only: This flag enables making/updating comments in the PR's diff info.
         user_id: The user's account ID number. Defaults to the generic bot's ID.
     """
 
@@ -426,7 +426,8 @@ def main():
     capture_clang_tools_output(
         args.version, args.tidy_checks, args.style, args.diff_only
     )
-    post_results(False, 14963867)  # 14963867 is user id for 2bndy5
+    # optionally pass 14963867 as user id for 2bndy5
+    post_results(False)  # False is hard-coded to disable diff comments.
 
 
 if __name__ == "__main__":
