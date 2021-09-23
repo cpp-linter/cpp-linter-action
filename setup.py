@@ -12,11 +12,6 @@ if repo is None:
     REPO += "2bndy5/cpp-linter"
 
 version = "v1.2.1"
-# with open("clang-tidy_output.json", "w", encoding="utf-8") as std_out:
-#     subprocess.run(["git", "describe", "--tags", "--abbrev=0"], stdout=std_out)
-# with open("clang-tidy_output.json", "r", encoding="utf-8") as std_out:
-#     version = std_out.readline().strip("\n")
-#     # print("Version: ", version)
 
 setup(
     name="python_action",
@@ -27,7 +22,7 @@ setup(
     long_description=".. warning:: this is not meant for PyPi (yet)",
     author="Brendan Doherty",
     author_email="2bndy5@gmail.com",
-    install_requires=["requests", "pyyaml"],
+    install_requires=["requests"],  #, "pyyaml"],  # pyyaml is installed with clang-tidy
     license="MIT",
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
