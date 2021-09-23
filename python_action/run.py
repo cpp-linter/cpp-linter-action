@@ -190,6 +190,8 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
             use the relative-most .clang-format configuration file.
         diff_only: A flag that forces focus on only changes in the event's diff info.
     """
+    if GITHUB_EVENT_NAME == "push":
+        diff_only = False  # diff comments are not supported for push events
     for index, file in enumerate(
         Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
     ):
@@ -218,6 +220,10 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
                     line_filter["lines"][-1][1] = line_numb_in_diff
                     line_numb_in_diff += 1
             Globals.FILES[index]["diff_line_map"] = diff_line_map
+            ranges = []
+            for scope in line_filter["lines"]:
+                ranges.append(range(scope[0], scope[1] + 1))
+            Globals.FILES[index]["line_range"] = ranges
             logger.info("line_filter = " + json.dumps(line_filter["lines"]))
 
         # run clang-tidy
@@ -226,17 +232,17 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
             cmds = ["clang-tidy"]
         if checks:
             cmds.append(f"-checks={checks}")
-        cmds.append("--export-fixes=clang_tidy_output.yml")
-        cmds.append(f"--format-style={style}")
+        # cmds.append("--export-fixes=clang_tidy_output.yml")
+        # cmds.append(f"--format-style={style}")
         if diff_only:
             cmds.append(f"--line-filter={json.dumps([line_filter])}")
         cmds.append(filename.replace("/", os.sep))
-        with open("clang_tidy_output.yml", "w", encoding="utf-8"):
-            pass  # clear yml file's content before running clang-tidy
+        # with open("clang_tidy_output.yml", "w", encoding="utf-8"):
+        #     pass  # clear yml file's content before running clang-tidy
         with open("clang_tidy_report.txt", "w", encoding="utf-8") as f_out:
             subprocess.run(cmds, stdout=f_out)
-        if os.path.getsize("clang_tidy_output.yml"):
-            parse_tidy_advice()  # get clang-tidy fixes from yml
+        # if os.path.getsize("clang_tidy_output.yml"):
+        #     parse_tidy_advice()  # get clang-tidy fixes from yml
 
         # run clang-format
         cmds = [
@@ -253,7 +259,7 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
         with open("clang_format_output.xml", "w", encoding="utf-8") as f_out:
             subprocess.run(cmds, stderr=f_out, stdout=f_out)
 
-        if os.path.getsize("clang_tidy_report.txt") and not diff_only:
+        if os.path.getsize("clang_tidy_report.txt"):
             parse_tidy_output()  # get clang-tidy fixes from stdout
             if Globals.PAYLOAD_TIDY:
                 Globals.PAYLOAD_TIDY += "<hr></details>"
@@ -263,12 +269,12 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
             GlobalParser.tidy_notes.clear()
 
         if os.path.getsize("clang_format_output.xml"):
-            parse_fmt_advice(filename.replace("/", os.sep))  # parse clang-format fixes
-            if not diff_only:
-                if not Globals.OUTPUT:
-                    Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
-                    Globals.OUTPUT += "Run `clang-format` on the following files\n"
-                Globals.OUTPUT += f"- [ ] {file['filename']}\n"
+            # parse clang-format fixes from YML
+            # parse_fmt_advice(filename.replace("/", os.sep))
+            if not Globals.OUTPUT:
+                Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
+                Globals.OUTPUT += "Run `clang-format` on the following files\n"
+            Globals.OUTPUT += f"- [ ] {file['filename']}\n"
 
     if Globals.PAYLOAD_TIDY:
         if not Globals.OUTPUT:
@@ -278,31 +284,28 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
         Globals.OUTPUT += "## :speech_balloon: Output from `clang-tidy`\n"
         Globals.OUTPUT += Globals.PAYLOAD_TIDY
 
-    logger.debug("OUTPUT is \n" + Globals.OUTPUT)
 
-
-def post_push_comment(base_url: str, diff_only: bool, user_id: int):
+def post_push_comment(base_url: str, user_id: int):
     """POST action's results for a push event.
 
     Args:
         base_url: The root of the url used to interact with the REST API via `requests`.
-        diff_only: A flag that forces focus on only changes in the event's diff info.
         user_id: The user's account ID number.
     """
     comments_url = base_url + f"commits/{GITHUB_SHA}/comments"
     remove_bot_comments(comments_url, user_id)
 
-    if not diff_only:
+    if Globals.OUTPUT:  # diff comments are not supported for push events
         payload = json.dumps({"body": Globals.OUTPUT})
-        logger.debug("payload body:\n" + json.dumps({"body": Globals.OUTPUT}, indent=2))
-
-    Globals.response_buffer = requests.post(
-        comments_url, headers=API_HEADERS, data=payload
-    )
-
-    logger.info(
-        f"Got {Globals.response_buffer.status_code} response from POSTing comment",
-    )
+        logger.debug("payload body:\n" + json.dumps({"body": Globals.OUTPUT}))
+        Globals.response_buffer = requests.post(
+            comments_url, headers=API_HEADERS, data=payload
+        )
+        logger.info(
+            f"Got {Globals.response_buffer.status_code} response from POSTing comment",
+        )
+        log_response_msg()
+    set_exit_code(1 if Globals.OUTPUT else 0)
 
 
 def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
@@ -315,11 +318,9 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
     """
     comments_url = base_url + f'issues/{Globals.EVENT_PAYLOAD["number"]}/comments'
     remove_bot_comments(comments_url, user_id)
-    reviews_url = base_url + f'pulls/{Globals.EVENT_PAYLOAD["number"]}/'
-    # if diff_only:
-    #     review_id = get_review_id(reviews_url + "reviews", user_id)
 
-    if not diff_only:
+    payload = ""
+    if Globals.OUTPUT:
         payload = json.dumps({"body": Globals.OUTPUT})
         logger.debug("payload body:\n" + json.dumps({"body": Globals.OUTPUT}, indent=2))
         Globals.response_buffer = requests.post(
@@ -328,12 +329,14 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
         logger.info(
             f"Got {Globals.response_buffer.status_code} from " f"POSTing comment"
         )
-        if Globals.response_buffer.status_code > 400:
-            log_response_msg()
-    else:
+        log_response_msg()
+    elif diff_only:
+        comments_url = base_url + "pulls/comments/"  # for use with comment_id
         payload = list_diff_comments()
         logger.info(f"Posting {len(payload)} comments")
+
         # get existing review comments
+        reviews_url = base_url + f'pulls/{Globals.EVENT_PAYLOAD["number"]}/'
         Globals.response_buffer = requests.get(reviews_url + "comments")
         existing_comments = json.loads(Globals.response_buffer.text)
         # filter out comments not made by our bot
@@ -341,31 +344,49 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
             if not comment["body"].startswith("<!-- cpp linter action -->"):
                 del existing_comments[index]
 
-        # conditionally post new comments in the diff
+        # conditionally post comments in the diff
         for i, body in enumerate(payload):
             # check if comment is already there
             already_posted = False
+            comment_id = None
             for comment in existing_comments:
                 if (
                     int(comment["user"]["id"]) == user_id
-                    and comment["body"].find(body["body"]) >= 0
+                    and comment["line"] == body["line"]
                     and comment["path"] == payload[i]["path"]
                 ):
                     already_posted = True
-                    break
-            if already_posted:
+                    if comment["body"] != body["body"]:
+                        comment_id = str(comment["id"])  # use this to update comment
+                    else:
+                        break
+            if already_posted and comment_id is None:
                 logger.info(f"comment {i} already posted")
                 continue  # don't bother reposting the same comment
-            logger.debug(json.dumps(body))
-            Globals.response_buffer = requests.post(
-                reviews_url + "comments", headers=API_HEADERS, data=json.dumps(body)
-            )
-            logger.info(
-                f"Got {Globals.response_buffer.status_code} from "
-                f"POSTing review comment {i}"
-            )
-            if Globals.response_buffer.status_code != 201:
+
+            # update ot create a review comment (in the diff)
+            logger.debug(f"Payload {i} body = " + json.dumps(body))
+            if comment_id is not None:
+                Globals.response_buffer = requests.patch(
+                    comments_url + comment_id,
+                    headers=API_HEADERS,
+                    data=json.dumps({"body": body["body"]}),
+                )
+                logger.info(
+                    f"Got {Globals.response_buffer.status_code} "
+                    f"from PATCHing comment {i} ({comment_id})"
+                )
                 log_response_msg()
+            else:
+                Globals.response_buffer = requests.post(
+                    reviews_url + "comments", headers=API_HEADERS, data=json.dumps(body)
+                )
+                logger.info(
+                    f"Got {Globals.response_buffer.status_code} from "
+                    f"POSTing review comment {i}"
+                )
+                log_response_msg()
+    set_exit_code(1 if payload else 0)
 
 
 def post_results(diff_only: bool, user_id: int = 41898282):
@@ -384,7 +405,7 @@ def post_results(diff_only: bool, user_id: int = 41898282):
     if GITHUB_EVENT_NAME == "pull_request":
         post_pr_comment(base_url, diff_only, user_id)
     elif GITHUB_EVENT_NAME == "push":
-        post_push_comment(base_url, diff_only, user_id)
+        post_push_comment(base_url, user_id)
 
 
 def main():
@@ -405,8 +426,7 @@ def main():
     capture_clang_tools_output(
         args.version, args.tidy_checks, args.style, args.diff_only
     )
-    set_exit_code(0)
-    post_results(args.diff_only, 14963867)  # 14963867 is user id for 2bndy5
+    post_results(False, 14963867)  # 14963867 is user id for 2bndy5
 
 
 if __name__ == "__main__":

@@ -4,8 +4,11 @@ import io
 import os
 import logging
 
+FOUND_RICH_LIB = False
 try:
     from rich.logging import RichHandler
+
+    FOUND_RICH_LIB = True
 
     logging.basicConfig(
         format="%(name)s: %(message)s",
@@ -13,11 +16,12 @@ try:
     )
 
 except ImportError:
-    print("rich module not found")
     logging.basicConfig()
 
 #: The logging.Logger object used for outputing data.
 logger = logging.getLogger("CPP Linter")
+if not FOUND_RICH_LIB:
+    logger.debug("rich module not found")
 
 # global constant variables
 GITHUB_SHA = os.getenv("GITHUB_SHA", "293af27ec15d6094a5308fe655a7e111e5b8721a")
@@ -93,7 +97,5 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
 
 def log_response_msg():
     """Output the response buffer's message on failed request"""
-    logger.error(
-        "response returned message: %s",
-        Globals.response_buffer.text
-    )
+    if Globals.response_buffer.status_code >= 400:
+        logger.error("response returned message: %s", Globals.response_buffer.text)

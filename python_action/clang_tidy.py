@@ -73,10 +73,17 @@ def parse_tidy_output() -> None:
                 GlobalParser.tidy_notes.append(notification)
             elif notification is not None:
                 notification.fixit_lines.append(line)
-    # for notification in GlobalParser.tidy_notes:
-    #     print("found", len(GlobalParser.tidy_notes), "tidy_notes")
-    #     print(repr(notification))
+
+
+def print_fixits():
+    """Print out all clang-tidy notifications from stdout (which are saved to
+    clang_tidy_report.txt and allocated to
+    [`tidy_notes`][python_action.__init__.GlobalParser.tidy_notes]."""
+    for notification in GlobalParser.tidy_notes:
+        print("found", len(GlobalParser.tidy_notes), "tidy_notes")
+        print(repr(notification))
 
 
 if __name__ == "__main__":
     parse_tidy_output()
+    print_fixits()

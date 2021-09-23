@@ -1,17 +1,67 @@
 """Parse output from clang-format's XML suggestions."""
+import os
 import xml.etree.ElementTree as ET
 from . import GlobalParser, get_line_cnt_from_cols
+
+class FormatReplacement:
+    """An object representing a single replacement.
+
+    Attributes:
+        cols (int): The columns number of where the suggestion starts on the line
+        null_len (int): The number of bytes removed by suggestion
+        text (str): The `bytearray` of the suggestion
+    """
+
+    def __init__(self, cols: int, null_len: int, text: str) -> None:
+        """
+        Args:
+            cols: The columns number of where the suggestion starts on the line
+            null_len: The number of bytes removed by suggestion
+            text: The `bytearray` of the suggestion
+        """
+        self.cols = cols
+        self.null_len = null_len
+        self.text = text
+
+    def __repr__(self) -> str:
+        return (
+            f"<FormatReplacement at cols {self.cols} removes {self.null_len} bytes"
+            f" adds {len(self.text)} bytes>"
+        )
+
+class FormatReplacementLine:
+    """An object that represents a replacement(s) for a single line.
+
+    Attributes:
+        line (int): The line number of where the suggestion starts
+        replacements (list): A list of
+            [`FormatReplacement`][python_action.clang_format_xml.FormatReplacement]
+            object(s) representing suggestions.
+    """
+
+    def __init__(self, line_numb: int):
+        """
+        Args:
+            line_numb: The line number of about the replacements
+        """
+        self.line = line_numb
+        self.replacements = []
+
+    def __repr__(self):
+        return (
+            f"<FormatReplacementLine @ line {self.line} "
+            f"with {len(self.replacements)} replacements>"
+        )
 
 
 class XMLFixit:
     """A single object to represent each suggestion.
 
     Attributes:
-        filename (str): The source file that the suggestion concerns
-        line (int): The line number of where the suggestion starts
-        cols (int): The columns number of where the suggestion starts on the line
-        null_len (int): The number of bytes removed by suggestion
-        text (bytes): The `bytearray` of the suggestion
+        filename (str): The source file that the suggestion concerns.
+        replaced_lines (list): A list of
+            [`FormatReplacementLine`][python_action.clang_format_xml.FormatReplacementLine]
+            representing replacement(s) on a single line.
     """
 
     def __init__(self, filename: str):
@@ -20,14 +70,14 @@ class XMLFixit:
             filename: The source file's name for which the contents of the xml
                 file exported by clang-tidy.
         """
-        self.filename = filename  #: The source file that the suggestion concerns
-        self.line = 0  #: The line number of where the suggestion starts
-        self.cols = 0  #: The columns number of where the suggestion starts on the line
-        self.null_len = 0  #: The number of bytes removed by suggestion
-        self.text = b""  #: The `bytearray` of the suggestion
+        self.filename = filename.replace(os.sep, "/")
+        self.replaced_lines = []
 
     def __repr__(self) -> str:
-        return f"<XMLFixit @ line {self.line} cols {self.cols} for {self.filename}>"
+        return (
+            f"<XMLFixit with {len(self.replaced_lines)} lines of "
+            f"replacements for {self.filename}>"
+        )
 
 
 def parse_format_replacements_xml(src_filename: str):
@@ -39,22 +89,34 @@ def parse_format_replacements_xml(src_filename: str):
             file exported by clang-tidy.
     """
     tree = ET.parse("clang_format_output.xml")
-    fixin = XMLFixit(src_filename)
+    fixit = XMLFixit(src_filename)
     for child in tree.getroot():
         if child.tag == "replacement":
             offset = int(child.attrib["offset"])
-            fixin.line, fixin.cols = get_line_cnt_from_cols(src_filename, offset)
-            fixin.null_len = int(child.attrib["length"])
-            fixin.text = "" if child.text is None else child.text
-    GlobalParser.format_advice.append(fixin)
+            line, cols = get_line_cnt_from_cols(src_filename, offset)
+            null_len = int(child.attrib["length"])
+            text = "" if child.text is None else child.text
+            fix = FormatReplacement(cols, null_len, text)
+            if not fixit.replaced_lines or (
+                fixit.replaced_lines and line != fixit.replaced_lines[-1].line
+            ):
+                line_fix = FormatReplacementLine(line)
+                line_fix.replacements.append(fix)
+                fixit.replaced_lines.append(line_fix)
+            elif fixit.replaced_lines and line == fixit.replaced_lines[-1].line:
+                fixit.replaced_lines[-1].replacements.append(fix)
+    GlobalParser.format_advice.append(fixit)
 
 
 def print_fixits():
     """Print all [`XMLFixit`][python_action.clang_format_xml.XMLFixit] objects in
     [`format_advice`][python_action.__init__.GlobalParser.format_advice]."""
-    for fixin in GlobalParser.format_advice:
-        if isinstance(fixin, XMLFixit):
-            print(repr(fixin))
+    for fixit in GlobalParser.format_advice:
+        print(repr(fixit))
+        for line_fix in fixit.replaced_lines:
+            print("    " + repr(line_fix))
+            for fix in line_fix.replacements:
+                print("\t" + repr(fix))
 
 
 if __name__ == "__main__":

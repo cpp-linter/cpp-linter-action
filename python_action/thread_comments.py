@@ -1,5 +1,6 @@
 """A module to house the various functions for traversing/adjusting comments"""
 import os
+from typing import Union
 import requests
 import json
 from . import Globals, GlobalParser, logger, API_HEADERS, GITHUB_SHA, log_response_msg
@@ -12,8 +13,6 @@ def remove_bot_comments(comments_url: str, user_id: int):
     Args:
         comments_url: The URL used to fetch the comments.
         user_id: The user's account id number.
-    Returns:
-        The number of comments for the given URL's thread.
     """
     logger.info(f"comments_url: {comments_url}")
     Globals.response_buffer = requests.get(comments_url)
@@ -35,6 +34,7 @@ def remove_bot_comments(comments_url: str, user_id: int):
                 f"Got {Globals.response_buffer.status_code} from DELETE "
                 f"{comment['url'][comment['url'].find('.com') + 4 :]}"
             )
+            log_response_msg()
             del comments[i]
         logger.debug(
             f'comment id {comment["id"]} from user {comment["user"]["login"]}'
@@ -44,7 +44,7 @@ def remove_bot_comments(comments_url: str, user_id: int):
         json.dump(comments, json_comments, indent=4)
 
 
-def list_diff_comments():
+def list_diff_comments() -> list:
     """Aggregate list of comments for use in the event's diff. This function assumes
     that the CLI option `--diff-only` is set to True.
 
@@ -55,7 +55,8 @@ def list_diff_comments():
     for index, fixit in enumerate(GlobalParser.tidy_advice):
         for diag in fixit.diagnostics:
             # base body of comment
-            body = "<!-- cpp linter action -->\n**" + diag.name + "**\n>" + diag.message
+            body = "<!-- cpp linter action -->\n## :speech_balloon: Clang-tidy\n**"
+            body += diag.name + "**\n>" + diag.message
 
             # assemble a suggestion (only if for a single line)
             fix_lines = []  # a list of line numbers for the suggested fixes
@@ -72,23 +73,25 @@ def list_diff_comments():
             with open(filename) as temp:
                 lines = temp.readlines()
 
-            for i, fix in enumerate(diag.replacements):
-                line = lines[fix.line - 1]
+            # aggregate clang-tidy advice
+            for i, tidy_fix in enumerate(diag.replacements):
+                line = lines[tidy_fix.line - 1]
                 if not fix_lines:
-                    fix_lines.append(fix.line)
-                elif fix.line not in fix_lines:
+                    fix_lines.append(tidy_fix.line)
+                elif tidy_fix.line not in fix_lines:
                     is_multiline_fix = True
                     break
-                if i:  # if this isn't the first fix for the same line
+                if i:  # if this isn't the first tidy_fix for the same line
                     last_fix = diag.replacements[i - 1]
-                    suggestion += line[
-                        last_fix.cols + last_fix.null_len - 1 : fix.cols - 1
-                    ] + fix.text.decode()
+                    suggestion += (
+                        line[last_fix.cols + last_fix.null_len - 1 : tidy_fix.cols - 1]
+                        + tidy_fix.text.decode()
+                    )
                 else:
-                    suggestion += line[: fix.cols - 1] + fix.text.decode()
+                    suggestion += line[: tidy_fix.cols - 1] + tidy_fix.text.decode()
             if not is_multiline_fix and diag.replacements:
                 last_fix = diag.replacements[len(diag.replacements) - 1]
-                suggestion += line[last_fix.cols + last_fix.null_len - 1: -1] + "\n```"
+                suggestion += line[last_fix.cols + last_fix.null_len - 1 : -1] + "\n```"
                 body += suggestion
 
             results.append(
@@ -100,10 +103,75 @@ def list_diff_comments():
                     "side": "RIGHT",
                 }
             )
+
+    # aggregate clang-format advice
+    for index, fmt_advice in enumerate(GlobalParser.format_advice):
+
+        # get original code
+        filename = Globals.FILES[index]["filename"].replace("/", os.sep)
+        if not os.path.exists(filename):
+            # the file had to be downloaded (no git checkout).
+            # thus use only the filename (without the path to the file)
+            filename = os.path.split(filename)[1]
+        lines = []  # the list of lines from the src file
+        with open(filename) as temp:
+            lines = temp.readlines()
+        ranges = Globals.FILES[index]["line_range"]
+        line = ""  # the line that concerns the fix
+        for fixed_line in fmt_advice.replaced_lines:
+            # clang-format can include advice that starts/ends outside the diff's domain
+            in_range = False
+            for scope in ranges:
+                if fixed_line.line in scope:
+                    in_range = True
+            if not in_range:
+                continue  # line is out of scope for diff, so skip this fix
+
+            # assemble the suggestion
+            body = "## :scroll: clang-format advice\n```suggestion\n"
+            line = lines[fixed_line.line - 1]
+            print(fixed_line.line, ">>>", line[:-1])
+            for fix_index, line_fix in enumerate(fixed_line.replacements):
+                print(repr(line_fix), f">>> {line_fix.text.encode('utf-8')}")
+                if fix_index:
+                    last_fix = fixed_line.replacements[fix_index - 1]
+                    body += line[
+                        last_fix.cols + last_fix.null_len - 1 : line_fix.cols - 1
+                    ]
+                    body += line_fix.text
+                else:
+                    body += line[: line_fix.cols - 1] + line_fix.text
+            last_fix = fixed_line.replacements[-1]
+            body += line[last_fix.cols + last_fix.null_len - 1 : -1] + "\n```"
+            print("body <<<", body)
+
+            # check for comments from clang-tidy on the same line
+            comment_index = None
+            for i, payload in enumerate(results):
+                if (
+                    payload["line"] == fixed_line.line
+                    and payload["path"] == fmt_advice.filename
+                ):
+                    comment_index = i  # mark this comment for concatenation
+                    break
+            if comment_index is not None:
+                # append clang-format advice to clang-tidy output/suggestion
+                results[i]["body"] += "\n" + body
+            else:
+                # create a suggestion from clang-format advice
+                results.append(
+                    {
+                        "body": body,
+                        "commit_id": GITHUB_SHA,
+                        "line": fixed_line.line,
+                        "path": fmt_advice.filename,
+                        "side": "RIGHT",
+                    }
+                )
     return results
 
 
-def get_review_id(reviews_url: str, user_id: int):
+def get_review_id(reviews_url: str, user_id: int) -> int:
     """Dismiss all stale reviews (only the ones made by our bot).
 
     Args:
@@ -141,8 +209,16 @@ def get_review_id(reviews_url: str, user_id: int):
     return review_id
 
 
-def find_review(reviews: dict, user_id: int):
-    """Find a review created by a certain user ID."""
+def find_review(reviews: dict, user_id: int) -> Union[int, None]:
+    """Find a review created by a certain user ID.
+
+    Args:
+        reviews: the JSON object fetched via GIT REST API.
+        user_id: The user account's ID number
+
+    Returns:
+        An ID that corresponds to the specified `user_id`.
+    """
     review_id = None
     for review in reviews:
         if int(review["user"]["id"]) == user_id and review["body"].startswith(

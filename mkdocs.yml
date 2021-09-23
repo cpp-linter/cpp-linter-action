@@ -12,6 +12,7 @@ nav:
     - API Reference/python_action.clang_tidy.md
     - API Reference/python_action.clang_tidy_yml.md
     - API Reference/python_action.clang_format_xml.md
+    - API Reference/python_action.thread_comments.md
 
 theme:
   name: material
