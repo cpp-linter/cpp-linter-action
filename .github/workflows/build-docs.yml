@@ -25,7 +25,7 @@ jobs:
           name: "cpp linter action dev docs"
           path: site/**
       - name: upload to github pages
-        if: ${{ github.event_name == 'release'}}
+        # if: ${{ github.event_name == 'release'}}
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -50,6 +50,8 @@ jobs:
 | `tidy-checks` | 'boost-\*,bugprone-\*,performance-\*,<br>readability-\*,portability-\*,<br>modernize-\*,clang-analyzer-\*,<br>cppcoreguidelines-\*' | A string of regex-like patterns specifying what checks clang-tidy will use.|
 | `repo-root` | '.' | The relative path to the repository root directory. This path is relative to path designated by the runner's GITHUB_WORKSPACE environment variable. |
 | `version` | '10' | The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, 12. |
+| `diff-only` | 'false' | Set this option to 'true' to only analyse changes in the event's diff. |
+| `verbosity` | '10' | This controls the action's verbosity in the workflow's logs. Supported options are defined by the python logging library's log levels. |
 
 ### Outputs
 
@@ -57,7 +59,7 @@ This action creates 1 output variable named `checks-failed`. Even if the linting
 
 ## Example
 <!--intro-end-->
-![github-actions bot](./docs/images/result.png)
+![github-actions bot](./docs/images/demo_comment.png)
 <!--footer-start-->
 Example comment is [here](https://github.com/shenxianpeng/cpp-linter-action/pull/5#commitcomment-55252014).
 

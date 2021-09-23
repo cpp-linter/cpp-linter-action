@@ -6,7 +6,7 @@
    end="<!--intro-end-->"
 %}
 
-![sample picture](images/result.png)
+![sample picture](images/demo_comment.png)
 
 {%
    include-markdown "../README.md"
