@@ -25,3 +25,5 @@ jobs:
           name: "cpp linter action dev docs"
           path: |
             site/**
+      - name: push to gh-pages
+        run: mkdocs gh-deploy
