@@ -1,4 +1,4 @@
-name: build-dev-docs
+name: dev-docs
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     types: [opened]
 
 jobs:
-  build-mkdocs-docs:
+  using-mkdocs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
