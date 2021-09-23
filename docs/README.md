@@ -6,6 +6,7 @@ From the root directory of the repository, do the following to steps
     ```
     pip install -r docs/requirements.txt
     ```
+    On Linux, you may need to use `pip3` instead.
 
 2. Build the docs
 
