@@ -23,7 +23,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: "cpp linter action dev docs"
-          path: |
-            site/**
-      - name: push to gh-pages
-        run: mkdocs gh-deploy
+          path: site/**
+      - name: upload to github pages
+        if: ${{ github.event_name == 'release'}}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: site
