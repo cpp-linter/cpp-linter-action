@@ -1,8 +1,8 @@
 """A module to house the various functions for traversing/adjusting comments"""
 import os
 from typing import Union
-import requests
 import json
+import requests
 from . import Globals, GlobalParser, logger, API_HEADERS, GITHUB_SHA, log_response_msg
 
 
@@ -14,7 +14,7 @@ def remove_bot_comments(comments_url: str, user_id: int):
         comments_url: The URL used to fetch the comments.
         user_id: The user's account id number.
     """
-    logger.info(f"comments_url: {comments_url}")
+    logger.info("comments_url: %s", comments_url)
     Globals.response_buffer = requests.get(comments_url)
     comments = Globals.response_buffer.json()
     for i, comment in enumerate(comments):
@@ -37,8 +37,10 @@ def remove_bot_comments(comments_url: str, user_id: int):
             log_response_msg()
             del comments[i]
         logger.debug(
-            f'comment id {comment["id"]} from user {comment["user"]["login"]}'
-            f' ({comment["user"]["id"]})'
+            "comment id %d from user %s (%d)",
+            comment["id"],
+            comment["user"]["login"],
+            comment["user"]["id"]
         )
     with open("comments.json", "w", encoding="utf-8") as json_comments:
         json.dump(comments, json_comments, indent=4)
@@ -130,9 +132,9 @@ def list_diff_comments() -> list:
             # assemble the suggestion
             body = "## :scroll: clang-format advice\n```suggestion\n"
             line = lines[fixed_line.line - 1]
-            print(fixed_line.line, ">>>", line[:-1])
+            logger.debug("%d >>> %s", fixed_line.line, line[:-1])
             for fix_index, line_fix in enumerate(fixed_line.replacements):
-                print(repr(line_fix), f">>> {line_fix.text.encode('utf-8')}")
+                logger.debug("%s >>> %s", repr(line_fix), line_fix.text.encode("utf-8"))
                 if fix_index:
                     last_fix = fixed_line.replacements[fix_index - 1]
                     body += line[
@@ -143,7 +145,7 @@ def list_diff_comments() -> list:
                     body += line[: line_fix.cols - 1] + line_fix.text
             last_fix = fixed_line.replacements[-1]
             body += line[last_fix.cols + last_fix.null_len - 1 : -1] + "\n```"
-            print("body <<<", body)
+            logger.debug("body <<< %s", body)
 
             # check for comments from clang-tidy on the same line
             comment_index = None
@@ -180,7 +182,7 @@ def get_review_id(reviews_url: str, user_id: int) -> int:
     Returns:
         The ID number of the review created by the action's generic bot.
     """
-    logger.info(f"  review_url: {reviews_url}")
+    logger.info("  review_url: %s", reviews_url)
     Globals.response_buffer = requests.get(reviews_url)
     review_id = find_review(json.loads(Globals.response_buffer.text), user_id)
     if review_id is None:  # create a PR review
@@ -227,5 +229,5 @@ def find_review(reviews: dict, user_id: int) -> Union[int, None]:
             review_id = int(review["id"])
             break  # there will only be 1 review from this action, so break when found
 
-    logger.info(f"   review_id: {review_id}")
+    logger.info("   review_id: %d", review_id)
     return review_id

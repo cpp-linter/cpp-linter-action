@@ -53,7 +53,8 @@ class GlobalParser:
     """
 
     tidy_notes = []
-    """This can only be a `list` of type [`TidyNotification`][python_action.clang_tidy.TidyNotification]"""
+    """This can only be a `list` of type
+    [`TidyNotification`][python_action.clang_tidy.TidyNotification]"""
     tidy_advice = []
     """This can only be a `list` of type [`YMLFixit`][python_action.clang_tidy_yml.YMLFixit]"""
     format_advice = []
@@ -91,7 +92,6 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
                     src_file.seek(0, io.SEEK_SET)
                     line_cnt = 1
         cols = src_file.tell() - last_lf_pos
-        src_file.newlines
     return (line_cnt, cols)
 
 

@@ -11,13 +11,12 @@ REPO += "" if repo is None else repo
 if repo is None:
     REPO += "2bndy5/cpp-linter"
 
-version = "v1.2.1"
 
 setup(
     name="python_action",
     # use_scm_version=True,
     # setup_requires=["setuptools_scm"],
-    version=version.lower().lstrip("v"),
+    version="v1.2.1",
     description=__doc__,
     long_description=".. warning:: this is not meant for PyPi (yet)",
     author="Brendan Doherty",
@@ -32,9 +31,9 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     keywords="clang clang-tidy clang-format",
-    packages = ["python_action"],
+    packages=["python_action"],
 
-    entry_points = {"console_scripts": ["run-action=python_action.run:main"]},
+    entry_points={"console_scripts": ["run-action=python_action.run:main"]},
     # Specifiy your homepage URL for your project here
     url=REPO,
     download_url=f"{REPO}/releases",
