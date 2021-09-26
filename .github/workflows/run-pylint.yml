@@ -1,9 +1,6 @@
 name: "Check python code"
 
-on:
-  push:
-  pull_request:
-    types: [opened]
+on: [push, pull_request]
 
 jobs:
   using-pylint:
