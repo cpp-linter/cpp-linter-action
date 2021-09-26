@@ -13,7 +13,9 @@ jobs:
       - uses: actions/setup-python@v1
         with:
           python-version: 3.7
-      - name: Install pylint
-        run: python3 -m pip install --upgrade pylint
+      - name: Install pylint and action deps
+        run: |
+          python3 -m pip install --upgrade pylint
+          python3 -m pip install -r requirements.txt
       - name: run pylint
         run: pylint python_action/**
