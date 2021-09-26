@@ -31,8 +31,9 @@ def remove_bot_comments(comments_url: str, user_id: int):
                 headers=API_HEADERS,
             )
             logger.info(
-                f"Got {Globals.response_buffer.status_code} from DELETE "
-                f"{comment['url'][comment['url'].find('.com') + 4 :]}"
+                "Got %d from DELETE %s",
+                Globals.response_buffer.status_code,
+                comment['url'][comment['url'].find('.com') + 4 :]
             )
             log_response_msg()
             del comments[i]

@@ -23,10 +23,11 @@ from . import (
     API_HEADERS,
     log_response_msg,
 )
+
 # from .clang_tidy_yml import parse_tidy_suggestions_yml
 # from .clang_format_xml import parse_format_replacements_xml
 from .clang_tidy import parse_tidy_output
-from .thread_comments import remove_bot_comments, list_diff_comments  #, get_review_id
+from .thread_comments import remove_bot_comments, list_diff_comments  # , get_review_id
 
 
 # global constant variables
@@ -99,7 +100,7 @@ def set_exit_code(override: int = None):
 def get_list_of_changed_files():
     """Fetch the JSON payload of the event's changed files. Sets the
     [`FILES`][python_action.__init__.Globals.FILES] attribute."""
-    logger.info(f"processing {GITHUB_EVENT_NAME} event")
+    logger.info("processing %s event", GITHUB_EVENT_NAME)
     with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
         Globals.EVENT_PAYLOAD = json.load(payload)
         logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
@@ -110,9 +111,9 @@ def get_list_of_changed_files():
     elif GITHUB_EVENT_NAME == "push":
         files_link += f"commits/{GITHUB_SHA}"
     else:
-        logger.warn("triggered on unsupported event.")
+        logger.warning("triggered on unsupported event.")
         sys.exit(set_exit_code(0))
-    logger.info(f"Fetching files list from url: {files_link}")
+    logger.info("Fetching files list from url: %s", files_link)
     Globals.FILES = requests.get(files_link).json()
     # logger.debug("files json:\n" + json.dumps(Globals.FILES, indent=2))
 
@@ -156,7 +157,7 @@ def filter_out_non_source_files(ext_list: str, diff_only: bool):
             ".cpp_linter_action_changed_files.json", "w", encoding="utf-8"
         ) as temp:
             json.dump(Globals.FILES, temp)
-    logger.info("File names:\n\t{}".format("\n\t".join([f["filename"] for f in files])))
+    logger.info("File names:\n\t%s", "\n\t".join([f["filename"] for f in files]))
 
 
 def verify_files_are_present():
@@ -172,7 +173,7 @@ def verify_files_are_present():
     ):
         file_name = file["filename"].replace("/", os.sep)
         if not os.path.exists(file_name):
-            logger.info(f'Downloading file from url: {file["raw_url"]}')
+            logger.info("Downloading file from url: %s", file["raw_url"])
             download = requests.get(file["raw_url"])
             with open(os.path.split(file_name)[1], "w", encoding="utf-8") as temp:
                 temp.write(download)
@@ -198,7 +199,7 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
         filename = file["filename"]
         if not os.path.exists(file["filename"]):
             filename = os.path.split(file["raw_url"])[1]
-        logger.info(f"Performing checkup on {filename}")
+        logger.info("Performing checkup on %s", filename)
 
         if diff_only:
             # get diff details for the file's changes
@@ -224,7 +225,7 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
             for scope in line_filter["lines"]:
                 ranges.append(range(scope[0], scope[1] + 1))
             Globals.FILES[index]["line_range"] = ranges
-            logger.info("line_filter = " + json.dumps(line_filter["lines"]))
+            logger.info("line_filter = %s", json.dumps(line_filter["lines"]))
 
         # run clang-tidy
         cmds = [f"clang-tidy-{version}"]
@@ -296,12 +297,12 @@ def post_push_comment(base_url: str, user_id: int):
 
     if Globals.OUTPUT:  # diff comments are not supported for push events
         payload = json.dumps({"body": Globals.OUTPUT})
-        logger.debug("payload body:\n" + json.dumps({"body": Globals.OUTPUT}))
+        logger.debug("payload body:\n%s", json.dumps({"body": Globals.OUTPUT}))
         Globals.response_buffer = requests.post(
             comments_url, headers=API_HEADERS, data=payload
         )
         logger.info(
-            f"Got {Globals.response_buffer.status_code} response from POSTing comment",
+            "Got %d response from POSTing comment", Globals.response_buffer.status_code
         )
         log_response_msg()
     set_exit_code(1 if Globals.OUTPUT else 0)
@@ -321,18 +322,18 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
     payload = ""
     if Globals.OUTPUT:
         payload = json.dumps({"body": Globals.OUTPUT})
-        logger.debug("payload body:\n" + json.dumps({"body": Globals.OUTPUT}, indent=2))
+        logger.debug(
+            "payload body:\n%s", json.dumps({"body": Globals.OUTPUT}, indent=2)
+        )
         Globals.response_buffer = requests.post(
             comments_url, headers=API_HEADERS, data=payload
         )
-        logger.info(
-            f"Got {Globals.response_buffer.status_code} from " f"POSTing comment"
-        )
+        logger.info("Got %d from POSTing comment", Globals.response_buffer.status_code)
         log_response_msg()
     if diff_only:
         comments_url = base_url + "pulls/comments/"  # for use with comment_id
         payload = list_diff_comments()
-        logger.info(f"Posting {len(payload)} comments")
+        logger.info("Posting %d comments", len(payload))
 
         # get existing review comments
         reviews_url = base_url + f'pulls/{Globals.EVENT_PAYLOAD["number"]}/'
@@ -364,7 +365,7 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
                 continue  # don't bother reposting the same comment
 
             # update ot create a review comment (in the diff)
-            logger.debug(f"Payload {i} body = " + json.dumps(body))
+            logger.debug("Payload %d body = %s", i, json.dumps(body))
             if comment_id is not None:
                 Globals.response_buffer = requests.patch(
                     comments_url + comment_id,
@@ -372,8 +373,10 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
                     data=json.dumps({"body": body["body"]}),
                 )
                 logger.info(
-                    f"Got {Globals.response_buffer.status_code} "
-                    f"from PATCHing comment {i} ({comment_id})"
+                    "Got %d from PATCHing comment %d (%d)",
+                    Globals.response_buffer.status_code,
+                    i,
+                    comment_id,
                 )
                 log_response_msg()
             else:
@@ -381,8 +384,9 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
                     reviews_url + "comments", headers=API_HEADERS, data=json.dumps(body)
                 )
                 logger.info(
-                    f"Got {Globals.response_buffer.status_code} from "
-                    f"POSTing review comment {i}"
+                    "Got %d from POSTing review comment %d",
+                    Globals.response_buffer.status_code,
+                    i,
                 )
                 log_response_msg()
     set_exit_code(1 if payload else 0)
