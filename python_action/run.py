@@ -241,7 +241,7 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
         # with open("clang_tidy_output.yml", "w", encoding="utf-8"):
         #     pass  # clear yml file's content before running clang-tidy
         with open("clang_tidy_report.txt", "w", encoding="utf-8") as f_out:
-            subprocess.run(cmds, stdout=f_out)
+            subprocess.run(cmds, stdout=f_out, check=True)
         # if os.path.getsize("clang_tidy_output.yml"):
         #     parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
 
@@ -258,7 +258,7 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
         cmds.append(filename.replace("/", os.sep))
 
         with open("clang_format_output.xml", "w", encoding="utf-8") as f_out:
-            subprocess.run(cmds, stderr=f_out, stdout=f_out)
+            subprocess.run(cmds, stderr=f_out, stdout=f_out, check=True)
 
         if os.path.getsize("clang_tidy_report.txt"):
             parse_tidy_output()  # get clang-tidy fixes from stdout
@@ -361,7 +361,7 @@ def post_pr_comment(base_url: str, diff_only: bool, user_id: int):
                     else:
                         break
             if already_posted and comment_id is None:
-                logger.info(f"comment {i} already posted")
+                logger.info("comment %d already posted", i)
                 continue  # don't bother reposting the same comment
 
             # update ot create a review comment (in the diff)

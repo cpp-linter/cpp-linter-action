@@ -42,7 +42,7 @@ set_exit_code () {
 get_list_of_changed_files() {
    # echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
    echo "processing $GITHUB_EVENT_NAME event"
-   $(cat "$GITHUB_EVENT_PATH" | jq '.')
+   jq '.' "$GITHUB_EVENT_PATH"
 
    # Use git REST API payload
    if [[ "$GITHUB_EVENT_NAME" == "push" ]]
