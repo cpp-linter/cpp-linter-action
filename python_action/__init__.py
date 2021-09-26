@@ -24,7 +24,7 @@ if not FOUND_RICH_LIB:
     logger.debug("rich module not found")
 
 # global constant variables
-GITHUB_SHA = os.getenv("GITHUB_SHA", "293af27ec15d6094a5308fe655a7e111e5b8721a")
+GITHUB_SHA = os.getenv("GITHUB_SHA", "cf989be19c74ad1d27614badca3bc7f63eb73806")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", None))
 API_HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}",
@@ -56,9 +56,11 @@ class GlobalParser:
     """This can only be a `list` of type
     [`TidyNotification`][python_action.clang_tidy.TidyNotification]"""
     tidy_advice = []
-    """This can only be a `list` of type [`YMLFixit`][python_action.clang_tidy_yml.YMLFixit]"""
+    """This can only be a `list` of type
+    [`YMLFixit`][python_action.clang_tidy_yml.YMLFixit]"""
     format_advice = []
-    """This can only be a `list` of type [`XMLFixit`][python_action.clang_format_xml.XMLFixit]"""
+    """This can only be a `list` of type
+    [`XMLFixit`][python_action.clang_format_xml.XMLFixit]"""
 
 
 def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:

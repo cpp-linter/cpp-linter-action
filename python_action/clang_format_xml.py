@@ -60,7 +60,8 @@ class XMLFixit:
     Attributes:
         filename (str): The source file that the suggestion concerns.
         replaced_lines (list): A list of
-            [`FormatReplacementLine`][python_action.clang_format_xml.FormatReplacementLine]
+            [`FormatReplacementLine`][
+                python_action.clang_format_xml.FormatReplacementLine]
             representing replacement(s) on a single line.
     """
 

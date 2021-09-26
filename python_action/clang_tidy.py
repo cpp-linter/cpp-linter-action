@@ -16,7 +16,8 @@ class TidyNotification:
         cols (int): The columns of the line that triggered the notification.
         note_type (str): The priority level of notification (warning/error).
         note_info (str): The rationale of the notification.
-        fixit_lines (list): A `list` of lines (`str`) for the code-block in the notification.
+        fixit_lines (list): A `list` of lines (`str`) for the code-block in the
+            notification.
     """
 
     def __init__(self, notification_line: str):

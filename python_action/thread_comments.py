@@ -33,7 +33,7 @@ def remove_bot_comments(comments_url: str, user_id: int):
             logger.info(
                 "Got %d from DELETE %s",
                 Globals.response_buffer.status_code,
-                comment['url'][comment['url'].find('.com') + 4 :]
+                comment["url"][comment["url"].find(".com") + 4 :],
             )
             log_response_msg()
             del comments[i]
@@ -41,19 +41,15 @@ def remove_bot_comments(comments_url: str, user_id: int):
             "comment id %d from user %s (%d)",
             comment["id"],
             comment["user"]["login"],
-            comment["user"]["id"]
+            comment["user"]["id"],
         )
     with open("comments.json", "w", encoding="utf-8") as json_comments:
         json.dump(comments, json_comments, indent=4)
 
 
-def list_diff_comments() -> list:
-    """Aggregate list of comments for use in the event's diff. This function assumes
-    that the CLI option `--diff-only` is set to True.
-
-    Returns:
-        A list of comments (each element as json content).
-    """
+def aggregate_tidy_advice() -> list:
+    """Aggregate a list of json contents representing advice from clang-tidy
+    suggestions."""
     results = []
     for index, fixit in enumerate(GlobalParser.tidy_advice):
         for diag in fixit.diagnostics:
@@ -73,7 +69,7 @@ def list_diff_comments() -> list:
                 filename = os.path.split(filename)[1]
             lines = []  # the list of lines in a file
             line = ""  # the line that concerns the fix/comment
-            with open(filename) as temp:
+            with open(filename, encoding="utf-8") as temp:
                 lines = temp.readlines()
 
             # aggregate clang-tidy advice
@@ -106,8 +102,13 @@ def list_diff_comments() -> list:
                     "side": "RIGHT",
                 }
             )
+    return results
 
-    # aggregate clang-format advice
+
+def aggregate_format_advice() -> list:
+    """Aggregate a list of json contents representing advice from clang-format
+    suggestions."""
+    results = []
     for index, fmt_advice in enumerate(GlobalParser.format_advice):
 
         # get original code
@@ -117,15 +118,15 @@ def list_diff_comments() -> list:
             # thus use only the filename (without the path to the file)
             filename = os.path.split(filename)[1]
         lines = []  # the list of lines from the src file
-        with open(filename) as temp:
+        with open(filename, encoding="utf-8") as temp:
             lines = temp.readlines()
-        ranges = Globals.FILES[index]["line_range"]
+        ranges = Globals.FILES[index]["line_filter"]["lines"]
         line = ""  # the line that concerns the fix
         for fixed_line in fmt_advice.replaced_lines:
             # clang-format can include advice that starts/ends outside the diff's domain
             in_range = False
             for scope in ranges:
-                if fixed_line.line in scope:
+                if fixed_line.line in range(scope[0], scope[1] + 1):
                     in_range = True
             if not in_range:
                 continue  # line is out of scope for diff, so skip this fix
@@ -133,9 +134,11 @@ def list_diff_comments() -> list:
             # assemble the suggestion
             body = "## :scroll: clang-format advice\n```suggestion\n"
             line = lines[fixed_line.line - 1]
-            logger.debug("%d >>> %s", fixed_line.line, line[:-1])
+            # logger.debug("%d >>> %s", fixed_line.line, line[:-1])
             for fix_index, line_fix in enumerate(fixed_line.replacements):
-                logger.debug("%s >>> %s", repr(line_fix), line_fix.text.encode("utf-8"))
+                # logger.debug(
+                #     "%s >>> %s", repr(line_fix), line_fix.text.encode("utf-8")
+                # )
                 if fix_index:
                     last_fix = fixed_line.replacements[fix_index - 1]
                     body += line[
@@ -148,29 +151,49 @@ def list_diff_comments() -> list:
             body += line[last_fix.cols + last_fix.null_len - 1 : -1] + "\n```"
             logger.debug("body <<< %s", body)
 
-            # check for comments from clang-tidy on the same line
-            comment_index = None
-            for i, payload in enumerate(results):
-                if (
-                    payload["line"] == fixed_line.line
-                    and payload["path"] == fmt_advice.filename
-                ):
-                    comment_index = i  # mark this comment for concatenation
-                    break
-            if comment_index is not None:
-                # append clang-format advice to clang-tidy output/suggestion
-                results[i]["body"] += "\n" + body
-            else:
-                # create a suggestion from clang-format advice
-                results.append(
-                    {
-                        "body": body,
-                        "commit_id": GITHUB_SHA,
-                        "line": fixed_line.line,
-                        "path": fmt_advice.filename,
-                        "side": "RIGHT",
-                    }
-                )
+            # create a suggestion from clang-format advice
+            results.append(
+                {
+                    "body": body,
+                    "commit_id": GITHUB_SHA,
+                    "line": fixed_line.line,
+                    "path": fmt_advice.filename,
+                    "side": "RIGHT",
+                }
+            )
+    return results
+
+
+def concatenate_comments(tidy_advice: list, format_advice: list) -> list:
+    """Concatenate comments made to the same line of the same file."""
+    # traverse comments from clang-format
+    for index, comment_body in enumerate(format_advice):
+        # check for comments from clang-tidy on the same line
+        comment_index = None
+        for i, payload in enumerate(tidy_advice):
+            if (
+                payload["line"] == comment_body["line"]
+                and payload["path"] == comment_body["path"]
+            ):
+                comment_index = i  # mark this comment for concatenation
+                break
+        if comment_index is not None:
+            # append clang-format advice to clang-tidy output/suggestion
+            tidy_advice[comment_index]["body"] += "\n" + comment_body["body"]
+            del format_advice[index]  # remove duplicate comment
+    return tidy_advice + format_advice
+
+
+def list_diff_comments() -> list:
+    """Aggregate list of comments for use in the event's diff. This function assumes
+    that the CLI option `--diff-only` is set to True.
+
+    Returns:
+        A list of comments (each element as json content).
+    """
+    tidy_advice = aggregate_tidy_advice()
+    format_advice = aggregate_format_advice()
+    results = concatenate_comments(tidy_advice, format_advice)
     return results
 
 

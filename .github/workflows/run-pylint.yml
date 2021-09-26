@@ -1,0 +1,19 @@
+name: "Check python code"
+
+on:
+  push:
+  pull_request:
+    types: [opened]
+
+jobs:
+  using-pylint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install pylint
+        run: python3 -m pip install --upgrade pylint
+      - name: run pylint
+        run: pylint python_action/**
