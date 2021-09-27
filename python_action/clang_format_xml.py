@@ -3,6 +3,7 @@ import os
 import xml.etree.ElementTree as ET
 from . import GlobalParser, get_line_cnt_from_cols
 
+
 class FormatReplacement:
     """An object representing a single replacement.
 
@@ -28,6 +29,7 @@ class FormatReplacement:
             f"<FormatReplacement at cols {self.cols} removes {self.null_len} bytes"
             f" adds {len(self.text)} bytes>"
         )
+
 
 class FormatReplacementLine:
     """An object that represents a replacement(s) for a single line.
