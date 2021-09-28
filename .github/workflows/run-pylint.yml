@@ -15,4 +15,6 @@ jobs:
           python3 -m pip install --upgrade pylint
           python3 -m pip install -r requirements.txt
       - name: run pylint
-        run: pylint python_action/**
+        run: |
+          pylint python_action/**
+          pylint setup.py
