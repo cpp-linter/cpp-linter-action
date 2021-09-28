@@ -1,15 +1,14 @@
 """Bootstrapper for docker's ENTRYPOINT executable."""
 import os
-import subprocess
 from setuptools import setup
 
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 REPO = "https://github.com/"
-repo = os.getenv("GITHUB_REPOSITORY", None)
+repo = os.getenv("GITHUB_REPOSITORY", None)  # in case this is published from a fork
 REPO += "" if repo is None else repo
 if repo is None:
-    REPO += "2bndy5/cpp-linter"
+    REPO += "2bndy5/cpp-linter-action"
 
 
 setup(

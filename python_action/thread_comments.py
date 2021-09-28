@@ -57,10 +57,6 @@ def aggregate_tidy_advice() -> list:
             body = "<!-- cpp linter action -->\n## :speech_balloon: Clang-tidy\n**"
             body += diag.name + "**\n>" + diag.message
 
-            # assemble a suggestion (only if for a single line)
-            fix_lines = []  # a list of line numbers for the suggested fixes
-            suggestion = "\n```suggestion\n"
-            is_multiline_fix = False
             # get original code
             filename = Globals.FILES[index]["filename"].replace("/", os.sep)
             if not os.path.exists(filename):
@@ -68,11 +64,14 @@ def aggregate_tidy_advice() -> list:
                 # thus use only the filename (without the path to the file)
                 filename = os.path.split(filename)[1]
             lines = []  # the list of lines in a file
-            line = ""  # the line that concerns the fix/comment
             with open(filename, encoding="utf-8") as temp:
                 lines = temp.readlines()
 
             # aggregate clang-tidy advice
+            suggestion = "\n```suggestion\n"
+            is_multiline_fix = False
+            fix_lines = []  # a list of line numbers for the suggested fixes
+            line = ""  # the line that concerns the fix/comment
             for i, tidy_fix in enumerate(diag.replacements):
                 line = lines[tidy_fix.line - 1]
                 if not fix_lines:
@@ -89,6 +88,7 @@ def aggregate_tidy_advice() -> list:
                 else:
                     suggestion += line[: tidy_fix.cols - 1] + tidy_fix.text.decode()
             if not is_multiline_fix and diag.replacements:
+                # complete suggestion with original src code and closing md fence
                 last_fix = diag.replacements[len(diag.replacements) - 1]
                 suggestion += line[last_fix.cols + last_fix.null_len - 1 : -1] + "\n```"
                 body += suggestion
@@ -120,11 +120,13 @@ def aggregate_format_advice() -> list:
         lines = []  # the list of lines from the src file
         with open(filename, encoding="utf-8") as temp:
             lines = temp.readlines()
-        ranges = Globals.FILES[index]["line_filter"]["lines"]
+
+        # aggregate clang-format suggestion
         line = ""  # the line that concerns the fix
         for fixed_line in fmt_advice.replaced_lines:
             # clang-format can include advice that starts/ends outside the diff's domain
             in_range = False
+            ranges = Globals.FILES[index]["line_filter"]["lines"]
             for scope in ranges:
                 if fixed_line.line in range(scope[0], scope[1] + 1):
                     in_range = True
@@ -147,9 +149,10 @@ def aggregate_format_advice() -> list:
                     body += line_fix.text
                 else:
                     body += line[: line_fix.cols - 1] + line_fix.text
+            # complete suggestion with original src code and closing md fence
             last_fix = fixed_line.replacements[-1]
             body += line[last_fix.cols + last_fix.null_len - 1 : -1] + "\n```"
-            logger.debug("body <<< %s", body)
+            # logger.debug("body <<< %s", body)
 
             # create a suggestion from clang-format advice
             results.append(
