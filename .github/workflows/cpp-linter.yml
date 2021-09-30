@@ -3,15 +3,13 @@ name: cpp-linter
 on:
   push:
   pull_request:
-    types: [opened]
 
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: C/C++ Lint Action
-        uses: shenxianpeng/cpp-linter-action@master
+      - uses: shenxianpeng/cpp-linter-action@master
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

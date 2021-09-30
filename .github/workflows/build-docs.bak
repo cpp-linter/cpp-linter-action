@@ -1,0 +1,32 @@
+name: dev-docs
+
+on:
+  push:
+  pull_request:
+    types: [opened]
+
+jobs:
+  using-mkdocs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install doc's deps
+        run: |
+          python3 -m pip install -r docs/requirements.txt
+          python3 -m pip install .
+      - name: Build docs
+        run: mkdocs build
+      - name: Save artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: "cpp linter action dev docs"
+          path: site/**
+      - name: upload to github pages
+        if: ${{ github.event_name == 'release'}}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: site

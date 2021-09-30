@@ -32,6 +32,14 @@ inputs:
     description: "The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to 10."
     required: false
     default: '10'
+  verbosity:
+    descruption: A hidden option to control the action's log verbosity. This is the `logging` level (degaults to DEBUG)
+    required: false
+    default: '10'
+  diff-only:
+    description: Set this option to 'true' to only analyse changes in the event's diff. Defaults to 'false'.
+    required: false
+    default: false
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
@@ -39,8 +47,10 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.style }}
-    - ${{ inputs.extensions }}
-    - ${{ inputs.tidy-checks }}
-    - ${{ inputs.repo-root }}
-    - ${{ inputs.version }}
+    - --style=${{ inputs.style }}
+    - --extensions=${{ inputs.extensions }}
+    - --tidy-checks=${{ inputs.tidy-checks }}
+    - --repo-root=${{ inputs.repo-root }}
+    - --version=${{ inputs.version }}
+    - --verbosity=${{ inputs.verbosity }}
+    - --diff-only=${{ inputs.diff-only }}

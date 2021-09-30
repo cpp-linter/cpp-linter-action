@@ -8,6 +8,7 @@ OUTPUT=""
 URLS=""
 PATHNAMES=""
 declare -a JSON_INDEX
+FILES_LINK=""
 
 # alias CLI args
 args=("$@")
@@ -39,9 +40,9 @@ set_exit_code () {
 # Fetch JSON of event's changed files
 ###################################################
 get_list_of_changed_files() {
-   echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
+   # echo "GH_EVENT_PATH = $GITHUB_EVENT_PATH"
    echo "processing $GITHUB_EVENT_NAME event"
-   # cat "$GITHUB_EVENT_PATH" | jq '.'
+   jq '.' "$GITHUB_EVENT_PATH"
 
    # Use git REST API payload
    if [[ "$GITHUB_EVENT_NAME" == "push" ]]
@@ -207,7 +208,7 @@ capture_clang_tools_output() {
       then
          if [ "$OUTPUT" == "" ]
          then
-            OUTPUT=$'## Run `clang-format` on the following files\n'
+            OUTPUT=$'<!-- cpp linter action -->\n## Run `clang-format` on the following files\n'
          fi
          OUTPUT+="- [ ] ${PATHNAMES[index]}"$'\n'
       fi
@@ -235,13 +236,19 @@ post_results() {
    fi
 
    COMMENTS_URL=$(jq -r .pull_request.comments_url "$GITHUB_EVENT_PATH")
+   COMMENT_COUNT=$(jq -r .comments "$GITHUB_EVENT_PATH")
    if [[ "$GITHUB_EVENT_NAME" == "push" ]]
    then
       COMMENTS_URL="$FILES_LINK/comments"
+      COMMENT_COUNT=$(jq -r .commit.comment_count .cpp_linter_action_changed_files.json)
    fi
-
-   echo "COMMENTS_URL = $COMMENTS_URL"
-
+   echo "COMMENTS_URL: $COMMENTS_URL"
+   echo "Number of Comments = $COMMENT_COUNT"
+   if [[ $COMMENT_COUNT -gt 0 ]]
+   then
+      # get the list of comments
+      curl "$COMMENTS_URL" > ".comments.json"
+   fi
    PAYLOAD=$(echo '{}' | jq --arg body "$OUTPUT" '.body = $body')
 
    # creating PR comments is the same API as creating issue. Creating commit comments have more optional parameters (but same required API)
