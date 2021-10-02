@@ -207,9 +207,9 @@ def verify_files_are_present() -> None:
         file_name = file["filename"].replace("/", os.sep)
         if not os.path.exists(file_name):
             logger.info("Downloading file from url: %s", file["raw_url"])
-            download = requests.get(file["raw_url"])
+            Globals.response_buffer = requests.get(file["raw_url"])
             with open(os.path.split(file_name)[1], "w", encoding="utf-8") as temp:
-                temp.write(download)
+                temp.write(Globals.response_buffer.text)
 
 
 def run_clang_tidy(
