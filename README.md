@@ -48,7 +48,7 @@ jobs:
 |------------|---------------|-------------|
 | `style` | 'llvm' | The style rules to use. Set this to 'file' to have clang-format use the closest relative .clang-format file. |
 | `extensions` | 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx' | The file extensions to run the action against. This is a comma-separated string. |
-| `tidy-checks` | 'boost-\*,bugprone-\*,performance-\*,<br>readability-\*,portability-\*,<br>modernize-\*,clang-analyzer-\*,<br>cppcoreguidelines-\*' | A string of regex-like patterns specifying what checks clang-tidy will use.|
+| `tidy-checks` | 'boost-\*,bugprone-\*,performance-\*,readability-\*,portability-\*,modernize-\*,clang-analyzer-\*,cppcoreguidelines-\*' | A string of regex-like patterns specifying what checks clang-tidy will use.|
 | `repo-root` | '.' | The relative path to the repository root directory. This path is relative to path designated by the runner's GITHUB_WORKSPACE environment variable. |
 | `version` | '10' | The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, 12. |
 | `diff-only` | 'false' | Set this option to 'true' to only analyse changes in the event's diff. |
