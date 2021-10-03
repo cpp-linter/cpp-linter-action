@@ -250,9 +250,9 @@ def run_clang_format(
     """Run clang-format on a certain file
 
     Args:
-        filename: The name of the local file to run clang-tidy on.
+        filename: The name of the local file to run clang-format on.
         file_obj: JSON info about the file.
-        version: The version of clang-tidy to run.
+        version: The version of clang-format to run.
         style: The clang-format style rules to adhere. Set this to 'file' to
             use the relative-most .clang-format configuration file.
         diff_only: A flag that forces focus on only changes in the event's diff info.
