@@ -239,7 +239,7 @@ def run_clang_tidy(
     with open("clang_tidy_output.yml", "w", encoding="utf-8"):
         pass  # clear yml file's content before running clang-tidy
     with open("clang_tidy_report.txt", "w", encoding="utf-8") as f_out:
-        subprocess.run(cmds, stdout=f_out, check=True)
+        subprocess.run(cmds, stdout=f_out)
     if os.path.getsize("clang_tidy_output.yml"):
         parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
 
@@ -268,7 +268,7 @@ def run_clang_format(
     cmds.append(filename.replace("/", os.sep))
 
     with open("clang_format_output.xml", "w", encoding="utf-8") as f_out:
-        subprocess.run(cmds, stderr=f_out, stdout=f_out, check=True)
+        subprocess.run(cmds, stderr=f_out, stdout=f_out)
 
 
 def capture_clang_tools_output(version: str, checks: str, style: str, diff_only: bool):

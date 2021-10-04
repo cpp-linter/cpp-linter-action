@@ -32,6 +32,8 @@ jobs:
     name: cpp-linter
     runs-on: ubuntu-latest
     steps:
+      # It is best to checkout the repo before running cpp-linter-action
+      - uses: actions/checkout@v2
       - name: C/C++ Lint Action
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
