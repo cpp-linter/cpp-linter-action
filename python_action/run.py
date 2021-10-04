@@ -236,12 +236,19 @@ def run_clang_tidy(
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
         cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")
     cmds.append(filename.replace("/", os.sep))
-    with open("clang_tidy_output.yml", "w", encoding="utf-8"):
+    with open("clang_tidy_output.yml", "wb"):
         pass  # clear yml file's content before running clang-tidy
-    with open("clang_tidy_report.txt", "w", encoding="utf-8") as f_out:
-        subprocess.run(cmds, stdout=f_out)
+    results = subprocess.run(cmds, capture_output=True)
+    with open("clang_tidy_report.txt", "wb") as f_out:
+        f_out.write(results.stdout)
     if os.path.getsize("clang_tidy_output.yml"):
         parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
+    if results.returncode:
+        logger.warning(
+            "%s raised the following error(s):\n%s",
+            cmds[0],
+            results.stderr.decode()
+        )
 
 
 def run_clang_format(
@@ -266,9 +273,15 @@ def run_clang_format(
         for line_range in file_obj["line_filter"]["lines"]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")
     cmds.append(filename.replace("/", os.sep))
-
-    with open("clang_format_output.xml", "w", encoding="utf-8") as f_out:
-        subprocess.run(cmds, stderr=f_out, stdout=f_out)
+    results = subprocess.run(cmds, capture_output=True)
+    with open("clang_format_output.xml", "wb") as f_out:
+        f_out.write(results.stdout)
+    if results.returncode:
+        logger.warning(
+            "%s raised the following error(s):\n%s",
+            cmds[0],
+            results.stderr.decode()
+        )
 
 
 def capture_clang_tools_output(version: str, checks: str, style: str, diff_only: bool):
