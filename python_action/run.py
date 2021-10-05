@@ -199,13 +199,14 @@ def verify_files_are_present() -> None:
     !!! hint
         This function assumes the working directory is the root of the invoking
         repository. If files are not found, then they are downloaded to the working
-        directory. This may be bad for files with the same name from different folders.
+        directory. This is bad for files with the same name from different folders.
     """
     for file in (
         Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
     ):
         file_name = file["filename"].replace("/", os.sep)
         if not os.path.exists(file_name):
+            logger.warning("Could not find %s! Did you checkout the repo?", file_name)
             logger.info("Downloading file from url: %s", file["raw_url"])
             Globals.response_buffer = requests.get(file["raw_url"])
             with open(os.path.split(file_name)[1], "w", encoding="utf-8") as temp:
@@ -245,9 +246,7 @@ def run_clang_tidy(
         parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
     if results.returncode:
         logger.warning(
-            "%s raised the following error(s):\n%s",
-            cmds[0],
-            results.stderr.decode()
+            "%s raised the following error(s):\n%s", cmds[0], results.stderr.decode()
         )
 
 
@@ -278,9 +277,7 @@ def run_clang_format(
         f_out.write(results.stdout)
     if results.returncode:
         logger.warning(
-            "%s raised the following error(s):\n%s",
-            cmds[0],
-            results.stderr.decode()
+            "%s raised the following error(s):\n%s", cmds[0], results.stderr.decode()
         )
 
 
