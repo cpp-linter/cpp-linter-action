@@ -592,7 +592,7 @@ def main():
 
     # prepare ignored paths list
     logger.debug("ignored_paths:\n%s", args.ignore)
-    ignored_paths = args.ignore.split(";")
+    ignored_paths = args.ignore.split("\n")
     if len(ignored_paths) == 1 and not ignored_paths[0]:
         # remove the default value of an empty string
         ignored_paths = []
