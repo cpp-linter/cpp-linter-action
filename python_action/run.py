@@ -148,7 +148,7 @@ def is_file_ignored(paths: list, file_name: str) -> bool:
         - False if `file_name` is not in the `paths` list.
     """
     for path in paths:
-        if not path: # skip empty strings
+        if not path.rstrip(): # skip empty strings
             continue
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
@@ -298,9 +298,9 @@ def list_source_files(ext_list: str, ignored_paths: list) -> bool:
     for dirpath, _, filenames in os.walk(root_path):
         path = dirpath.replace(root_path, "").lstrip(os.sep)
         if path.startswith("."):
-            # logger.debug("Skipping %s", path)
+            # logger.debug("Skipping \"%s\"", path)
             continue  # skip sources in hidden directories
-        logger.debug("Crawling %s", path)
+        logger.debug("Crawling \"./%s\"", path)
         for file in filenames:
             if file.find(".") > 0 and file.split(".")[1] in ext_list:
                 file_path = os.path.join(path, file)
