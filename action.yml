@@ -46,9 +46,9 @@ inputs:
     default: true
   ignore:
     description: >
-      Set this option to a semi-colon seperated list of paths to ignore. This can
-      also have files, but the file's relative path has to be specified as well.
-      Defaults to '' (a blank string).
+      Set this option with string of paths to ignore. In the case of multiple paths, you can use a pipe
+      character `|` followed by a multiple indented lines of paths. This can also have files, but the
+      file's relative path has to be specified as well. Defaults to '' (a blank string).
     required: false
     default: ''
 outputs:

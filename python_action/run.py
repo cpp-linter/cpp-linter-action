@@ -61,48 +61,48 @@ cli_arg_parser.add_argument(
     default="boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,"
     "clang-analyzer-*,cppcoreguidelines-*",
     help="A string of regex-like patterns specifying what checks clang-tidy will use. "
-    "This defaults to 'boost-*,bugprone-*,performance-*,readability-*,portability-*,"
-    "modernize-*,clang-analyzer-*,cppcoreguidelines-*'. See also clang-tidy docs for "
-    "more info.",
+    "This defaults to %(default)s. See also clang-tidy docs for more info.",
 )
 cli_arg_parser.add_argument(
     "--version",
     default="10",
     help="The desired version of the clang tools to use. Accepted options are strings "
-    "which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to 10.",
+    "which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
     "--extensions",
     default="c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx",
     help="The file extensions to run the action against. This comma-separated string "
-    "defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'.",
+    "defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
     "--repo-root",
     default=".",
-    help="The relative path to the repository root directory. The default value '.' is "
-    "relative to the runner's GITHUB_WORKSPACE environment variable.",
+    help="The relative path to the repository root directory. The default value "
+    "'%(default)s' is relative to the runner's GITHUB_WORKSPACE environment variable.",
 )
 cli_arg_parser.add_argument(
     "--ignore",
-    default="",
-    help="Set this option to a semi-colon seperated list of paths to ignore. This can "
-    "also have files, but the file's relative path has to be specified as well. "
-    "Defaults to '' (a blank string).",
+    default=[],
+    action="append",
+    help="Set this option with paths to ignore. In the case of multiple "
+    "paths, you can set this option (multiple times) for each path. This can "
+    "also have files, but the file's relative path has to be specified as well "
+    "with the filename.",
 )
 cli_arg_parser.add_argument(
     "--lines-changed-only",
     default="false",
     type=lambda input: input.lower() == "true",
     help="Set this option to 'true' to only analyse changes in the event's diff. "
-    "Defaults to 'false'.",
+    "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
     "--files-changed-only",
     default="true",
     type=lambda input: input.lower() == "true",
     help="Set this option to 'false' to analyse any source files in the repo. "
-    "Defaults to 'true'.",
+    "Defaults to %(default)s.",
 )
 
 
@@ -591,11 +591,8 @@ def main():
     logger.setLevel(int(args.verbosity))
 
     # prepare ignored paths list
-    logger.debug("ignored_paths:\n%s", args.ignore)
-    ignored_paths = args.ignore.split("\n")
-    if len(ignored_paths) == 1 and not ignored_paths[0]:
-        # remove the default value of an empty string
-        ignored_paths = []
+    if len(args.ignore) == 1:
+        args.ignore = args.ignore[0].split("\n")
 
     # prepare extensions list
     args.extensions = args.extensions.split(",")
@@ -614,20 +611,21 @@ def main():
     os.chdir(args.repo_root)
 
     start_log_group("Get list of specified source files")
-    logger.info(
-        "Ignoring the following paths/files:\n\t%s",
-        "\n\t".join(f for f in ignored_paths),
-    )
+    if args.ignore:
+        logger.info(
+            "Ignoring the following paths/files:\n\t%s",
+            "\n\t".join(f for f in args.ignore),
+        )
     if args.files_changed_only:
         get_list_of_changed_files()
         filter_out_non_source_files(
             args.extensions,
-            ignored_paths,
+            args.ignore,
             args.lines_changed_only if args.files_changed_only else False,
         )
         verify_files_are_present()
     else:
-        list_source_files(args.extensions, ignored_paths)
+        list_source_files(args.extensions, args.ignore)
     end_log_group()
 
     capture_clang_tools_output(
