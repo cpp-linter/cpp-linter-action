@@ -135,7 +135,7 @@ def end_log_group() -> None:
     logger.critical("::endgroup::")
 
 
-def is_file_in_ignored_paths(paths: list, file_name: str) -> bool:
+def is_file_ignored(paths: list, file_name: str) -> bool:
     """Detirmine if a file is specified in a list of paths and/or filenames.
 
     Args:
@@ -150,7 +150,7 @@ def is_file_in_ignored_paths(paths: list, file_name: str) -> bool:
     for path in paths:
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
-            logger.debug("%s compared to %s", result, path)
+            logger.debug("\"%s\" compared to \"%s\"", file_name, path)
             return True
     return False
 
@@ -195,7 +195,7 @@ def filter_out_non_source_files(
             extension is not None
             and extension.group(0)[1:] in ext_list
             and not file["status"].endswith("removed")
-            and not is_file_in_ignored_paths(ignored, file["filename"])
+            and not is_file_ignored(ignored, file["filename"])
         ):
             if lines_changed_only and "patch" in file.keys():
                 # get diff details for the file's changes
@@ -299,7 +299,7 @@ def list_source_files(ext_list: str, ignored_paths: list) -> bool:
             if file.find(".") > 0 and file.split(".")[1] in ext_list:
                 file_path = os.path.join(path, file)
                 logger.debug("%s is a source file", file_path)
-                if not is_file_in_ignored_paths(ignored_paths, file_path):
+                if not is_file_ignored(ignored_paths, file_path):
                     Globals.FILES.append({"filename": file_path})
 
     if Globals.FILES:
