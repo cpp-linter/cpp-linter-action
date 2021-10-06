@@ -591,10 +591,12 @@ def main():
     logger.setLevel(int(args.verbosity))
 
     # prepare ignored paths list
+    logger.debug("ignored_paths:\n\t%s", args.ignore)
     ignored_paths = args.ignore.split(";")
     if len(ignored_paths) == 1 and not ignored_paths[0]:
         # remove the default value of an empty string
         ignored_paths = []
+
     # prepare extensions list
     args.extensions = args.extensions.split(",")
 

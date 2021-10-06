@@ -1,0 +1,3 @@
+[submodule "FAKE"]
+	path = demo
+	url = https://github.com/FAKE/DEMO.git
