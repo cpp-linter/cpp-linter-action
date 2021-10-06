@@ -150,6 +150,7 @@ def is_file_in_ignored_paths(paths: list, file_name: str) -> bool:
     for path in paths:
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
+            logger.debug("%s compared to %s", result, path)
             return True
     return False
 
