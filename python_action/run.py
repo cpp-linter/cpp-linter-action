@@ -291,6 +291,7 @@ def list_source_files(ext_list: str, ignored_paths: list) -> bool:
     for dirpath, _, filenames in os.walk(root_path):
         path = dirpath.replace(root_path, "").lstrip(os.sep)
         if path.startswith("."):
+            logger.debug("Skipping %s", path)
             continue  # skip sources in hidden directories
         for file in filenames:
             if file.find(".") > 0 and file.split(".")[1] in ext_list:
