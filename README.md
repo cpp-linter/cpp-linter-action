@@ -11,6 +11,7 @@
 [![Documentation Status](https://readthedocs.org/projects/cpp-linter-action/badge/?version=latest)](https://cpp-linter-action.readthedocs.io/en/latest/?badge=latest)
 [![open repo in gitpod](https://img.shields.io/badge/Gitpod-Use%20Online%20IDE-B16C04?logo=gitpod)](https://gitpod.io/#https://github.com/shenxianpeng/cpp-linter-action)
 
+
 Github Actions for linting C/C++ code. Integrated clang-tidy, clang-format check.
 
 ## Usage
@@ -22,22 +23,28 @@ The conetent of the file should be in the following format.
 ```yaml
 name: cpp-linter
 
+# Workflow syntax:
+# https://help.github.com/en/articles/workflow-syntax-for-github-actions
+
 # Triggers the workflow on push or pull request events
 on:
   push:
   pull_request:
     types: [opened]
+    
 jobs:
   cpp-linter:
     name: cpp-linter
     runs-on: ubuntu-latest
     steps:
-      # It is best to checkout the repo before running cpp-linter-action
-      - uses: actions/checkout@v2
-      - name: C/C++ Lint Action
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Checkout the code base
+      - name: Checkout code
+        uses: actions/checkout@v2
+      # Run linter against code base
+      - name: Lint code
         uses: shenxianpeng/cpp-linter-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: 'file'
 ```
@@ -65,6 +72,18 @@ This action creates 1 output variable named `checks-failed`. Even if the linting
 ![github-actions bot](./docs/images/demo_comment.png)
 <!--footer-start-->
 Example comment is [here](https://github.com/shenxianpeng/cpp-linter-action/pull/5#commitcomment-55252014).
+
+## Add C/C++ Lint Action badge in README
+
+You can show C/C++ Lint Action status with a badge in your repository README
+
+Example 
+
+```
+[![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
+```
+
+[![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
 
 ## Have question or feedback?
 
