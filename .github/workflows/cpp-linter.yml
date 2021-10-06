@@ -20,8 +20,9 @@ jobs:
         with:
           style: file
           ignore: |
-            "python_action"
-            "docs"
+            python_action
+            *docs
+          files-changed-only: false
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
