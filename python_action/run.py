@@ -148,9 +148,15 @@ def is_file_ignored(paths: list, file_name: str) -> bool:
         - False if `file_name` is not in the `paths` list.
     """
     for path in paths:
+        if not path: # skip empty strings
+            continue
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
-            logger.debug("\"%s\" compared to \"%s\"", file_name, path)
+            logger.debug(
+                "ignoring \"%s\" because \"%s\" was specified",
+                file_name,
+                path
+            )
             return True
     return False
 
