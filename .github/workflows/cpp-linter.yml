@@ -2,7 +2,10 @@ name: cpp-linter
 
 on:
   push:
+    path: "!docs/**"
   pull_request:
+    path: "!docs/**"
+
 
 jobs:
   cpp-linter:

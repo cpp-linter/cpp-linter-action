@@ -603,10 +603,10 @@ def main():
     # load event's json info about the workflow run
     with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
         Globals.EVENT_PAYLOAD = json.load(payload)
-        if logger.getEffectiveLevel() <= logging.DEBUG:
-            start_log_group("event json (exists only on the runner)")
-            logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
-            end_log_group()
+    if logger.getEffectiveLevel() >= logging.DEBUG:
+        start_log_group("Event json from the runner")
+        logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
+        end_log_group()
 
     # change working directory
     os.chdir(args.repo_root)
@@ -633,7 +633,7 @@ def main():
     )
 
     start_log_group("Posting comment(s)")
-    # post_results(False)  # False is hard-coded to disable diff comments.
+    post_results(False)  # False is hard-coded to disable diff comments.
     end_log_group()
 
 
