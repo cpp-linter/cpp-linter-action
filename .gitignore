@@ -180,4 +180,3 @@ CPackConfig.cmake
 CPackSourceConfig.cmake
 CMakeFiles
 cmake_install.cmake
-# compile_commands.json

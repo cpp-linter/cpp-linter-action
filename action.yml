@@ -36,10 +36,21 @@ inputs:
     descruption: A hidden option to control the action's log verbosity. This is the `logging` level (degaults to DEBUG)
     required: false
     default: '10'
-  diff-only:
+  lines-changed-only:
     description: Set this option to 'true' to only analyse changes in the event's diff. Defaults to 'false'.
     required: false
     default: false
+  files-changed-only:
+    description: Set this option to 'false' to analyse any source files in the repo. Defaults to 'true'.
+    required: false
+    default: true
+  ignore:
+    description: >
+      Set this option to a semi-colon seperated list of paths to ignore. This can
+      also have files, but the file's relative path has to be specified as well.
+      Defaults to '' (a blank string).
+    required: false
+    default: ''
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
@@ -53,4 +64,6 @@ runs:
     - --repo-root=${{ inputs.repo-root }}
     - --version=${{ inputs.version }}
     - --verbosity=${{ inputs.verbosity }}
-    - --diff-only=${{ inputs.diff-only }}
+    - --lines-changed-only=${{ inputs.lines-changed-only }}
+    - --files-changed-only=${{ inputs.files-changed-only }}
+    - --ignore=${{ inputs.ignore }}

@@ -15,11 +15,13 @@ import os
 import sys
 import re
 import argparse
+import configparser
 import json
 import requests
 from . import (
     Globals,
     GlobalParser,
+    logging,
     logger,
     GITHUB_TOKEN,
     GITHUB_SHA,
@@ -55,12 +57,6 @@ cli_arg_parser.add_argument(
     "clang-format use the closest relative .clang-format file.",
 )
 cli_arg_parser.add_argument(
-    "--extensions",
-    default="c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx",
-    help="The file extensions to run the action against. This comma-separated string "
-    "defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'.",
-)
-cli_arg_parser.add_argument(
     "--tidy-checks",
     default="boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,"
     "clang-analyzer-*,cppcoreguidelines-*",
@@ -70,23 +66,43 @@ cli_arg_parser.add_argument(
     "more info.",
 )
 cli_arg_parser.add_argument(
-    "--repo-root",
-    default=".",
-    help="The relative path to the repository root directory. The default value '.' is "
-    "relative to the runner's GITHUB_WORKSPACE environment variable.",
-)
-cli_arg_parser.add_argument(
     "--version",
     default="10",
     help="The desired version of the clang tools to use. Accepted options are strings "
     "which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to 10.",
 )
 cli_arg_parser.add_argument(
-    "--diff-only",
+    "--extensions",
+    default="c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx",
+    help="The file extensions to run the action against. This comma-separated string "
+    "defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'.",
+)
+cli_arg_parser.add_argument(
+    "--repo-root",
+    default=".",
+    help="The relative path to the repository root directory. The default value '.' is "
+    "relative to the runner's GITHUB_WORKSPACE environment variable.",
+)
+cli_arg_parser.add_argument(
+    "--ignore",
+    default="",
+    help="Set this option to a semi-colon seperated list of paths to ignore. This can "
+    "also have files, but the file's relative path has to be specified as well. "
+    "Defaults to '' (a blank string).",
+)
+cli_arg_parser.add_argument(
+    "--lines-changed-only",
     default="false",
     type=lambda input: input.lower() == "true",
     help="Set this option to 'true' to only analyse changes in the event's diff. "
     "Defaults to 'false'.",
+)
+cli_arg_parser.add_argument(
+    "--files-changed-only",
+    default="true",
+    type=lambda input: input.lower() == "true",
+    help="Set this option to 'false' to analyse any source files in the repo. "
+    "Defaults to 'true'.",
 )
 
 
@@ -105,14 +121,42 @@ def set_exit_code(override: int = None) -> int:
     return exit_code
 
 
+def start_log_group(name: str) -> None:
+    """Begin a callapsable group of log statements.
+
+    Argrs:
+        name: The name of the callapsable group
+    """
+    print(f"::group::{name}")
+
+
+def end_log_group() -> None:
+    """End a callapsable group of log statements."""
+    print("::endgroup::")
+
+
+def is_file_in_ignored_paths(paths: list, file_name: str) -> bool:
+    """Detirmine if a file is specified in a list of paths and/or filenames.
+
+    Args:
+        paths: A list of specified paths to compare with. This list can contain a
+            specified file, but the file's path must be included as part of the
+            filename.
+        file_name: The file's path & name being sought in the `paths` list.
+    Returns:
+        - True if `file_name` is in the `paths` list.
+        - False if `file_name` is not in the `paths` list.
+    """
+    for path in paths:
+        result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
+        if result == path:
+            return True
+    return False
+
+
 def get_list_of_changed_files() -> None:
     """Fetch the JSON payload of the event's changed files. Sets the
     [`FILES`][python_action.__init__.Globals.FILES] attribute."""
-    logger.info("processing %s event", GITHUB_EVENT_NAME)
-    with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
-        Globals.EVENT_PAYLOAD = json.load(payload)
-        logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
-
     files_link = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
         files_link += f"pulls/{Globals.EVENT_PAYLOAD['number']}/files"
@@ -123,21 +167,23 @@ def get_list_of_changed_files() -> None:
         sys.exit(set_exit_code(0))
     logger.info("Fetching files list from url: %s", files_link)
     Globals.FILES = requests.get(files_link).json()
-    logger.debug("files json:\n%s", json.dumps(Globals.FILES, indent=2))
 
 
-def filter_out_non_source_files(ext_list: str, diff_only: bool) -> None:
+def filter_out_non_source_files(
+    ext_list: list, ignored: list, lines_changed_only: bool
+) -> None:
     """Exclude undesired files (specified by user input 'extensions'). This filter
     applies to the event's [`FILES`][python_action.__init__.Globals.FILES] attribute.
 
     Args:
-        ext_list: A comma-separated `str` of extensions that are concerned.
-        diff_only: A flag that forces focus on only changes in the event's diff info.
+        ext_list: A list of file extensions that are to be examined.
+        ignored: A list of paths to explicitly ignore.
+        lines_changed_only: A flag that forces focus on only changes in the event's
+            diff info.
 
     !!! note
         This will exit early when nothing left to do.
     """
-    ext_list = ext_list.split(",")
     files = []
     for file in (
         Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
@@ -147,8 +193,9 @@ def filter_out_non_source_files(ext_list: str, diff_only: bool) -> None:
             extension is not None
             and extension.group(0)[1:] in ext_list
             and not file["status"].endswith("removed")
+            and not is_file_in_ignored_paths(ignored, file["filename"])
         ):
-            if diff_only and "patch" in file.keys():
+            if lines_changed_only and "patch" in file.keys():
                 # get diff details for the file's changes
                 line_filter = {
                     "name": file["filename"].replace("/", os.sep),
@@ -173,7 +220,7 @@ def filter_out_non_source_files(ext_list: str, diff_only: bool) -> None:
                         line_filter["lines"][-1][1] = line_numb_in_diff
                         line_numb_in_diff += 1
                 file["line_filter"] = line_filter
-            elif diff_only:
+            elif lines_changed_only:
                 continue
             files.append(file)
 
@@ -182,15 +229,20 @@ def filter_out_non_source_files(ext_list: str, diff_only: bool) -> None:
         logger.info("No source files need checking!")
         sys.exit(set_exit_code(0))
     else:
-        logger.info("File names:\n\t%s", "\n\t".join([f["filename"] for f in files]))
+        logger.info(
+            "Giving attention to the following files:\n\t%s",
+            "\n\t".join([f["filename"] for f in files]),
+        )
         if GITHUB_EVENT_NAME == "pull_request":
             Globals.FILES = files
         else:
             Globals.FILES["files"] = files
-        with open(
-            ".cpp_linter_action_changed_files.json", "w", encoding="utf-8"
-        ) as temp:
-            json.dump(Globals.FILES, temp, indent=2)
+        if not os.getenv("CI"):  # if not executed on a github runner
+            with open(
+                ".cpp_linter_action_changed_files.json", "w", encoding="utf-8"
+            ) as temp:
+                # dump altered json of changed files
+                json.dump(Globals.FILES, temp, indent=2)
 
 
 def verify_files_are_present() -> None:
@@ -213,8 +265,45 @@ def verify_files_are_present() -> None:
                 temp.write(Globals.response_buffer.text)
 
 
+def list_source_files(ext_list: str, ignored_paths: list) -> None:
+    """Make a list of source files to be checked. The resulting list is stored in
+    [`FILES`][Global.FILES].
+
+    Args:
+        ext_list: A comma-separated `str` of extensions that are concerned.
+        ignored_paths: A list of paths to explicitly ignore.
+    """
+    if os.path.exists(".gitmodules"):
+        submodules = configparser.ConfigParser()
+        submodules.read(".gitmodules")
+        for module in submodules.sections():
+            logger.info(
+                "Apending submodule to ignored paths: %s", submodules[module]["path"]
+            )
+            ignored_paths.append(submodules[module]["path"])
+
+    root_path = os.getcwd()
+    for dirpath, _, filenames in os.walk(root_path):
+        path = dirpath.replace(root_path, "").lstrip(os.sep)
+        if path.startswith("."):
+            continue  # skip sources in submodules and hidden directories
+        for file in filenames:
+            if file.find(".") > 0 and file.split(".")[1] in ext_list:
+                file_path = os.path.join(path, file)
+                if not is_file_in_ignored_paths(ignored_paths, file_path):
+                    Globals.FILES.append({"filename": file_path})
+
+    if Globals.FILES:
+        logger.info(
+            "Giving attention to the following files:\n\t%s",
+            "\n\t".join([f["filename"] for f in Globals.FILES]),
+        )
+    else:
+        logger.info("No source files found.")  # this might need to be warning
+
+
 def run_clang_tidy(
-    filename: str, file_obj: dict, version: str, checks: str, diff_only: bool
+    filename: str, file_obj: dict, version: str, checks: str, lines_changed_only: bool
 ) -> None:
     """Run clang-tidy on a certain file.
 
@@ -224,7 +313,8 @@ def run_clang_tidy(
         version: The version of clang-tidy to run.
         checks: The `str` of comma-separated regulate expressions that describe
             the desired clang-tidy checks to be enabled/configured.
-        diff_only: A flag that forces focus on only changes in the event's diff info.
+        lines_changed_only: A flag that forces focus on only changes in the event's
+            diff info.
     """
     cmds = [f"clang-tidy-{version}"]
     if sys.platform.startswith("win32"):
@@ -233,7 +323,7 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
     # cmds.append(f"--format-style={style}")
-    if diff_only:
+    if lines_changed_only:
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
         cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")
     cmds.append(filename.replace("/", os.sep))
@@ -242,6 +332,7 @@ def run_clang_tidy(
     results = subprocess.run(cmds, capture_output=True)
     with open("clang_tidy_report.txt", "wb") as f_out:
         f_out.write(results.stdout)
+    logger.debug("Output from clang-tidy:\n%s", results.stdout.decode())
     if os.path.getsize("clang_tidy_output.yml"):
         parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
     if results.returncode:
@@ -251,7 +342,7 @@ def run_clang_tidy(
 
 
 def run_clang_format(
-    filename: str, file_obj: dict, version: str, style: str, diff_only: bool
+    filename: str, file_obj: dict, version: str, style: str, lines_changed_only: bool
 ) -> None:
     """Run clang-format on a certain file
 
@@ -261,27 +352,32 @@ def run_clang_format(
         version: The version of clang-format to run.
         style: The clang-format style rules to adhere. Set this to 'file' to
             use the relative-most .clang-format configuration file.
-        diff_only: A flag that forces focus on only changes in the event's diff info.
+        lines_changed_only: A flag that forces focus on only changes in the event's
+            diff info.
     """
     cmds = [
         "clang-format" + ("" if sys.platform.startswith("win32") else f"-{version}"),
         f"-style={style}",
         "--output-replacements-xml",
     ]
-    if diff_only:
+    if lines_changed_only:
         for line_range in file_obj["line_filter"]["lines"]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")
     cmds.append(filename.replace("/", os.sep))
     results = subprocess.run(cmds, capture_output=True)
     with open("clang_format_output.xml", "wb") as f_out:
         f_out.write(results.stdout)
+    if results.stdout:
+        logger.debug("clang-format has suggestions.")
     if results.returncode:
         logger.warning(
             "%s raised the following error(s):\n%s", cmds[0], results.stderr.decode()
         )
 
 
-def capture_clang_tools_output(version: str, checks: str, style: str, diff_only: bool):
+def capture_clang_tools_output(
+    version: str, checks: str, style: str, lines_changed_only: bool
+):
     """Execute and capture all output from clang-tidy and clang-format. This aggregates
     results in the [`OUTPUT`][python_action.__init__.Globals.OUTPUT].
 
@@ -291,21 +387,21 @@ def capture_clang_tools_output(version: str, checks: str, style: str, diff_only:
             the desired clang-tidy checks to be enabled/configured.
         style: The clang-format style rules to adhere. Set this to 'file' to
             use the relative-most .clang-format configuration file.
-        diff_only: A flag that forces focus on only changes in the event's diff info.
+        lines_changed_only: A flag that forces focus on only changes in the event's
+            diff info.
     """
-    if GITHUB_EVENT_NAME == "push":
-        diff_only = False  # diff comments are not supported for push events
     for file in (
-        Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
+        Globals.FILES
+        if GITHUB_EVENT_NAME == "pull_request" or isinstance(Globals.FILES, list)
+        else Globals.FILES["files"]
     ):
         filename = file["filename"]
         if not os.path.exists(file["filename"]):
             filename = os.path.split(file["raw_url"])[1]
-        logger.info("Performing checkup on %s", filename)
-
-        run_clang_tidy(filename, file, version, checks, diff_only)
-        run_clang_format(filename, file, version, style, diff_only)
-
+        start_log_group(f"Performing checkup on {filename}")
+        run_clang_tidy(filename, file, version, checks, lines_changed_only)
+        run_clang_format(filename, file, version, style, lines_changed_only)
+        end_log_group()
         if os.path.getsize("clang_tidy_report.txt"):
             parse_tidy_output()  # get clang-tidy fixes from stdout
             if Globals.PAYLOAD_TIDY:
@@ -345,7 +441,7 @@ def post_push_comment(base_url: str, user_id: int) -> bool:
     comments_url = base_url + f"commits/{GITHUB_SHA}/comments"
     remove_bot_comments(comments_url, user_id)
 
-    if Globals.OUTPUT:  # diff comments are not supported for push events
+    if Globals.OUTPUT:  # diff comments are not supported for push events (yet)
         payload = json.dumps({"body": Globals.OUTPUT})
         logger.debug("payload body:\n%s", json.dumps({"body": Globals.OUTPUT}))
         Globals.response_buffer = requests.post(
@@ -373,6 +469,7 @@ def post_diff_comments(base_url: str, user_id: int) -> bool:
     payload = list_diff_comments()
     logger.info("Posting %d comments", len(payload))
 
+    # uncomment the next 3 lines for debug output without posting a comment
     # for i, comment in enumerate(payload):
     #     logger.debug("comments %d: %s", i, json.dumps(comment, indent=2))
     # return
@@ -469,8 +566,7 @@ def post_results(use_diff_comments: bool, user_id: int = 41898282):
             info.
         user_id: The user's account ID number. Defaults to the generic bot's ID.
     """
-
-    if GITHUB_TOKEN is None:
+    if not GITHUB_TOKEN:
         logger.error("The GITHUB_TOKEN is required!")
         sys.exit(set_exit_code(1))
 
@@ -494,16 +590,51 @@ def main():
     # set logging verbosity
     logger.setLevel(int(args.verbosity))
 
+    # prepare ignored paths list
+    ignored_paths = args.ignore.split(";")
+    if len(ignored_paths) == 1 and not ignored_paths[0]:
+        # remove the default value of an empty string
+        ignored_paths = []
+    # prepare extensions list
+    args.extensions = args.extensions.split(",")
+
+    logger.info("processing %s event", GITHUB_EVENT_NAME)
+
+    # load event's json info about the workflow run
+    with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
+        Globals.EVENT_PAYLOAD = json.load(payload)
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            start_log_group("event json (exists only on the runner)")
+            logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
+            end_log_group()
+
     # change working directory
     os.chdir(args.repo_root)
 
-    get_list_of_changed_files()
-    filter_out_non_source_files(args.extensions, args.diff_only)
-    verify_files_are_present()
-    capture_clang_tools_output(
-        args.version, args.tidy_checks, args.style, args.diff_only
+    start_log_group("Get list of specified source files")
+    logger.info(
+        "Ignoring the following paths/files:\n\t%s",
+        "\n\t".join(f for f in ignored_paths),
     )
-    post_results(False)  # False is hard-coded to disable diff comments.
+    if args.files_changed_only:
+        get_list_of_changed_files()
+        filter_out_non_source_files(
+            args.extensions,
+            ignored_paths,
+            args.lines_changed_only if args.files_changed_only else False,
+        )
+        verify_files_are_present()
+    else:
+        list_source_files(args.extensions, ignored_paths)
+    end_log_group()
+
+    capture_clang_tools_output(
+        args.version, args.tidy_checks, args.style, args.lines_changed_only
+    )
+
+    start_log_group("Posting comment(s)")
+    # post_results(False)  # False is hard-coded to disable diff comments.
+    end_log_group()
 
 
 if __name__ == "__main__":
