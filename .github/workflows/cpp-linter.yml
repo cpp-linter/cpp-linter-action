@@ -19,8 +19,8 @@ jobs:
         with:
           style: file
           ignore: |
-            python_action
-            *docs
+            - "python_action"
+            - "*docs"
           files-changed-only: false
 
       - name: Fail fast?!
