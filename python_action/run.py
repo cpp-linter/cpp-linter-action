@@ -127,12 +127,12 @@ def start_log_group(name: str) -> None:
     Argrs:
         name: The name of the callapsable group
     """
-    print(f"::group::{name}")
+    logger.critical("::group::%s", name)
 
 
 def end_log_group() -> None:
     """End a callapsable group of log statements."""
-    print("::endgroup::")
+    logger.critical("::endgroup::")
 
 
 def is_file_in_ignored_paths(paths: list, file_name: str) -> bool:
