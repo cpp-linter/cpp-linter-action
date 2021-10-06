@@ -171,7 +171,7 @@ def get_list_of_changed_files() -> None:
 
 def filter_out_non_source_files(
     ext_list: list, ignored: list, lines_changed_only: bool
-) -> None:
+) -> bool:
     """Exclude undesired files (specified by user input 'extensions'). This filter
     applies to the event's [`FILES`][python_action.__init__.Globals.FILES] attribute.
 
@@ -181,8 +181,9 @@ def filter_out_non_source_files(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
 
-    !!! note
-        This will exit early when nothing left to do.
+    Returns:
+        True if there are files to check. False will invoke a early exit (in
+        [`main()`][python_action.run.main()]) when no files to be checked.
     """
     files = []
     for file in (
@@ -224,11 +225,7 @@ def filter_out_non_source_files(
                 continue
             files.append(file)
 
-    if not files:
-        # exit early if no changed files are source files
-        logger.info("No source files need checking!")
-        sys.exit(set_exit_code(0))
-    else:
+    if files:
         logger.info(
             "Giving attention to the following files:\n\t%s",
             "\n\t".join([f["filename"] for f in files]),
@@ -243,6 +240,10 @@ def filter_out_non_source_files(
             ) as temp:
                 # dump altered json of changed files
                 json.dump(Globals.FILES, temp, indent=2)
+    else:
+        logger.info("No source files need checking!")
+        return False
+    return True
 
 
 def verify_files_are_present() -> None:
@@ -265,13 +266,17 @@ def verify_files_are_present() -> None:
                 temp.write(Globals.response_buffer.text)
 
 
-def list_source_files(ext_list: str, ignored_paths: list) -> None:
+def list_source_files(ext_list: str, ignored_paths: list) -> bool:
     """Make a list of source files to be checked. The resulting list is stored in
     [`FILES`][Global.FILES].
 
     Args:
         ext_list: A comma-separated `str` of extensions that are concerned.
         ignored_paths: A list of paths to explicitly ignore.
+
+    Returns:
+        True if there are files to check. False will invoke a early exit (in
+        [`main()`][python_action.run.main()]) when no files to be checked.
     """
     if os.path.exists(".gitmodules"):
         submodules = configparser.ConfigParser()
@@ -300,6 +305,8 @@ def list_source_files(ext_list: str, ignored_paths: list) -> None:
         )
     else:
         logger.info("No source files found.")  # this might need to be warning
+        return False
+    return True
 
 
 def run_clang_tidy(
@@ -616,17 +623,21 @@ def main():
             "Ignoring the following paths/files:\n\t%s",
             "\n\t".join(f for f in args.ignore),
         )
+    exit_early = False
     if args.files_changed_only:
         get_list_of_changed_files()
-        filter_out_non_source_files(
+        exit_early = not filter_out_non_source_files(
             args.extensions,
             args.ignore,
             args.lines_changed_only if args.files_changed_only else False,
         )
-        verify_files_are_present()
+        if not exit_early:
+            verify_files_are_present()
     else:
-        list_source_files(args.extensions, args.ignore)
+        exit_early = not list_source_files(args.extensions, args.ignore)
     end_log_group()
+    if exit_early:
+        sys.exit(set_exit_code(0))
 
     capture_clang_tools_output(
         args.version, args.tidy_checks, args.style, args.lines_changed_only

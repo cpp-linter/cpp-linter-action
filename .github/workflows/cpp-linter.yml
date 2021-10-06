@@ -6,7 +6,6 @@ on:
   pull_request:
     path: "!docs/**"
 
-
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
