@@ -18,7 +18,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file
-          ignore: !!str ["python_action", "*docs"]
+          ignore: !!python/list ["python_action", "*docs"]
           files-changed-only: false
 
       - name: Fail fast?!
