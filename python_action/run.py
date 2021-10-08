@@ -624,15 +624,15 @@ def make_annotations():
     for note in GlobalParser.tidy_notes:
         # log_commander's verbosity is hard-coded tto show debug statements
         log_commander.info(
-            "::%s file=%s,line=%d,endLine=%d,title=%s::%s\n```%s\n%s```",
+            "::%s file=%s,line=%d,endLine=%d,title=%s::%s\\n```%s\\n%s```",
             "notice" if note.note_type.startswith("note") else note.note_type,
             note.filename,
             note.line,
             note.line,
             note.diagnostic,
-            note.info,
-            os.path.splitext(note.filename)[1],
-            "".join(note.fixit_lines)
+            note.note_info,
+            os.path.splitext(note.filename)[1][1:],
+            ("".join(note.fixit_lines)).replace("\n", "\\n")
         )
     for note in GlobalParser.format_advice:
         log_commander.info(
