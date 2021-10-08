@@ -48,7 +48,6 @@ class TidyNotification:
         self.fixit_lines = []
 
     def __repr__(self) -> str:
-        file_ext = re.search("\.\w+", self.filename)
         return (
             "<details open>\n<summary><strong>{}:{}:{}:</strong> {}: [{}]"
             "\n\n> {}\n</summary><p>\n\n```{}\n{}```\n</p>\n</details>\n\n".format(
@@ -58,7 +57,7 @@ class TidyNotification:
                 self.note_type,
                 self.diagnostic,
                 self.note_info,
-                "" if file_ext is None else file_ext.group(0)[1:],
+                os.path.splitext(self.filename)[1],
                 "".join(self.fixit_lines),
             )
         )

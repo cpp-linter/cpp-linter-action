@@ -446,7 +446,7 @@ def capture_clang_tools_output(
             Globals.PAYLOAD_TIDY += f"<details><summary>{filename}</summary><br>\n"
             for fix in GlobalParser.tidy_notes:
                 Globals.PAYLOAD_TIDY += repr(fix)
-            GlobalParser.tidy_notes.clear()
+            # GlobalParser.tidy_notes.clear()
 
         if os.path.getsize("clang_format_output.xml"):
             parse_format_replacements_xml(filename.replace("/", os.sep))
@@ -618,6 +618,30 @@ def post_results(use_diff_comments: bool, user_id: int = 41898282):
     set_exit_code(1 if checks_passed else 0)
 
 
+def make_annotations():
+    """Use github log commands to make annotations about from clang-format and
+    clang-tidy"""
+    for note in GlobalParser.tidy_notes:
+        # log_commander's verbosity is hard-coded tto show debug statements
+        log_commander.info(
+            "::%s file=%s,line=%d,endLine=%d,title=%s::%s\n```%s\n%s```",
+            "notice" if note.note_type.startswith("note") else note.note_type,
+            note.filename,
+            note.line,
+            note.line,
+            note.diagnostic,
+            note.info,
+            os.path.splitext(note.filename)[1],
+            "".join(note.fixit_lines)
+        )
+    for note in GlobalParser.format_advice:
+        log_commander.info(
+            "::notice file=%s,line=1,endLine=1,title=clang-format advice::"
+            "clang-format reports that this file's code style does not conform.",
+            note.filename,
+        )
+
+
 def main():
     """The main script."""
 
@@ -688,7 +712,8 @@ def main():
     )
 
     start_log_group("Posting comment(s)")
-    post_results(False)  # False is hard-coded to disable diff comments.
+    # post_results(False)  # False is hard-coded to disable diff comments.
+    make_annotations()
     end_log_group()
 
 
