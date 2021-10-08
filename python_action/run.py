@@ -626,7 +626,7 @@ def make_annotations():
     for note in GlobalParser.tidy_notes:
         ret_val = True
         log_commander.info(
-            "::%s file=%s,line=%d,title=%s:%d:%d [%s]::%s\r\n```%s\r\n%s```",
+            "::%s file=%s,line=%d,title=%s:%d:%d [%s]::%s",
             "notice" if note.note_type.startswith("note") else note.note_type,
             note.filename,
             note.line,
@@ -635,8 +635,6 @@ def make_annotations():
             note.cols,
             note.diagnostic,
             note.note_info,
-            os.path.splitext(note.filename)[1][1:],
-            ("".join(note.fixit_lines)).replace("\n", "\r\n")
         )
     for note in GlobalParser.format_advice:
         ret_val = True

@@ -1,16 +1,16 @@
 /** This is a very ugly test code (doomed to fail linting) */
 #include "demo.hpp"
-#include <stdio.h> //
+#include <stdio.h> ///
 
 
 
 
 int main(){
 
-    for (;;) break; //
+    for (;;) break; ///
 
 
-    printf("Hello world!\n"); ///
+    printf("Hello world!\n");  ///
 
 
 
