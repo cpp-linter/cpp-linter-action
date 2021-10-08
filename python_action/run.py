@@ -46,17 +46,20 @@ cli_arg_parser = argparse.ArgumentParser(
     description=__doc__[: __doc__.find("If executed from")]
 )
 cli_arg_parser.add_argument(
+    "-v",
     "--verbosity",
     default="10",
     help="The logging level. Defaults to level 20 (aka 'logging.INFO').",
 )
 cli_arg_parser.add_argument(
+    "-s",
     "--style",
     default="llvm",
     help="The style rules to use (defaults to 'llvm'). Set this to 'file' to have "
     "clang-format use the closest relative .clang-format file.",
 )
 cli_arg_parser.add_argument(
+    "-c",
     "--tidy-checks",
     default="boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,"
     "clang-analyzer-*,cppcoreguidelines-*",
@@ -64,24 +67,28 @@ cli_arg_parser.add_argument(
     "This defaults to %(default)s. See also clang-tidy docs for more info.",
 )
 cli_arg_parser.add_argument(
+    "-V",
     "--version",
     default="10",
     help="The desired version of the clang tools to use. Accepted options are strings "
     "which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
+    "-e",
     "--extensions",
     default="c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx",
     help="The file extensions to run the action against. This comma-separated string "
     "defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
+    "-r",
     "--repo-root",
     default=".",
     help="The relative path to the repository root directory. The default value "
     "'%(default)s' is relative to the runner's GITHUB_WORKSPACE environment variable.",
 )
 cli_arg_parser.add_argument(
+    "-i",
     "--ignore",
     default=[],
     nargs="*",
