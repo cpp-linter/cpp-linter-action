@@ -625,7 +625,7 @@ def main():
     logger.setLevel(int(args.verbosity))
 
     # prepare ignored paths list
-    args.ignore = args.ignore.split(" | ")
+    args.ignore = args.ignore.rstrip(" | ").split(" | ")
     ignored, not_ignored = ([], [])
     for path in args.ignore:
         path = path.lstrip("./")  # relative dir is assumed

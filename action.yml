@@ -77,4 +77,5 @@ runs:
     - --verbosity=${{ inputs.verbosity }}
     - --lines-changed-only=${{ inputs.lines-changed-only }}
     - --files-changed-only=${{ inputs.files-changed-only }}
-    - --ignore='${{ inputs.ignore }}'
+    - --ignore
+    - ${{ inputs.ignore }}
