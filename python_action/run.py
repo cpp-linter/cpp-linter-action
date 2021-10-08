@@ -151,7 +151,7 @@ def end_log_group() -> None:
     log_commander.fatal("::endgroup::")
 
 
-def is_file_in_list(paths: list, file_name: str) -> bool:
+def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
     """Detirmine if a file is specified in a list of paths and/or filenames.
 
     Args:
@@ -159,6 +159,7 @@ def is_file_in_list(paths: list, file_name: str) -> bool:
             specified file, but the file's path must be included as part of the
             filename.
         file_name: The file's path & name being sought in the `paths` list.
+        prompt: A debugging prompt to use when the path is found in the list.
     Returns:
         - True if `file_name` is in the `paths` list.
         - False if `file_name` is not in the `paths` list.
@@ -166,7 +167,9 @@ def is_file_in_list(paths: list, file_name: str) -> bool:
     for path in paths:
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
-            logger.debug('"%s" is in the specified domain "%s"', file_name, path)
+            logger.debug(
+                '"%s" is %s as specified in the domain "%s"', file_name, prompt, path
+            )
             return True
     return False
 
@@ -213,8 +216,8 @@ def filter_out_non_source_files(
             and extension.group(0)[1:] in ext_list
             and not file["status"].endswith("removed")
             and (
-                not is_file_in_list(ignored, file["filename"])
-                or is_file_in_list(not_ignored, file["filename"])
+                not is_file_in_list(ignored, file["filename"], "ignored")
+                or is_file_in_list(not_ignored, file["filename"], "not ignored")
             )
         ):
             if lines_changed_only and "patch" in file.keys():
@@ -320,8 +323,9 @@ def list_source_files(ext_list: str, ignored_paths: list, not_ignored: list) -> 
             if file.find(".") > 0 and file.split(".")[1] in ext_list:
                 file_path = os.path.join(path, file)
                 logger.debug("%s is a source file", file_path)
-                if not is_file_in_list(ignored_paths, file_path) or is_file_in_list(
-                    not_ignored, file_path
+                if (
+                    not is_file_in_list(ignored_paths, file_path, "ignored")
+                    or is_file_in_list(not_ignored, file_path, "not ignored")
                 ):
                     Globals.FILES.append({"filename": file_path})
 
@@ -630,7 +634,6 @@ def main():
     for path in args.ignore:
         path = path.lstrip("./")  # relative dir is assumed
         path = path.strip()  # strip leading/trailing spaces
-        path = path.strip("'").strip("\"")  # strip leading/trailing quotes
         if path.startswith("!"):
             not_ignored.append(path[1:])
         else:
@@ -685,7 +688,7 @@ def main():
     )
 
     start_log_group("Posting comment(s)")
-    # post_results(False)  # False is hard-coded to disable diff comments.
+    post_results(False)  # False is hard-coded to disable diff comments.
     end_log_group()
 
 
