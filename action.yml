@@ -61,6 +61,7 @@ inputs:
         submodules if desired.
       - Glob patterns are not supported here. All asterick characters ('*') are literal.
     required: false
+    default: "NONE_APPLICABLE_BECAUSE_NONE_SPECIFIED"
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
