@@ -90,8 +90,8 @@ cli_arg_parser.add_argument(
 cli_arg_parser.add_argument(
     "-i",
     "--ignore",
-    default=[],
-    nargs="*",
+    # default=[],
+    # nargs="*",
     help="Set this option with paths to ignore. In the case of multiple "
     "paths, you can set this option (multiple times) for each path. This can "
     "also have files, but the file's relative path has to be specified as well "
@@ -625,9 +625,12 @@ def main():
     logger.setLevel(int(args.verbosity))
 
     # prepare ignored paths list
+    args.ignore = args.ignore.split(" | ")
     ignored, not_ignored = ([], [])
     for path in args.ignore:
-        path = path.lstrip("./")
+        path = path.lstrip("./")  # relative dir is assumed
+        path = path.strip()  # strip leading/trailing spaces
+        path = path.strip("'").strip("\"")  # strip leading/trailing quotes
         if path.startswith("!"):
             not_ignored.append(path[1:])
         else:

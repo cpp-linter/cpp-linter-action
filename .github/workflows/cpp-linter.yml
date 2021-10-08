@@ -19,8 +19,8 @@ jobs:
         with:
           style: file
           ignore: >
-            demo
-            !demo/demo.cpp
+            demo |
+            !demo/demo.cpp |
           files-changed-only: false
 
       - name: Fail fast?!
