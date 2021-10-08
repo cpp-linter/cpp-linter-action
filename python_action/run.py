@@ -84,7 +84,7 @@ cli_arg_parser.add_argument(
 cli_arg_parser.add_argument(
     "--ignore",
     default=[],
-    action="append",
+    nargs="*",
     help="Set this option with paths to ignore. In the case of multiple "
     "paths, you can set this option (multiple times) for each path. This can "
     "also have files, but the file's relative path has to be specified as well "
@@ -121,21 +121,30 @@ def set_exit_code(override: int = None) -> int:
     return exit_code
 
 
+# setup a separate logger for using github log commands
+log_commander = logger.getChild("LOG COMMANDER")  # create a child of our logger obj
+log_commander.setLevel(logging.DEBUG)  # be sure that log commands are output
+console_handler = logging.StreamHandler()  # Create special stdout stream handler
+console_handler.setFormatter(logging.Formatter("%(message)s"))  # no formatted log cmds
+log_commander.addHandler(console_handler)  # Use special handler for log_commander
+log_commander.propagate = False  # prevent duplicate messages in the parent logger obj
+
+
 def start_log_group(name: str) -> None:
     """Begin a callapsable group of log statements.
 
     Argrs:
         name: The name of the callapsable group
     """
-    logger.critical("::group::%s", name)
+    log_commander.fatal("::group::%s", name)
 
 
 def end_log_group() -> None:
     """End a callapsable group of log statements."""
-    logger.critical("::endgroup::")
+    log_commander.fatal("::endgroup::")
 
 
-def is_file_ignored(paths: list, file_name: str) -> bool:
+def is_file_in_list(paths: list, file_name: str) -> bool:
     """Detirmine if a file is specified in a list of paths and/or filenames.
 
     Args:
@@ -148,15 +157,9 @@ def is_file_ignored(paths: list, file_name: str) -> bool:
         - False if `file_name` is not in the `paths` list.
     """
     for path in paths:
-        if not path.rstrip(): # skip empty strings
-            continue
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
-            logger.debug(
-                "ignoring \"%s\" because \"%s\" was specified",
-                file_name,
-                path
-            )
+            logger.debug('ignoring "%s" because "%s" was specified', file_name, path)
             return True
     return False
 
@@ -177,7 +180,7 @@ def get_list_of_changed_files() -> None:
 
 
 def filter_out_non_source_files(
-    ext_list: list, ignored: list, lines_changed_only: bool
+    ext_list: list, ignored: list, not_ignored: list, lines_changed_only: bool
 ) -> bool:
     """Exclude undesired files (specified by user input 'extensions'). This filter
     applies to the event's [`FILES`][python_action.__init__.Globals.FILES] attribute.
@@ -185,6 +188,7 @@ def filter_out_non_source_files(
     Args:
         ext_list: A list of file extensions that are to be examined.
         ignored: A list of paths to explicitly ignore.
+        not_ignored: A list of paths to explicitly not ignore.
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
 
@@ -201,7 +205,10 @@ def filter_out_non_source_files(
             extension is not None
             and extension.group(0)[1:] in ext_list
             and not file["status"].endswith("removed")
-            and not is_file_ignored(ignored, file["filename"])
+            and (
+                not is_file_in_list(ignored, file["filename"])
+                or is_file_in_list(not_ignored, file["filename"])
+            )
         ):
             if lines_changed_only and "patch" in file.keys():
                 # get diff details for the file's changes
@@ -273,13 +280,14 @@ def verify_files_are_present() -> None:
                 temp.write(Globals.response_buffer.text)
 
 
-def list_source_files(ext_list: str, ignored_paths: list) -> bool:
+def list_source_files(ext_list: str, ignored_paths: list, not_ignored: list) -> bool:
     """Make a list of source files to be checked. The resulting list is stored in
     [`FILES`][Global.FILES].
 
     Args:
         ext_list: A comma-separated `str` of extensions that are concerned.
         ignored_paths: A list of paths to explicitly ignore.
+        not_ignored: A list of paths to explicitly not ignore.
 
     Returns:
         True if there are files to check. False will invoke a early exit (in
@@ -300,12 +308,14 @@ def list_source_files(ext_list: str, ignored_paths: list) -> bool:
         if path.startswith("."):
             # logger.debug("Skipping \"%s\"", path)
             continue  # skip sources in hidden directories
-        logger.debug("Crawling \"./%s\"", path)
+        logger.debug('Crawling "./%s"', path)
         for file in filenames:
             if file.find(".") > 0 and file.split(".")[1] in ext_list:
                 file_path = os.path.join(path, file)
                 logger.debug("%s is a source file", file_path)
-                if not is_file_ignored(ignored_paths, file_path):
+                if not is_file_in_list(ignored_paths, file_path) or is_file_in_list(
+                    not_ignored, file_path
+                ):
                     Globals.FILES.append({"filename": file_path})
 
     if Globals.FILES:
@@ -608,8 +618,13 @@ def main():
     logger.setLevel(int(args.verbosity))
 
     # prepare ignored paths list
-    if len(args.ignore) == 1:
-        args.ignore = args.ignore[0].split("\n")
+    ignored, not_ignored = ([], [])
+    for path in args.ignore:
+        path = path.lstrip("./")
+        if path.startswith("!"):
+            not_ignored.append(path[1:])
+        else:
+            ignored.append(path)
 
     # prepare extensions list
     args.extensions = args.extensions.split(",")
@@ -619,7 +634,7 @@ def main():
     # load event's json info about the workflow run
     with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
         Globals.EVENT_PAYLOAD = json.load(payload)
-    if logger.getEffectiveLevel() >= logging.DEBUG:
+    if logger.getEffectiveLevel() <= logging.DEBUG:
         start_log_group("Event json from the runner")
         logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
         end_log_group()
@@ -628,23 +643,29 @@ def main():
     os.chdir(args.repo_root)
 
     start_log_group("Get list of specified source files")
-    if args.ignore:
+    if ignored:
         logger.info(
             "Ignoring the following paths/files:\n\t%s",
-            "\n\t".join(f for f in args.ignore),
+            "\n\t".join(f for f in ignored),
+        )
+    if not_ignored:
+        logger.info(
+            "Not ignoring the following paths/files:\n\t%s",
+            "\n\t".join(f for f in not_ignored),
         )
     exit_early = False
     if args.files_changed_only:
         get_list_of_changed_files()
         exit_early = not filter_out_non_source_files(
             args.extensions,
-            args.ignore,
+            ignored,
+            not_ignored,
             args.lines_changed_only if args.files_changed_only else False,
         )
         if not exit_early:
             verify_files_are_present()
     else:
-        exit_early = not list_source_files(args.extensions, args.ignore)
+        exit_early = not list_source_files(args.extensions, ignored, not_ignored)
     end_log_group()
     if exit_early:
         sys.exit(set_exit_code(0))
@@ -654,7 +675,7 @@ def main():
     )
 
     start_log_group("Posting comment(s)")
-    post_results(False)  # False is hard-coded to disable diff comments.
+    # post_results(False)  # False is hard-coded to disable diff comments.
     end_log_group()
 
 
