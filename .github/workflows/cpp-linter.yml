@@ -19,9 +19,7 @@ jobs:
         with:
           style: file
           files-changed-only: false
-          ignore: >
-            demo |
-            !demo/demo.cpp
+          ignore: demo;!demo/demo.cpp;\'dead beef\'
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0

@@ -166,7 +166,7 @@ def is_file_in_list(paths: list, file_name: str) -> bool:
     for path in paths:
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
-            logger.debug('ignoring "%s" because "%s" was specified', file_name, path)
+            logger.debug('"%s" is in the specified domain "%s"', file_name, path)
             return True
     return False
 
@@ -625,7 +625,7 @@ def main():
     logger.setLevel(int(args.verbosity))
 
     # prepare ignored paths list
-    args.ignore = args.ignore.rstrip(" | ").split(" | ")
+    args.ignore = args.ignore.split(";")
     ignored, not_ignored = ([], [])
     for path in args.ignore:
         path = path.lstrip("./")  # relative dir is assumed

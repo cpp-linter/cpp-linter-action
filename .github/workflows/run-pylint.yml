@@ -3,12 +3,12 @@ name: "Check python code"
 on:
   push:
     path:
-      - "**.py"
+      - python_action/*.py
       - .pylintrc
   pull_request:
     types: opened
     path:
-      - "**.py"
+      - python_action/*.py
       - .pylintrc
 
 jobs:
