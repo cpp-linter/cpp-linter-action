@@ -624,21 +624,23 @@ def make_annotations():
     for note in GlobalParser.tidy_notes:
         # log_commander's verbosity is hard-coded tto show debug statements
         log_commander.info(
-            "::%s file=%s,line=%d,title=%s::'%s"
-            "\n```%s\n%s```'",
+            "::%s file=%s,line=%d,col=%d,title=%s::%s"
+            "<br>```%s<br>%s```",
             "notice" if note.note_type.startswith("note") else note.note_type,
             note.filename,
             note.line,
+            note.cols,
             note.diagnostic,
             note.note_info,
             os.path.splitext(note.filename)[1][1:],
-            "".join(note.fixit_lines)
+            ("".join(note.fixit_lines)).replace("\n", "<br>")
         )
     for note in GlobalParser.format_advice:
         log_commander.info(
-            "::notice file=%s,line=1,col=1,"
-            "title=clang-format advice::clang-format reports that this file's code "
-            "style does not conform.",
+            "::notice file=%s,"
+            "title=clang-format advice::clang-format reports that the code "
+            "style for %s does not conform.",
+            note.filename,
             note.filename,
         )
 
