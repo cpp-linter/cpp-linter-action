@@ -10,7 +10,7 @@ int main(){
     for (;;) break; //
 
 
-    printf("Hello world!\n"); //
+    printf("Hello world!\n"); ///
 
 
 

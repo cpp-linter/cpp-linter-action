@@ -621,28 +621,35 @@ def post_results(use_diff_comments: bool, user_id: int = 41898282):
 def make_annotations():
     """Use github log commands to make annotations about from clang-format and
     clang-tidy"""
+    # log_commander's verbosity is hard-coded tto show debug statements
+    ret_val = False
     for note in GlobalParser.tidy_notes:
-        # log_commander's verbosity is hard-coded tto show debug statements
+        ret_val = True
         log_commander.info(
-            "::%s file=%s,line=%d,col=%d,title=%s::%s"
-            "<br>```%s<br>%s```",
+            "::%s file=%s,line=%d,title=clang-tidy diagnostic:%s (%s:%d:%d)::%s",
+            # "<br>```%s<br>%s```",
             "notice" if note.note_type.startswith("note") else note.note_type,
             note.filename,
             note.line,
-            note.cols,
             note.diagnostic,
+            note.filename,
+            note.line,
+            note.cols,
             note.note_info,
-            os.path.splitext(note.filename)[1][1:],
-            ("".join(note.fixit_lines)).replace("\n", "<br>")
+            # os.path.splitext(note.filename)[1][1:],
+            # ("".join(note.fixit_lines)).replace("\n", "<br>")
         )
     for note in GlobalParser.format_advice:
+        ret_val = True
         log_commander.info(
             "::notice file=%s,"
-            "title=clang-format advice::clang-format reports that the code "
+            "title=Run clang-format on %s::clang-format reports that the code "
             "style for %s does not conform.",
             note.filename,
             note.filename,
+            note.filename,
         )
+    return ret_val
 
 
 def main():
@@ -716,7 +723,7 @@ def main():
 
     start_log_group("Posting comment(s)")
     # post_results(False)  # False is hard-coded to disable diff comments.
-    make_annotations()
+    set_exit_code(int(make_annotations()))
     end_log_group()
 
 
