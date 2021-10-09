@@ -13,7 +13,6 @@ the entrypoint.
 import subprocess
 import os
 import sys
-import re
 import argparse
 import configparser
 import json
@@ -212,10 +211,8 @@ def filter_out_non_source_files(
     for file in (
         Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
     ):
-        extension = re.search("\.\w+$", file["filename"])
         if (
-            extension is not None
-            and extension.group(0)[1:] in ext_list
+            os.path.splitext(file["filename"])[1][1:] in ext_list
             and not file["status"].endswith("removed")
             and (
                 not is_file_in_list(ignored, file["filename"], "ignored")
@@ -261,9 +258,7 @@ def filter_out_non_source_files(
         else:
             Globals.FILES["files"] = files
         if not os.getenv("CI"):  # if not executed on a github runner
-            with open(
-                ".cpp_linter_action_changed_files.json", "w", encoding="utf-8"
-            ) as temp:
+            with open(".changed_files.json", "w", encoding="utf-8") as temp:
                 # dump altered json of changed files
                 json.dump(Globals.FILES, temp, indent=2)
     else:
@@ -292,12 +287,12 @@ def verify_files_are_present() -> None:
                 temp.write(Globals.response_buffer.text)
 
 
-def list_source_files(ext_list: str, ignored_paths: list, not_ignored: list) -> bool:
+def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) -> bool:
     """Make a list of source files to be checked. The resulting list is stored in
     [`FILES`][Global.FILES].
 
     Args:
-        ext_list: A comma-separated `str` of extensions that are concerned.
+        ext_list: A list of file extensions that should by attended.
         ignored_paths: A list of paths to explicitly ignore.
         not_ignored: A list of paths to explicitly not ignore.
 
@@ -322,9 +317,9 @@ def list_source_files(ext_list: str, ignored_paths: list, not_ignored: list) -> 
             continue  # skip sources in hidden directories
         logger.debug('Crawling "./%s"', path)
         for file in filenames:
-            if file.find(".") > 0 and file.split(".")[1] in ext_list:
+            if os.path.splitext(file)[1][1:] in ext_list:
                 file_path = os.path.join(path, file)
-                logger.debug("\"./%s\" is a source code file", file_path)
+                logger.debug('"./%s" is a source code file', file_path)
                 if not is_file_in_list(
                     ignored_paths, file_path, "ignored"
                 ) or is_file_in_list(not_ignored, file_path, "not ignored"):
@@ -620,9 +615,9 @@ def post_results(use_diff_comments: bool, user_id: int = 41898282):
     set_exit_code(1 if checks_passed else 0)
 
 
-def make_annotations(style: str) -> None:
-    """Use github log commands to make annotations about from clang-format and
-    clang-tidy.
+def make_annotations(style: str) -> bool:
+    """Use github log commands to make annotations from clang-format and
+    clang-tidy output.
 
     Args:
         style: The chosen code style guidelines. The value 'file' is replaced with

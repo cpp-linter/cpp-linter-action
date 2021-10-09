@@ -1,5 +1,5 @@
 # local demo specific
-.cpp_linter_action_changed_files.json
+.changed_files.json
 clang_format*.txt
 clang_tidy*.txt
 act.exe
