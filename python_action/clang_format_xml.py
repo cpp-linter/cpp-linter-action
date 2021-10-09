@@ -96,11 +96,11 @@ class XMLFixit:
         Args:
             style: The chosen code style guidelines.
         """
-        if style not in ("llvm", "google", "webkit", "mozilla"):
-            # potentially the style parameter could be a serialized JSON string
+        if style not in ("llvm", "google", "webkit", "mozilla", "gnu"):
+            # potentially the style parameter could be a str of JSON/YML syntax
             style = "Custom"
         else:
-            if style.startswith("llvm"):
+            if style.startswith("llvm") or style.startswith("gnu"):
                 style = style.upper()
             else:
                 style = style.title()
