@@ -94,16 +94,24 @@ class XMLFixit:
               actions/workflow-commands-for-github-actions#setting-a-notice-message)
 
         Args:
-            style: The chosen code style guidelines. The value 'file' is replaced with
-                'custom style'.
+            style: The chosen code style guidelines.
         """
+        if style not in ("llvm", "google", "webkit", "mozilla"):
+            # potentially the style parameter could be a serialized JSON string
+            style = "Custom"
+        else:
+            if style.startswith("llvm"):
+                style = style.upper()
+            else:
+                style = style.title()
+
         return (
             "::notice file={name},title=Run clang-format on {name}::"
             "File {name} (lines {lines}): Code does not conform to {style_guide} "
-            "guidelines.".format(
+            "style guidelines.".format(
                 name=self.filename,
                 lines=", ".join(str(f.line) for f in self.replaced_lines),
-                style_guide=style if not style.startswith("file") else "custom style",
+                style_guide=style.upper(),
             )
         )
 
