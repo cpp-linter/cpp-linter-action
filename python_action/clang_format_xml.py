@@ -111,7 +111,7 @@ class XMLFixit:
             "style guidelines.".format(
                 name=self.filename,
                 lines=", ".join(str(f.line) for f in self.replaced_lines),
-                style_guide=style.upper(),
+                style_guide=style,
             )
         )
 
