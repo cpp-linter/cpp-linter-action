@@ -16,7 +16,7 @@ try:
     )
 
 except ImportError:
-    logging.basicConfig(format="%(name)s: %(message)s")
+    logging.basicConfig()
 
 #: The logging.Logger object used for outputing data.
 logger = logging.getLogger("CPP Linter")

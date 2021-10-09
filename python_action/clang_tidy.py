@@ -62,6 +62,28 @@ class TidyNotification:
             )
         )
 
+    def log_command(self) -> str:
+        """Output the notification as a github log command.
+
+        !!! info See Also
+            - [An error message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-an-error-message)
+            - [A warning message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-a-warning-message)
+            - [A notice message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-a-notice-message)
+        """
+        return "::{} file={},line={},title={}:{}:{} [{}]::{}".format(
+            "notice" if self.note_type.startswith("note") else self.note_type,
+            self.filename,
+            self.line,
+            self.filename,
+            self.line,
+            self.cols,
+            self.diagnostic,
+            self.note_info,
+        )
+
 
 def parse_tidy_output() -> None:
     """Parse clang-tidy output in a file created from stdout."""

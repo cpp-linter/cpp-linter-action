@@ -167,7 +167,10 @@ def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
             logger.debug(
-                '"%s" is %s as specified in the domain "%s"', file_name, prompt, path
+                '"./%s" is %s as specified in the domain "./%s"',
+                file_name,
+                prompt,
+                path,
             )
             return True
     return False
@@ -321,11 +324,10 @@ def list_source_files(ext_list: str, ignored_paths: list, not_ignored: list) -> 
         for file in filenames:
             if file.find(".") > 0 and file.split(".")[1] in ext_list:
                 file_path = os.path.join(path, file)
-                logger.debug("%s is a source file", file_path)
-                if (
-                    not is_file_in_list(ignored_paths, file_path, "ignored")
-                    or is_file_in_list(not_ignored, file_path, "not ignored")
-                ):
+                logger.debug("\"./%s\" is a source code file", file_path)
+                if not is_file_in_list(
+                    ignored_paths, file_path, "ignored"
+                ) or is_file_in_list(not_ignored, file_path, "not ignored"):
                     Globals.FILES.append({"filename": file_path})
 
     if Globals.FILES:
@@ -618,34 +620,22 @@ def post_results(use_diff_comments: bool, user_id: int = 41898282):
     set_exit_code(1 if checks_passed else 0)
 
 
-def make_annotations():
+def make_annotations(style: str) -> None:
     """Use github log commands to make annotations about from clang-format and
-    clang-tidy"""
-    # log_commander's verbosity is hard-coded tto show debug statements
+    clang-tidy.
+
+    Args:
+        style: The chosen code style guidelines. The value 'file' is replaced with
+            'custom style'.
+    """
+    # log_commander obj's verbosity is hard-coded to show debug statements
     ret_val = False
     for note in GlobalParser.tidy_notes:
         ret_val = True
-        log_commander.info(
-            "::%s file=%s,line=%d,title=%s:%d:%d [%s]::%s",
-            "notice" if note.note_type.startswith("note") else note.note_type,
-            note.filename,
-            note.line,
-            note.filename,
-            note.line,
-            note.cols,
-            note.diagnostic,
-            note.note_info,
-        )
+        log_commander.info(note.log_command())
     for note in GlobalParser.format_advice:
         ret_val = True
-        log_commander.info(
-            "::notice file=%s,"
-            "title=Run clang-format on %s::clang-format reports that the code "
-            "style for %s does not conform.",
-            note.filename,
-            note.filename,
-            note.filename,
-        )
+        log_commander.info(note.log_command(style))
     return ret_val
 
 
@@ -661,7 +651,7 @@ def main():
     # prepare ignored paths list
     ignored, not_ignored = ([], [])
     if args.ignore is not None:
-        args.ignore = args.ignore.split(";")
+        args.ignore = args.ignore.split("|")
         for path in args.ignore:
             path = path.lstrip("./")  # relative dir is assumed
             path = path.strip()  # strip leading/trailing spaces
@@ -690,12 +680,12 @@ def main():
     if ignored:
         logger.info(
             "Ignoring the following paths/files:\n\t%s",
-            "\n\t".join(f for f in ignored),
+            "\n\t./".join(f for f in ignored),
         )
     if not_ignored:
         logger.info(
             "Not ignoring the following paths/files:\n\t%s",
-            "\n\t".join(f for f in not_ignored),
+            "\n\t./".join(f for f in not_ignored),
         )
     exit_early = False
     if args.files_changed_only:
@@ -720,7 +710,7 @@ def main():
 
     start_log_group("Posting comment(s)")
     # post_results(False)  # False is hard-coded to disable diff comments.
-    set_exit_code(int(make_annotations()))
+    set_exit_code(int(make_annotations(args.style)))
     end_log_group()
 
 

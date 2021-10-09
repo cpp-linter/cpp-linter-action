@@ -46,10 +46,10 @@ inputs:
     default: true
   ignore:
     description: >
-      Set this option with string of paths to ignore.
+      Set this option with string of path(s) to ignore.
 
-      - In the case of multiple paths, you can use a greater than character `>`
-        followed by a multiple indented lines of paths.
+      - In the case of multiple paths, you can use a pipe character ('|')
+        to separate the multiple paths. Multiple lines are forbidden as input to this option.
       - This can also have files, but the file's relative path has to be specified
         as well.
       - There is no need to use './' for each entry; a blank string ('') represents
@@ -61,7 +61,7 @@ inputs:
         submodules if desired.
       - Glob patterns are not supported here. All asterick characters ('*') are literal.
     required: false
-    default: "NONE_APPLICABLE_BECAUSE_NONE_SPECIFIED"
+    default: ".github"
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
