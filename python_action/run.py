@@ -212,7 +212,7 @@ def filter_out_non_source_files(
 
     Returns:
         True if there are files to check. False will invoke a early exit (in
-        [`main()`][python_action.run.main()]) when no files to be checked.
+        [`main()`][python_action.run.main]) when no files to be checked.
     """
     files = []
     for file in (
@@ -296,7 +296,7 @@ def verify_files_are_present() -> None:
 
 def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) -> bool:
     """Make a list of source files to be checked. The resulting list is stored in
-    [`FILES`][Global.FILES].
+    [`FILES`][python_action.__init__.Globals.FILES].
 
     Args:
         ext_list: A list of file extensions that should by attended.
@@ -305,7 +305,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
 
     Returns:
         True if there are files to check. False will invoke a early exit (in
-        [`main()`][python_action.run.main()]) when no files to be checked.
+        [`main()`][python_action.run.main]) when no files to be checked.
     """
     if os.path.exists(".gitmodules"):
         submodules = configparser.ConfigParser()

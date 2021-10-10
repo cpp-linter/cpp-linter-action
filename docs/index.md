@@ -8,9 +8,12 @@
    end="<!--intro-end-->"
 %}
 
-**Thread Comment**
+### Thread Comment
+
 ![sample comment](images/demo_comment.png)
-**Annotations**
+
+### Annotations
+
 ![workflow annotations](images/demo_annotations.png)
 
 {%
