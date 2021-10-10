@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # - uses: shenxianpeng/cpp-linter-action@master
-      - uses: 2bndy5/cpp-linter-action@check-all-files
+      - uses: shenxianpeng/cpp-linter-action@master
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
