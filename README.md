@@ -52,31 +52,31 @@ jobs:
 
 ### Optional Inputs
 
-- `style`
+#### `style`
    - **Description**: The style rules to use. Set this to 'file' to have clang-format use the closest relative .clang-format file.
    - Default: 'llvm'
-- `extensions`
+#### `extensions`
    - **Description**: The file extensions to run the action against. This is a comma-separated string.
    - Default: 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'
-- `tidy-checks`
+#### `tidy-checks`
    - **Description**: Comma-separated list of globs with optional '-' prefix. Globs are processed in order of appearance in the list. Globs without '-' prefix add checks with matching names to the set, globs with the '-' prefix remove checks with matching names from the set of enabled checks. This option's value is appended to the value of the 'Checks' option in a .clang-tidy file (if any).
    - Default: 'boost-\*,bugprone-\*,performance-\*,readability-\*,portability-\*,modernize-\*,clang-analyzer-\*,cppcoreguidelines-\*'
-- `repo-root`
+#### `repo-root`
    - **Description**: The relative path to the repository root directory. This path is relative to the path designated as the runner's GITHUB_WORKSPACE environment variable.
    - Default: '.'
-- `version`
+#### `version`
    - **Description**: The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, or 12.
    - Default: '10'
-- `verbosity`
+#### `verbosity`
    - **Description**: This controls the action's verbosity in the workflow's logs. Supported options are defined by the python logging library's log levels. This option does not affect the verbosity of resulting comments or annotations.
    - Default: '10'
-- `lines-changed-only`
+#### `lines-changed-only`
    - **Description**: Set this option to true to only analyse changes in the event's diff.
    - Default: false
-- `files-changed-only`
+#### `files-changed-only`
    - **Description**: Set this option to false to analyse any source files in the repo.
    - Default: true
-- `ignore`
+#### `ignore`
    - **Description**: Set this option with string of path(s) to ignore.
       - In the case of multiple paths, you can use a pipe character ('|')
         to separate the multiple paths. Multiple lines are forbidden as an input to this option; it must be a single string.
@@ -90,7 +90,7 @@ jobs:
         a submodule's path (if desired) but not hidden directories.
       - Glob patterns are not supported here. All asterick characters ('*') are literal.
    - Default: '.github'
-- `thread-comments`
+#### `thread-comments`
    - **Description**: Set this option to false to disable the use of thread comments as feedback.
       - To use thread comments, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
         variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
