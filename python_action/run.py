@@ -431,6 +431,7 @@ def capture_clang_tools_output(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
     """
+    tidy_notes = []  # temporary cache of parsed notifications for use in log commands
     for file in (
         Globals.FILES
         if GITHUB_EVENT_NAME == "pull_request" or isinstance(Globals.FILES, list)
@@ -450,7 +451,9 @@ def capture_clang_tools_output(
             Globals.PAYLOAD_TIDY += f"<details><summary>{filename}</summary><br>\n"
             for fix in GlobalParser.tidy_notes:
                 Globals.PAYLOAD_TIDY += repr(fix)
-            # GlobalParser.tidy_notes.clear()
+            for note in GlobalParser.tidy_notes:
+                tidy_notes.append(note)
+            GlobalParser.tidy_notes.clear()  # empty list to avoid duplicated output
 
         if os.path.getsize("clang_format_output.xml"):
             parse_format_replacements_xml(filename.replace("/", os.sep))
@@ -466,6 +469,7 @@ def capture_clang_tools_output(
             Globals.OUTPUT += "\n---\n"
         Globals.OUTPUT += "## :speech_balloon: Output from `clang-tidy`\n"
         Globals.OUTPUT += Globals.PAYLOAD_TIDY
+    GlobalParser.tidy_notes = tidy_notes[:]  # restore cache of notifications
 
 
 def post_push_comment(base_url: str, user_id: int) -> bool:
