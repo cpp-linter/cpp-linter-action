@@ -109,6 +109,13 @@ cli_arg_parser.add_argument(
     help="Set this option to 'false' to analyse any source files in the repo. "
     "Defaults to %(default)s.",
 )
+cli_arg_parser.add_argument(
+    "--thread-comments",
+    default="true",
+    type=lambda input: input.lower() == "true",
+    help="Set this option to false to disable the use of thread comments as feedback."
+    "Defaults to %(default)s.",
+)
 
 
 def set_exit_code(override: int = None) -> int:
@@ -704,7 +711,8 @@ def main():
     )
 
     start_log_group("Posting comment(s)")
-    # post_results(False)  # False is hard-coded to disable diff comments.
+    if args.thread_comments:
+        post_results(False)  # False is hard-coded to disable diff comments.
     set_exit_code(int(make_annotations(args.style)))
     end_log_group()
 

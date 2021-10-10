@@ -8,7 +8,10 @@
    end="<!--intro-end-->"
 %}
 
-![sample picture](images/demo_comment.png)
+**Thread Comment**
+![sample comment](images/demo_comment.png)
+**Annotations**
+![workflow annotations](images/demo_annotations.png)
 
 {%
    include-markdown "../README.md"
