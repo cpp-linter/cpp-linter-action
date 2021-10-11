@@ -15,7 +15,7 @@ A Github Action for linting C/C++ code integrating clang-tidy and clang-format t
 
 ## Usage
 
-Create a new GitHub Actions workflow in your project, e.g. at `.github/workflows/cpp-linter.yml`
+Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/shenxianpeng/cpp-linter-action/blob/master/.github/workflows/cpp-linter.yml)
 
 The content of the file should be in the following format.
 
@@ -25,27 +25,35 @@ name: cpp-linter
 # Workflow syntax:
 # https://help.github.com/en/articles/workflow-syntax-for-github-actions
 
-# Triggers the workflow on push or pull request events
+name: cpp-linter
+
 on:
   push:
+    paths-ignore: "docs/**"
   pull_request:
-    types: [opened]
+    paths-ignore: "docs/**"
 
 jobs:
   cpp-linter:
-    name: cpp-linter
     runs-on: ubuntu-latest
     steps:
-      # Checkout the code base
-      - name: Checkout code
-        uses: actions/checkout@v2
-      # Run linter against code base
-      - name: Lint code
-        uses: shenxianpeng/cpp-linter-action@master
+      - uses: actions/checkout@v2
+      - uses: shenxianpeng/cpp-linter-action@master
+        id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: "file"
+          style: file
+          files-changed-only: false
+          # to ignore all demo folder contents except for demo.cpp
+          # ignore: demo|!demo/demo.cpp
+
+      - name: Fail fast?!
+        if: steps.linter.outputs.checks-failed > 0
+        run: |
+          echo "Some files failed the linting checks!"
+        # for actual deployment
+        # run: exit 1
 ```
 
 ### Optional Inputs
@@ -130,8 +138,6 @@ This action creates 1 output variable named `checks-failed`. Even if the linting
 ![workflow annotations](./docs/images/demo_annotations.png)
 
 <!--footer-start-->
-
-Example comment is [here](https://github.com/shenxianpeng/cpp-linter-action/pull/5#commitcomment-55252014).
 
 ## Add C/C++ Lint Action badge in README
 
