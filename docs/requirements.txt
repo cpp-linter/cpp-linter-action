@@ -1,0 +1,5 @@
+mkdocs
+mkdocstrings
+mkdocs-material
+mkdocs-autorefs
+mkdocs-include-markdown-plugin
