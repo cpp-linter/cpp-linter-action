@@ -41,9 +41,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file
-          files-changed-only: false
-          # to ignore all demo folder contents except for demo.cpp
-          # ignore: demo|!demo/demo.cpp
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
