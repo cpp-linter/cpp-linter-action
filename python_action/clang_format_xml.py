@@ -82,6 +82,39 @@ class XMLFixit:
             f"replacements for {self.filename}>"
         )
 
+    def log_command(self, style: str) -> str:
+        """Output a notification as a github log command.
+
+        !!! info See Also
+            - [An error message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-an-error-message)
+            - [A warning message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-a-warning-message)
+            - [A notice message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-a-notice-message)
+
+        Args:
+            style: The chosen code style guidelines.
+        """
+        if style not in ("llvm", "google", "webkit", "mozilla", "gnu"):
+            # potentially the style parameter could be a str of JSON/YML syntax
+            style = "Custom"
+        else:
+            if style.startswith("llvm") or style.startswith("gnu"):
+                style = style.upper()
+            else:
+                style = style.title()
+
+        return (
+            "::notice file={name},title=Run clang-format on {name}::"
+            "File {name} (lines {lines}): Code does not conform to {style_guide} "
+            "style guidelines.".format(
+                name=self.filename,
+                lines=", ".join(str(f.line) for f in self.replaced_lines),
+                style_guide=style,
+            )
+        )
+
 
 def parse_format_replacements_xml(src_filename: str):
     """Parse XML output of replacements from clang-format. Output is saved to

@@ -1,6 +1,15 @@
 name: "Check python code"
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - "**.py"
+      - .pylintrc
+  pull_request:
+    types: opened
+    paths:
+      - "**.py"
+      - .pylintrc
 
 jobs:
   using-pylint:

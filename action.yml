@@ -2,15 +2,19 @@ name: C/C++ Lint Action
 description: Automatically checks push & pull request changes with clang-format & clang-tidy, then posts a comment with faulty results.
 author: shenxianpeng
 branding:
-  icon: 'check-circle'
-  color: 'green'
+  icon: "check-circle"
+  color: "green"
 inputs:
+  thread-comments:
+    description: Set this option to false to disable the use of thread comments as feedback. Defaults to true.
+    required: false
+    default: true
   style:
     description: >
       The style rules to use (defaults to 'llvm').
       Set this to 'file' to have clang-format use the closest relative .clang-format file.
     required: false
-    default: 'llvm'
+    default: "llvm"
   extensions:
     description: >
       The file extensions to run the action against.
@@ -22,30 +26,52 @@ inputs:
       A string of regex-like patterns specifying what checks clang-tidy will use.
       This defaults to 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*'. See also clang-tidy docs for more info.
     required: false
-    default: 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*'
+    default: "boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*"
   repo-root:
     description: >
       The relative path to the repository root directory. The default value '.' is relative to the runner's GITHUB_WORKSPACE environment variable.
     required: false
-    default: '.'
+    default: "."
   version:
     description: "The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to 10."
     required: false
-    default: '10'
+    default: "10"
   verbosity:
     descruption: A hidden option to control the action's log verbosity. This is the `logging` level (degaults to DEBUG)
     required: false
-    default: '10'
-  diff-only:
+    default: "10"
+  lines-changed-only:
     description: Set this option to 'true' to only analyse changes in the event's diff. Defaults to 'false'.
     required: false
     default: false
+  files-changed-only:
+    description: Set this option to 'false' to analyse any source files in the repo. Defaults to 'true'.
+    required: false
+    default: true
+  ignore:
+    description: >
+      Set this option with string of path(s) to ignore.
+
+      - In the case of multiple paths, you can use a pipe character ('|')
+        to separate the multiple paths. Multiple lines are forbidden as input to this option.
+      - This can also have files, but the file's relative path has to be specified
+        as well.
+      - There is no need to use './' for each entry; a blank string ('') represents
+        the repo-root path (specified by the `repo-root` input option).
+      - Path(s) containing a space should be inside single quotes.
+      - Submodules are automatically ignored.
+      - Prefix a path with a bang (`!`) to make it explicitly not ignored - order of
+        multiple paths does take precedence. The `!` prefix can be applied to
+        submodules if desired.
+      - Glob patterns are not supported here. All asterick characters ('*') are literal.
+    required: false
+    default: ".github"
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
   args:
     - --style=${{ inputs.style }}
     - --extensions=${{ inputs.extensions }}
@@ -53,4 +79,8 @@ runs:
     - --repo-root=${{ inputs.repo-root }}
     - --version=${{ inputs.version }}
     - --verbosity=${{ inputs.verbosity }}
-    - --diff-only=${{ inputs.diff-only }}
+    - --lines-changed-only=${{ inputs.lines-changed-only }}
+    - --files-changed-only=${{ inputs.files-changed-only }}
+    - --thread-comments=${{ inputs.thread-comments }}
+    - --ignore
+    - ${{ inputs.ignore }}

@@ -48,7 +48,6 @@ class TidyNotification:
         self.fixit_lines = []
 
     def __repr__(self) -> str:
-        file_ext = re.search("\.\w+", self.filename)
         return (
             "<details open>\n<summary><strong>{}:{}:{}:</strong> {}: [{}]"
             "\n\n> {}\n</summary><p>\n\n```{}\n{}```\n</p>\n</details>\n\n".format(
@@ -58,9 +57,31 @@ class TidyNotification:
                 self.note_type,
                 self.diagnostic,
                 self.note_info,
-                "" if file_ext is None else file_ext.group(0)[1:],
+                os.path.splitext(self.filename)[1],
                 "".join(self.fixit_lines),
             )
+        )
+
+    def log_command(self) -> str:
+        """Output the notification as a github log command.
+
+        !!! info See Also
+            - [An error message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-an-error-message)
+            - [A warning message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-a-warning-message)
+            - [A notice message](https://docs.github.com/en/actions/learn-github-
+              actions/workflow-commands-for-github-actions#setting-a-notice-message)
+        """
+        return "::{} file={},line={},title={}:{}:{} [{}]::{}".format(
+            "notice" if self.note_type.startswith("note") else self.note_type,
+            self.filename,
+            self.line,
+            self.filename,
+            self.line,
+            self.cols,
+            self.diagnostic,
+            self.note_info,
         )
 
 
