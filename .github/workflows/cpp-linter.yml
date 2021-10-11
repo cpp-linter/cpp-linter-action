@@ -2,21 +2,24 @@ name: cpp-linter
 
 on:
   push:
+    paths-ignore: "docs/**"
   pull_request:
-    types: [opened]
+    paths-ignore: "docs/**"
 
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: C/C++ Lint Action
-        uses: shenxianpeng/cpp-linter-action@master
+      - uses: shenxianpeng/cpp-linter-action@master
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file
+          files-changed-only: false
+          # to ignore all demo folder contents except for demo.cpp
+          # ignore: demo|!demo/demo.cpp
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0

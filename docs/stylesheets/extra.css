@@ -1,0 +1,59 @@
+:root>* {
+    --md-code-hl-number-color: #7e9b1e;
+    --md-code-hl-special-color: #499DC7;
+    --md-code-hl-constant-color: #48C999;
+    --md-code-hl-keyword-color: #499CD6;
+    --md-code-hl-string-color: #B88451;
+    --md-code-hl-comment-color: #5E9955;
+    /* --md-typeset-table-color: #ff000085; */
+}
+
+.md-typeset table:not([class]) tbody tr:hover,
+tr:hover {
+    background-color: var(--md-accent-fg-color--transparent);
+}
+
+th {
+    background-color: var(--md-primary-fg-color--light);
+}
+
+.md-typeset table:not([class]) {
+    /* border-radius: .1rem; */
+    border-radius: 0 1rem 1rem 0;
+    border-left: .2rem solid;
+    border-left-color: var(--md-default-fg-color);
+}
+
+.md-typeset details:not([open])>summary {
+    /* border-radius: .1rem; */
+    border-radius: 0 1rem 1rem 0;
+}
+
+.md-typeset summary {
+    border-top-right-radius: 1rem;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+    /* border-top-right-radius: .1rem; */
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+.md-typeset .cite>.admonition-title,
+.md-typeset .cite>summary,
+.md-typeset .quote>.admonition-title,
+.md-typeset .quote>summary {
+    /* background-color: hsla(0,0%,62%,.1); */
+    /* border-color: #9e9e9e; */
+    background-color: hsla(27.9, 68.9%, 41.6%, 0.33);
+    border-color: hsl(27.9, 68.9%, 41.6%);
+}
+
+.md-typeset .admonition.cite,
+.md-typeset .admonition.quote,
+.md-typeset details.cite,
+.md-typeset details.quote {
+    /* border-color: #9e9e9e; */
+    border-color: hsla(27.9, 68.9%, 41.6%);
+}
