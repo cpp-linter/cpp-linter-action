@@ -20,11 +20,8 @@ Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows
 The content of the file should be in the following format.
 
 ```yaml
-name: cpp-linter
-
 # Workflow syntax:
 # https://help.github.com/en/articles/workflow-syntax-for-github-actions
-
 name: cpp-linter
 
 on:
