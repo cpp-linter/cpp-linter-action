@@ -80,19 +80,15 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
     last_lf_pos = 0
     cols = 1
     file_path = file_path.replace("/", os.sep)
-    with io.open(file_path, "r", encoding="utf-8", newline="\n") as src_file:
-        src_file.seek(0, io.SEEK_END)
-        max_len = src_file.tell()
+    # logger.debug("Getting line count from %s at offset %d", file_path, offset)
+    with io.open(file_path, "rb") as src_file:
+        max_len = src_file.seek(0, io.SEEK_END)
         src_file.seek(0, io.SEEK_SET)
         while src_file.tell() != offset and src_file.tell() < max_len:
             char = src_file.read(1)
-            if char == "\n":
+            if char == b"\n":
                 line_cnt += 1
                 last_lf_pos = src_file.tell() - 1  # -1 because LF is part of offset
-                if last_lf_pos + 1 > max_len:
-                    src_file.newlines = "\r\n"
-                    src_file.seek(0, io.SEEK_SET)
-                    line_cnt = 1
         cols = src_file.tell() - last_lf_pos
     return (line_cnt, cols)
 

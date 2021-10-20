@@ -2,8 +2,9 @@
 import os
 import sys
 import re
-from . import GlobalParser
+from . import GlobalParser  #, logger
 
+NOTE_HEADER = re.compile("^(.*):(\d+):(\d+):\s(\w+):(.*)\[(.*)\]$")
 
 class TidyNotification:
     """Create a object that decodes info from the clang-tidy output's initial line that
@@ -25,22 +26,17 @@ class TidyNotification:
         Args:
             notification_line: The first line in the notification.
         """
-        sliced_line = notification_line.split(":")
-        if sys.platform.startswith("win32") and len(sliced_line) > 5:
-            # sliced_list items 0 & 1 are the path seperated at the ":".
-            # we need to re-assemble the path for correct list expansion (see below)
-            sliced_line = [sliced_line[0] + ":" + sliced_line[1]] + sliced_line[2:]
+        # logger.debug("Creating tidy note from line %s", notification_line)
         (
             self.filename,
             self.line,
             self.cols,
             self.note_type,
             self.note_info,
-        ) = sliced_line
+            self.diagnostic,
+        ) = notification_line
 
-        self.diagnostic = re.search("\[.*\]", self.note_info).group(0)
-        self.note_info = self.note_info.replace(self.diagnostic, "").strip()
-        self.diagnostic = self.diagnostic[1:-1]
+        self.note_info = self.note_info.strip()
         self.note_type = self.note_type.strip()
         self.line = int(self.line)
         self.cols = int(self.cols)
@@ -90,8 +86,9 @@ def parse_tidy_output() -> None:
     notification = None
     with open("clang_tidy_report.txt", "r", encoding="utf-8") as tidy_out:
         for line in tidy_out.readlines():
-            if re.search("^.*:\d+:\d+:\s\w+:.*\[.*\]$", line) is not None:
-                notification = TidyNotification(line)
+            match = re.match(NOTE_HEADER, line)
+            if match is not None:
+                notification = TidyNotification(match.groups())
                 GlobalParser.tidy_notes.append(notification)
             elif notification is not None:
                 notification.fixit_lines.append(line)

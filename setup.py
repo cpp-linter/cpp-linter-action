@@ -15,12 +15,12 @@ setup(
     name="cpp_linter",
     # use_scm_version=True,
     # setup_requires=["setuptools_scm"],
-    version="v1.2.1",
+    version="1.3.1",
     description=__doc__,
     long_description=".. warning:: this is not meant for PyPi (yet)",
     author="Brendan Doherty",
     author_email="2bndy5@gmail.com",
-    install_requires=["requests"],  #, "pyyaml"],  # pyyaml is installed with clang-tidy
+    install_requires=["requests", "pyyaml"],  # pyyaml is installed with clang-tidy
     license="MIT",
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
