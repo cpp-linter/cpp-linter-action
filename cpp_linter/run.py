@@ -330,7 +330,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
                 break
         if is_hidden:
             continue  # skip sources in hidden directories
-        logger.debug("Crawling \".%s%s\"", os.sep, path)
+        logger.debug('Crawling ".%s%s"', os.sep, path)
         for file in filenames:
             if os.path.splitext(file)[1][1:] in ext_list:
                 file_path = os.path.join(path, file)
@@ -382,7 +382,7 @@ def run_clang_tidy(
     cmds.append(filename.replace("/", os.sep))
     with open("clang_tidy_output.yml", "wb"):
         pass  # clear yml file's content before running clang-tidy
-    logger.info("Running \"%s\"", " ".join(cmds))
+    logger.info('Running "%s"', " ".join(cmds))
     results = subprocess.run(cmds, capture_output=True)
     with open("clang_tidy_report.txt", "wb") as f_out:
         f_out.write(results.stdout)
@@ -418,7 +418,7 @@ def run_clang_format(
         for line_range in file_obj["line_filter"]["lines"]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")
     cmds.append(filename.replace("/", os.sep))
-    logger.info("Running \"%s\"", " ".join(cmds))
+    logger.info('Running "%s"', " ".join(cmds))
     results = subprocess.run(cmds, capture_output=True)
     with open("clang_format_output.xml", "wb") as f_out:
         f_out.write(results.stdout)

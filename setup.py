@@ -31,7 +31,6 @@ setup(
     ],
     keywords="clang clang-tidy clang-format",
     packages=["cpp_linter"],
-
     entry_points={"console_scripts": ["cpp-linter=cpp_linter.run:main"]},
     # Specifiy your homepage URL for your project here
     url=REPO,

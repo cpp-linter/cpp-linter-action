@@ -1,10 +1,10 @@
 """Parse output from clang-tidy's stdout"""
 import os
-import sys
 import re
-from . import GlobalParser  #, logger
+from . import GlobalParser  # , logger
 
 NOTE_HEADER = re.compile("^(.*):(\d+):(\d+):\s(\w+):(.*)\[(.*)\]$")
+
 
 class TidyNotification:
     """Create a object that decodes info from the clang-tidy output's initial line that
