@@ -5,7 +5,6 @@ from . import GlobalParser  # , logger
 
 NOTE_HEADER = re.compile("^(.*):(\d+):(\d+):\s(\w+):(.*)\[(.*)\]$")
 
-
 class TidyNotification:
     """Create a object that decodes info from the clang-tidy output's initial line that
     details a specific notification.
@@ -21,10 +20,12 @@ class TidyNotification:
             notification.
     """
 
-    def __init__(self, notification_line: str):
+    def __init__(self, notification_line: tuple):
         """
         Args:
-            notification_line: The first line in the notification.
+            notification_line: The first line in the notification parsed into a tuple of
+                string that represent the different components of the notification's
+                details.
         """
         # logger.debug("Creating tidy note from line %s", notification_line)
         (
