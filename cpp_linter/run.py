@@ -38,7 +38,7 @@ from .thread_comments import remove_bot_comments, list_diff_comments  # , get_re
 GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
-GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "")
+GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
 
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
@@ -675,15 +675,6 @@ def main():
 
     logger.info("processing %s event", GITHUB_EVENT_NAME)
 
-    if args.files_checked_only:
-        # load event's json info about the workflow run
-        with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
-            Globals.EVENT_PAYLOAD = json.load(payload)
-        if logger.getEffectiveLevel() <= logging.DEBUG:
-            start_log_group("Event json from the runner")
-            logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
-            end_log_group()
-
     # change working directory
     os.chdir(args.repo_root)
 
@@ -700,6 +691,13 @@ def main():
         )
     exit_early = False
     if args.files_changed_only:
+        # load event's json info about the workflow run
+        with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
+            Globals.EVENT_PAYLOAD = json.load(payload)
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            start_log_group("Event json from the runner")
+            logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
+            end_log_group()
         get_list_of_changed_files()
         exit_early = not filter_out_non_source_files(
             args.extensions,
