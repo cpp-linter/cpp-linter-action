@@ -1,6 +1,6 @@
-# clang_format_xml module
+# clang_tidy_yml module
 
 !!! info
     This API is experimental and not actually used in production.
 
-::: python_action.clang_format_xml
+::: cpp_linter.clang_tidy_yml

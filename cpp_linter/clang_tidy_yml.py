@@ -20,7 +20,7 @@ class TidyDiagnostic:
         cols (int): The columns of the `line` that triggered the diagnostic
         null_len (int): The number of bytes replaced by suggestions
         replacements (list): The `list` of
-            [`TidyReplacement`][python_action.clang_tidy_yml.TidyReplacement] objects.
+            [`TidyReplacement`][cpp_linter.clang_tidy_yml.TidyReplacement] objects.
 
     """
 
@@ -79,7 +79,7 @@ class YMLFixit:
     Attributes:
         filename (str): The source file's name concerning the suggestion.
         diagnostics (list): The `list` of
-            [`TidyDiagnostic`][python_action.clang_tidy_yml.TidyDiagnostic] objects.
+            [`TidyDiagnostic`][cpp_linter.clang_tidy_yml.TidyDiagnostic] objects.
     """
 
     def __init__(self, filename: str) -> None:
@@ -99,7 +99,7 @@ class YMLFixit:
 
 def parse_tidy_suggestions_yml():
     """Read a YAML file from clang-tidy and create a list of suggestions from it.
-    Output is saved to [`tidy_advice`][python_action.__init__.GlobalParser.tidy_advice].
+    Output is saved to [`tidy_advice`][cpp_linter.__init__.GlobalParser.tidy_advice].
     """
     yml = {}
     with open("clang_tidy_output.yml", "r", encoding="utf-8") as yml_file:
@@ -129,8 +129,8 @@ def parse_tidy_suggestions_yml():
 
 
 def print_fixits():
-    """Print all [`YMLFixit`][python_action.clang_tidy_yml.YMLFixit] objects in
-    [`tidy_advice`][python_action.__init__.GlobalParser.tidy_advice]."""
+    """Print all [`YMLFixit`][cpp_linter.clang_tidy_yml.YMLFixit] objects in
+    [`tidy_advice`][cpp_linter.__init__.GlobalParser.tidy_advice]."""
     for fix in GlobalParser.tidy_advice:
         for diag in fix.diagnostics:
             print(repr(diag))

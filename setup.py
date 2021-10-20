@@ -12,7 +12,7 @@ if repo is None:
 
 
 setup(
-    name="python_action",
+    name="cpp_linter",
     # use_scm_version=True,
     # setup_requires=["setuptools_scm"],
     version="v1.2.1",
@@ -30,9 +30,9 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     keywords="clang clang-tidy clang-format",
-    packages=["python_action"],
+    packages=["cpp_linter"],
 
-    entry_points={"console_scripts": ["run-action=python_action.run:main"]},
+    entry_points={"console_scripts": ["cpp-linter=cpp_linter.run:main"]},
     # Specifiy your homepage URL for your project here
     url=REPO,
     download_url=f"{REPO}/releases",

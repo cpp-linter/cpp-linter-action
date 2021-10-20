@@ -16,11 +16,11 @@ RUN apt-get update
 RUN apt-get -y install python3-pip
 # RUN python3 -m pip install --upgrade pip
 
-COPY python_action/ pkg/python_action/
+COPY cpp_linter/ pkg/cpp_linter/
 COPY setup.py pkg/setup.py
 RUN python3 -m pip install pkg/
 
 # github action args use the CMD option
 # See https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsargs
 # also https://docs.docker.com/engine/reference/builder/#cmd
-ENTRYPOINT [ "python3", "-m", "python_action.run" ]
+ENTRYPOINT [ "python3", "-m", "cpp_linter.run" ]

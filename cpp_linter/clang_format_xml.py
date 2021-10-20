@@ -37,7 +37,7 @@ class FormatReplacementLine:
     Attributes:
         line (int): The line number of where the suggestion starts
         replacements (list): A list of
-            [`FormatReplacement`][python_action.clang_format_xml.FormatReplacement]
+            [`FormatReplacement`][cpp_linter.clang_format_xml.FormatReplacement]
             object(s) representing suggestions.
     """
 
@@ -63,7 +63,7 @@ class XMLFixit:
         filename (str): The source file that the suggestion concerns.
         replaced_lines (list): A list of
             [`FormatReplacementLine`][
-                python_action.clang_format_xml.FormatReplacementLine]
+                cpp_linter.clang_format_xml.FormatReplacementLine]
             representing replacement(s) on a single line.
     """
 
@@ -118,7 +118,7 @@ class XMLFixit:
 
 def parse_format_replacements_xml(src_filename: str):
     """Parse XML output of replacements from clang-format. Output is saved to
-    [`format_advice`][python_action.__init__.GlobalParser.format_advice].
+    [`format_advice`][cpp_linter.__init__.GlobalParser.format_advice].
 
     Args:
         src_filename: The source file's name for which the contents of the xml
@@ -145,8 +145,8 @@ def parse_format_replacements_xml(src_filename: str):
 
 
 def print_fixits():
-    """Print all [`XMLFixit`][python_action.clang_format_xml.XMLFixit] objects in
-    [`format_advice`][python_action.__init__.GlobalParser.format_advice]."""
+    """Print all [`XMLFixit`][cpp_linter.clang_format_xml.XMLFixit] objects in
+    [`format_advice`][cpp_linter.__init__.GlobalParser.format_advice]."""
     for fixit in GlobalParser.format_advice:
         print(repr(fixit))
         for line_fix in fixit.replaced_lines:

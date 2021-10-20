@@ -1,4 +1,4 @@
-"""The Base module of the `python_action` package. This holds the objects shared by
+"""The Base module of the `cpp_linter` package. This holds the objects shared by
 multiple modules."""
 import io
 import os
@@ -24,7 +24,7 @@ if not FOUND_RICH_LIB:
     logger.debug("rich module not found")
 
 # global constant variables
-GITHUB_SHA = os.getenv("GITHUB_SHA", "95915a282b3efcad67b9ad3f95fba1501e43ab22")
+GITHUB_SHA = os.getenv("GITHUB_SHA", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", ""))
 API_HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}",
@@ -54,13 +54,13 @@ class GlobalParser:
 
     tidy_notes = []
     """This can only be a `list` of type
-    [`TidyNotification`][python_action.clang_tidy.TidyNotification]"""
+    [`TidyNotification`][cpp_linter.clang_tidy.TidyNotification]"""
     tidy_advice = []
     """This can only be a `list` of type
-    [`YMLFixit`][python_action.clang_tidy_yml.YMLFixit]"""
+    [`YMLFixit`][cpp_linter.clang_tidy_yml.YMLFixit]"""
     format_advice = []
     """This can only be a `list` of type
-    [`XMLFixit`][python_action.clang_format_xml.XMLFixit]"""
+    [`XMLFixit`][cpp_linter.clang_format_xml.XMLFixit]"""
 
 
 def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:

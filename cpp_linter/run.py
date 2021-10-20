@@ -1,5 +1,5 @@
 """Run clang-tidy and clang-format on a list of changed files provided by GitHub's
-REST API. If executed from command-line, then [`main()`][python_action.run.main] is
+REST API. If executed from command-line, then [`main()`][cpp_linter.run.main] is
 the entrypoint.
 
 !!! info "See Also"
@@ -35,10 +35,10 @@ from .thread_comments import remove_bot_comments, list_diff_comments  # , get_re
 
 
 # global constant variables
-GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "event_payload.json")
+GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
-GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "2bndy5/cpp-linter-action")
-GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "pull_request")
+GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
+GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "")
 
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
@@ -184,7 +184,7 @@ def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
 
 def get_list_of_changed_files() -> None:
     """Fetch the JSON payload of the event's changed files. Sets the
-    [`FILES`][python_action.__init__.Globals.FILES] attribute."""
+    [`FILES`][cpp_linter.__init__.Globals.FILES] attribute."""
     files_link = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
         files_link += f"pulls/{Globals.EVENT_PAYLOAD['number']}/files"
@@ -201,7 +201,7 @@ def filter_out_non_source_files(
     ext_list: list, ignored: list, not_ignored: list, lines_changed_only: bool
 ) -> bool:
     """Exclude undesired files (specified by user input 'extensions'). This filter
-    applies to the event's [`FILES`][python_action.__init__.Globals.FILES] attribute.
+    applies to the event's [`FILES`][cpp_linter.__init__.Globals.FILES] attribute.
 
     Args:
         ext_list: A list of file extensions that are to be examined.
@@ -212,7 +212,7 @@ def filter_out_non_source_files(
 
     Returns:
         True if there are files to check. False will invoke a early exit (in
-        [`main()`][python_action.run.main]) when no files to be checked.
+        [`main()`][cpp_linter.run.main]) when no files to be checked.
     """
     files = []
     for file in (
@@ -296,7 +296,7 @@ def verify_files_are_present() -> None:
 
 def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) -> bool:
     """Make a list of source files to be checked. The resulting list is stored in
-    [`FILES`][python_action.__init__.Globals.FILES].
+    [`FILES`][cpp_linter.__init__.Globals.FILES].
 
     Args:
         ext_list: A list of file extensions that should by attended.
@@ -305,7 +305,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
 
     Returns:
         True if there are files to check. False will invoke a early exit (in
-        [`main()`][python_action.run.main]) when no files to be checked.
+        [`main()`][cpp_linter.run.main]) when no files to be checked.
     """
     if os.path.exists(".gitmodules"):
         submodules = configparser.ConfigParser()
@@ -357,6 +357,10 @@ def run_clang_tidy(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
     """
+    if checks == "-*":  # if all checks are disabled, then clang-tidy is skipped
+        # clear the clang-tidy output file and exit function
+        with open("clang_tidy_report.txt", "wb") as f_out:
+            return
     cmds = [f"clang-tidy-{version}"]
     if sys.platform.startswith("win32"):
         cmds = ["clang-tidy"]
@@ -420,7 +424,7 @@ def capture_clang_tools_output(
     version: str, checks: str, style: str, lines_changed_only: bool
 ):
     """Execute and capture all output from clang-tidy and clang-format. This aggregates
-    results in the [`OUTPUT`][python_action.__init__.Globals.OUTPUT].
+    results in the [`OUTPUT`][cpp_linter.__init__.Globals.OUTPUT].
 
     Args:
         version: The version of clang-tidy to run.
@@ -671,13 +675,14 @@ def main():
 
     logger.info("processing %s event", GITHUB_EVENT_NAME)
 
-    # load event's json info about the workflow run
-    with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
-        Globals.EVENT_PAYLOAD = json.load(payload)
-    if logger.getEffectiveLevel() <= logging.DEBUG:
-        start_log_group("Event json from the runner")
-        logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
-        end_log_group()
+    if args.files_checked_only:
+        # load event's json info about the workflow run
+        with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
+            Globals.EVENT_PAYLOAD = json.load(payload)
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            start_log_group("Event json from the runner")
+            logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
+            end_log_group()
 
     # change working directory
     os.chdir(args.repo_root)
