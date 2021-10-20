@@ -24,8 +24,6 @@ jobs:
           python3 -m pip install --upgrade pylint
           python3 -m pip install -r requirements.txt
       - name: run pylint
-        uses: 2bndy5/check-python-sources@master
-        id: linter
-      - name: Code needs attention?
-        if: steps.linter.outputs.checks-failed > 0
-        run: exit 1
+        run: |
+          pylint cpp_linter/**
+          pylint setup.py
