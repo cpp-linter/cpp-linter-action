@@ -1,5 +1,5 @@
 """Run clang-tidy and clang-format on a list of changed files provided by GitHub's
-REST API. If executed from command-line, then [`main()`][python_action.run.main] is
+REST API. If executed from command-line, then [`main()`][cpp_linter.run.main] is
 the entrypoint.
 
 !!! info "See Also"
@@ -35,10 +35,10 @@ from .thread_comments import remove_bot_comments, list_diff_comments  # , get_re
 
 
 # global constant variables
-GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "event_payload.json")
+GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
-GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "2bndy5/cpp-linter-action")
-GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "pull_request")
+GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
+GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
 
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
@@ -104,14 +104,14 @@ cli_arg_parser.add_argument(
 )
 cli_arg_parser.add_argument(
     "--files-changed-only",
-    default="true",
+    default="false",
     type=lambda input: input.lower() == "true",
     help="Set this option to 'false' to analyse any source files in the repo. "
     "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
     "--thread-comments",
-    default="true",
+    default="false",
     type=lambda input: input.lower() == "true",
     help="Set this option to false to disable the use of thread comments as feedback."
     "Defaults to %(default)s.",
@@ -173,9 +173,11 @@ def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
         result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
         if result == path:
             logger.debug(
-                '"./%s" is %s as specified in the domain "./%s"',
+                '".%s%s" is %s as specified in the domain ".%s%s"',
+                os.sep,
                 file_name,
                 prompt,
+                os.sep,
                 path,
             )
             return True
@@ -184,7 +186,8 @@ def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
 
 def get_list_of_changed_files() -> None:
     """Fetch the JSON payload of the event's changed files. Sets the
-    [`FILES`][python_action.__init__.Globals.FILES] attribute."""
+    [`FILES`][cpp_linter.__init__.Globals.FILES] attribute."""
+    start_log_group("Get list of specified source files")
     files_link = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
         files_link += f"pulls/{Globals.EVENT_PAYLOAD['number']}/files"
@@ -201,7 +204,7 @@ def filter_out_non_source_files(
     ext_list: list, ignored: list, not_ignored: list, lines_changed_only: bool
 ) -> bool:
     """Exclude undesired files (specified by user input 'extensions'). This filter
-    applies to the event's [`FILES`][python_action.__init__.Globals.FILES] attribute.
+    applies to the event's [`FILES`][cpp_linter.__init__.Globals.FILES] attribute.
 
     Args:
         ext_list: A list of file extensions that are to be examined.
@@ -212,7 +215,7 @@ def filter_out_non_source_files(
 
     Returns:
         True if there are files to check. False will invoke a early exit (in
-        [`main()`][python_action.run.main]) when no files to be checked.
+        [`main()`][cpp_linter.run.main]) when no files to be checked.
     """
     files = []
     for file in (
@@ -296,7 +299,7 @@ def verify_files_are_present() -> None:
 
 def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) -> bool:
     """Make a list of source files to be checked. The resulting list is stored in
-    [`FILES`][python_action.__init__.Globals.FILES].
+    [`FILES`][cpp_linter.__init__.Globals.FILES].
 
     Args:
         ext_list: A list of file extensions that should by attended.
@@ -305,8 +308,9 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
 
     Returns:
         True if there are files to check. False will invoke a early exit (in
-        [`main()`][python_action.run.main]) when no files to be checked.
+        [`main()`][cpp_linter.run.main]) when no files to be checked.
     """
+    start_log_group("Get list of specified source files")
     if os.path.exists(".gitmodules"):
         submodules = configparser.ConfigParser()
         submodules.read(".gitmodules")
@@ -319,14 +323,20 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
     root_path = os.getcwd()
     for dirpath, _, filenames in os.walk(root_path):
         path = dirpath.replace(root_path, "").lstrip(os.sep)
-        if path.startswith("."):
-            # logger.debug("Skipping \"%s\"", path)
+        path_parts = path.split(os.sep)
+        is_hidden = False
+        for part in path_parts:
+            if part.startswith("."):
+                # logger.debug("Skipping \".%s%s\"", os.sep, path)
+                is_hidden = True
+                break
+        if is_hidden:
             continue  # skip sources in hidden directories
-        logger.debug('Crawling "./%s"', path)
+        logger.debug('Crawling ".%s%s"', os.sep, path)
         for file in filenames:
             if os.path.splitext(file)[1][1:] in ext_list:
                 file_path = os.path.join(path, file)
-                logger.debug('"./%s" is a source code file', file_path)
+                logger.debug('".%s%s" is a source code file', os.sep, file_path)
                 if not is_file_in_list(
                     ignored_paths, file_path, "ignored"
                 ) or is_file_in_list(not_ignored, file_path, "not ignored"):
@@ -357,6 +367,10 @@ def run_clang_tidy(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
     """
+    if checks == "-*":  # if all checks are disabled, then clang-tidy is skipped
+        # clear the clang-tidy output file and exit function
+        with open("clang_tidy_report.txt", "wb") as f_out:
+            return
     cmds = [f"clang-tidy-{version}"]
     if sys.platform.startswith("win32"):
         cmds = ["clang-tidy"]
@@ -370,6 +384,7 @@ def run_clang_tidy(
     cmds.append(filename.replace("/", os.sep))
     with open("clang_tidy_output.yml", "wb"):
         pass  # clear yml file's content before running clang-tidy
+    logger.info('Running "%s"', " ".join(cmds))
     results = subprocess.run(cmds, capture_output=True)
     with open("clang_tidy_report.txt", "wb") as f_out:
         f_out.write(results.stdout)
@@ -405,11 +420,10 @@ def run_clang_format(
         for line_range in file_obj["line_filter"]["lines"]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")
     cmds.append(filename.replace("/", os.sep))
+    logger.info('Running "%s"', " ".join(cmds))
     results = subprocess.run(cmds, capture_output=True)
     with open("clang_format_output.xml", "wb") as f_out:
         f_out.write(results.stdout)
-    if results.stdout:
-        logger.debug("clang-format has suggestions.")
     if results.returncode:
         logger.warning(
             "%s raised the following error(s):\n%s", cmds[0], results.stderr.decode()
@@ -420,7 +434,7 @@ def capture_clang_tools_output(
     version: str, checks: str, style: str, lines_changed_only: bool
 ):
     """Execute and capture all output from clang-tidy and clang-format. This aggregates
-    results in the [`OUTPUT`][python_action.__init__.Globals.OUTPUT].
+    results in the [`OUTPUT`][cpp_linter.__init__.Globals.OUTPUT].
 
     Args:
         version: The version of clang-tidy to run.
@@ -455,8 +469,8 @@ def capture_clang_tools_output(
                 tidy_notes.append(note)
             GlobalParser.tidy_notes.clear()  # empty list to avoid duplicated output
 
-        if os.path.getsize("clang_format_output.xml"):
-            parse_format_replacements_xml(filename.replace("/", os.sep))
+        parse_format_replacements_xml(filename.replace("/", os.sep))
+        if GlobalParser.format_advice[-1].replaced_lines:
             if not Globals.OUTPUT:
                 Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
                 Globals.OUTPUT += "Run `clang-format` on the following files\n"
@@ -636,12 +650,17 @@ def make_annotations(style: str) -> bool:
     """
     # log_commander obj's verbosity is hard-coded to show debug statements
     ret_val = False
+    count = 0
     for note in GlobalParser.tidy_notes:
         ret_val = True
         log_commander.info(note.log_command())
+        count += 1
     for note in GlobalParser.format_advice:
-        ret_val = True
-        log_commander.info(note.log_command(style))
+        if note.replaced_lines:
+            ret_val = True
+            log_commander.info(note.log_command(style))
+            count += 1
+    logger.info("Created %d annotations", count)
     return ret_val
 
 
@@ -671,18 +690,9 @@ def main():
 
     logger.info("processing %s event", GITHUB_EVENT_NAME)
 
-    # load event's json info about the workflow run
-    with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
-        Globals.EVENT_PAYLOAD = json.load(payload)
-    if logger.getEffectiveLevel() <= logging.DEBUG:
-        start_log_group("Event json from the runner")
-        logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
-        end_log_group()
-
     # change working directory
     os.chdir(args.repo_root)
 
-    start_log_group("Get list of specified source files")
     if ignored:
         logger.info(
             "Ignoring the following paths/files:\n\t%s",
@@ -695,6 +705,13 @@ def main():
         )
     exit_early = False
     if args.files_changed_only:
+        # load event's json info about the workflow run
+        with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
+            Globals.EVENT_PAYLOAD = json.load(payload)
+        if logger.getEffectiveLevel() <= logging.DEBUG:
+            start_log_group("Event json from the runner")
+            logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
+            end_log_group()
         get_list_of_changed_files()
         exit_early = not filter_out_non_source_files(
             args.extensions,

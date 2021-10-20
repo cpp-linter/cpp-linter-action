@@ -1,4 +1,4 @@
-"""The Base module of the `python_action` package. This holds the objects shared by
+"""The Base module of the `cpp_linter` package. This holds the objects shared by
 multiple modules."""
 import io
 import os
@@ -24,7 +24,7 @@ if not FOUND_RICH_LIB:
     logger.debug("rich module not found")
 
 # global constant variables
-GITHUB_SHA = os.getenv("GITHUB_SHA", "95915a282b3efcad67b9ad3f95fba1501e43ab22")
+GITHUB_SHA = os.getenv("GITHUB_SHA", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", ""))
 API_HEADERS = {
     "Authorization": f"token {GITHUB_TOKEN}",
@@ -54,13 +54,13 @@ class GlobalParser:
 
     tidy_notes = []
     """This can only be a `list` of type
-    [`TidyNotification`][python_action.clang_tidy.TidyNotification]"""
+    [`TidyNotification`][cpp_linter.clang_tidy.TidyNotification]"""
     tidy_advice = []
     """This can only be a `list` of type
-    [`YMLFixit`][python_action.clang_tidy_yml.YMLFixit]"""
+    [`YMLFixit`][cpp_linter.clang_tidy_yml.YMLFixit]"""
     format_advice = []
     """This can only be a `list` of type
-    [`XMLFixit`][python_action.clang_format_xml.XMLFixit]"""
+    [`XMLFixit`][cpp_linter.clang_format_xml.XMLFixit]"""
 
 
 def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
@@ -80,24 +80,20 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
     last_lf_pos = 0
     cols = 1
     file_path = file_path.replace("/", os.sep)
-    with io.open(file_path, "r", encoding="utf-8", newline="\n") as src_file:
-        src_file.seek(0, io.SEEK_END)
-        max_len = src_file.tell()
+    # logger.debug("Getting line count from %s at offset %d", file_path, offset)
+    with io.open(file_path, "rb") as src_file:
+        max_len = src_file.seek(0, io.SEEK_END)
         src_file.seek(0, io.SEEK_SET)
         while src_file.tell() != offset and src_file.tell() < max_len:
             char = src_file.read(1)
-            if char == "\n":
+            if char == b"\n":
                 line_cnt += 1
                 last_lf_pos = src_file.tell() - 1  # -1 because LF is part of offset
-                if last_lf_pos + 1 > max_len:
-                    src_file.newlines = "\r\n"
-                    src_file.seek(0, io.SEEK_SET)
-                    line_cnt = 1
         cols = src_file.tell() - last_lf_pos
     return (line_cnt, cols)
 
 
 def log_response_msg():
-    """Output the response buffer's message on failed request"""
+    """Output the response buffer's message on a failed request."""
     if Globals.response_buffer.status_code >= 400:
         logger.error("response returned message: %s", Globals.response_buffer.text)
