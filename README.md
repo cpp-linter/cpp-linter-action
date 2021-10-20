@@ -20,11 +20,8 @@ Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows
 The content of the file should be in the following format.
 
 ```yaml
-name: cpp-linter
-
 # Workflow syntax:
 # https://help.github.com/en/articles/workflow-syntax-for-github-actions
-
 name: cpp-linter
 
 on:
@@ -44,9 +41,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file
-          files-changed-only: false
-          # to ignore all demo folder contents except for demo.cpp
-          # ignore: demo|!demo/demo.cpp
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
