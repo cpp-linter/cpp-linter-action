@@ -187,6 +187,7 @@ def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
 def get_list_of_changed_files() -> None:
     """Fetch the JSON payload of the event's changed files. Sets the
     [`FILES`][cpp_linter.__init__.Globals.FILES] attribute."""
+    start_log_group("Get list of specified source files")
     files_link = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
         files_link += f"pulls/{Globals.EVENT_PAYLOAD['number']}/files"
@@ -309,6 +310,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
         True if there are files to check. False will invoke a early exit (in
         [`main()`][cpp_linter.run.main]) when no files to be checked.
     """
+    start_log_group("Get list of specified source files")
     if os.path.exists(".gitmodules"):
         submodules = configparser.ConfigParser()
         submodules.read(".gitmodules")
@@ -691,7 +693,6 @@ def main():
     # change working directory
     os.chdir(args.repo_root)
 
-    start_log_group("Get list of specified source files")
     if ignored:
         logger.info(
             "Ignoring the following paths/files:\n\t%s",
