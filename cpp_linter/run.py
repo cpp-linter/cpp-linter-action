@@ -471,7 +471,10 @@ def capture_clang_tools_output(
 
         if os.path.getsize("clang_format_output.xml"):
             parse_format_replacements_xml(filename.replace("/", os.sep))
-            if GlobalParser.format_advice and GlobalParser.format_advice[-1].replaced_lines:
+            if (
+                GlobalParser.format_advice
+                and GlobalParser.format_advice[-1].replaced_lines
+            ):
                 if not Globals.OUTPUT:
                     Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
                     Globals.OUTPUT += "Run `clang-format` on the following files\n"
@@ -665,35 +668,29 @@ def make_annotations(style: str) -> bool:
     return ret_val
 
 
-def main():
-    """The main script."""
+def parse_ignore_option(paths: str):
+    """Parse a givven string of paths (separated by a '|') into `ignored` and
+    `not_ignored` lists of strings.
 
-    # The parsed CLI args
-    args = cli_arg_parser.parse_args()
+    Args:
+        paths: This argument conforms to the CLI arg `--ignore` (or `-i`).
 
-    # set logging verbosity
-    logger.setLevel(int(args.verbosity))
-
-    # prepare ignored paths list
+    Returns:
+        A tuple of lists in which each list is a set of strings.
+        - index 0 is the `ignored` list
+        - index 1 is the `not_ignored` list
+    """
     ignored, not_ignored = ([], [])
-    if args.ignore is not None:
-        args.ignore = args.ignore.split("|")
-        for path in args.ignore:
-            if path.startswith("./"):
-                path = path.lstrip("./")  # relative dir is assumed
-            path = path.strip()  # strip leading/trailing spaces
-            if path.startswith("!"):
-                not_ignored.append(path[1:])
-            else:
-                ignored.append(path)
-
-    # prepare extensions list
-    args.extensions = args.extensions.split(",")
-
-    logger.info("processing %s event", GITHUB_EVENT_NAME)
-
-    # change working directory
-    os.chdir(args.repo_root)
+    paths = paths.split("|")
+    for path in paths:
+        is_included = path.startswith("!")
+        if path.startswith("!./" if is_included else "./"):
+            path = path.replace("./", "", 1)  # relative dir is assumed
+        path = path.strip()  # strip leading/trailing spaces
+        if is_included:
+            not_ignored.append(path[1:])
+        else:
+            ignored.append(path)
 
     if ignored:
         logger.info(
@@ -705,6 +702,29 @@ def main():
             "Not ignoring the following paths/files:\n\t./%s",
             "\n\t./".join(f for f in not_ignored),
         )
+    return (ignored, not_ignored)
+
+
+def main():
+    """The main script."""
+
+    # The parsed CLI args
+    args = cli_arg_parser.parse_args()
+
+    # set logging verbosity
+    logger.setLevel(int(args.verbosity))
+
+    # prepare ignored paths list
+    ignored, not_ignored = parse_ignore_option("" if not args.ignore else args.ignore)
+
+    # prepare extensions list
+    args.extensions = args.extensions.split(",")
+
+    logger.info("processing %s event", GITHUB_EVENT_NAME)
+
+    # change working directory
+    os.chdir(args.repo_root)
+
     exit_early = False
     if args.files_changed_only:
         # load event's json info about the workflow run
