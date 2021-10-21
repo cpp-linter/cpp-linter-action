@@ -469,12 +469,13 @@ def capture_clang_tools_output(
                 tidy_notes.append(note)
             GlobalParser.tidy_notes.clear()  # empty list to avoid duplicated output
 
-        parse_format_replacements_xml(filename.replace("/", os.sep))
-        if GlobalParser.format_advice[-1].replaced_lines:
-            if not Globals.OUTPUT:
-                Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
-                Globals.OUTPUT += "Run `clang-format` on the following files\n"
-            Globals.OUTPUT += f"- [ ] {file['filename']}\n"
+        if os.path.getsize("clang_format_output.xml"):
+            parse_format_replacements_xml(filename.replace("/", os.sep))
+            if GlobalParser.format_advice and GlobalParser.format_advice[-1].replaced_lines:
+                if not Globals.OUTPUT:
+                    Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
+                    Globals.OUTPUT += "Run `clang-format` on the following files\n"
+                Globals.OUTPUT += f"- [ ] {file['filename']}\n"
 
     if Globals.PAYLOAD_TIDY:
         if not Globals.OUTPUT:
@@ -651,15 +652,15 @@ def make_annotations(style: str) -> bool:
     # log_commander obj's verbosity is hard-coded to show debug statements
     ret_val = False
     count = 0
-    for note in GlobalParser.tidy_notes:
-        ret_val = True
-        log_commander.info(note.log_command())
-        count += 1
     for note in GlobalParser.format_advice:
         if note.replaced_lines:
             ret_val = True
             log_commander.info(note.log_command(style))
             count += 1
+    for note in GlobalParser.tidy_notes:
+        ret_val = True
+        log_commander.info(note.log_command())
+        count += 1
     logger.info("Created %d annotations", count)
     return ret_val
 
@@ -678,7 +679,8 @@ def main():
     if args.ignore is not None:
         args.ignore = args.ignore.split("|")
         for path in args.ignore:
-            path = path.lstrip("./")  # relative dir is assumed
+            if path.startswith("./"):
+                path = path.lstrip("./")  # relative dir is assumed
             path = path.strip()  # strip leading/trailing spaces
             if path.startswith("!"):
                 not_ignored.append(path[1:])
@@ -695,12 +697,12 @@ def main():
 
     if ignored:
         logger.info(
-            "Ignoring the following paths/files:\n\t%s",
+            "Ignoring the following paths/files:\n\t./%s",
             "\n\t./".join(f for f in ignored),
         )
     if not_ignored:
         logger.info(
-            "Not ignoring the following paths/files:\n\t%s",
+            "Not ignoring the following paths/files:\n\t./%s",
             "\n\t./".join(f for f in not_ignored),
         )
     exit_early = False
