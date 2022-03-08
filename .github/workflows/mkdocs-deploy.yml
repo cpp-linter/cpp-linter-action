@@ -1,0 +1,22 @@
+name: MkDocs Deploy
+
+on:
+  push:
+    branches: [ master ]
+    paths: 
+      - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: pip install -r docs/requirements.txt
+      - run: |
+          git config user.name 'github-actions'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdocs gh-deploy --force
