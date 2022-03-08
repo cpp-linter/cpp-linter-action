@@ -2,7 +2,7 @@ name: MkDocs Deploy
 
 on:
   push:
-    branches: [master]
+    # branches: [master]
   workflow_dispatch:
 
 jobs:
