@@ -2,8 +2,8 @@ name: MkDocs Deploy
 
 on:
   push:
-    branches: [ master ]
-    paths: 
+    branches: [master]
+    paths:
       - 'docs/**'
   workflow_dispatch:
 
