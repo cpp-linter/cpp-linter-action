@@ -21,6 +21,3 @@
    start="<!--footer-start-->"
    end="<!--footer-end-->"
 %}
-{%
-   include-markdown "README.md"
-%}
