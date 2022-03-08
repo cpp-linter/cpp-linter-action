@@ -15,8 +15,10 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
-      - run: pip install -r docs/requirements.txt
-      - run: |
+      - name: Install python action for doc extraction
+        run: pip install .
+      - name: Build docs and deploy to gh-pages
+        run: |
           git config user.name 'github-actions'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           mkdocs gh-deploy --force
