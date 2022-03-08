@@ -8,7 +8,7 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shenxianpeng/cpp-linter-action)
 [![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
 ![GitHub](https://img.shields.io/github/license/shenxianpeng/cpp-linter-action?label=license)
-[![Dev Docs Status](https://readthedocs.org/projects/cpp-linter-action/badge/?version=latest)](https://cpp-linter-action.readthedocs.io/en/latest/?badge=latest)
+[![MkDocs Deploy](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/mkdocs-deploy.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
 [![open repo in gitpod](https://img.shields.io/badge/Gitpod-Use%20Online%20IDE-B16C04?logo=gitpod)](https://gitpod.io/#https://github.com/shenxianpeng/cpp-linter-action)
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
