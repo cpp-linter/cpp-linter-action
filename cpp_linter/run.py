@@ -51,6 +51,18 @@ cli_arg_parser.add_argument(
     help="The logging level. Defaults to level 20 (aka 'logging.INFO').",
 )
 cli_arg_parser.add_argument(
+    "-p",
+    "--database",
+    help="-p <build-path> is used to read a compile command database."
+    "For example, it can be a CMake build directory in which a file named"
+    "compile_commands.json exists (use -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    "CMake option to get this output). When no build path is specified,"
+    "a search for compile_commands.json will be attempted through all"
+    "parent paths of the first input file . See:"
+    "https://clang.llvm.org/docs/HowToSetupToolingForLLVM.html for an"
+    "example of setting up Clang Tooling on a source tree.",
+)
+cli_arg_parser.add_argument(
     "-s",
     "--style",
     default="llvm",
@@ -354,7 +366,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
 
 
 def run_clang_tidy(
-    filename: str, file_obj: dict, version: str, checks: str, lines_changed_only: bool
+    filename: str, file_obj: dict, version: str, checks: str, lines_changed_only: bool, database: str
 ) -> None:
     """Run clang-tidy on a certain file.
 
@@ -378,6 +390,9 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
     # cmds.append(f"--format-style={style}")
+    if database != None:
+        cmds.append("-p")
+        cmds.append(database)
     if lines_changed_only:
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
         cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")
@@ -431,7 +446,7 @@ def run_clang_format(
 
 
 def capture_clang_tools_output(
-    version: str, checks: str, style: str, lines_changed_only: bool
+    version: str, checks: str, style: str, lines_changed_only: bool, database: str
 ):
     """Execute and capture all output from clang-tidy and clang-format. This aggregates
     results in the [`OUTPUT`][cpp_linter.__init__.Globals.OUTPUT].
@@ -455,7 +470,7 @@ def capture_clang_tools_output(
         if not os.path.exists(file["filename"]):
             filename = os.path.split(file["raw_url"])[1]
         start_log_group(f"Performing checkup on {filename}")
-        run_clang_tidy(filename, file, version, checks, lines_changed_only)
+        run_clang_tidy(filename, file, version, checks, lines_changed_only, database)
         run_clang_format(filename, file, version, style, lines_changed_only)
         end_log_group()
         if os.path.getsize("clang_tidy_report.txt"):
@@ -750,7 +765,7 @@ def main():
         sys.exit(set_exit_code(0))
 
     capture_clang_tools_output(
-        args.version, args.tidy_checks, args.style, args.lines_changed_only
+        args.version, args.tidy_checks, args.style, args.lines_changed_only, args.database
     )
 
     start_log_group("Posting comment(s)")
