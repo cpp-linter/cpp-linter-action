@@ -26,9 +26,7 @@ if not FOUND_RICH_LIB:
 # global constant variables
 GITHUB_SHA = os.getenv("GITHUB_SHA", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", ""))
-API_HEADERS = {
-    "Accept": "application/vnd.github.v3.text+json",
-}
+API_HEADERS = {"Accept": "application/vnd.github.v3.text+json",}
 if GITHUB_TOKEN:
     API_HEADERS["Authorization"] = f"token {GITHUB_TOKEN}"
 
