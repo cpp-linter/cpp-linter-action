@@ -1,4 +1,5 @@
 ## How to build the docs
+
 From the root directory of the repository, do the following to steps
 
 1. Install docs' dependencies
