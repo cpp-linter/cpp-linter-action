@@ -27,10 +27,10 @@ if not FOUND_RICH_LIB:
 GITHUB_SHA = os.getenv("GITHUB_SHA", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", ""))
 API_HEADERS = {
-    "Authorization": f"token {GITHUB_TOKEN}",
     "Accept": "application/vnd.github.v3.text+json",
 }
-
+if GITHUB_TOKEN:
+    API_HEADERS["Authorization"] = f"token {GITHUB_TOKEN}"
 
 class Globals:
     """Global variables for re-use (non-constant)."""
@@ -40,7 +40,7 @@ class Globals:
     OUTPUT = ""
     """The accumulated body of the resulting comment that gets posted."""
     FILES = []
-    """The reponding payload containing info about changed files."""
+    """The responding payload containing info about changed files."""
     EVENT_PAYLOAD = {}
     """The parsed JSON of the event payload."""
     response_buffer = None

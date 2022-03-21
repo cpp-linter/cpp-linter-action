@@ -18,7 +18,7 @@ def remove_bot_comments(comments_url: str, user_id: int):
     Globals.response_buffer = requests.get(comments_url)
     comments = Globals.response_buffer.json()
     for i, comment in enumerate(comments):
-        # only serach for comments from the user's ID and
+        # only search for comments from the user's ID and
         # whose comment body begins with a specific html comment
         if (
             int(comment["user"]["id"]) == user_id
@@ -231,7 +231,7 @@ def get_review_id(reviews_url: str, user_id: int) -> int:
         Globals.response_buffer = requests.get(reviews_url)
         if Globals.response_buffer.status_code != 200:
             log_response_msg()
-            raise RuntimeError("could not create a review for commemts")
+            raise RuntimeError("could not create a review for comments")
         reviews = json.loads(Globals.response_buffer.text)
         reviews.reverse()  # traverse the list in reverse
         review_id = find_review(reviews, user_id)

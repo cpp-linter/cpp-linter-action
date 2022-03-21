@@ -211,7 +211,7 @@ def get_list_of_changed_files() -> None:
         logger.warning("triggered on unsupported event.")
         sys.exit(set_exit_code(0))
     logger.info("Fetching files list from url: %s", files_link)
-    Globals.FILES = requests.get(files_link).json()
+    Globals.FILES = requests.get(files_link, headers=API_HEADERS).json()
 
 
 def filter_out_non_source_files(
