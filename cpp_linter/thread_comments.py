@@ -16,8 +16,9 @@ def remove_bot_comments(comments_url: str, user_id: int):
     """
     logger.info("comments_url: %s", comments_url)
     Globals.response_buffer = requests.get(comments_url)
+    log_response_msg()
     comments = Globals.response_buffer.json()
-    for i, comment in enumerate(comments):
+    for comment in comments:
         # only search for comments from the user's ID and
         # whose comment body begins with a specific html comment
         if (
@@ -36,7 +37,6 @@ def remove_bot_comments(comments_url: str, user_id: int):
                 comment["url"][comment["url"].find(".com") + 4 :],
             )
             log_response_msg()
-            del comments[i]
         logger.debug(
             "comment id %d from user %s (%d)",
             comment["id"],
