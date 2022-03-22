@@ -91,7 +91,17 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
     return (line_cnt, cols)
 
 
-def log_response_msg():
-    """Output the response buffer's message on a failed request."""
+def log_response_msg() -> bool:
+    """Output the response buffer's message on a failed request.
+
+    Returns:
+        A bool decribing if response's status code was less than 400.
+    """
     if Globals.response_buffer.status_code >= 400:
-        logger.error("response returned message: %s", Globals.response_buffer.text)
+        logger.error(
+            "response returned %d message: %s",
+            Globals.response_buffer.status_code,
+            Globals.response_buffer.text,
+        )
+        return False
+    return True

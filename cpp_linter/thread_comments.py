@@ -16,7 +16,8 @@ def remove_bot_comments(comments_url: str, user_id: int):
     """
     logger.info("comments_url: %s", comments_url)
     Globals.response_buffer = requests.get(comments_url)
-    log_response_msg()
+    if not log_response_msg():
+        return  # error getting comments for the thread; stop here
     comments = Globals.response_buffer.json()
     for comment in comments:
         # only search for comments from the user's ID and
@@ -229,8 +230,7 @@ def get_review_id(reviews_url: str, user_id: int) -> int:
             Globals.response_buffer.status_code,
         )
         Globals.response_buffer = requests.get(reviews_url)
-        if Globals.response_buffer.status_code != 200:
-            log_response_msg()
+        if Globals.response_buffer.status_code != 200 and log_response_msg():
             raise RuntimeError("could not create a review for comments")
         reviews = json.loads(Globals.response_buffer.text)
         reviews.reverse()  # traverse the list in reverse
