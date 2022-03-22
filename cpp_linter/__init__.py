@@ -3,6 +3,7 @@ multiple modules."""
 import io
 import os
 import logging
+from requests import Response
 
 FOUND_RICH_LIB = False
 try:
@@ -41,7 +42,7 @@ class Globals:
     """The responding payload containing info about changed files."""
     EVENT_PAYLOAD = {}
     """The parsed JSON of the event payload."""
-    response_buffer = None
+    response_buffer = Response()
     """A shared response object for `requests` module."""
 
 
