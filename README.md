@@ -85,12 +85,12 @@ jobs:
 
 #### `lines-changed-only`
 
-- **Description**: Set this option to true to only analyse changes in the event's diff.
+- **Description**: Set this option to true to only analyze changes in the event's diff.
 - Default: false
 
 #### `files-changed-only`
 
-- **Description**: Set this option to false to analyse any source files in the repo.
+- **Description**: Set this option to false to analyze any source files in the repo.
 - Default: true
 
 #### `ignore`
@@ -106,7 +106,7 @@ jobs:
   - Prefix a path with a bang ('!') to make it explicitly _not_ ignored - order of
     multiple paths does _not_ take precedence. The '!' prefix can be applied to
     a submodule's path (if desired) but not hidden directories.
-  - Glob patterns are not supported here. All asterick characters ('\*') are literal.
+  - Glob patterns are not supported here. All asterisk characters ('\*') are literal.
 - Default: '.github'
 
 #### `thread-comments`
