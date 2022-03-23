@@ -69,7 +69,7 @@ inputs:
   database:
     description: The directory containing compile_commands.json file.
     required: false
-    default: "build"
+    default: ""
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.

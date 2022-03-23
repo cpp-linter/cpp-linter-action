@@ -53,6 +53,7 @@ cli_arg_parser.add_argument(
 cli_arg_parser.add_argument(
     "-p",
     "--database",
+    default="",
     help="-p <build-path> is used to read a compile command database."
     "For example, it can be a CMake build directory in which a file named"
     "compile_commands.json exists (use -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
@@ -395,7 +396,7 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
     # cmds.append(f"--format-style={style}")
-    if database is not None:
+    if database:
         cmds.append(f"-p={database}")
     if lines_changed_only:
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
