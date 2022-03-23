@@ -157,7 +157,7 @@ log_commander.propagate = False  # prevent duplicate messages in the parent logg
 def start_log_group(name: str) -> None:
     """Begin a callapsable group of log statements.
 
-    Argrs:
+    Args:
         name: The name of the callapsable group
     """
     log_commander.fatal("::group::%s", name)
@@ -169,7 +169,7 @@ def end_log_group() -> None:
 
 
 def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
-    """Detirmine if a file is specified in a list of paths and/or filenames.
+    """Determine if a file is specified in a list of paths and/or filenames.
 
     Args:
         paths: A list of specified paths to compare with. This list can contain a
@@ -328,7 +328,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
         submodules.read(".gitmodules")
         for module in submodules.sections():
             logger.info(
-                "Apending submodule to ignored paths: %s", submodules[module]["path"]
+                "Appending submodule to ignored paths: %s", submodules[module]["path"]
             )
             ignored_paths.append(submodules[module]["path"])
 
@@ -584,7 +584,7 @@ def post_diff_comments(base_url: str, user_id: int) -> bool:
                     break
         if already_posted and comment_id is None:
             logger.info("comment %d already posted", i)
-            continue  # don't bother reposting the same comment
+            continue  # don't bother re-posting the same comment
 
         # update ot create a review comment (in the diff)
         logger.debug("Payload %d body = %s", i, json.dumps(body))
@@ -689,7 +689,7 @@ def make_annotations(style: str) -> bool:
 
 
 def parse_ignore_option(paths: str):
-    """Parse a givven string of paths (separated by a '|') into `ignored` and
+    """Parse a given string of paths (separated by a '|') into `ignored` and
     `not_ignored` lists of strings.
 
     Args:
