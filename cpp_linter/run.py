@@ -395,7 +395,7 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
     # cmds.append(f"--format-style={style}")
-    if database is None:
+    if database is not None:
         cmds.append("-p")
         cmds.append(database)
     if lines_changed_only:
