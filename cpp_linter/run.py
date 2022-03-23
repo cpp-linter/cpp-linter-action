@@ -366,7 +366,12 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
 
 
 def run_clang_tidy(
-    filename: str, file_obj: dict, version: str, checks: str, lines_changed_only: bool, database: str
+    filename: str,
+    file_obj: dict,
+    version: str,
+    checks: str,
+    lines_changed_only: bool,
+    database: str,
 ) -> None:
     """Run clang-tidy on a certain file.
 
@@ -390,7 +395,7 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
     # cmds.append(f"--format-style={style}")
-    if database != None:
+    if database is None:
         cmds.append("-p")
         cmds.append(database)
     if lines_changed_only:
@@ -765,7 +770,11 @@ def main():
         sys.exit(set_exit_code(0))
 
     capture_clang_tools_output(
-        args.version, args.tidy_checks, args.style, args.lines_changed_only, args.database
+        args.version,
+        args.tidy_checks,
+        args.style,
+        args.lines_changed_only,
+        args.database,
     )
 
     start_log_group("Posting comment(s)")
