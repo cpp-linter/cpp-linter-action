@@ -63,9 +63,13 @@ inputs:
       - Prefix a path with a bang (`!`) to make it explicitly not ignored - order of
         multiple paths does take precedence. The `!` prefix can be applied to
         submodules if desired.
-      - Glob patterns are not supported here. All asterick characters ('*') are literal.
+      - Glob patterns are not supported here. All asterisk characters ('*') are literal.
     required: false
     default: ".github"
+  database:
+    description: The directory containing compile_commands.json file.
+    required: false
+    default: ""
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
@@ -82,5 +86,5 @@ runs:
     - --lines-changed-only=${{ inputs.lines-changed-only }}
     - --files-changed-only=${{ inputs.files-changed-only }}
     - --thread-comments=${{ inputs.thread-comments }}
-    - --ignore
-    - ${{ inputs.ignore }}
+    - --ignore=${{ inputs.ignore }}
+    - --database=${{ inputs.database }}

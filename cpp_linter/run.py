@@ -39,6 +39,7 @@ GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
+RUNNER_WORKSPACE = os.getenv("RUNNER_WORKSPACE", "")
 
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
@@ -49,6 +50,19 @@ cli_arg_parser.add_argument(
     "--verbosity",
     default="10",
     help="The logging level. Defaults to level 20 (aka 'logging.INFO').",
+)
+cli_arg_parser.add_argument(
+    "-p",
+    "--database",
+    default="",
+    help="-p <build-path> is used to read a compile command database."
+    "For example, it can be a CMake build directory in which a file named"
+    "compile_commands.json exists (use -DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    "CMake option to get this output). When no build path is specified,"
+    "a search for compile_commands.json will be attempted through all"
+    "parent paths of the first input file . See:"
+    "https://clang.llvm.org/docs/HowToSetupToolingForLLVM.html for an"
+    "example of setting up Clang Tooling on a source tree.",
 )
 cli_arg_parser.add_argument(
     "-s",
@@ -145,7 +159,7 @@ log_commander.propagate = False  # prevent duplicate messages in the parent logg
 def start_log_group(name: str) -> None:
     """Begin a callapsable group of log statements.
 
-    Argrs:
+    Args:
         name: The name of the callapsable group
     """
     log_commander.fatal("::group::%s", name)
@@ -157,7 +171,7 @@ def end_log_group() -> None:
 
 
 def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
-    """Detirmine if a file is specified in a list of paths and/or filenames.
+    """Determine if a file is specified in a list of paths and/or filenames.
 
     Args:
         paths: A list of specified paths to compare with. This list can contain a
@@ -316,7 +330,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
         submodules.read(".gitmodules")
         for module in submodules.sections():
             logger.info(
-                "Apending submodule to ignored paths: %s", submodules[module]["path"]
+                "Appending submodule to ignored paths: %s", submodules[module]["path"]
             )
             ignored_paths.append(submodules[module]["path"])
 
@@ -354,7 +368,13 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
 
 
 def run_clang_tidy(
-    filename: str, file_obj: dict, version: str, checks: str, lines_changed_only: bool
+    filename: str,
+    file_obj: dict,
+    version: str,
+    checks: str,
+    lines_changed_only: bool,
+    database: str,
+    repo_root: str,
 ) -> None:
     """Run clang-tidy on a certain file.
 
@@ -378,6 +398,15 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
     # cmds.append(f"--format-style={style}")
+    if database:
+        cmds.append("-p")
+        if RUNNER_WORKSPACE:
+            path_to_db = RUNNER_WORKSPACE
+            if repo_root and repo_root != ".":
+                path_to_db += os.sep + repo_root
+            cmds.append(os.path.join(path_to_db, database))
+        else:
+            cmds.append(database)
     if lines_changed_only:
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
         cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")
@@ -431,7 +460,12 @@ def run_clang_format(
 
 
 def capture_clang_tools_output(
-    version: str, checks: str, style: str, lines_changed_only: bool
+    version: str,
+    checks: str,
+    style: str,
+    lines_changed_only: bool,
+    database: str,
+    repo_root: str,
 ):
     """Execute and capture all output from clang-tidy and clang-format. This aggregates
     results in the [`OUTPUT`][cpp_linter.__init__.Globals.OUTPUT].
@@ -455,7 +489,9 @@ def capture_clang_tools_output(
         if not os.path.exists(file["filename"]):
             filename = os.path.split(file["raw_url"])[1]
         start_log_group(f"Performing checkup on {filename}")
-        run_clang_tidy(filename, file, version, checks, lines_changed_only)
+        run_clang_tidy(
+            filename, file, version, checks, lines_changed_only, database, repo_root
+        )
         run_clang_format(filename, file, version, style, lines_changed_only)
         end_log_group()
         if os.path.getsize("clang_tidy_report.txt"):
@@ -564,7 +600,7 @@ def post_diff_comments(base_url: str, user_id: int) -> bool:
                     break
         if already_posted and comment_id is None:
             logger.info("comment %d already posted", i)
-            continue  # don't bother reposting the same comment
+            continue  # don't bother re-posting the same comment
 
         # update ot create a review comment (in the diff)
         logger.debug("Payload %d body = %s", i, json.dumps(body))
@@ -669,7 +705,7 @@ def make_annotations(style: str) -> bool:
 
 
 def parse_ignore_option(paths: str):
-    """Parse a givven string of paths (separated by a '|') into `ignored` and
+    """Parse a given string of paths (separated by a '|') into `ignored` and
     `not_ignored` lists of strings.
 
     Args:
@@ -726,14 +762,14 @@ def main():
     os.chdir(args.repo_root)
 
     exit_early = False
+    with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
+        Globals.EVENT_PAYLOAD = json.load(payload)
+    if logger.getEffectiveLevel() <= logging.DEBUG:
+        start_log_group("Event json from the runner")
+        logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
+        end_log_group()
     if args.files_changed_only:
         # load event's json info about the workflow run
-        with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
-            Globals.EVENT_PAYLOAD = json.load(payload)
-        if logger.getEffectiveLevel() <= logging.DEBUG:
-            start_log_group("Event json from the runner")
-            logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
-            end_log_group()
         get_list_of_changed_files()
         exit_early = not filter_out_non_source_files(
             args.extensions,
@@ -750,7 +786,12 @@ def main():
         sys.exit(set_exit_code(0))
 
     capture_clang_tools_output(
-        args.version, args.tidy_checks, args.style, args.lines_changed_only
+        args.version,
+        args.tidy_checks,
+        args.style,
+        args.lines_changed_only,
+        args.database,
+        args.repo_root,
     )
 
     start_log_group("Posting comment(s)")
