@@ -39,7 +39,7 @@ GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
-CPP_LINTER_ACTION = os.getenv("RUNNER_OS ", "")
+RUNNER_WORKSPACE = os.getenv("RUNNER_WORKSPACE", "")
 
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
@@ -400,10 +400,13 @@ def run_clang_tidy(
     # cmds.append(f"--format-style={style}")
     if database:
         cmds.append("-p")
-        path_to_db = database if not CPP_LINTER_ACTION else "/github/workspace"
-        if repo_root and repo_root != ".":
-            path_to_db += os.sep + repo_root
-        cmds.append(os.path.join(path_to_db, database))
+        if RUNNER_WORKSPACE:
+            path_to_db = RUNNER_WORKSPACE
+            if repo_root and repo_root != ".":
+                path_to_db += os.sep + repo_root
+            cmds.append(os.path.join(path_to_db, database))
+        else:
+            cmds.append(database)
     if lines_changed_only:
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
         cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")
