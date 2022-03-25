@@ -35,7 +35,7 @@ from .thread_comments import remove_bot_comments, list_diff_comments  # , get_re
 
 
 # global constant variables
-GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
+GITHUB_EVENT_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
@@ -770,7 +770,7 @@ def main():
         end_log_group()
 
     exit_early = False
-    with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
+    with open(GITHUB_EVENT_PATH, "r", encoding="utf-8") as payload:
         Globals.EVENT_PAYLOAD = json.load(payload)
     if logger.getEffectiveLevel() <= logging.DEBUG:
         start_log_group("Event json from the runner")
@@ -802,7 +802,12 @@ def main():
     )
 
     start_log_group("Posting comment(s)")
-    if args.thread_comments:
+    thread_comments_allowed = True
+    if "private" in Globals.EVENT_PAYLOAD["repository"]:
+        thread_comments_allowed = (
+            Globals.EVENT_PAYLOAD["repository"]["private"] != "true"
+        )
+    if args.thread_comments and thread_comments_allowed:
         post_results(False)  # False is hard-coded to disable diff comments.
     set_exit_code(int(make_annotations(args.style)))
     end_log_group()
