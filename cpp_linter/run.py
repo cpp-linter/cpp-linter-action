@@ -397,7 +397,8 @@ def run_clang_tidy(
     cmds.append("--export-fixes=clang_tidy_output.yml")
     # cmds.append(f"--format-style={style}")
     if database:
-        cmds.append(f"-p={database}")
+        cmds.append("-p")
+        cmds.append(os.path.join('/github/workspace', database))
     if lines_changed_only:
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
         cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")
