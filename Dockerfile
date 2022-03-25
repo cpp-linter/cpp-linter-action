@@ -12,14 +12,11 @@ LABEL com.github.actions.color="gray-dark"
 LABEL repository="https://github.com/shenxianpeng/cpp-linter-action"
 LABEL maintainer="shenxianpeng <20297606+shenxianpeng@users.noreply.github.com>"
 
-RUN apt-get update
-RUN apt-get -y install python3-pip
-# RUN python3 -m pip install --upgrade pip
+RUN apt-get update && apt-get -y install python3-pip
 
 COPY cpp_linter/ pkg/cpp_linter/
 COPY setup.py pkg/setup.py
 RUN python3 -m pip install pkg/
-ENV CPP_LINTER_ACTION="1"
 
 # github action args use the CMD option
 # See https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsargs

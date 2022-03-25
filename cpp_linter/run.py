@@ -39,7 +39,7 @@ GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
-CPP_LINTER_ACTION = os.getenv("CPP_LINTER_ACTION", "")
+CPP_LINTER_ACTION = os.getenv("RUNNER_OS ", "")
 
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
