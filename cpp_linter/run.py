@@ -762,7 +762,7 @@ def main():
     os.chdir(args.repo_root)
 
     # load event's json info about the workflow run
-    with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
+    with open(GITHUB_EVENT_PATH, "r", encoding="utf-8") as payload:
         Globals.EVENT_PAYLOAD = json.load(payload)
     if logger.getEffectiveLevel() <= logging.DEBUG:
         start_log_group("Event json from the runner")
