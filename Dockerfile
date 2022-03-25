@@ -19,7 +19,7 @@ RUN apt-get -y install python3-pip
 COPY cpp_linter/ pkg/cpp_linter/
 COPY setup.py pkg/setup.py
 RUN python3 -m pip install pkg/
-ENV CPP_LINTER_ACTION 1
+ENV CPP_LINTER_ACTION="1"
 
 # github action args use the CMD option
 # See https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runsargs

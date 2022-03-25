@@ -400,11 +400,10 @@ def run_clang_tidy(
     # cmds.append(f"--format-style={style}")
     if database:
         cmds.append("-p")
-        cmds.append(
-            database
-            if not CPP_LINTER_ACTION
-            else os.path.join("/github/workspace", repo_root, database)
-        )
+        path_to_db = database if not CPP_LINTER_ACTION else "/github/workspace"
+        if repo_root and repo_root != ".":
+            path_to_db += os.sep + repo_root
+        cmds.append(os.path.join(path_to_db, database))
     if lines_changed_only:
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
         cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")

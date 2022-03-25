@@ -145,7 +145,7 @@ You can show C/C++ Lint Action status with a badge in your repository README
 
 Example
 
-```
+```markdown
 [![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
 ```
 
