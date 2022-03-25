@@ -39,6 +39,7 @@ GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
+GITHUB_WOKSPACE = os.getenv("GITHUB_WOKSPACE", "")
 
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
@@ -373,6 +374,7 @@ def run_clang_tidy(
     checks: str,
     lines_changed_only: bool,
     database: str,
+    repo_root: str,
 ) -> None:
     """Run clang-tidy on a certain file.
 
@@ -398,7 +400,11 @@ def run_clang_tidy(
     # cmds.append(f"--format-style={style}")
     if database:
         cmds.append("-p")
-        cmds.append(os.path.join('/github/workspace', database))
+        cmds.append(
+            database
+            if not GITHUB_WOKSPACE
+            else os.path.join(GITHUB_WOKSPACE, repo_root, database)
+        )
     if lines_changed_only:
         logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
         cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")
@@ -452,7 +458,12 @@ def run_clang_format(
 
 
 def capture_clang_tools_output(
-    version: str, checks: str, style: str, lines_changed_only: bool, database: str
+    version: str,
+    checks: str,
+    style: str,
+    lines_changed_only: bool,
+    database: str,
+    repo_root: str,
 ):
     """Execute and capture all output from clang-tidy and clang-format. This aggregates
     results in the [`OUTPUT`][cpp_linter.__init__.Globals.OUTPUT].
@@ -476,7 +487,9 @@ def capture_clang_tools_output(
         if not os.path.exists(file["filename"]):
             filename = os.path.split(file["raw_url"])[1]
         start_log_group(f"Performing checkup on {filename}")
-        run_clang_tidy(filename, file, version, checks, lines_changed_only, database)
+        run_clang_tidy(
+            filename, file, version, checks, lines_changed_only, database, repo_root
+        )
         run_clang_format(filename, file, version, style, lines_changed_only)
         end_log_group()
         if os.path.getsize("clang_tidy_report.txt"):
@@ -776,6 +789,7 @@ def main():
         args.style,
         args.lines_changed_only,
         args.database,
+        args.repo_root,
     )
 
     start_log_group("Posting comment(s)")

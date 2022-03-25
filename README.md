@@ -116,13 +116,11 @@ jobs:
     variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
 - Default: true
 
-<!-- EXPERIMENTAL - works as executable py pkg, but not as GH action
 #### `database`
 
 - **Description**: The directory containing compilation database (like compile_commands.json) file.
 - Default: ''
 
- -->
 ### Outputs
 
 This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
