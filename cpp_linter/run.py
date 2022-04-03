@@ -805,7 +805,7 @@ def main():
     thread_comments_allowed = True
     if "private" in Globals.EVENT_PAYLOAD["repository"]:
         thread_comments_allowed = (
-            Globals.EVENT_PAYLOAD["repository"]["private"] != True
+            Globals.EVENT_PAYLOAD["repository"]["private"] is not True
         )
     if args.thread_comments and thread_comments_allowed:
         post_results(False)  # False is hard-coded to disable diff comments.
