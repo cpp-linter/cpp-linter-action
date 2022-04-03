@@ -35,7 +35,7 @@ from .thread_comments import remove_bot_comments, list_diff_comments  # , get_re
 
 
 # global constant variables
-GITHUB_EVEN_PATH = os.getenv("GITHUB_EVENT_PATH", "")
+GITHUB_EVENT_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
@@ -211,7 +211,7 @@ def get_list_of_changed_files() -> None:
         logger.warning("triggered on unsupported event.")
         sys.exit(set_exit_code(0))
     logger.info("Fetching files list from url: %s", files_link)
-    Globals.FILES = requests.get(files_link).json()
+    Globals.FILES = requests.get(files_link, headers=API_HEADERS).json()
 
 
 def filter_out_non_source_files(
@@ -761,15 +761,16 @@ def main():
     # change working directory
     os.chdir(args.repo_root)
 
-    exit_early = False
-    with open(GITHUB_EVEN_PATH, "r", encoding="utf-8") as payload:
+    # load event's json info about the workflow run
+    with open(GITHUB_EVENT_PATH, "r", encoding="utf-8") as payload:
         Globals.EVENT_PAYLOAD = json.load(payload)
     if logger.getEffectiveLevel() <= logging.DEBUG:
         start_log_group("Event json from the runner")
         logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
         end_log_group()
+
+    exit_early = False
     if args.files_changed_only:
-        # load event's json info about the workflow run
         get_list_of_changed_files()
         exit_early = not filter_out_non_source_files(
             args.extensions,
@@ -795,7 +796,12 @@ def main():
     )
 
     start_log_group("Posting comment(s)")
-    if args.thread_comments:
+    thread_comments_allowed = True
+    if "private" in Globals.EVENT_PAYLOAD["repository"]:
+        thread_comments_allowed = (
+            Globals.EVENT_PAYLOAD["repository"]["private"] is not True
+        )
+    if args.thread_comments and thread_comments_allowed:
         post_results(False)  # False is hard-coded to disable diff comments.
     set_exit_code(int(make_annotations(args.style)))
     end_log_group()

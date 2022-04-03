@@ -92,6 +92,7 @@ jobs:
 
 - **Description**: Set this option to false to analyze any source files in the repo.
 - Default: true
+- NOTE: The `GITHUB_TOKEN` should be supplied when running on a private repository with this option enabled, otherwise the runner does not not have the privilege to list changed files for an event. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
 
 #### `ignore`
 
@@ -115,6 +116,7 @@ jobs:
   - To use thread comments, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
     variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
 - Default: true
+- NOTE: If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
 
 #### `database`
 

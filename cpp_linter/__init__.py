@@ -3,6 +3,7 @@ multiple modules."""
 import io
 import os
 import logging
+from requests import Response
 
 FOUND_RICH_LIB = False
 try:
@@ -26,11 +27,9 @@ if not FOUND_RICH_LIB:
 # global constant variables
 GITHUB_SHA = os.getenv("GITHUB_SHA", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", ""))
-API_HEADERS = {
-    "Authorization": f"token {GITHUB_TOKEN}",
-    "Accept": "application/vnd.github.v3.text+json",
-}
-
+API_HEADERS = {"Accept": "application/vnd.github.v3.text+json",}
+if GITHUB_TOKEN:
+    API_HEADERS["Authorization"] = f"token {GITHUB_TOKEN}"
 
 class Globals:
     """Global variables for re-use (non-constant)."""
@@ -40,10 +39,10 @@ class Globals:
     OUTPUT = ""
     """The accumulated body of the resulting comment that gets posted."""
     FILES = []
-    """The reponding payload containing info about changed files."""
+    """The responding payload containing info about changed files."""
     EVENT_PAYLOAD = {}
     """The parsed JSON of the event payload."""
-    response_buffer = None
+    response_buffer = Response()
     """A shared response object for `requests` module."""
 
 
@@ -93,7 +92,17 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
     return (line_cnt, cols)
 
 
-def log_response_msg():
-    """Output the response buffer's message on a failed request."""
+def log_response_msg() -> bool:
+    """Output the response buffer's message on a failed request.
+
+    Returns:
+        A bool decribing if response's status code was less than 400.
+    """
     if Globals.response_buffer.status_code >= 400:
-        logger.error("response returned message: %s", Globals.response_buffer.text)
+        logger.error(
+            "response returned %d message: %s",
+            Globals.response_buffer.status_code,
+            Globals.response_buffer.text,
+        )
+        return False
+    return True

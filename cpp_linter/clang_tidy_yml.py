@@ -4,9 +4,9 @@ import yaml
 from . import GlobalParser, get_line_cnt_from_cols
 
 
-CWD_HEADER_GAURD = bytes(
+CWD_HEADER_GUARD = bytes(
     os.getcwd().upper().replace(os.sep, "_").replace("-", "_"), encoding="utf-8"
-)  #: The constant used to trim absolute paths from header gaurd suggestions.
+)  #: The constant used to trim absolute paths from header guard suggestions.
 
 
 class TidyDiagnostic:
@@ -121,10 +121,10 @@ def parse_tidy_suggestions_yml():
                 print(
                     "filtering header guard suggestion (making relative to repo root)"
                 )
-                fix.text = fix.text.replace(CWD_HEADER_GAURD, b"")
+                fix.text = fix.text.replace(CWD_HEADER_GUARD, b"")
             diag.replacements.append(fix)
         fixit.diagnostics.append(diag)
-        # filter out absolute header gaurds
+        # filter out absolute header guards
     GlobalParser.tidy_advice.append(fixit)
 
 
