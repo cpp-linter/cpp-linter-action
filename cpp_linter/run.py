@@ -770,12 +770,6 @@ def main():
         end_log_group()
 
     exit_early = False
-    with open(GITHUB_EVENT_PATH, "r", encoding="utf-8") as payload:
-        Globals.EVENT_PAYLOAD = json.load(payload)
-    if logger.getEffectiveLevel() <= logging.DEBUG:
-        start_log_group("Event json from the runner")
-        logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
-        end_log_group()
     if args.files_changed_only:
         get_list_of_changed_files()
         exit_early = not filter_out_non_source_files(
