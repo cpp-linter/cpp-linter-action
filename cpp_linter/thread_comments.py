@@ -3,7 +3,7 @@ import os
 from typing import Union
 import json
 import requests
-from . import Globals, GlobalParser, logger, GITHUB_SHA, log_response_msg
+from . import Globals, GlobalParser, logger, API_HEADERS, GITHUB_SHA, log_response_msg
 
 
 def remove_bot_comments(comments_url: str, user_id: int):
