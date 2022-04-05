@@ -15,7 +15,7 @@ def remove_bot_comments(comments_url: str, user_id: int):
         user_id: The user's account id number.
     """
     logger.info("comments_url: %s", comments_url)
-    Globals.response_buffer = requests.get(comments_url, headers=API_HEADERS)
+    Globals.response_buffer = requests.get(comments_url)
     if not log_response_msg():
         return  # error getting comments for the thread; stop here
     comments = Globals.response_buffer.json()
