@@ -8,7 +8,7 @@ inputs:
   thread-comments:
     description: Set this option to false to disable the use of thread comments as feedback. Defaults to true.
     required: false
-    default: true
+    default: false
   style:
     description: >
       The style rules to use (defaults to 'llvm').
@@ -37,7 +37,7 @@ inputs:
     required: false
     default: "10"
   verbosity:
-    descruption: A hidden option to control the action's log verbosity. This is the `logging` level (degaults to DEBUG)
+    description: A hidden option to control the action's log verbosity. This is the `logging` level (degaults to DEBUG)
     required: false
     default: "10"
   lines-changed-only:

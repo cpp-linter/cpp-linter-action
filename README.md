@@ -115,7 +115,7 @@ jobs:
 - **Description**: Set this option to false to disable the use of thread comments as feedback.
   - To use thread comments, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
     variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
-- Default: true
+- Default: false
 - NOTE: If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
 
 #### `database`
