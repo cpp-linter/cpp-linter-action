@@ -3,7 +3,7 @@ import os
 from typing import Union
 import json
 import requests
-from . import Globals, GlobalParser, logger, API_HEADERS, GITHUB_SHA, log_response_msg
+from . import Globals, GlobalParser, logger, GITHUB_SHA, log_response_msg
 
 
 def remove_bot_comments(comments_url: str, user_id: int):
@@ -15,7 +15,7 @@ def remove_bot_comments(comments_url: str, user_id: int):
         user_id: The user's account id number.
     """
     logger.info("comments_url: %s", comments_url)
-    Globals.response_buffer = requests.get(comments_url, headers=API_HEADERS)
+    Globals.response_buffer = requests.get(comments_url)
     if not log_response_msg():
         return  # error getting comments for the thread; stop here
     comments = Globals.response_buffer.json()
