@@ -5,11 +5,12 @@
 
 # C/C++ Lint Action <sub><sup>| clang-format & clang-tidy</sup></sub>
 
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shenxianpeng/cpp-linter-action)
-[![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
-![GitHub](https://img.shields.io/github/license/shenxianpeng/cpp-linter-action?label=license)
-[![MkDocs Deploy](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/mkdocs-deploy.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
-[![open repo in gitpod](https://img.shields.io/badge/Gitpod-Use%20Online%20IDE-B16C04?logo=gitpod)](https://gitpod.io/#https://github.com/shenxianpeng/cpp-linter-action)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shenxianpeng/cpp-linter-action?style=flat-square)
+[![GitHub marketplace](https://img.shields.io/badge/marketplace-C%2FC%2B%2B%20Lint%20Action-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/c-c-lint-action)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/shenxianpeng/cpp-linter-action/cpp-linter?label=cpp-linter&logo=Github&style=flat-square)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/shenxianpeng/cpp-linter-action/MkDocs%20Deploy?label=docs&logo=Github&style=flat-square)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
+![GitHub](https://img.shields.io/github/license/shenxianpeng/cpp-linter-action?label=license&logo=github&style=flat-square)
+[![open repo in gitpod](https://img.shields.io/badge/Gitpod-Use%20Online%20IDE-B16C04?logo=gitpod&style=flat-square)](https://gitpod.io/#https://github.com/shenxianpeng/cpp-linter-action)
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
 
