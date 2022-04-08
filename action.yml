@@ -1,5 +1,5 @@
 name: C/C++ Lint Action
-description: Automatically checks push & pull request changes with clang-format & clang-tidy, then posts a comment with faulty results.
+description: Automatically checks push & PR changes with clang-format & clang-tidy, then post annotations/comments with faulty results.
 author: shenxianpeng
 branding:
   icon: "check-circle"
@@ -33,7 +33,7 @@ inputs:
     required: false
     default: "."
   version:
-    description: "The desired version of the clang tools to use. Accepted options are strings which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to 10."
+    description: "The desired version of the clang tools to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8. Defaults to 10."
     required: false
     default: "10"
   verbosity:
