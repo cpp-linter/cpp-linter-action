@@ -1,7 +1,7 @@
 """Parse output from clang-tidy's stdout"""
 import os
 import re
-from . import GlobalParser  # , logger
+from . import GlobalParser, IS_ON_RUNNER  # , logger
 
 NOTE_HEADER = re.compile("^(.*):(\d+):(\d+):\s(\w+):(.*)\[(.*)\]$")
 
@@ -37,11 +37,11 @@ class TidyNotification:
             self.diagnostic,
         ) = notification_line
 
-        self.note_info = self.note_info.strip()
-        self.note_type = self.note_type.strip()
+        self.note_info: str = self.note_info.strip()
+        self.note_type: str = self.note_type.strip()
         self.line = int(self.line)
         self.cols = int(self.cols)
-        self.filename = self.filename.replace(os.getcwd() + os.sep, "")
+        self.filename: str = self.filename.replace(os.getcwd() + os.sep, "")
         self.fixit_lines = []
 
     def __repr__(self) -> str:
@@ -70,15 +70,19 @@ class TidyNotification:
             - [A notice message](https://docs.github.com/en/actions/learn-github-
               actions/workflow-commands-for-github-actions#setting-a-notice-message)
         """
-        return "::{} file={},line={},title={}:{}:{} [{}]::{}".format(
-            "notice" if self.note_type.startswith("note") else self.note_type,
-            self.filename,
-            self.line,
-            self.filename,
-            self.line,
-            self.cols,
-            self.diagnostic,
-            self.note_info,
+        filename = self.filename
+        if IS_ON_RUNNER:
+            filename = self.filename.replace(os.sep, "/")
+        return (
+            "::{} file={file},line={line},title={file}:{line}:{cols} [{diag}]::"
+            "{info}".format(
+                "notice" if self.note_type.startswith("note") else self.note_type,
+                file=filename,
+                line=self.line,
+                cols=self.cols,
+                diag=self.diagnostic,
+                info=self.note_info,
+            )
         )
 
 

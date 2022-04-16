@@ -394,6 +394,8 @@ def run_clang_tidy(
     cmds = [f"clang-tidy-{version}"]
     if sys.platform.startswith("win32"):
         cmds = ["clang-tidy"]
+        if os.path.exists(version):
+            cmds = [f"{version}\\clang-tidy.exe"]
     if checks:
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
@@ -445,6 +447,8 @@ def run_clang_format(
         f"-style={style}",
         "--output-replacements-xml",
     ]
+    if sys.platform.startswith("win32") and os.path.exists(version):
+        cmds[0] = f"{version}\\clang-format.exe"
     if lines_changed_only:
         for line_range in file_obj["line_filter"]["lines"]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")
