@@ -394,8 +394,8 @@ def run_clang_tidy(
     cmds = [f"clang-tidy-{version}"]
     if sys.platform.startswith("win32"):
         cmds = ["clang-tidy"]
-        if os.path.exists(version):
-            cmds = [f"{version}\\clang-tidy.exe"]
+        if os.path.exists(version + os.sep + "bin"):
+            cmds = [f"{version}\\bin\\clang-tidy.exe"]
     elif not version.isdigit():
         logger.warning("ignoring invalid version number %s.", version)
         cmds = ["clang-tidy"]
@@ -451,8 +451,8 @@ def run_clang_format(
         f"-style={style}",
         "--output-replacements-xml",
     ]
-    if is_on_windows and os.path.exists(version):
-        cmds[0] = f"{version}\\clang-format.exe"
+    if is_on_windows and os.path.exists(version + os.sep + "bin"):
+        cmds[0] = f"{version}\\bin\\clang-format.exe"
     elif not is_on_windows and not version.isdigit():
         logger.warning("ignoring invalid version number %s.", version)
         cmds[0] = "clang-format"
