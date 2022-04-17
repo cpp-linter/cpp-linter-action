@@ -396,6 +396,9 @@ def run_clang_tidy(
         cmds = ["clang-tidy"]
         if os.path.exists(version):
             cmds = [f"{version}\\clang-tidy.exe"]
+    elif not version.isdigit():
+        logger.warning("ignoring invalid version number %s.", version)
+        cmds = ["clang-tidy"]
     if checks:
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
@@ -442,13 +445,17 @@ def run_clang_format(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
     """
+    is_on_windows = sys.platform.startswith("win32")
     cmds = [
-        "clang-format" + ("" if sys.platform.startswith("win32") else f"-{version}"),
+        "clang-format" + ("" if is_on_windows else f"-{version}"),
         f"-style={style}",
         "--output-replacements-xml",
     ]
-    if sys.platform.startswith("win32") and os.path.exists(version):
+    if is_on_windows and os.path.exists(version):
         cmds[0] = f"{version}\\clang-format.exe"
+    elif not is_on_windows and not version.isdigit():
+        logger.warning("ignoring invalid version number %s.", version)
+        cmds[0] = "clang-format"
     if lines_changed_only:
         for line_range in file_obj["line_filter"]["lines"]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")
