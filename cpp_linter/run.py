@@ -111,6 +111,7 @@ cli_arg_parser.add_argument(
     "with the filename. Prefix a path with '!' to explicitly not ignore it.",
 )
 cli_arg_parser.add_argument(
+    "-l",
     "--lines-changed-only",
     default="false",
     type=lambda input: input.lower() == "true",
@@ -118,6 +119,7 @@ cli_arg_parser.add_argument(
     "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
+    "-f",
     "--files-changed-only",
     default="false",
     type=lambda input: input.lower() == "true",
@@ -125,6 +127,7 @@ cli_arg_parser.add_argument(
     "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
+    "-t",
     "--thread-comments",
     default="false",
     type=lambda input: input.lower() == "true",
