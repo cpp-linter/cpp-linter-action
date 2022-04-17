@@ -167,8 +167,8 @@ jobs:
 
       - name: run linter as a python package
         id: linter
-        # pass the installed path (with '/bin' appended) to the '--version' argument
-        run: cpp-linter --version=${{ runner.temp }}/llvm/bin
+        # pass the installed path to the '--version' argument
+        run: cpp-linter --version=${{ runner.temp }}/llvm
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
