@@ -84,7 +84,8 @@ cli_arg_parser.add_argument(
     "--version",
     default="10",
     help="The desired version of the clang tools to use. Accepted options are strings "
-    "which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to %(default)s.",
+    "which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to %(default)s. On Windows, this "
+    "can also be a path to the install location of LLVM",
 )
 cli_arg_parser.add_argument(
     "-e",
@@ -107,7 +108,7 @@ cli_arg_parser.add_argument(
     help="Set this option with paths to ignore. In the case of multiple "
     "paths, you can set this option (multiple times) for each path. This can "
     "also have files, but the file's relative path has to be specified as well "
-    "with the filename.",
+    "with the filename. Prefix a path with '!' to explicitly not ignore it.",
 )
 cli_arg_parser.add_argument(
     "--lines-changed-only",
