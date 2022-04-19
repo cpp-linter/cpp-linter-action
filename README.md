@@ -128,6 +128,57 @@ jobs:
 
 This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
 
+## Using a Windows-based runner
+
+This action can only be run on a runner using the Ubuntu Operating System. However, this action's source code (essentially a python package) can be used on a runner using the Windows Operating System.
+
+Note: MacOS-based runners have not been tested, but the same approach applies.
+
+This example makes use of another action
+([KyleMayes/install-llvm-action](https://github.com/KyleMayes/install-llvm-action))
+to install a certain version of clang-tidy and clang-format.
+
+```yml
+on:
+  push:
+    paths-ignore: "docs/**"
+  pull_request:
+    paths-ignore: "docs/**"
+
+jobs:
+  cpp-linter:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+
+      - name: Install clang-tools
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          # v12 is the recommended minimum for the Visual Studio compiler
+          version: 12
+          # specifying an install path is required because
+          # Windows runners already have a certain version of LLVM installed
+          directory: ${{ runner.temp }}/llvm
+
+      - name: Install linter python package
+        run: python3 -m pip install git+https://github.com/shenxianpeng/cpp-linter-action
+
+      - name: run linter as a python package
+        id: linter
+        # pass the installed path to the '--version' argument
+        run: cpp-linter --version=${{ runner.temp }}/llvm
+
+      - name: Fail fast?!
+        if: steps.linter.outputs.checks-failed > 0
+        run: echo "Some files failed the linting checks!"
+        # for actual deployment
+        # run: exit 1
+```
+
+All input options listed above are specified by pre-pending a `--`. You can also install this repo locally and run `cpp-linter -h` for more detail.
+
 ## Example
 
 <!--intro-end-->

@@ -84,7 +84,8 @@ cli_arg_parser.add_argument(
     "--version",
     default="10",
     help="The desired version of the clang tools to use. Accepted options are strings "
-    "which can be 6.0, 7, 8, 9, 10, 11, 12. Defaults to %(default)s.",
+    "which can be 8, 9, 10, 11, 12, 13, 14. Defaults to %(default)s. On Windows, this "
+    "can also be a path to the install location of LLVM",
 )
 cli_arg_parser.add_argument(
     "-e",
@@ -107,9 +108,10 @@ cli_arg_parser.add_argument(
     help="Set this option with paths to ignore. In the case of multiple "
     "paths, you can set this option (multiple times) for each path. This can "
     "also have files, but the file's relative path has to be specified as well "
-    "with the filename.",
+    "with the filename. Prefix a path with '!' to explicitly not ignore it.",
 )
 cli_arg_parser.add_argument(
+    "-l",
     "--lines-changed-only",
     default="false",
     type=lambda input: input.lower() == "true",
@@ -117,6 +119,7 @@ cli_arg_parser.add_argument(
     "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
+    "-f",
     "--files-changed-only",
     default="false",
     type=lambda input: input.lower() == "true",
@@ -124,6 +127,7 @@ cli_arg_parser.add_argument(
     "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
+    "-t",
     "--thread-comments",
     default="false",
     type=lambda input: input.lower() == "true",
@@ -394,6 +398,11 @@ def run_clang_tidy(
     cmds = [f"clang-tidy-{version}"]
     if sys.platform.startswith("win32"):
         cmds = ["clang-tidy"]
+        if os.path.exists(version + os.sep + "bin"):
+            cmds = [f"{version}\\bin\\clang-tidy.exe"]
+    elif not version.isdigit():
+        logger.warning("ignoring invalid version number %s.", version)
+        cmds = ["clang-tidy"]
     if checks:
         cmds.append(f"-checks={checks}")
     cmds.append("--export-fixes=clang_tidy_output.yml")
@@ -440,11 +449,17 @@ def run_clang_format(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
     """
+    is_on_windows = sys.platform.startswith("win32")
     cmds = [
-        "clang-format" + ("" if sys.platform.startswith("win32") else f"-{version}"),
+        "clang-format" + ("" if is_on_windows else f"-{version}"),
         f"-style={style}",
         "--output-replacements-xml",
     ]
+    if is_on_windows and os.path.exists(version + os.sep + "bin"):
+        cmds[0] = f"{version}\\bin\\clang-format.exe"
+    elif not is_on_windows and not version.isdigit():
+        logger.warning("ignoring invalid version number %s.", version)
+        cmds[0] = "clang-format"
     if lines_changed_only:
         for line_range in file_obj["line_filter"]["lines"]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")

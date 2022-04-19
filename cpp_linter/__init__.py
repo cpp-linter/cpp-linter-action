@@ -25,6 +25,7 @@ if not FOUND_RICH_LIB:
     logger.debug("rich module not found")
 
 # global constant variables
+IS_ON_RUNNER = bool(os.getenv("CI"))
 GITHUB_SHA = os.getenv("GITHUB_SHA", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", ""))
 API_HEADERS = {"Accept": "application/vnd.github.v3.text+json",}
