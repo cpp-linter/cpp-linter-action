@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: shenxianpeng/cpp-linter-action@master
+      - uses: shenxianpeng/cpp-linter-action@v1.4.2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -163,7 +163,7 @@ jobs:
           directory: ${{ runner.temp }}/llvm
 
       - name: Install linter python package
-        run: python3 -m pip install git+https://github.com/shenxianpeng/cpp-linter-action
+        run: python3 -m pip install git+https://github.com/shenxianpeng/cpp-linter-action@v1.4.2
 
       - name: run linter as a python package
         id: linter

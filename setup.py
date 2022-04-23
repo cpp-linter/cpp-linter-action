@@ -15,7 +15,7 @@ setup(
     name="cpp_linter",
     # use_scm_version=True,
     # setup_requires=["setuptools_scm"],
-    version="1.3.1",
+    version="1.4.2",
     description=__doc__,
     long_description=".. warning:: this is not meant for PyPi (yet)",
     author="Brendan Doherty",
