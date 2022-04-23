@@ -6,25 +6,26 @@ from setuptools import setup
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 REPO = "https://github.com/"
 repo = os.getenv("GITHUB_REPOSITORY", None)  # in case this is published from a fork
-REPO += "" if repo is None else repo
-if repo is None:
-    REPO += "2bndy5/cpp-linter-action"
+REPO += "shenxianpeng/cpp-linter-action" if repo is None else repo
 
 
 setup(
     name="cpp_linter",
     # use_scm_version=True,
     # setup_requires=["setuptools_scm"],
-    version="1.3.1",
+    version="1.4.2",
     description=__doc__,
-    long_description=".. warning:: this is not meant for PyPi (yet)",
-    author="Brendan Doherty",
+    long_description=(
+        "A python package that powers the github action named cpp-linter-action. "
+        + f"See `the github repository README <{REPO}#readme>`_ for full details."
+    ),
+    author="Brendan Doherty, Peter Shen",
     author_email="2bndy5@gmail.com",
     install_requires=["requests", "pyyaml"],  # pyyaml is installed with clang-tidy
     license="MIT",
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        "Development Status :: 1 - Production/Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
