@@ -76,7 +76,7 @@ jobs:
 
 #### `version`
 
-- **Description**: The desired version of the [clang-tools](https://hub.docker.com/repository/docker/xianpengshen/clang-tools) to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8.
+- **Description**: The desired version of the [clang-tools](https://hub.docker.com/r/xianpengshen/clang-tools) to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8.
 - Default: '10'
 
 #### `verbosity`
@@ -183,13 +183,15 @@ All input options listed above are specified by pre-pending a `--`. You can also
 
 <!--intro-end-->
 
-### Thread Comment
-
-![github-actions bot](./docs/images/demo_comment.png)
-
 ### Annotations
 
-![workflow annotations](./docs/images/demo_annotations.png)
+![clang-format annotations](./docs/images/annotations-clang-format.png)
+
+![clang-tidy annotations](./docs/images/annotations-clang-tidy.png)
+
+### Thread Comment
+
+![github-actions bot](./docs/images/comment.png)
 
 <!--footer-start-->
 

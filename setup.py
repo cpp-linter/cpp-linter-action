@@ -19,7 +19,7 @@ setup(
         "A python package that powers the github action named cpp-linter-action. "
         + f"See `the github repository README <{REPO}#readme>`_ for full details."
     ),
-    author="Brendan Doherty, Peter Shen",
+    author="Brendan Doherty",
     author_email="2bndy5@gmail.com",
     install_requires=["requests", "pyyaml"],  # pyyaml is installed with clang-tidy
     license="MIT",
