@@ -134,6 +134,14 @@ cli_arg_parser.add_argument(
     help="Set this option to false to disable the use of thread comments as feedback."
     "Defaults to %(default)s.",
 )
+cli_arg_parser.add_argument(
+    "-a",
+    "--file-annotations",
+    default="true",
+    type=lambda input: input.lower() == "true",
+    help="Set this option to false to disable the use of file annotations as feedback."
+    "Defaults to %(default)s.",
+)
 
 
 def set_exit_code(override: int = None) -> int:
@@ -695,7 +703,7 @@ def post_results(use_diff_comments: bool, user_id: int = 41898282):
     set_exit_code(1 if checks_passed else 0)
 
 
-def make_annotations(style: str) -> bool:
+def make_annotations(style: str, file_annotations: bool) -> bool:
     """Use github log commands to make annotations from clang-format and
     clang-tidy output.
 
@@ -709,11 +717,13 @@ def make_annotations(style: str) -> bool:
     for note in GlobalParser.format_advice:
         if note.replaced_lines:
             ret_val = True
-            log_commander.info(note.log_command(style))
+            if file_annotations:
+                log_commander.info(note.log_command(style))
             count += 1
     for note in GlobalParser.tidy_notes:
         ret_val = True
-        log_commander.info(note.log_command())
+        if file_annotations:
+            log_commander.info(note.log_command())
         count += 1
     logger.info("Created %d annotations", count)
     return ret_val
@@ -818,7 +828,7 @@ def main():
         )
     if args.thread_comments and thread_comments_allowed:
         post_results(False)  # False is hard-coded to disable diff comments.
-    set_exit_code(int(make_annotations(args.style)))
+    set_exit_code(int(make_annotations(args.style, args.file_annotations)))
     end_log_group()
 
 
