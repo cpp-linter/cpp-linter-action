@@ -119,6 +119,11 @@ jobs:
 - Default: false
 - NOTE: If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
 
+#### `file-annotations`
+
+- **Description**: Set this option to false to disable the use of file annotations as feedback.
+- Default: true
+
 #### `database`
 
 - **Description**: The directory containing compilation database (like compile_commands.json) file.
