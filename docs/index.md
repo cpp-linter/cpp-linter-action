@@ -8,13 +8,15 @@
    end="<!--intro-end-->"
 %}
 
-### Thread Comment
-
-![sample comment](images/demo_comment.png)
-
 ### Annotations
 
-![workflow annotations](images/demo_annotations.png)
+![clang-format annotations](images/annotations-clang-format.png)
+
+![clang-tidy annotations](images/annotations-clang-tidy.png)
+
+### Thread Comment
+
+![sample comment](images/comment.png)
 
 {%
    include-markdown "../README.md"
