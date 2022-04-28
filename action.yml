@@ -6,9 +6,13 @@ branding:
   color: "green"
 inputs:
   thread-comments:
-    description: Set this option to false to disable the use of thread comments as feedback. Defaults to true.
+    description: Set this option to false to disable the use of thread comments as feedback. Defaults to false.
     required: false
     default: false
+  file-annotations:
+    description: Set this option to false to disable the use of file annotations as feedback. Defaults to true.
+    required: false
+    default: true
   style:
     description: >
       The style rules to use (defaults to 'llvm').
@@ -88,3 +92,4 @@ runs:
     - --thread-comments=${{ inputs.thread-comments }}
     - --ignore=${{ inputs.ignore }}
     - --database=${{ inputs.database }}
+    - --file-annotations=${{ inputs.file-annotations }}

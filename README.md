@@ -26,10 +26,9 @@ The content of the file should be in the following format.
 name: cpp-linter
 
 on:
-  push:
-    paths-ignore: "docs/**"
   pull_request:
-    paths-ignore: "docs/**"
+    types: [opened, reopened]  # let PR-synchronize events be handled by push events
+  push:
 
 jobs:
   cpp-linter:
@@ -119,6 +118,11 @@ jobs:
 - Default: false
 - NOTE: If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
 
+#### `file-annotations`
+
+- **Description**: Set this option to false to disable the use of file annotations as feedback.
+- Default: true
+
 #### `database`
 
 - **Description**: The directory containing compilation database (like compile_commands.json) file.
@@ -140,10 +144,9 @@ to install a certain version of clang-tidy and clang-format.
 
 ```yml
 on:
-  push:
-    paths-ignore: "docs/**"
   pull_request:
-    paths-ignore: "docs/**"
+    types: [opened, reopened]  # let PR-synchronize events be handled by push events
+  push:
 
 jobs:
   cpp-linter:
