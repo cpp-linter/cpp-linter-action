@@ -185,13 +185,13 @@ All input options listed above are specified by pre-pending a `--`. You can also
 
 ### Annotations
 
-<a href="url"><img src="./docs/images/annotations-clang-format.png" height="408" width="744" ></a>
+![clang-format annotations](./docs/images/annotations-clang-format.png)
 
-<a href="url"><img src="./docs/images/annotations-clang-tidy.png" height="446" width="547" ></a>
+![clang-tidy annotations](./docs/images/annotations-clang-tidy.png)
 
 ### Thread Comment
 
-<a href="url"><img src="./docs/images/comment.png" height="975" width="831" ></a>
+![sample comment](./docs/images/comment.png)
 
 <!--footer-start-->
 
