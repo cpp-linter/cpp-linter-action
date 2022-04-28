@@ -26,10 +26,9 @@ The content of the file should be in the following format.
 name: cpp-linter
 
 on:
-  push:
-    paths-ignore: "docs/**"
   pull_request:
-    paths-ignore: "docs/**"
+    types: [opened, reopened]  # let PR-synchronize events be handled by push events
+  push:
 
 jobs:
   cpp-linter:
@@ -145,10 +144,9 @@ to install a certain version of clang-tidy and clang-format.
 
 ```yml
 on:
-  push:
-    paths-ignore: "docs/**"
   pull_request:
-    paths-ignore: "docs/**"
+    types: [opened, reopened]  # let PR-synchronize events be handled by push events
+  push:
 
 jobs:
   cpp-linter:
