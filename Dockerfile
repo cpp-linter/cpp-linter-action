@@ -9,7 +9,7 @@ LABEL com.github.actions.description="Lint your code with clang-tidy in parallel
 LABEL com.github.actions.icon="code"
 LABEL com.github.actions.color="gray-dark"
 
-LABEL repository="https://github.com/shenxianpeng/cpp-linter-action"
+LABEL repository="https://github.com/cpp-linter/cpp-linter-action"
 LABEL maintainer="shenxianpeng <20297606+shenxianpeng@users.noreply.github.com>"
 
 RUN apt-get update && apt-get -y install python3-pip

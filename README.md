@@ -5,18 +5,18 @@
 
 # C/C++ Lint Action <sub><sup>| clang-format & clang-tidy</sup></sub>
 
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shenxianpeng/cpp-linter-action?style=flat-square)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cpp-linter/cpp-linter-action?style=flat-square)
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-C%2FC%2B%2B%20Lint%20Action-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/c-c-lint-action)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/shenxianpeng/cpp-linter-action/cpp-linter?label=cpp-linter&logo=Github&style=flat-square)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/shenxianpeng/cpp-linter-action/MkDocs%20Deploy?label=docs&logo=Github&style=flat-square)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
-![GitHub](https://img.shields.io/github/license/shenxianpeng/cpp-linter-action?label=license&logo=github&style=flat-square)
-[![open repo in gitpod](https://img.shields.io/badge/Gitpod-Use%20Online%20IDE-B16C04?logo=gitpod&style=flat-square)](https://gitpod.io/#https://github.com/shenxianpeng/cpp-linter-action)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/cpp-linter?label=cpp-linter&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/MkDocs%20Deploy?label=docs&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
+![GitHub](https://img.shields.io/github/license/cpp-linter/cpp-linter-action?label=license&logo=github&style=flat-square)
+[![open repo in gitpod](https://img.shields.io/badge/Gitpod-Use%20Online%20IDE-B16C04?logo=gitpod&style=flat-square)](https://gitpod.io/#https://github.com/cpp-linter/cpp-linter-action)
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
 
 ## Usage
 
-Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/shenxianpeng/cpp-linter-action/blob/master/.github/workflows/cpp-linter.yml)
+Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/master/.github/workflows/cpp-linter.yml)
 
 The content of the file should be in the following format.
 
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: shenxianpeng/cpp-linter-action@v1
+      - uses: cpp-linter/cpp-linter-action@v1
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -166,7 +166,7 @@ jobs:
           directory: ${{ runner.temp }}/llvm
 
       - name: Install linter python package
-        run: python3 -m pip install git+https://github.com/shenxianpeng/cpp-linter-action@v1
+        run: python3 -m pip install git+https://github.com/cpp-linter/cpp-linter-action@v1
 
       - name: run linter as a python package
         id: linter
@@ -205,17 +205,17 @@ You can show C/C++ Lint Action status with a badge in your repository README
 Example
 
 ```markdown
-[![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
+[![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 ```
 
-[![cpp-linter](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/shenxianpeng/cpp-linter-action/actions/workflows/cpp-linter.yml)
+[![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 
 ## Have question or feedback?
 
-To provide feedback (requesting a feature or reporting a bug) please post to [issues](https://github.com/shenxianpeng/cpp-linter-action/issues).
+To provide feedback (requesting a feature or reporting a bug) please post to [issues](https://github.com/cpp-linter/cpp-linter-action/issues).
 
 ## License
 
-The scripts and documentation in this project are released under the [MIT License](https://github.com/shenxianpeng/cpp-linter-action/blob/master/LICENSE)
+The scripts and documentation in this project are released under the [MIT License](https://github.com/cpp-linter/cpp-linter-action/blob/master/LICENSE)
 
 <!--footer-end-->
