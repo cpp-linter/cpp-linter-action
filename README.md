@@ -198,6 +198,12 @@ All input options listed above are specified by pre-pending a `--`. You can also
 
 <!--footer-start-->
 
+## Used By
+
+- [google/flatbuffers](https://github.com/google/flatbuffers) ![GitHub Repo stars](https://img.shields.io/github/stars/google/flatbuffers?style=social)
+- [CHIP-SPV/chip-spv](https://github.com/CHIP-SPV/chip-spv) ![GitHub Repo stars](https://img.shields.io/github/stars/CHIP-SPV/chip-spv?style=social)
+- [and more](https://github.com/search?q=shenxianpeng%2Fcpp-linter-action&type=Code)
+
 ## Add C/C++ Lint Action badge in README
 
 You can show C/C++ Lint Action status with a badge in your repository README
