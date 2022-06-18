@@ -137,10 +137,10 @@ This action creates 1 output variable named `checks-failed`. Even if the linting
 
 Some Continuous Integration environments require access to non-default compilers
 and/or externally fetched libraries. To do this properly, the docker container should
-not be used. Instead you can use this action's python source code as an installed
+not be used. Instead, can use this action's python source code as an installed
 python package (see below).
 
-## Using the python source code
+### Using the python source code
 
 This action can only be run on a runner using the Ubuntu Operating System. However, this action's source code (essentially a python package) can be used on any runner using the Windows, Ubuntu, or possibly even MacOS (untested) virtual environments.
 
