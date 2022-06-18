@@ -175,8 +175,8 @@ jobs:
         with:
           # v12 is the recommended minimum for the Visual Studio compiler (on Windows)
           version: 14
-          # specifying an install path is required because installing multiple
-          # versions on Windows runners needs non-default install paths.
+          # specifying an install path is required (on Windows) because installing
+          # multiple versions on Windows runners needs non-default install paths.
           directory: ${{ runner.temp }}/llvm
 
       - name: Install linter python package
