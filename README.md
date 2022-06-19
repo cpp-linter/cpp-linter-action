@@ -197,7 +197,33 @@ jobs:
         # run: exit 1
 ```
 
-All input options listed above are specified by pre-pending a `--`. You can also install this repo locally and run `cpp-linter -h` for more detail.
+All input options listed above are specified by pre-pending a `--`. You can also install this repo locally and run `cpp-linter -h` for more detail. For example:
+
+```yaml
+      - uses: cpp-linter/cpp-linter-action@v1
+        with:
+          version: 12
+          style: file
+          tidy-checks: '-*'
+          files-changed-only: false
+          ignore: dist/third-party-lib
+```
+
+is equivalent to
+
+```yaml
+      - name: Install linter python package
+        run: python3 -m pip install git+https://github.com/cpp-linter/cpp-linter-action@v1
+
+      - name: run linter as a python package
+        run: |
+          cpp-linter \
+          --version=12 \
+          --style=file \
+          --tidy-checks='-*' \
+          --files-changed-only=false \
+          --ignore='dist/third-party-lib'
+```
 
 ## Example
 
