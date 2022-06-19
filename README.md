@@ -77,7 +77,7 @@ jobs:
 #### `version`
 
 - **Description**: The desired version of the [clang-tools](https://hub.docker.com/r/xianpengshen/clang-tools) to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8.
-- Default: '10'
+- Default: ''
 
 #### `verbosity`
 
