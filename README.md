@@ -136,9 +136,9 @@ This action creates 1 output variable named `checks-failed`. Even if the linting
 ## Running without the docker container
 
 Some Continuous Integration environments require access to non-default compilers
-and/or externally fetched libraries. To do this properly, the docker container should
-not be used. Instead, can use this action's python source code as an installed
-python package (see below).
+and/or non-standard libraries. To do this properly, the docker container should
+not be used due to it's isolated file system. Instead, you should use this action's
+python source code as an installed python package (see below).
 
 ### Using the python source code
 
@@ -202,11 +202,10 @@ All input options listed above are specified by pre-pending a `--`. You can also
 ```yaml
       - uses: cpp-linter/cpp-linter-action@v1
         with:
-          version: 12
           style: file
           tidy-checks: '-*'
           files-changed-only: false
-          ignore: dist/third-party-lib
+          ignore: 'dist/third-party-lib'
 ```
 
 is equivalent to
@@ -218,7 +217,6 @@ is equivalent to
       - name: run linter as a python package
         run: |
           cpp-linter \
-          --version=12 \
           --style=file \
           --tidy-checks='-*' \
           --files-changed-only=false \
