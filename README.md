@@ -149,8 +149,8 @@ virtual environments.
 
 Note, some runners already ship with clang-format and/or clang-tidy. As of this writing, the following versions of clang-format and clang-tidy are already available:
 
-- `ubuntu-latest` ships with v10, v11, and v12. [More details](https://github.com/actions/virtual-environments/blob/ubuntu20/20220508.1/images/linux/Ubuntu2004-Readme.md)
-- `windows-latest` ships with v13. [More details](https://github.com/actions/virtual-environments/blob/win22/20220511.2/images/win/Windows2022-Readme.md)
+- `ubuntu-latest` ships with v10, v11, and v12. [More details](https://github.com/actions/virtual-environments/blob/ubuntu20/20220508.1/images/linux/Ubuntu2004-Readme.md).
+- `windows-latest` ships with v13. [More details](https://github.com/actions/virtual-environments/blob/win22/20220511.2/images/win/Windows2022-Readme.md).
 - `macos-latest` ships with v13. [More details](https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md).
 
 This example makes use of another action
