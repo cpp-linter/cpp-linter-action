@@ -613,7 +613,7 @@ def post_diff_comments(base_url: str, user_id: int) -> bool:
             if (
                 int(comment["user"]["id"]) == user_id
                 and comment["line"] == body["line"]
-                and comment["path"] == payload[i]["path"]
+                and comment["path"] == body["path"]
             ):
                 already_posted = True
                 if comment["body"] != body["body"]:
