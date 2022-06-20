@@ -66,6 +66,7 @@ jobs:
 
 - **Description**: Comma-separated list of globs with optional '-' prefix. Globs are processed in order of appearance in the list. Globs without '-' prefix add checks with matching names to the set, globs with the '-' prefix remove checks with matching names from the set of enabled checks. This option's value is appended to the value of the 'Checks' option in a .clang-tidy file (if any).
     - It is possible to disable clang-tidy entirely by setting this option to '-\*'. This allows using only clang-format to lint your source files.
+    - It is also possible to rely solely on a .clang-tidy config file by specifying this option as a blank string ('').
 - Default: 'boost-\*,bugprone-\*,performance-\*,readability-\*,portability-\*,modernize-\*,clang-analyzer-\*,cppcoreguidelines-\*'
 
 #### `repo-root`
@@ -76,6 +77,7 @@ jobs:
 #### `version`
 
 - **Description**: The desired version of the [clang-tools](https://hub.docker.com/r/xianpengshen/clang-tools) to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8.
+    - Set this option to a blank string ('') to use the platform's default installed version.
 - Default: '10'
 
 #### `verbosity`
@@ -132,11 +134,25 @@ jobs:
 
 This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
 
-## Using a Windows-based runner
+## Running without the docker container
 
-This action can only be run on a runner using the Ubuntu Operating System. However, this action's source code (essentially a python package) can be used on a runner using the Windows Operating System.
+Some Continuous Integration environments require access to non-default compilers
+and/or non-standard libraries. To do this properly, the docker container should
+not be used due to it's isolated file system. Instead, you should use this action's
+python source code as an installed python package (see below).
 
-Note: MacOS-based runners have not been tested, but the same approach applies.
+### Using the python source code
+
+This action was originally designed to only be used on a runner with the Ubuntu
+Operating System. However, this action's source code (essentially a python package)
+can be used on any runner using the Windows, Ubuntu, or possibly even MacOS (untested)
+virtual environments.
+
+Note, some runners already ship with clang-format and/or clang-tidy. As of this writing, the following versions of clang-format and clang-tidy are already available:
+
+- `ubuntu-latest` ships with v10, v11, and v12. [More details](https://github.com/actions/virtual-environments/blob/ubuntu20/20220508.1/images/linux/Ubuntu2004-Readme.md).
+- `windows-latest` ships with v13. [More details](https://github.com/actions/virtual-environments/blob/win22/20220511.2/images/win/Windows2022-Readme.md).
+- `macos-latest` ships with v13. [More details](https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md).
 
 This example makes use of another action
 ([KyleMayes/install-llvm-action](https://github.com/KyleMayes/install-llvm-action))
@@ -156,13 +172,15 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
 
+      # this step can be skipped if the desired
+      # version already comes with the runner's OS
       - name: Install clang-tools
         uses: KyleMayes/install-llvm-action@v1
         with:
-          # v12 is the recommended minimum for the Visual Studio compiler
-          version: 12
-          # specifying an install path is required because
-          # Windows runners already have a certain version of LLVM installed
+          # v12 is the recommended minimum for the Visual Studio compiler (on Windows)
+          version: 14
+          # specifying an install path is required (on Windows) because installing
+          # multiple versions on Windows runners needs non-default install paths.
           directory: ${{ runner.temp }}/llvm
 
       - name: Install linter python package
@@ -170,8 +188,11 @@ jobs:
 
       - name: run linter as a python package
         id: linter
-        # pass the installed path to the '--version' argument
-        run: cpp-linter --version=${{ runner.temp }}/llvm
+        # pass the installed path to the '--version' argument (Windows only).
+        # Any other OS-based runners only take the version number.
+        #     Example. run: cpp-linter --version=14
+        # Omit the version option if using the default version available in the OS.
+        run: cpp-linter --version=${{ runner.temp }}/llvm 
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
@@ -180,7 +201,31 @@ jobs:
         # run: exit 1
 ```
 
-All input options listed above are specified by pre-pending a `--`. You can also install this repo locally and run `cpp-linter -h` for more detail.
+All input options listed above are specified by pre-pending a `--`. You can also install this repo locally and run `cpp-linter -h` for more detail. For example:
+
+```yaml
+      - uses: cpp-linter/cpp-linter-action@v1
+        with:
+          style: file
+          tidy-checks: '-*'
+          files-changed-only: false
+          ignore: 'dist/third-party-lib'
+```
+
+is equivalent to
+
+```yaml
+      - name: Install linter python package
+        run: python3 -m pip install git+https://github.com/cpp-linter/cpp-linter-action@v1
+
+      - name: run linter as a python package
+        run: |
+          cpp-linter \
+          --style=file \
+          --tidy-checks='-*' \
+          --files-changed-only=false \
+          --ignore='dist/third-party-lib'
+```
 
 ## Example
 

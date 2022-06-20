@@ -82,7 +82,7 @@ cli_arg_parser.add_argument(
 cli_arg_parser.add_argument(
     "-V",
     "--version",
-    default="10",
+    default="",
     help="The desired version of the clang tools to use. Accepted options are strings "
     "which can be 8, 9, 10, 11, 12, 13, 14. Defaults to %(default)s. On Windows, this "
     "can also be a path to the install location of LLVM",
@@ -403,18 +403,17 @@ def run_clang_tidy(
         # clear the clang-tidy output file and exit function
         with open("clang_tidy_report.txt", "wb") as f_out:
             return
-    cmds = [f"clang-tidy-{version}"]
-    if sys.platform.startswith("win32"):
-        cmds = ["clang-tidy"]
-        if os.path.exists(version + os.sep + "bin"):
-            cmds = [f"{version}\\bin\\clang-tidy.exe"]
-    elif not version.isdigit():
+    cmds = [
+        "clang-tidy" + ("" if not version else f"-{version}"),
+        "--export-fixes=clang_tidy_output.yml",
+    ]
+    if sys.platform.startswith("win32") and os.path.exists(version + os.sep + "bin"):
+        cmds[0] = f"{version + os.sep}bin\\clang-tidy.exe"
+    elif not sys.platform.startswith("win32") and not version.isdigit():
         logger.warning("ignoring invalid version number %s.", version)
-        cmds = ["clang-tidy"]
+        cmds[0] = "clang-tidy"
     if checks:
         cmds.append(f"-checks={checks}")
-    cmds.append("--export-fixes=clang_tidy_output.yml")
-    # cmds.append(f"--format-style={style}")
     if database:
         cmds.append("-p")
         if RUNNER_WORKSPACE:
@@ -459,7 +458,7 @@ def run_clang_format(
     """
     is_on_windows = sys.platform.startswith("win32")
     cmds = [
-        "clang-format" + ("" if is_on_windows else f"-{version}"),
+        "clang-format" + ("" if not version else f"-{version}"),
         f"-style={style}",
         "--output-replacements-xml",
     ]
@@ -614,7 +613,7 @@ def post_diff_comments(base_url: str, user_id: int) -> bool:
             if (
                 int(comment["user"]["id"]) == user_id
                 and comment["line"] == body["line"]
-                and comment["path"] == payload[i]["path"]
+                and comment["path"] == body["path"]
             ):
                 already_posted = True
                 if comment["body"] != body["body"]:
