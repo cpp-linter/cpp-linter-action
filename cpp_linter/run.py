@@ -404,7 +404,7 @@ def run_clang_tidy(
         with open("clang_tidy_report.txt", "wb") as f_out:
             return
     cmds = [
-        "clang-tidy" + "" if not version else f"-{version}",
+        "clang-tidy" + ("" if not version else f"-{version}"),
         "--export-fixes=clang_tidy_output.yml",
     ]
     if sys.platform.startswith("win32") and os.path.exists(version + os.sep + "bin"):
