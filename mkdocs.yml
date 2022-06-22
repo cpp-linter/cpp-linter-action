@@ -6,13 +6,13 @@ edit_uri: "blob/master/docs/"
 repo_name: "cpp-linter/cpp-linter-action"
 nav:
   - index.md
-  - "Dev Docs":
-    - API Reference/cpp_linter.md
-    - API Reference/cpp_linter.run.md
-    - API Reference/cpp_linter.clang_tidy.md
-    - API Reference/cpp_linter.clang_tidy_yml.md
-    - API Reference/cpp_linter.clang_format_xml.md
-    - API Reference/cpp_linter.thread_comments.md
+  - 'Dev Docs':
+    - 'API Reference/cpp_linter.md'
+    - 'API Reference/cpp_linter.run.md'
+    - 'API Reference/cpp_linter.clang_tidy.md'
+    - 'API Reference/cpp_linter.clang_tidy_yml.md'
+    - 'API Reference/cpp_linter.clang_format_xml.md'
+    - 'API Reference/cpp_linter.thread_comments.md'
 
 theme:
   name: material

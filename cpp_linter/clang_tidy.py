@@ -102,7 +102,7 @@ def parse_tidy_output() -> None:
 def print_fixits():
     """Print out all clang-tidy notifications from stdout (which are saved to
     clang_tidy_report.txt and allocated to
-    [`tidy_notes`][cpp_linter.__init__.GlobalParser.tidy_notes]."""
+    [`tidy_notes`][cpp_linter.GlobalParser.tidy_notes]."""
     for notification in GlobalParser.tidy_notes:
         print("found", len(GlobalParser.tidy_notes), "tidy_notes")
         print(repr(notification))
