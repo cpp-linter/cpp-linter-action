@@ -41,6 +41,8 @@ GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
 RUNNER_WORKSPACE = os.getenv("RUNNER_WORKSPACE", "")
 
+IS_ON_WINDOWS = sys.platform.startswith("win32")
+
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
     description=__doc__[: __doc__.find("If executed from")]
@@ -407,9 +409,11 @@ def run_clang_tidy(
         "clang-tidy" + ("" if not version else f"-{version}"),
         "--export-fixes=clang_tidy_output.yml",
     ]
-    if sys.platform.startswith("win32") and os.path.exists(version + os.sep + "bin"):
-        cmds[0] = f"{version + os.sep}bin\\clang-tidy.exe"
-    elif not sys.platform.startswith("win32") and not version.isdigit():
+    if IS_ON_WINDOWS:
+        cmds[0] = "clang-tidy"
+        if os.path.exists(version + "\\bin"):
+            cmds[0] = f"{version}\\bin\\clang-tidy.exe"
+    elif not version.isdigit():
         logger.warning("ignoring invalid version number %s.", version)
         cmds[0] = "clang-tidy"
     if checks:
@@ -456,15 +460,16 @@ def run_clang_format(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
     """
-    is_on_windows = sys.platform.startswith("win32")
     cmds = [
         "clang-format" + ("" if not version else f"-{version}"),
         f"-style={style}",
         "--output-replacements-xml",
     ]
-    if is_on_windows and os.path.exists(version + os.sep + "bin"):
-        cmds[0] = f"{version}\\bin\\clang-format.exe"
-    elif not is_on_windows and not version.isdigit():
+    if IS_ON_WINDOWS:
+        cmds[0] = "clang-format"
+        if os.path.exists(version + "\\bin"):
+            cmds[0] = f"{version}\\bin\\clang-format.exe"
+    elif not version.isdigit():
         logger.warning("ignoring invalid version number %s.", version)
         cmds[0] = "clang-format"
     if lines_changed_only:
