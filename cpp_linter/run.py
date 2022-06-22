@@ -214,7 +214,7 @@ def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
 
 def get_list_of_changed_files() -> None:
     """Fetch the JSON payload of the event's changed files. Sets the
-    [`FILES`][cpp_linter.__init__.Globals.FILES] attribute."""
+    [`FILES`][cpp_linter.Globals.FILES] attribute."""
     start_log_group("Get list of specified source files")
     files_link = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
@@ -232,7 +232,7 @@ def filter_out_non_source_files(
     ext_list: list, ignored: list, not_ignored: list, lines_changed_only: bool
 ) -> bool:
     """Exclude undesired files (specified by user input 'extensions'). This filter
-    applies to the event's [`FILES`][cpp_linter.__init__.Globals.FILES] attribute.
+    applies to the event's [`FILES`][cpp_linter.Globals.FILES] attribute.
 
     Args:
         ext_list: A list of file extensions that are to be examined.
@@ -327,7 +327,7 @@ def verify_files_are_present() -> None:
 
 def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) -> bool:
     """Make a list of source files to be checked. The resulting list is stored in
-    [`FILES`][cpp_linter.__init__.Globals.FILES].
+    [`FILES`][cpp_linter.Globals.FILES].
 
     Args:
         ext_list: A list of file extensions that should by attended.
@@ -495,7 +495,7 @@ def capture_clang_tools_output(
     repo_root: str,
 ):
     """Execute and capture all output from clang-tidy and clang-format. This aggregates
-    results in the [`OUTPUT`][cpp_linter.__init__.Globals.OUTPUT].
+    results in the [`OUTPUT`][cpp_linter.Globals.OUTPUT].
 
     Args:
         version: The version of clang-tidy to run.
@@ -733,7 +733,7 @@ def make_annotations(style: str, file_annotations: bool) -> bool:
     return ret_val
 
 
-def parse_ignore_option(paths: str):
+def parse_ignore_option(paths: str) -> tuple:
     """Parse a given string of paths (separated by a '|') into `ignored` and
     `not_ignored` lists of strings.
 

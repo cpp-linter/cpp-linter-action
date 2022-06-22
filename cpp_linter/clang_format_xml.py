@@ -118,7 +118,7 @@ class XMLFixit:
 
 def parse_format_replacements_xml(src_filename: str):
     """Parse XML output of replacements from clang-format. Output is saved to
-    [`format_advice`][cpp_linter.__init__.GlobalParser.format_advice].
+    [`format_advice`][cpp_linter.GlobalParser.format_advice].
 
     Args:
         src_filename: The source file's name for which the contents of the xml
@@ -146,7 +146,7 @@ def parse_format_replacements_xml(src_filename: str):
 
 def print_fixits():
     """Print all [`XMLFixit`][cpp_linter.clang_format_xml.XMLFixit] objects in
-    [`format_advice`][cpp_linter.__init__.GlobalParser.format_advice]."""
+    [`format_advice`][cpp_linter.GlobalParser.format_advice]."""
     for fixit in GlobalParser.format_advice:
         print(repr(fixit))
         for line_fix in fixit.replaced_lines:

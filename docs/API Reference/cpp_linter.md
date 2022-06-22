@@ -1,3 +1,3 @@
 # Base module
 
-::: cpp_linter.__init__
+::: cpp_linter
