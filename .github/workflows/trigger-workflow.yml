@@ -2,9 +2,9 @@ name: "Trigger test workflows"
 
 on:
   push:
-    # branches:
-    #   - 'master'
-    # paths-ignore: "docs/**"
+    branches:
+      - 'master'
+    paths-ignore: "docs/**"
 
 jobs:
   run-lint-action:
