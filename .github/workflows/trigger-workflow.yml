@@ -1,4 +1,4 @@
-name: "Run test actions"
+name: "Trigger test workflows"
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     # paths-ignore: "docs/**"
 
 jobs:
-  trigger-workflow:
+  run-lint-action:
     runs-on: ubuntu-latest
     steps:
     - uses: convictional/trigger-workflow-and-wait@v1.6.3
@@ -22,6 +22,9 @@ jobs:
         propagate_failure: true
         trigger_workflow: true
         wait_workflow: true
+  run-lint-package:
+    runs-on: ubuntu-latest
+    steps:
     - uses: convictional/trigger-workflow-and-wait@v1.6.3
       with:
         owner: cpp-linter
