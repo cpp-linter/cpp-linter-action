@@ -1,13 +1,26 @@
-name: "Trigger test workflows"
+name: "Test action and package"
 
 on:
   push:
-    branches:
-      - 'master'
+    branches: master
+    paths-ignore: "docs/**"
+  pull_request:
+    branches: master
     paths-ignore: "docs/**"
 
 jobs:
-  run-lint-action:
+  add-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: retag latest commit for testing
+        run: |
+          git push --delete origin latest || true
+	        git tag -a latest -m 'Retag latest commit'
+          git push origin latest
+
+  test-action:
     runs-on: ubuntu-latest
     steps:
     - uses: convictional/trigger-workflow-and-wait@v1.6.3
@@ -22,7 +35,7 @@ jobs:
         propagate_failure: true
         trigger_workflow: true
         wait_workflow: true
-  run-lint-package:
+  test-package:
     runs-on: ubuntu-latest
     steps:
     - uses: convictional/trigger-workflow-and-wait@v1.6.3
