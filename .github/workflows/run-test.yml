@@ -17,7 +17,7 @@ jobs:
       - name: retag latest commit for testing
         run: |
           git push --delete origin latest || true
-	        git tag -a latest -m 'Retag latest commit'
+          git tag -a latest -m 'Retag latest commit'
           git push origin latest
 
   test-action:
