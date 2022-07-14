@@ -1,0 +1,1025 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Developer documentation from sources.">
+      
+      
+      
+        <link rel="canonical" href="https://cpp-linter.github.io/cpp-linter-action/API%20Reference/cpp_linter.clang_tidy/">
+      
+      <link rel="icon" href="../../images/icon_large.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
+    
+    
+      
+        <title>clang_tidy module - C/C++ Linter Action</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1d29e8d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#clang_tidy-module" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="C/C++ Linter Action" class="md-header__button md-logo" aria-label="C/C++ Linter Action" data-md-component="logo">
+      
+  <img src="../../images/icon_large.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            C/C++ Linter Action
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              clang_tidy module
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/cpp-linter/cpp-linter-action" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    cpp-linter/cpp-linter-action
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="C/C++ Linter Action" class="md-nav__button md-logo" aria-label="C/C++ Linter Action" data-md-component="logo">
+      
+  <img src="../../images/icon_large.png" alt="logo">
+
+    </a>
+    C/C++ Linter Action
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/cpp-linter/cpp-linter-action" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    cpp-linter/cpp-linter-action
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Dev Docs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Dev Docs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Dev Docs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter/" class="md-nav__link">
+        Base module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter.run/" class="md-nav__link">
+        Run module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          clang_tidy module
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        clang_tidy module
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy" class="md-nav__link">
+    cpp_linter.clang_tidy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.TidyNotification" class="md-nav__link">
+    TidyNotification
+  </a>
+  
+    <nav class="md-nav" aria-label="TidyNotification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.TidyNotification.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.TidyNotification.log_command" class="md-nav__link">
+    log_command()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.parse_tidy_output" class="md-nav__link">
+    parse_tidy_output()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.print_fixits" class="md-nav__link">
+    print_fixits()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter.clang_tidy_yml/" class="md-nav__link">
+        clang_tidy_yml module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter.clang_format_xml/" class="md-nav__link">
+        clang_format_xml module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter.thread_comments/" class="md-nav__link">
+        thread_comments module
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy" class="md-nav__link">
+    cpp_linter.clang_tidy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.TidyNotification" class="md-nav__link">
+    TidyNotification
+  </a>
+  
+    <nav class="md-nav" aria-label="TidyNotification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.TidyNotification.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.TidyNotification.log_command" class="md-nav__link">
+    log_command()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.parse_tidy_output" class="md-nav__link">
+    parse_tidy_output()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.clang_tidy.print_fixits" class="md-nav__link">
+    print_fixits()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/cpp-linter/cpp-linter-action/blob/master/docs/API Reference/cpp_linter.clang_tidy.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+<h1 id="clang_tidy-module">clang_tidy module<a class="headerlink" href="#clang_tidy-module" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+<a id="cpp_linter.clang_tidy"></a>
+  <div class="doc doc-contents first">
+  
+      <p>Parse output from clang-tidy's stdout</p>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="cpp_linter.clang_tidy.TidyNotification" class="doc doc-heading">
+        <code>TidyNotification</code>
+
+
+<a href="#cpp_linter.clang_tidy.TidyNotification" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+
+  
+      <p>Create a object that decodes info from the clang-tidy output's initial line that
+details a specific notification.</p>
+
+  <p><strong>Attributes:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>diagnostic</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The clang-tidy check that enabled the notification.</p></td>
+        </tr>
+        <tr>
+          <td><code>filename</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The source filename concerning the notification.</p></td>
+        </tr>
+        <tr>
+          <td><code>line</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>The line number of the source file.</p></td>
+        </tr>
+        <tr>
+          <td><code>cols</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>The columns of the line that triggered the notification.</p></td>
+        </tr>
+        <tr>
+          <td><code>note_type</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The priority level of notification (warning/error).</p></td>
+        </tr>
+        <tr>
+          <td><code>note_info</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The rationale of the notification.</p></td>
+        </tr>
+        <tr>
+          <td><code>fixit_lines</code></td>
+          <td>
+                <code>list</code>
+          </td>
+          <td><p>A <code>list</code> of lines (<code>str</code>) for the code-block in the
+notification.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+
+        <details class="quote">
+          <summary>Source code in <code>cpp_linter/clang_tidy.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos=" 8 "></span><span class="k">class</span> <span class="nc">TidyNotification</span><span class="p">:</span>
+<span class="linenos" data-linenos=" 9 "></span>    <span class="sd">&quot;&quot;&quot;Create a object that decodes info from the clang-tidy output&#39;s initial line that</span>
+<span class="linenos" data-linenos="10 "></span><span class="sd">    details a specific notification.</span>
+<span class="linenos" data-linenos="11 "></span>
+<span class="linenos" data-linenos="12 "></span><span class="sd">    Attributes:</span>
+<span class="linenos" data-linenos="13 "></span><span class="sd">        diagnostic (str): The clang-tidy check that enabled the notification.</span>
+<span class="linenos" data-linenos="14 "></span><span class="sd">        filename (str): The source filename concerning the notification.</span>
+<span class="linenos" data-linenos="15 "></span><span class="sd">        line (int): The line number of the source file.</span>
+<span class="linenos" data-linenos="16 "></span><span class="sd">        cols (int): The columns of the line that triggered the notification.</span>
+<span class="linenos" data-linenos="17 "></span><span class="sd">        note_type (str): The priority level of notification (warning/error).</span>
+<span class="linenos" data-linenos="18 "></span><span class="sd">        note_info (str): The rationale of the notification.</span>
+<span class="linenos" data-linenos="19 "></span><span class="sd">        fixit_lines (list): A `list` of lines (`str`) for the code-block in the</span>
+<span class="linenos" data-linenos="20 "></span><span class="sd">            notification.</span>
+<span class="linenos" data-linenos="21 "></span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="22 "></span>
+<span class="linenos" data-linenos="23 "></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notification_line</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+<span class="linenos" data-linenos="24 "></span>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="25 "></span><span class="sd">        Args:</span>
+<span class="linenos" data-linenos="26 "></span><span class="sd">            notification_line: The first line in the notification parsed into a tuple of</span>
+<span class="linenos" data-linenos="27 "></span><span class="sd">                string that represent the different components of the notification&#39;s</span>
+<span class="linenos" data-linenos="28 "></span><span class="sd">                details.</span>
+<span class="linenos" data-linenos="29 "></span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="30 "></span>        <span class="c1"># logger.debug(&quot;Creating tidy note from line %s&quot;, notification_line)</span>
+<span class="linenos" data-linenos="31 "></span>        <span class="p">(</span>
+<span class="linenos" data-linenos="32 "></span>            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+<span class="linenos" data-linenos="33 "></span>            <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+<span class="linenos" data-linenos="34 "></span>            <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
+<span class="linenos" data-linenos="35 "></span>            <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="p">,</span>
+<span class="linenos" data-linenos="36 "></span>            <span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="p">,</span>
+<span class="linenos" data-linenos="37 "></span>            <span class="bp">self</span><span class="o">.</span><span class="n">diagnostic</span><span class="p">,</span>
+<span class="linenos" data-linenos="38 "></span>        <span class="p">)</span> <span class="o">=</span> <span class="n">notification_line</span>
+<span class="linenos" data-linenos="39 "></span>
+<span class="linenos" data-linenos="40 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="linenos" data-linenos="41 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="linenos" data-linenos="42 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">line</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">)</span>
+<span class="linenos" data-linenos="43 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+<span class="linenos" data-linenos="44 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="45 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">fixit_lines</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos" data-linenos="46 "></span>
+<span class="linenos" data-linenos="47 "></span>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos" data-linenos="48 "></span>        <span class="k">return</span> <span class="p">(</span>
+<span class="linenos" data-linenos="49 "></span>            <span class="s2">&quot;&lt;details open&gt;</span><span class="se">\n</span><span class="s2">&lt;summary&gt;&lt;strong&gt;</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">:&lt;/strong&gt; </span><span class="si">{}</span><span class="s2">: [</span><span class="si">{}</span><span class="s2">]&quot;</span>
+<span class="linenos" data-linenos="50 "></span>            <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&gt; </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&lt;/summary&gt;&lt;p&gt;</span><span class="se">\n\n</span><span class="s2">```</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s2">```</span><span class="se">\n</span><span class="s2">&lt;/p&gt;</span><span class="se">\n</span><span class="s2">&lt;/details&gt;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+<span class="linenos" data-linenos="51 "></span>                <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+<span class="linenos" data-linenos="52 "></span>                <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+<span class="linenos" data-linenos="53 "></span>                <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
+<span class="linenos" data-linenos="54 "></span>                <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="p">,</span>
+<span class="linenos" data-linenos="55 "></span>                <span class="bp">self</span><span class="o">.</span><span class="n">diagnostic</span><span class="p">,</span>
+<span class="linenos" data-linenos="56 "></span>                <span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="p">,</span>
+<span class="linenos" data-linenos="57 "></span>                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+<span class="linenos" data-linenos="58 "></span>                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixit_lines</span><span class="p">),</span>
+<span class="linenos" data-linenos="59 "></span>            <span class="p">)</span>
+<span class="linenos" data-linenos="60 "></span>        <span class="p">)</span>
+<span class="linenos" data-linenos="61 "></span>
+<span class="linenos" data-linenos="62 "></span>    <span class="k">def</span> <span class="nf">log_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos" data-linenos="63 "></span>        <span class="sd">&quot;&quot;&quot;Output the notification as a github log command.</span>
+<span class="linenos" data-linenos="64 "></span>
+<span class="linenos" data-linenos="65 "></span><span class="sd">        !!! info See Also</span>
+<span class="linenos" data-linenos="66 "></span><span class="sd">            - [An error message](https://docs.github.com/en/actions/learn-github-</span>
+<span class="linenos" data-linenos="67 "></span><span class="sd">              actions/workflow-commands-for-github-actions#setting-an-error-message)</span>
+<span class="linenos" data-linenos="68 "></span><span class="sd">            - [A warning message](https://docs.github.com/en/actions/learn-github-</span>
+<span class="linenos" data-linenos="69 "></span><span class="sd">              actions/workflow-commands-for-github-actions#setting-a-warning-message)</span>
+<span class="linenos" data-linenos="70 "></span><span class="sd">            - [A notice message](https://docs.github.com/en/actions/learn-github-</span>
+<span class="linenos" data-linenos="71 "></span><span class="sd">              actions/workflow-commands-for-github-actions#setting-a-notice-message)</span>
+<span class="linenos" data-linenos="72 "></span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="73 "></span>        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+<span class="linenos" data-linenos="74 "></span>        <span class="k">if</span> <span class="n">IS_ON_RUNNER</span><span class="p">:</span>
+<span class="linenos" data-linenos="75 "></span>            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="76 "></span>        <span class="k">return</span> <span class="p">(</span>
+<span class="linenos" data-linenos="77 "></span>            <span class="s2">&quot;::</span><span class="si">{}</span><span class="s2"> file=</span><span class="si">{file}</span><span class="s2">,line=</span><span class="si">{line}</span><span class="s2">,title=</span><span class="si">{file}</span><span class="s2">:</span><span class="si">{line}</span><span class="s2">:</span><span class="si">{cols}</span><span class="s2"> [</span><span class="si">{diag}</span><span class="s2">]::&quot;</span>
+<span class="linenos" data-linenos="78 "></span>            <span class="s2">&quot;</span><span class="si">{info}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+<span class="linenos" data-linenos="79 "></span>                <span class="s2">&quot;notice&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;note&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="p">,</span>
+<span class="linenos" data-linenos="80 "></span>                <span class="n">file</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+<span class="linenos" data-linenos="81 "></span>                <span class="n">line</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+<span class="linenos" data-linenos="82 "></span>                <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
+<span class="linenos" data-linenos="83 "></span>                <span class="n">diag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">diagnostic</span><span class="p">,</span>
+<span class="linenos" data-linenos="84 "></span>                <span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="p">,</span>
+<span class="linenos" data-linenos="85 "></span>            <span class="p">)</span>
+<span class="linenos" data-linenos="86 "></span>        <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="cpp_linter.clang_tidy.TidyNotification.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">notification_line</span><span class="p">)</span></code>
+
+<a href="#cpp_linter.clang_tidy.TidyNotification.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>notification_line</code></td>
+          <td>
+                <code>tuple</code>
+          </td>
+          <td><p>The first line in the notification parsed into a tuple of
+string that represent the different components of the notification's
+details.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/clang_tidy.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="23 "></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notification_line</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+<span class="linenos" data-linenos="24 "></span>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="25 "></span><span class="sd">    Args:</span>
+<span class="linenos" data-linenos="26 "></span><span class="sd">        notification_line: The first line in the notification parsed into a tuple of</span>
+<span class="linenos" data-linenos="27 "></span><span class="sd">            string that represent the different components of the notification&#39;s</span>
+<span class="linenos" data-linenos="28 "></span><span class="sd">            details.</span>
+<span class="linenos" data-linenos="29 "></span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="30 "></span>    <span class="c1"># logger.debug(&quot;Creating tidy note from line %s&quot;, notification_line)</span>
+<span class="linenos" data-linenos="31 "></span>    <span class="p">(</span>
+<span class="linenos" data-linenos="32 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+<span class="linenos" data-linenos="33 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+<span class="linenos" data-linenos="34 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
+<span class="linenos" data-linenos="35 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="p">,</span>
+<span class="linenos" data-linenos="36 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="p">,</span>
+<span class="linenos" data-linenos="37 "></span>        <span class="bp">self</span><span class="o">.</span><span class="n">diagnostic</span><span class="p">,</span>
+<span class="linenos" data-linenos="38 "></span>    <span class="p">)</span> <span class="o">=</span> <span class="n">notification_line</span>
+<span class="linenos" data-linenos="39 "></span>
+<span class="linenos" data-linenos="40 "></span>    <span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="linenos" data-linenos="41 "></span>    <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="linenos" data-linenos="42 "></span>    <span class="bp">self</span><span class="o">.</span><span class="n">line</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">)</span>
+<span class="linenos" data-linenos="43 "></span>    <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+<span class="linenos" data-linenos="44 "></span>    <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="45 "></span>    <span class="bp">self</span><span class="o">.</span><span class="n">fixit_lines</span> <span class="o">=</span> <span class="p">[]</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="cpp_linter.clang_tidy.TidyNotification.log_command" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">log_command</span><span class="p">()</span></code>
+
+<a href="#cpp_linter.clang_tidy.TidyNotification.log_command" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Output the notification as a github log command.</p>
+<div class="admonition info see also">
+<p class="admonition-title">Info</p>
+<ul>
+<li><a href="https://docs.github.com/en/actions/learn-github-
+  actions/workflow-commands-for-github-actions#setting-an-error-message">An error message</a></li>
+<li><a href="https://docs.github.com/en/actions/learn-github-
+  actions/workflow-commands-for-github-actions#setting-a-warning-message">A warning message</a></li>
+<li><a href="https://docs.github.com/en/actions/learn-github-
+  actions/workflow-commands-for-github-actions#setting-a-notice-message">A notice message</a></li>
+</ul>
+</div>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/clang_tidy.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="62 "></span><span class="k">def</span> <span class="nf">log_command</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos" data-linenos="63 "></span>    <span class="sd">&quot;&quot;&quot;Output the notification as a github log command.</span>
+<span class="linenos" data-linenos="64 "></span>
+<span class="linenos" data-linenos="65 "></span><span class="sd">    !!! info See Also</span>
+<span class="linenos" data-linenos="66 "></span><span class="sd">        - [An error message](https://docs.github.com/en/actions/learn-github-</span>
+<span class="linenos" data-linenos="67 "></span><span class="sd">          actions/workflow-commands-for-github-actions#setting-an-error-message)</span>
+<span class="linenos" data-linenos="68 "></span><span class="sd">        - [A warning message](https://docs.github.com/en/actions/learn-github-</span>
+<span class="linenos" data-linenos="69 "></span><span class="sd">          actions/workflow-commands-for-github-actions#setting-a-warning-message)</span>
+<span class="linenos" data-linenos="70 "></span><span class="sd">        - [A notice message](https://docs.github.com/en/actions/learn-github-</span>
+<span class="linenos" data-linenos="71 "></span><span class="sd">          actions/workflow-commands-for-github-actions#setting-a-notice-message)</span>
+<span class="linenos" data-linenos="72 "></span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="73 "></span>    <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+<span class="linenos" data-linenos="74 "></span>    <span class="k">if</span> <span class="n">IS_ON_RUNNER</span><span class="p">:</span>
+<span class="linenos" data-linenos="75 "></span>        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="76 "></span>    <span class="k">return</span> <span class="p">(</span>
+<span class="linenos" data-linenos="77 "></span>        <span class="s2">&quot;::</span><span class="si">{}</span><span class="s2"> file=</span><span class="si">{file}</span><span class="s2">,line=</span><span class="si">{line}</span><span class="s2">,title=</span><span class="si">{file}</span><span class="s2">:</span><span class="si">{line}</span><span class="s2">:</span><span class="si">{cols}</span><span class="s2"> [</span><span class="si">{diag}</span><span class="s2">]::&quot;</span>
+<span class="linenos" data-linenos="78 "></span>        <span class="s2">&quot;</span><span class="si">{info}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+<span class="linenos" data-linenos="79 "></span>            <span class="s2">&quot;notice&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;note&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">note_type</span><span class="p">,</span>
+<span class="linenos" data-linenos="80 "></span>            <span class="n">file</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+<span class="linenos" data-linenos="81 "></span>            <span class="n">line</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+<span class="linenos" data-linenos="82 "></span>            <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
+<span class="linenos" data-linenos="83 "></span>            <span class="n">diag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">diagnostic</span><span class="p">,</span>
+<span class="linenos" data-linenos="84 "></span>            <span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">note_info</span><span class="p">,</span>
+<span class="linenos" data-linenos="85 "></span>        <span class="p">)</span>
+<span class="linenos" data-linenos="86 "></span>    <span class="p">)</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.clang_tidy.parse_tidy_output" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">parse_tidy_output</span><span class="p">()</span></code>
+
+<a href="#cpp_linter.clang_tidy.parse_tidy_output" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Parse clang-tidy output in a file created from stdout.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/clang_tidy.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="89 "></span><span class="k">def</span> <span class="nf">parse_tidy_output</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos" data-linenos="90 "></span>    <span class="sd">&quot;&quot;&quot;Parse clang-tidy output in a file created from stdout.&quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="91 "></span>    <span class="n">notification</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="linenos" data-linenos="92 "></span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;clang_tidy_report.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tidy_out</span><span class="p">:</span>
+<span class="linenos" data-linenos="93 "></span>        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tidy_out</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+<span class="linenos" data-linenos="94 "></span>            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">NOTE_HEADER</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+<span class="linenos" data-linenos="95 "></span>            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos" data-linenos="96 "></span>                <span class="n">notification</span> <span class="o">=</span> <span class="n">TidyNotification</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
+<span class="linenos" data-linenos="97 "></span>                <span class="n">GlobalParser</span><span class="o">.</span><span class="n">tidy_notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">notification</span><span class="p">)</span>
+<span class="linenos" data-linenos="98 "></span>            <span class="k">elif</span> <span class="n">notification</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos" data-linenos="99 "></span>                <span class="n">notification</span><span class="o">.</span><span class="n">fixit_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.clang_tidy.print_fixits" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">print_fixits</span><span class="p">()</span></code>
+
+<a href="#cpp_linter.clang_tidy.print_fixits" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Print out all clang-tidy notifications from stdout (which are saved to
+clang_tidy_report.txt and allocated to
+<a class="autorefs autorefs-internal" href="../cpp_linter/#cpp_linter.GlobalParser.tidy_notes"><code>tidy_notes</code></a>.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/clang_tidy.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="102 "></span><span class="k">def</span> <span class="nf">print_fixits</span><span class="p">():</span>
+<span class="linenos" data-linenos="103 "></span>    <span class="sd">&quot;&quot;&quot;Print out all clang-tidy notifications from stdout (which are saved to</span>
+<span class="linenos" data-linenos="104 "></span><span class="sd">    clang_tidy_report.txt and allocated to</span>
+<span class="linenos" data-linenos="105 "></span><span class="sd">    [`tidy_notes`][cpp_linter.GlobalParser.tidy_notes].&quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="106 "></span>    <span class="k">for</span> <span class="n">notification</span> <span class="ow">in</span> <span class="n">GlobalParser</span><span class="o">.</span><span class="n">tidy_notes</span><span class="p">:</span>
+<span class="linenos" data-linenos="107 "></span>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;found&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">GlobalParser</span><span class="o">.</span><span class="n">tidy_notes</span><span class="p">),</span> <span class="s2">&quot;tidy_notes&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="108 "></span>        <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">notification</span><span class="p">))</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../cpp_linter.run/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Run module" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Run module
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../cpp_linter.clang_tidy_yml/" class="md-footer__link md-footer__link--next" aria-label="Next: clang_tidy_yml module" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              clang_tidy_yml module
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "search": "../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.6c7ad80a.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1203 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Developer documentation from sources.">
+      
+      
+      
+        <link rel="canonical" href="https://cpp-linter.github.io/cpp-linter-action/API%20Reference/cpp_linter.thread_comments/">
+      
+      <link rel="icon" href="../../images/icon_large.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
+    
+    
+      
+        <title>thread_comments module - C/C++ Linter Action</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1d29e8d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#thread_comments-module" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="C/C++ Linter Action" class="md-header__button md-logo" aria-label="C/C++ Linter Action" data-md-component="logo">
+      
+  <img src="../../images/icon_large.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            C/C++ Linter Action
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              thread_comments module
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/cpp-linter/cpp-linter-action" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    cpp-linter/cpp-linter-action
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="C/C++ Linter Action" class="md-nav__button md-logo" aria-label="C/C++ Linter Action" data-md-component="logo">
+      
+  <img src="../../images/icon_large.png" alt="logo">
+
+    </a>
+    C/C++ Linter Action
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/cpp-linter/cpp-linter-action" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    cpp-linter/cpp-linter-action
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Dev Docs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Dev Docs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Dev Docs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter/" class="md-nav__link">
+        Base module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter.run/" class="md-nav__link">
+        Run module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter.clang_tidy/" class="md-nav__link">
+        clang_tidy module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter.clang_tidy_yml/" class="md-nav__link">
+        clang_tidy_yml module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cpp_linter.clang_format_xml/" class="md-nav__link">
+        clang_format_xml module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          thread_comments module
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        thread_comments module
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments" class="md-nav__link">
+    cpp_linter.thread_comments
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.aggregate_format_advice" class="md-nav__link">
+    aggregate_format_advice()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.aggregate_tidy_advice" class="md-nav__link">
+    aggregate_tidy_advice()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.concatenate_comments" class="md-nav__link">
+    concatenate_comments()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.find_review" class="md-nav__link">
+    find_review()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.get_review_id" class="md-nav__link">
+    get_review_id()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.list_diff_comments" class="md-nav__link">
+    list_diff_comments()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.remove_bot_comments" class="md-nav__link">
+    remove_bot_comments()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments" class="md-nav__link">
+    cpp_linter.thread_comments
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.aggregate_format_advice" class="md-nav__link">
+    aggregate_format_advice()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.aggregate_tidy_advice" class="md-nav__link">
+    aggregate_tidy_advice()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.concatenate_comments" class="md-nav__link">
+    concatenate_comments()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.find_review" class="md-nav__link">
+    find_review()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.get_review_id" class="md-nav__link">
+    get_review_id()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.list_diff_comments" class="md-nav__link">
+    list_diff_comments()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cpp_linter.thread_comments.remove_bot_comments" class="md-nav__link">
+    remove_bot_comments()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/cpp-linter/cpp-linter-action/blob/master/docs/API Reference/cpp_linter.thread_comments.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+<h1 id="thread_comments-module">thread_comments module<a class="headerlink" href="#thread_comments-module" title="Permanent link">&para;</a></h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+<a id="cpp_linter.thread_comments"></a>
+  <div class="doc doc-contents first">
+  
+      <p>A module to house the various functions for traversing/adjusting comments</p>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.thread_comments.aggregate_format_advice" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">aggregate_format_advice</span><span class="p">()</span></code>
+
+<a href="#cpp_linter.thread_comments.aggregate_format_advice" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Aggregate a list of json contents representing advice from clang-format
+suggestions.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/thread_comments.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="109 "></span><span class="k">def</span> <span class="nf">aggregate_format_advice</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="linenos" data-linenos="110 "></span>    <span class="sd">&quot;&quot;&quot;Aggregate a list of json contents representing advice from clang-format</span>
+<span class="linenos" data-linenos="111 "></span><span class="sd">    suggestions.&quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="112 "></span>    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos" data-linenos="113 "></span>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">fmt_advice</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">GlobalParser</span><span class="o">.</span><span class="n">format_advice</span><span class="p">):</span>
+<span class="linenos" data-linenos="114 "></span>
+<span class="linenos" data-linenos="115 "></span>        <span class="c1"># get original code</span>
+<span class="linenos" data-linenos="116 "></span>        <span class="n">filename</span> <span class="o">=</span> <span class="n">Globals</span><span class="o">.</span><span class="n">FILES</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+<span class="linenos" data-linenos="117 "></span>        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="linenos" data-linenos="118 "></span>            <span class="c1"># the file had to be downloaded (no git checkout).</span>
+<span class="linenos" data-linenos="119 "></span>            <span class="c1"># thus use only the filename (without the path to the file)</span>
+<span class="linenos" data-linenos="120 "></span>            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos="121 "></span>        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># the list of lines from the src file</span>
+<span class="linenos" data-linenos="122 "></span>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">temp</span><span class="p">:</span>
+<span class="linenos" data-linenos="123 "></span>            <span class="n">lines</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<span class="linenos" data-linenos="124 "></span>
+<span class="linenos" data-linenos="125 "></span>        <span class="c1"># aggregate clang-format suggestion</span>
+<span class="linenos" data-linenos="126 "></span>        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># the line that concerns the fix</span>
+<span class="linenos" data-linenos="127 "></span>        <span class="k">for</span> <span class="n">fixed_line</span> <span class="ow">in</span> <span class="n">fmt_advice</span><span class="o">.</span><span class="n">replaced_lines</span><span class="p">:</span>
+<span class="linenos" data-linenos="128 "></span>            <span class="c1"># clang-format can include advice that starts/ends outside the diff&#39;s domain</span>
+<span class="linenos" data-linenos="129 "></span>            <span class="n">in_range</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="linenos" data-linenos="130 "></span>            <span class="n">ranges</span> <span class="o">=</span> <span class="n">Globals</span><span class="o">.</span><span class="n">FILES</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s2">&quot;line_filter&quot;</span><span class="p">][</span><span class="s2">&quot;lines&quot;</span><span class="p">]</span>
+<span class="linenos" data-linenos="131 "></span>            <span class="k">for</span> <span class="n">scope</span> <span class="ow">in</span> <span class="n">ranges</span><span class="p">:</span>
+<span class="linenos" data-linenos="132 "></span>                <span class="k">if</span> <span class="n">fixed_line</span><span class="o">.</span><span class="n">line</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">scope</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scope</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+<span class="linenos" data-linenos="133 "></span>                    <span class="n">in_range</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="linenos" data-linenos="134 "></span>            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_range</span><span class="p">:</span>
+<span class="linenos" data-linenos="135 "></span>                <span class="k">continue</span>  <span class="c1"># line is out of scope for diff, so skip this fix</span>
+<span class="linenos" data-linenos="136 "></span>
+<span class="linenos" data-linenos="137 "></span>            <span class="c1"># assemble the suggestion</span>
+<span class="linenos" data-linenos="138 "></span>            <span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;## :scroll: clang-format advice</span><span class="se">\n</span><span class="s2">```suggestion</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="linenos" data-linenos="139 "></span>            <span class="n">line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">fixed_line</span><span class="o">.</span><span class="n">line</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos="140 "></span>            <span class="c1"># logger.debug(&quot;%d &gt;&gt;&gt; %s&quot;, fixed_line.line, line[:-1])</span>
+<span class="linenos" data-linenos="141 "></span>            <span class="k">for</span> <span class="n">fix_index</span><span class="p">,</span> <span class="n">line_fix</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fixed_line</span><span class="o">.</span><span class="n">replacements</span><span class="p">):</span>
+<span class="linenos" data-linenos="142 "></span>                <span class="c1"># logger.debug(</span>
+<span class="linenos" data-linenos="143 "></span>                <span class="c1">#     &quot;%s &gt;&gt;&gt; %s&quot;, repr(line_fix), line_fix.text.encode(&quot;utf-8&quot;)</span>
+<span class="linenos" data-linenos="144 "></span>                <span class="c1"># )</span>
+<span class="linenos" data-linenos="145 "></span>                <span class="k">if</span> <span class="n">fix_index</span><span class="p">:</span>
+<span class="linenos" data-linenos="146 "></span>                    <span class="n">last_fix</span> <span class="o">=</span> <span class="n">fixed_line</span><span class="o">.</span><span class="n">replacements</span><span class="p">[</span><span class="n">fix_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos="147 "></span>                    <span class="n">body</span> <span class="o">+=</span> <span class="n">line</span><span class="p">[</span>
+<span class="linenos" data-linenos="148 "></span>                        <span class="n">last_fix</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="n">last_fix</span><span class="o">.</span><span class="n">null_len</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">line_fix</span><span class="o">.</span><span class="n">cols</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="linenos" data-linenos="149 "></span>                    <span class="p">]</span>
+<span class="linenos" data-linenos="150 "></span>                    <span class="n">body</span> <span class="o">+=</span> <span class="n">line_fix</span><span class="o">.</span><span class="n">text</span>
+<span class="linenos" data-linenos="151 "></span>                <span class="k">else</span><span class="p">:</span>
+<span class="linenos" data-linenos="152 "></span>                    <span class="n">body</span> <span class="o">+=</span> <span class="n">line</span><span class="p">[:</span> <span class="n">line_fix</span><span class="o">.</span><span class="n">cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">line_fix</span><span class="o">.</span><span class="n">text</span>
+<span class="linenos" data-linenos="153 "></span>            <span class="c1"># complete suggestion with original src code and closing md fence</span>
+<span class="linenos" data-linenos="154 "></span>            <span class="n">last_fix</span> <span class="o">=</span> <span class="n">fixed_line</span><span class="o">.</span><span class="n">replacements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos="155 "></span>            <span class="n">body</span> <span class="o">+=</span> <span class="n">line</span><span class="p">[</span><span class="n">last_fix</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="n">last_fix</span><span class="o">.</span><span class="n">null_len</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```&quot;</span>
+<span class="linenos" data-linenos="156 "></span>            <span class="c1"># logger.debug(&quot;body &lt;&lt;&lt; %s&quot;, body)</span>
+<span class="linenos" data-linenos="157 "></span>
+<span class="linenos" data-linenos="158 "></span>            <span class="c1"># create a suggestion from clang-format advice</span>
+<span class="linenos" data-linenos="159 "></span>            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+<span class="linenos" data-linenos="160 "></span>                <span class="p">{</span>
+<span class="linenos" data-linenos="161 "></span>                    <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">body</span><span class="p">,</span>
+<span class="linenos" data-linenos="162 "></span>                    <span class="s2">&quot;commit_id&quot;</span><span class="p">:</span> <span class="n">GITHUB_SHA</span><span class="p">,</span>
+<span class="linenos" data-linenos="163 "></span>                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">fixed_line</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+<span class="linenos" data-linenos="164 "></span>                    <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">fmt_advice</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+<span class="linenos" data-linenos="165 "></span>                    <span class="s2">&quot;side&quot;</span><span class="p">:</span> <span class="s2">&quot;RIGHT&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="166 "></span>                <span class="p">}</span>
+<span class="linenos" data-linenos="167 "></span>            <span class="p">)</span>
+<span class="linenos" data-linenos="168 "></span>    <span class="k">return</span> <span class="n">results</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.thread_comments.aggregate_tidy_advice" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">aggregate_tidy_advice</span><span class="p">()</span></code>
+
+<a href="#cpp_linter.thread_comments.aggregate_tidy_advice" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Aggregate a list of json contents representing advice from clang-tidy
+suggestions.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/thread_comments.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos=" 51 "></span><span class="k">def</span> <span class="nf">aggregate_tidy_advice</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="linenos" data-linenos=" 52 "></span>    <span class="sd">&quot;&quot;&quot;Aggregate a list of json contents representing advice from clang-tidy</span>
+<span class="linenos" data-linenos=" 53 "></span><span class="sd">    suggestions.&quot;&quot;&quot;</span>
+<span class="linenos" data-linenos=" 54 "></span>    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos" data-linenos=" 55 "></span>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">fixit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">GlobalParser</span><span class="o">.</span><span class="n">tidy_advice</span><span class="p">):</span>
+<span class="linenos" data-linenos=" 56 "></span>        <span class="k">for</span> <span class="n">diag</span> <span class="ow">in</span> <span class="n">fixit</span><span class="o">.</span><span class="n">diagnostics</span><span class="p">:</span>
+<span class="linenos" data-linenos=" 57 "></span>            <span class="c1"># base body of comment</span>
+<span class="linenos" data-linenos=" 58 "></span>            <span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;&lt;!-- cpp linter action --&gt;</span><span class="se">\n</span><span class="s2">## :speech_balloon: Clang-tidy</span><span class="se">\n</span><span class="s2">**&quot;</span>
+<span class="linenos" data-linenos=" 59 "></span>            <span class="n">body</span> <span class="o">+=</span> <span class="n">diag</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;**</span><span class="se">\n</span><span class="s2">&gt;&quot;</span> <span class="o">+</span> <span class="n">diag</span><span class="o">.</span><span class="n">message</span>
+<span class="linenos" data-linenos=" 60 "></span>
+<span class="linenos" data-linenos=" 61 "></span>            <span class="c1"># get original code</span>
+<span class="linenos" data-linenos=" 62 "></span>            <span class="n">filename</span> <span class="o">=</span> <span class="n">Globals</span><span class="o">.</span><span class="n">FILES</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+<span class="linenos" data-linenos=" 63 "></span>            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="linenos" data-linenos=" 64 "></span>                <span class="c1"># the file had to be downloaded (no git checkout).</span>
+<span class="linenos" data-linenos=" 65 "></span>                <span class="c1"># thus use only the filename (without the path to the file)</span>
+<span class="linenos" data-linenos=" 66 "></span>                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos=" 67 "></span>            <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># the list of lines in a file</span>
+<span class="linenos" data-linenos=" 68 "></span>            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">temp</span><span class="p">:</span>
+<span class="linenos" data-linenos=" 69 "></span>                <span class="n">lines</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<span class="linenos" data-linenos=" 70 "></span>
+<span class="linenos" data-linenos=" 71 "></span>            <span class="c1"># aggregate clang-tidy advice</span>
+<span class="linenos" data-linenos=" 72 "></span>            <span class="n">suggestion</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```suggestion</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="linenos" data-linenos=" 73 "></span>            <span class="n">is_multiline_fix</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="linenos" data-linenos=" 74 "></span>            <span class="n">fix_lines</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># a list of line numbers for the suggested fixes</span>
+<span class="linenos" data-linenos=" 75 "></span>            <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># the line that concerns the fix/comment</span>
+<span class="linenos" data-linenos=" 76 "></span>            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tidy_fix</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">diag</span><span class="o">.</span><span class="n">replacements</span><span class="p">):</span>
+<span class="linenos" data-linenos=" 77 "></span>                <span class="n">line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">tidy_fix</span><span class="o">.</span><span class="n">line</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos=" 78 "></span>                <span class="k">if</span> <span class="ow">not</span> <span class="n">fix_lines</span><span class="p">:</span>
+<span class="linenos" data-linenos=" 79 "></span>                    <span class="n">fix_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tidy_fix</span><span class="o">.</span><span class="n">line</span><span class="p">)</span>
+<span class="linenos" data-linenos=" 80 "></span>                <span class="k">elif</span> <span class="n">tidy_fix</span><span class="o">.</span><span class="n">line</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fix_lines</span><span class="p">:</span>
+<span class="linenos" data-linenos=" 81 "></span>                    <span class="n">is_multiline_fix</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="linenos" data-linenos=" 82 "></span>                    <span class="k">break</span>
+<span class="linenos" data-linenos=" 83 "></span>                <span class="k">if</span> <span class="n">i</span><span class="p">:</span>  <span class="c1"># if this isn&#39;t the first tidy_fix for the same line</span>
+<span class="linenos" data-linenos=" 84 "></span>                    <span class="n">last_fix</span> <span class="o">=</span> <span class="n">diag</span><span class="o">.</span><span class="n">replacements</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos=" 85 "></span>                    <span class="n">suggestion</span> <span class="o">+=</span> <span class="p">(</span>
+<span class="linenos" data-linenos=" 86 "></span>                        <span class="n">line</span><span class="p">[</span><span class="n">last_fix</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="n">last_fix</span><span class="o">.</span><span class="n">null_len</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">tidy_fix</span><span class="o">.</span><span class="n">cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos=" 87 "></span>                        <span class="o">+</span> <span class="n">tidy_fix</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="linenos" data-linenos=" 88 "></span>                    <span class="p">)</span>
+<span class="linenos" data-linenos=" 89 "></span>                <span class="k">else</span><span class="p">:</span>
+<span class="linenos" data-linenos=" 90 "></span>                    <span class="n">suggestion</span> <span class="o">+=</span> <span class="n">line</span><span class="p">[:</span> <span class="n">tidy_fix</span><span class="o">.</span><span class="n">cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">tidy_fix</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="linenos" data-linenos=" 91 "></span>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_multiline_fix</span> <span class="ow">and</span> <span class="n">diag</span><span class="o">.</span><span class="n">replacements</span><span class="p">:</span>
+<span class="linenos" data-linenos=" 92 "></span>                <span class="c1"># complete suggestion with original src code and closing md fence</span>
+<span class="linenos" data-linenos=" 93 "></span>                <span class="n">last_fix</span> <span class="o">=</span> <span class="n">diag</span><span class="o">.</span><span class="n">replacements</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">diag</span><span class="o">.</span><span class="n">replacements</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="linenos" data-linenos=" 94 "></span>                <span class="n">suggestion</span> <span class="o">+=</span> <span class="n">line</span><span class="p">[</span><span class="n">last_fix</span><span class="o">.</span><span class="n">cols</span> <span class="o">+</span> <span class="n">last_fix</span><span class="o">.</span><span class="n">null_len</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">```&quot;</span>
+<span class="linenos" data-linenos=" 95 "></span>                <span class="n">body</span> <span class="o">+=</span> <span class="n">suggestion</span>
+<span class="linenos" data-linenos=" 96 "></span>
+<span class="linenos" data-linenos=" 97 "></span>            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+<span class="linenos" data-linenos=" 98 "></span>                <span class="p">{</span>
+<span class="linenos" data-linenos=" 99 "></span>                    <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">body</span><span class="p">,</span>
+<span class="linenos" data-linenos="100 "></span>                    <span class="s2">&quot;commit_id&quot;</span><span class="p">:</span> <span class="n">GITHUB_SHA</span><span class="p">,</span>
+<span class="linenos" data-linenos="101 "></span>                    <span class="s2">&quot;line&quot;</span><span class="p">:</span> <span class="n">diag</span><span class="o">.</span><span class="n">line</span><span class="p">,</span>
+<span class="linenos" data-linenos="102 "></span>                    <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">fixit</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+<span class="linenos" data-linenos="103 "></span>                    <span class="s2">&quot;side&quot;</span><span class="p">:</span> <span class="s2">&quot;RIGHT&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="104 "></span>                <span class="p">}</span>
+<span class="linenos" data-linenos="105 "></span>            <span class="p">)</span>
+<span class="linenos" data-linenos="106 "></span>    <span class="k">return</span> <span class="n">results</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.thread_comments.concatenate_comments" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">concatenate_comments</span><span class="p">(</span><span class="n">tidy_advice</span><span class="p">,</span> <span class="n">format_advice</span><span class="p">)</span></code>
+
+<a href="#cpp_linter.thread_comments.concatenate_comments" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Concatenate comments made to the same line of the same file.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/thread_comments.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="171 "></span><span class="k">def</span> <span class="nf">concatenate_comments</span><span class="p">(</span><span class="n">tidy_advice</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">format_advice</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="linenos" data-linenos="172 "></span>    <span class="sd">&quot;&quot;&quot;Concatenate comments made to the same line of the same file.&quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="173 "></span>    <span class="c1"># traverse comments from clang-format</span>
+<span class="linenos" data-linenos="174 "></span>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">comment_body</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">format_advice</span><span class="p">):</span>
+<span class="linenos" data-linenos="175 "></span>        <span class="c1"># check for comments from clang-tidy on the same line</span>
+<span class="linenos" data-linenos="176 "></span>        <span class="n">comment_index</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="linenos" data-linenos="177 "></span>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">payload</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tidy_advice</span><span class="p">):</span>
+<span class="linenos" data-linenos="178 "></span>            <span class="k">if</span> <span class="p">(</span>
+<span class="linenos" data-linenos="179 "></span>                <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;line&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">comment_body</span><span class="p">[</span><span class="s2">&quot;line&quot;</span><span class="p">]</span>
+<span class="linenos" data-linenos="180 "></span>                <span class="ow">and</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">comment_body</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span>
+<span class="linenos" data-linenos="181 "></span>            <span class="p">):</span>
+<span class="linenos" data-linenos="182 "></span>                <span class="n">comment_index</span> <span class="o">=</span> <span class="n">i</span>  <span class="c1"># mark this comment for concatenation</span>
+<span class="linenos" data-linenos="183 "></span>                <span class="k">break</span>
+<span class="linenos" data-linenos="184 "></span>        <span class="k">if</span> <span class="n">comment_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos" data-linenos="185 "></span>            <span class="c1"># append clang-format advice to clang-tidy output/suggestion</span>
+<span class="linenos" data-linenos="186 "></span>            <span class="n">tidy_advice</span><span class="p">[</span><span class="n">comment_index</span><span class="p">][</span><span class="s2">&quot;body&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">comment_body</span><span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">]</span>
+<span class="linenos" data-linenos="187 "></span>            <span class="k">del</span> <span class="n">format_advice</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>  <span class="c1"># remove duplicate comment</span>
+<span class="linenos" data-linenos="188 "></span>    <span class="k">return</span> <span class="n">tidy_advice</span> <span class="o">+</span> <span class="n">format_advice</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.thread_comments.find_review" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_review</span><span class="p">(</span><span class="n">reviews</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span></code>
+
+<a href="#cpp_linter.thread_comments.find_review" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Find a review created by a certain user ID.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>reviews</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>the JSON object fetched via GIT REST API.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>user_id</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>The user account's ID number</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing.Union">Union</span>[int, None]</code>
+          </td>
+          <td><p>An ID that corresponds to the specified <code>user_id</code>.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/thread_comments.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="241 "></span><span class="k">def</span> <span class="nf">find_review</span><span class="p">(</span><span class="n">reviews</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="linenos" data-linenos="242 "></span>    <span class="sd">&quot;&quot;&quot;Find a review created by a certain user ID.</span>
+<span class="linenos" data-linenos="243 "></span>
+<span class="linenos" data-linenos="244 "></span><span class="sd">    Args:</span>
+<span class="linenos" data-linenos="245 "></span><span class="sd">        reviews: the JSON object fetched via GIT REST API.</span>
+<span class="linenos" data-linenos="246 "></span><span class="sd">        user_id: The user account&#39;s ID number</span>
+<span class="linenos" data-linenos="247 "></span>
+<span class="linenos" data-linenos="248 "></span><span class="sd">    Returns:</span>
+<span class="linenos" data-linenos="249 "></span><span class="sd">        An ID that corresponds to the specified `user_id`.</span>
+<span class="linenos" data-linenos="250 "></span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="251 "></span>    <span class="n">review_id</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="linenos" data-linenos="252 "></span>    <span class="k">for</span> <span class="n">review</span> <span class="ow">in</span> <span class="n">reviews</span><span class="p">:</span>
+<span class="linenos" data-linenos="253 "></span>        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">review</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="n">user_id</span> <span class="ow">and</span> <span class="n">review</span><span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+<span class="linenos" data-linenos="254 "></span>            <span class="s2">&quot;&lt;!-- cpp linter action --&gt;&quot;</span>
+<span class="linenos" data-linenos="255 "></span>        <span class="p">):</span>
+<span class="linenos" data-linenos="256 "></span>            <span class="n">review_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">review</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+<span class="linenos" data-linenos="257 "></span>            <span class="k">break</span>  <span class="c1"># there will only be 1 review from this action, so break when found</span>
+<span class="linenos" data-linenos="258 "></span>
+<span class="linenos" data-linenos="259 "></span>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;   review_id: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">review_id</span><span class="p">)</span>
+<span class="linenos" data-linenos="260 "></span>    <span class="k">return</span> <span class="n">review_id</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.thread_comments.get_review_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_review_id</span><span class="p">(</span><span class="n">reviews_url</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span></code>
+
+<a href="#cpp_linter.thread_comments.get_review_id" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Dismiss all stale reviews (only the ones made by our bot).</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>reviews_url</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The URL used to fetch the review comments.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>user_id</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>The user's account id number.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>The ID number of the review created by the action's generic bot.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/thread_comments.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="204 "></span><span class="k">def</span> <span class="nf">get_review_id</span><span class="p">(</span><span class="n">reviews_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos" data-linenos="205 "></span>    <span class="sd">&quot;&quot;&quot;Dismiss all stale reviews (only the ones made by our bot).</span>
+<span class="linenos" data-linenos="206 "></span>
+<span class="linenos" data-linenos="207 "></span><span class="sd">    Args:</span>
+<span class="linenos" data-linenos="208 "></span><span class="sd">        reviews_url: The URL used to fetch the review comments.</span>
+<span class="linenos" data-linenos="209 "></span><span class="sd">        user_id: The user&#39;s account id number.</span>
+<span class="linenos" data-linenos="210 "></span><span class="sd">    Returns:</span>
+<span class="linenos" data-linenos="211 "></span><span class="sd">        The ID number of the review created by the action&#39;s generic bot.</span>
+<span class="linenos" data-linenos="212 "></span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="213 "></span>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  review_url: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">reviews_url</span><span class="p">)</span>
+<span class="linenos" data-linenos="214 "></span>    <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">reviews_url</span><span class="p">)</span>
+<span class="linenos" data-linenos="215 "></span>    <span class="n">review_id</span> <span class="o">=</span> <span class="n">find_review</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span><span class="o">.</span><span class="n">text</span><span class="p">),</span> <span class="n">user_id</span><span class="p">)</span>
+<span class="linenos" data-linenos="216 "></span>    <span class="k">if</span> <span class="n">review_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># create a PR review</span>
+<span class="linenos" data-linenos="217 "></span>        <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+<span class="linenos" data-linenos="218 "></span>            <span class="n">reviews_url</span><span class="p">,</span>
+<span class="linenos" data-linenos="219 "></span>            <span class="n">headers</span><span class="o">=</span><span class="n">API_HEADERS</span><span class="p">,</span>
+<span class="linenos" data-linenos="220 "></span>            <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+<span class="linenos" data-linenos="221 "></span>                <span class="p">{</span>
+<span class="linenos" data-linenos="222 "></span>                    <span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;!-- cpp linter action --&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="linenos" data-linenos="223 "></span>                    <span class="s2">&quot;CPP Linter Action found no problems&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="224 "></span>                    <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="s2">&quot;COMMENTED&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="225 "></span>                <span class="p">}</span>
+<span class="linenos" data-linenos="226 "></span>            <span class="p">),</span>
+<span class="linenos" data-linenos="227 "></span>        <span class="p">)</span>
+<span class="linenos" data-linenos="228 "></span>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+<span class="linenos" data-linenos="229 "></span>            <span class="s2">&quot;Got </span><span class="si">%d</span><span class="s2"> from POSTing new(/temp) PR review&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="230 "></span>            <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+<span class="linenos" data-linenos="231 "></span>        <span class="p">)</span>
+<span class="linenos" data-linenos="232 "></span>        <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">reviews_url</span><span class="p">)</span>
+<span class="linenos" data-linenos="233 "></span>        <span class="k">if</span> <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span> <span class="ow">and</span> <span class="n">log_response_msg</span><span class="p">():</span>
+<span class="linenos" data-linenos="234 "></span>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;could not create a review for comments&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="235 "></span>        <span class="n">reviews</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="linenos" data-linenos="236 "></span>        <span class="n">reviews</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>  <span class="c1"># traverse the list in reverse</span>
+<span class="linenos" data-linenos="237 "></span>        <span class="n">review_id</span> <span class="o">=</span> <span class="n">find_review</span><span class="p">(</span><span class="n">reviews</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+<span class="linenos" data-linenos="238 "></span>    <span class="k">return</span> <span class="n">review_id</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.thread_comments.list_diff_comments" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">list_diff_comments</span><span class="p">()</span></code>
+
+<a href="#cpp_linter.thread_comments.list_diff_comments" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Aggregate list of comments for use in the event's diff. This function assumes
+that the CLI option <code>--diff-only</code> is set to True.</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>list</code>
+          </td>
+          <td><p>A list of comments (each element as json content).</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/thread_comments.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos="191 "></span><span class="k">def</span> <span class="nf">list_diff_comments</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="linenos" data-linenos="192 "></span>    <span class="sd">&quot;&quot;&quot;Aggregate list of comments for use in the event&#39;s diff. This function assumes</span>
+<span class="linenos" data-linenos="193 "></span><span class="sd">    that the CLI option `--diff-only` is set to True.</span>
+<span class="linenos" data-linenos="194 "></span>
+<span class="linenos" data-linenos="195 "></span><span class="sd">    Returns:</span>
+<span class="linenos" data-linenos="196 "></span><span class="sd">        A list of comments (each element as json content).</span>
+<span class="linenos" data-linenos="197 "></span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="198 "></span>    <span class="n">tidy_advice</span> <span class="o">=</span> <span class="n">aggregate_tidy_advice</span><span class="p">()</span>
+<span class="linenos" data-linenos="199 "></span>    <span class="n">format_advice</span> <span class="o">=</span> <span class="n">aggregate_format_advice</span><span class="p">()</span>
+<span class="linenos" data-linenos="200 "></span>    <span class="n">results</span> <span class="o">=</span> <span class="n">concatenate_comments</span><span class="p">(</span><span class="n">tidy_advice</span><span class="p">,</span> <span class="n">format_advice</span><span class="p">)</span>
+<span class="linenos" data-linenos="201 "></span>    <span class="k">return</span> <span class="n">results</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="cpp_linter.thread_comments.remove_bot_comments" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">remove_bot_comments</span><span class="p">(</span><span class="n">comments_url</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span></code>
+
+<a href="#cpp_linter.thread_comments.remove_bot_comments" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Traverse the list of comments made by a specific user
+and remove all.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>comments_url</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The URL used to fetch the comments.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>user_id</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>The user's account id number.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>cpp_linter/thread_comments.py</code></summary>
+        <div class="highlight"><pre><span></span><code><span class="linenos" data-linenos=" 9 "></span><span class="k">def</span> <span class="nf">remove_bot_comments</span><span class="p">(</span><span class="n">comments_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="linenos" data-linenos="10 "></span>    <span class="sd">&quot;&quot;&quot;Traverse the list of comments made by a specific user</span>
+<span class="linenos" data-linenos="11 "></span><span class="sd">    and remove all.</span>
+<span class="linenos" data-linenos="12 "></span>
+<span class="linenos" data-linenos="13 "></span><span class="sd">    Args:</span>
+<span class="linenos" data-linenos="14 "></span><span class="sd">        comments_url: The URL used to fetch the comments.</span>
+<span class="linenos" data-linenos="15 "></span><span class="sd">        user_id: The user&#39;s account id number.</span>
+<span class="linenos" data-linenos="16 "></span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos" data-linenos="17 "></span>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;comments_url: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">comments_url</span><span class="p">)</span>
+<span class="linenos" data-linenos="18 "></span>    <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">comments_url</span><span class="p">)</span>
+<span class="linenos" data-linenos="19 "></span>    <span class="k">if</span> <span class="ow">not</span> <span class="n">log_response_msg</span><span class="p">():</span>
+<span class="linenos" data-linenos="20 "></span>        <span class="k">return</span>  <span class="c1"># error getting comments for the thread; stop here</span>
+<span class="linenos" data-linenos="21 "></span>    <span class="n">comments</span> <span class="o">=</span> <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="linenos" data-linenos="22 "></span>    <span class="k">for</span> <span class="n">comment</span> <span class="ow">in</span> <span class="n">comments</span><span class="p">:</span>
+<span class="linenos" data-linenos="23 "></span>        <span class="c1"># only search for comments from the user&#39;s ID and</span>
+<span class="linenos" data-linenos="24 "></span>        <span class="c1"># whose comment body begins with a specific html comment</span>
+<span class="linenos" data-linenos="25 "></span>        <span class="k">if</span> <span class="p">(</span>
+<span class="linenos" data-linenos="26 "></span>            <span class="nb">int</span><span class="p">(</span><span class="n">comment</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="n">user_id</span>
+<span class="linenos" data-linenos="27 "></span>            <span class="c1"># the specific html comment is our action&#39;s name</span>
+<span class="linenos" data-linenos="28 "></span>            <span class="ow">and</span> <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;body&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;!-- cpp linter action --&gt;&quot;</span><span class="p">)</span>
+<span class="linenos" data-linenos="29 "></span>        <span class="p">):</span>
+<span class="linenos" data-linenos="30 "></span>            <span class="c1"># remove other outdated comments but don&#39;t remove the last comment</span>
+<span class="linenos" data-linenos="31 "></span>            <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+<span class="linenos" data-linenos="32 "></span>                <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span>
+<span class="linenos" data-linenos="33 "></span>                <span class="n">headers</span><span class="o">=</span><span class="n">API_HEADERS</span><span class="p">,</span>
+<span class="linenos" data-linenos="34 "></span>            <span class="p">)</span>
+<span class="linenos" data-linenos="35 "></span>            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+<span class="linenos" data-linenos="36 "></span>                <span class="s2">&quot;Got </span><span class="si">%d</span><span class="s2"> from DELETE </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="37 "></span>                <span class="n">Globals</span><span class="o">.</span><span class="n">response_buffer</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+<span class="linenos" data-linenos="38 "></span>                <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">][</span><span class="n">comment</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.com&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span> <span class="p">:],</span>
+<span class="linenos" data-linenos="39 "></span>            <span class="p">)</span>
+<span class="linenos" data-linenos="40 "></span>            <span class="n">log_response_msg</span><span class="p">()</span>
+<span class="linenos" data-linenos="41 "></span>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+<span class="linenos" data-linenos="42 "></span>            <span class="s2">&quot;comment id </span><span class="si">%d</span><span class="s2"> from user </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%d</span><span class="s2">)&quot;</span><span class="p">,</span>
+<span class="linenos" data-linenos="43 "></span>            <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+<span class="linenos" data-linenos="44 "></span>            <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;login&quot;</span><span class="p">],</span>
+<span class="linenos" data-linenos="45 "></span>            <span class="n">comment</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+<span class="linenos" data-linenos="46 "></span>        <span class="p">)</span>
+<span class="linenos" data-linenos="47 "></span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;comments.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_comments</span><span class="p">:</span>
+<span class="linenos" data-linenos="48 "></span>        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">comments</span><span class="p">,</span> <span class="n">json_comments</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</code></pre></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../cpp_linter.clang_format_xml/" class="md-footer__link md-footer__link--prev" aria-label="Previous: clang_format_xml module" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              clang_format_xml module
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top"], "search": "../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.6c7ad80a.min.js"></script>
+      
+    
+  </body>
+</html>
