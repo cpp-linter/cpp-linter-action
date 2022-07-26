@@ -3,7 +3,16 @@ multiple modules."""
 import io
 import os
 import logging
+from typing import TYPE_CHECKING, List, Dict, Union, Any
 from requests import Response
+
+if TYPE_CHECKING:  # Used to avoid circular imports
+    from cpp_linter.clang_format_xml import XMLFixit
+    from cpp_linter.clang_tidy_yml import YMLFixit
+    from cpp_linter.clang_tidy import TidyNotification
+
+# A type alias for custom line filter objects
+LINE_FILTER = Dict[str, Union[str, List[List[int]]]]
 
 FOUND_RICH_LIB = False
 try:
@@ -19,7 +28,7 @@ try:
 except ImportError:
     logging.basicConfig()
 
-#: The logging.Logger object used for outputing data.
+#: The logging.Logger object used for outputting data.
 logger = logging.getLogger("CPP Linter")
 if not FOUND_RICH_LIB:
     logger.debug("rich module not found")
@@ -35,13 +44,13 @@ if GITHUB_TOKEN:
 class Globals:
     """Global variables for re-use (non-constant)."""
 
-    PAYLOAD_TIDY = ""
+    PAYLOAD_TIDY: str = ""
     """The accumulated output of clang-tidy (gets appended to OUTPUT)"""
-    OUTPUT = ""
+    OUTPUT: str = ""
     """The accumulated body of the resulting comment that gets posted."""
-    FILES = []
+    FILES: List[Dict[str, Union[str, int, LINE_FILTER]]] = []
     """The responding payload containing info about changed files."""
-    EVENT_PAYLOAD = {}
+    EVENT_PAYLOAD: Dict[str, Any] = {}
     """The parsed JSON of the event payload."""
     response_buffer = Response()
     """A shared response object for `requests` module."""
@@ -52,13 +61,13 @@ class GlobalParser:
     following attributes represents a clang-tool's output for 1 source file.
     """
 
-    tidy_notes = []
+    tidy_notes = []  # type: List[TidyNotification]
     """This can only be a `list` of type
     [`TidyNotification`][cpp_linter.clang_tidy.TidyNotification]"""
-    tidy_advice = []
+    tidy_advice = []  # type: List[YMLFixit]
     """This can only be a `list` of type
     [`YMLFixit`][cpp_linter.clang_tidy_yml.YMLFixit]"""
-    format_advice = []
+    format_advice = []  # type: List[XMLFixit]
     """This can only be a `list` of type
     [`XMLFixit`][cpp_linter.clang_format_xml.XMLFixit]"""
 
@@ -97,7 +106,7 @@ def log_response_msg() -> bool:
     """Output the response buffer's message on a failed request.
 
     Returns:
-        A bool decribing if response's status code was less than 400.
+        A bool describing if response's status code was less than 400.
     """
     if Globals.response_buffer.status_code >= 400:
         logger.error(

@@ -1,5 +1,6 @@
 """Parse output from clang-format's XML suggestions."""
 import os
+from typing import List
 import xml.etree.ElementTree as ET
 from . import GlobalParser, get_line_cnt_from_cols
 
@@ -47,7 +48,7 @@ class FormatReplacementLine:
             line_numb: The line number of about the replacements
         """
         self.line = line_numb
-        self.replacements = []
+        self.replacements: List[FormatReplacement] = []
 
     def __repr__(self):
         return (
@@ -74,7 +75,7 @@ class XMLFixit:
                 file exported by clang-tidy.
         """
         self.filename = filename.replace(os.sep, "/")
-        self.replaced_lines = []
+        self.replaced_lines: List[FormatReplacementLine] = []
 
     def __repr__(self) -> str:
         return (

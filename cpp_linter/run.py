@@ -16,6 +16,7 @@ import sys
 import argparse
 import configparser
 import json
+from typing import cast, List
 import requests
 from . import (
     Globals,
@@ -26,6 +27,7 @@ from . import (
     GITHUB_SHA,
     API_HEADERS,
     log_response_msg,
+    LINE_FILTER,
 )
 
 from .clang_tidy_yml import parse_tidy_suggestions_yml
@@ -117,7 +119,7 @@ cli_arg_parser.add_argument(
     "--lines-changed-only",
     default="false",
     type=lambda input: input.lower() == "true",
-    help="Set this option to 'true' to only analyse changes in the event's diff. "
+    help="Set this option to 'true' to only analyze changes in the event's diff. "
     "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
@@ -125,7 +127,7 @@ cli_arg_parser.add_argument(
     "--files-changed-only",
     default="false",
     type=lambda input: input.lower() == "true",
-    help="Set this option to 'false' to analyse any source files in the repo. "
+    help="Set this option to 'false' to analyze any source files in the repo. "
     "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
@@ -171,16 +173,16 @@ log_commander.propagate = False  # prevent duplicate messages in the parent logg
 
 
 def start_log_group(name: str) -> None:
-    """Begin a callapsable group of log statements.
+    """Begin a collapsable group of log statements.
 
     Args:
-        name: The name of the callapsable group
+        name: The name of the collapsable group
     """
     log_commander.fatal("::group::%s", name)
 
 
 def end_log_group() -> None:
-    """End a callapsable group of log statements."""
+    """End a collapsable group of log statements."""
     log_commander.fatal("::endgroup::")
 
 
@@ -247,7 +249,7 @@ def filter_out_non_source_files(
     """
     files = []
     for file in (
-        Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
+        Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]  # type: ignore
     ):
         if (
             os.path.splitext(file["filename"])[1][1:] in ext_list
@@ -259,10 +261,10 @@ def filter_out_non_source_files(
         ):
             if lines_changed_only and "patch" in file.keys():
                 # get diff details for the file's changes
-                line_filter = {
-                    "name": file["filename"].replace("/", os.sep),
-                    "lines": [],
-                }
+                line_filter: LINE_FILTER = dict(
+                    name=file["filename"].replace("/", os.sep),
+                    lines=[],
+                )
                 file["diff_line_map"], line_numb_in_diff = ({}, 0)
                 # diff_line_map is a dict for which each
                 #     - key is the line number in the file
@@ -273,13 +275,15 @@ def filter_out_non_source_files(
                         changed_hunk = changed_hunk.split(",")
                         start_line = int(changed_hunk[0])
                         hunk_length = int(changed_hunk[1])
-                        line_filter["lines"].append(
+                        cast(List[List[int]], line_filter["lines"]).append(
                             [start_line, hunk_length + start_line]
                         )
                         line_numb_in_diff = start_line
                     elif not line.startswith("-"):
                         file["diff_line_map"][line_numb_in_diff] = i
-                        line_filter["lines"][-1][1] = line_numb_in_diff
+                        cast(List[List[int]], line_filter["lines"])[-1][
+                            1
+                        ] = line_numb_in_diff
                         line_numb_in_diff += 1
                 file["line_filter"] = line_filter
             elif lines_changed_only:
@@ -294,7 +298,7 @@ def filter_out_non_source_files(
         if GITHUB_EVENT_NAME == "pull_request":
             Globals.FILES = files
         else:
-            Globals.FILES["files"] = files
+            Globals.FILES["files"] = files  # type: ignore
         if not os.getenv("CI"):  # if not executed on a github runner
             with open(".changed_files.json", "w", encoding="utf-8") as temp:
                 # dump altered json of changed files
@@ -314,7 +318,7 @@ def verify_files_are_present() -> None:
         directory. This is bad for files with the same name from different folders.
     """
     for file in (
-        Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]
+        Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]  # type: ignore
     ):
         file_name = file["filename"].replace("/", os.sep)
         if not os.path.exists(file_name):
@@ -373,7 +377,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
     if Globals.FILES:
         logger.info(
             "Giving attention to the following files:\n\t%s",
-            "\n\t".join([f["filename"] for f in Globals.FILES]),
+            "\n\t".join([f["filename"] for f in Globals.FILES]),  # type: ignore
         )
     else:
         logger.info("No source files found.")  # this might need to be warning
@@ -510,11 +514,11 @@ def capture_clang_tools_output(
     for file in (
         Globals.FILES
         if GITHUB_EVENT_NAME == "pull_request" or isinstance(Globals.FILES, list)
-        else Globals.FILES["files"]
+        else Globals.FILES["files"]  # type: ignore
     ):
-        filename = file["filename"]
-        if not os.path.exists(file["filename"]):
-            filename = os.path.split(file["raw_url"])[1]
+        filename = cast(str, file["filename"])
+        if not os.path.exists(filename):
+            filename = os.path.split(cast(str, file["raw_url"]))[1]
         start_log_group(f"Performing checkup on {filename}")
         run_clang_tidy(
             filename, file, version, checks, lines_changed_only, database, repo_root
@@ -718,11 +722,11 @@ def make_annotations(style: str, file_annotations: bool) -> bool:
     # log_commander obj's verbosity is hard-coded to show debug statements
     ret_val = False
     count = 0
-    for note in GlobalParser.format_advice:
-        if note.replaced_lines:
+    for advice in GlobalParser.format_advice:
+        if advice.replaced_lines:
             ret_val = True
             if file_annotations:
-                log_commander.info(note.log_command(style))
+                log_commander.info(advice.log_command(style))
             count += 1
     for note in GlobalParser.tidy_notes:
         ret_val = True
@@ -746,8 +750,7 @@ def parse_ignore_option(paths: str) -> tuple:
         - index 1 is the `not_ignored` list
     """
     ignored, not_ignored = ([], [])
-    paths = paths.split("|")
-    for path in paths:
+    for path in paths.split("|"):
         is_included = path.startswith("!")
         if path.startswith("!./" if is_included else "./"):
             path = path.replace("./", "", 1)  # relative dir is assumed

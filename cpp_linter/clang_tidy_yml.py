@@ -1,5 +1,6 @@
 """Parse output from clang-tidy's YML format"""
 import os
+from typing import List
 import yaml
 from . import GlobalParser, get_line_cnt_from_cols
 
@@ -34,7 +35,7 @@ class TidyDiagnostic:
         self.line = 0
         self.cols = 0
         self.null_len = 0
-        self.replacements = []
+        self.replacements: List["TidyReplacement"] = []
 
     def __repr__(self):
         """a str representation of all attributes."""
@@ -51,7 +52,7 @@ class TidyReplacement:
         line (int): The replacement content's starting line
         cols (int): The replacement content's starting columns
         null_len (int): The number of bytes discarded from `cols`
-        text (list): The replacement content's text (each `str` item is a line)
+        text (bytes): The replacement content's text.
     """
 
     def __init__(self, line_cnt: int, cols: int, length: int):
@@ -64,7 +65,7 @@ class TidyReplacement:
         self.line = line_cnt
         self.cols = cols
         self.null_len = length
-        self.text = []
+        self.text: bytes = b""
 
     def __repr__(self) -> str:
         return (
@@ -88,7 +89,7 @@ class YMLFixit:
             filename: The source file's name (with path) concerning the suggestion.
         """
         self.filename = filename.replace(os.getcwd() + os.sep, "").replace(os.sep, "/")
-        self.diagnostics = []
+        self.diagnostics: List[TidyDiagnostic] = []
 
     def __repr__(self) -> str:
         return (

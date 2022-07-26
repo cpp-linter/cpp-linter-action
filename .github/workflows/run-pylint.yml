@@ -5,11 +5,13 @@ on:
     paths:
       - "**.py"
       - .pylintrc
+      - mypy.ini
   pull_request:
     types: opened
     paths:
       - "**.py"
       - .pylintrc
+      - mypy.ini
 
 jobs:
   using-pylint:
@@ -20,10 +22,9 @@ jobs:
         with:
           python-version: 3.7
       - name: Install pylint and action deps
-        run: |
-          python3 -m pip install --upgrade pylint
-          python3 -m pip install -r requirements.txt
+        run: python3 -m pip install -r requirements.txt -r requierments-dev.txt
       - name: run pylint
         run: |
           pylint cpp_linter/**
           pylint setup.py
+      - run: mypy cpp_linter/

@@ -1,6 +1,6 @@
 """A module to house the various functions for traversing/adjusting comments"""
 import os
-from typing import Union
+from typing import Union, cast, List, Optional
 import json
 import requests
 from . import Globals, GlobalParser, logger, API_HEADERS, GITHUB_SHA, log_response_msg
@@ -59,7 +59,7 @@ def aggregate_tidy_advice() -> list:
             body += diag.name + "**\n>" + diag.message
 
             # get original code
-            filename = Globals.FILES[index]["filename"].replace("/", os.sep)
+            filename = cast(str, Globals.FILES[index]["filename"]).replace("/", os.sep)
             if not os.path.exists(filename):
                 # the file had to be downloaded (no git checkout).
                 # thus use only the filename (without the path to the file)
@@ -71,7 +71,7 @@ def aggregate_tidy_advice() -> list:
             # aggregate clang-tidy advice
             suggestion = "\n```suggestion\n"
             is_multiline_fix = False
-            fix_lines = []  # a list of line numbers for the suggested fixes
+            fix_lines: List[int] = []  # a list of line numbers for the suggested fixes
             line = ""  # the line that concerns the fix/comment
             for i, tidy_fix in enumerate(diag.replacements):
                 line = lines[tidy_fix.line - 1]
@@ -113,7 +113,7 @@ def aggregate_format_advice() -> list:
     for index, fmt_advice in enumerate(GlobalParser.format_advice):
 
         # get original code
-        filename = Globals.FILES[index]["filename"].replace("/", os.sep)
+        filename = cast(str, Globals.FILES[index]["filename"]).replace("/", os.sep)
         if not os.path.exists(filename):
             # the file had to be downloaded (no git checkout).
             # thus use only the filename (without the path to the file)
@@ -127,7 +127,7 @@ def aggregate_format_advice() -> list:
         for fixed_line in fmt_advice.replaced_lines:
             # clang-format can include advice that starts/ends outside the diff's domain
             in_range = False
-            ranges = Globals.FILES[index]["line_filter"]["lines"]
+            ranges: List[List[int]] = Globals.FILES[index]["line_filter"]["lines"]  # type: ignore
             for scope in ranges:
                 if fixed_line.line in range(scope[0], scope[1] + 1):
                     in_range = True
@@ -201,7 +201,7 @@ def list_diff_comments() -> list:
     return results
 
 
-def get_review_id(reviews_url: str, user_id: int) -> int:
+def get_review_id(reviews_url: str, user_id: int) -> Optional[int]:
     """Dismiss all stale reviews (only the ones made by our bot).
 
     Args:
