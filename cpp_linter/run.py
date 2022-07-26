@@ -109,6 +109,7 @@ cli_arg_parser.add_argument(
     "-i",
     "--ignore",
     nargs="?",
+    default=".github",
     help="Set this option with paths to ignore. In the case of multiple "
     "paths, you can set this option (multiple times) for each path. This can "
     "also have files, but the file's relative path has to be specified as well "
@@ -783,7 +784,7 @@ def main():
     logger.setLevel(int(args.verbosity))
 
     # prepare ignored paths list
-    ignored, not_ignored = parse_ignore_option("" if not args.ignore else args.ignore)
+    ignored, not_ignored = parse_ignore_option(args.ignore)
 
     # prepare extensions list
     args.extensions = args.extensions.split(",")
