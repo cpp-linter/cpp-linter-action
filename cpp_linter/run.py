@@ -425,7 +425,7 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     if database:
         cmds.append("-p")
-        if RUNNER_WORKSPACE:
+        if RUNNER_WORKSPACE and not os.path.isabs(database):
             path_to_db = RUNNER_WORKSPACE
             if repo_root and repo_root != ".":
                 path_to_db += os.sep + repo_root
