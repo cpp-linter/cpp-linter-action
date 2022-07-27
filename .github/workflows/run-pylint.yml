@@ -6,15 +6,17 @@ on:
       - "**.py"
       - .pylintrc
       - mypy.ini
+      - ".github/workflows/run-pylint.yml"
   pull_request:
     types: opened
     paths:
       - "**.py"
       - .pylintrc
       - mypy.ini
+      - ".github/workflows/run-pylint.yml"
 
 jobs:
-  using-pylint:
+  check-python-sources:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,7 +24,7 @@ jobs:
         with:
           python-version: 3.7
       - name: Install pylint and action deps
-        run: python3 -m pip install -r requirements.txt -r requierments-dev.txt
+        run: python3 -m pip install -r requirements.txt -r requirements-dev.txt
       - name: run pylint
         run: |
           pylint cpp_linter/**

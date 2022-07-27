@@ -250,7 +250,9 @@ def filter_out_non_source_files(
     """
     files = []
     for file in (
-        Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]  # type: ignore
+        Globals.FILES
+        if GITHUB_EVENT_NAME == "pull_request"
+        else Globals.FILES["files"]  # type: ignore
     ):
         if (
             os.path.splitext(file["filename"])[1][1:] in ext_list
@@ -319,7 +321,9 @@ def verify_files_are_present() -> None:
         directory. This is bad for files with the same name from different folders.
     """
     for file in (
-        Globals.FILES if GITHUB_EVENT_NAME == "pull_request" else Globals.FILES["files"]  # type: ignore
+        Globals.FILES
+        if GITHUB_EVENT_NAME == "pull_request"
+        else Globals.FILES["files"]  # type: ignore
     ):
         file_name = file["filename"].replace("/", os.sep)
         if not os.path.exists(file_name):

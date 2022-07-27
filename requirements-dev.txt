@@ -1,3 +1,5 @@
 types-requests
+types-PyYAML
 mypy
 pylint
+rich

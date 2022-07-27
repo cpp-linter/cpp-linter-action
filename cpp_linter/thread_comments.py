@@ -127,7 +127,9 @@ def aggregate_format_advice() -> list:
         for fixed_line in fmt_advice.replaced_lines:
             # clang-format can include advice that starts/ends outside the diff's domain
             in_range = False
-            ranges: List[List[int]] = Globals.FILES[index]["line_filter"]["lines"]  # type: ignore
+            ranges: List[List[int]] = (
+                Globals.FILES[index]["line_filter"]["lines"]  # type: ignore
+            )
             for scope in ranges:
                 if fixed_line.line in range(scope[0], scope[1] + 1):
                     in_range = True
