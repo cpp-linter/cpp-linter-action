@@ -348,14 +348,6 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
         [`main()`][cpp_linter.run.main]) when no files to be checked.
     """
     start_log_group("Get list of specified source files")
-    if os.path.exists(".gitmodules"):
-        submodules = configparser.ConfigParser()
-        submodules.read(".gitmodules")
-        for module in submodules.sections():
-            logger.info(
-                "Appending submodule to ignored paths: %s", submodules[module]["path"]
-            )
-            ignored_paths.append(submodules[module]["path"])
 
     root_path = os.getcwd()
     for dirpath, _, filenames in os.walk(root_path):
@@ -755,15 +747,28 @@ def parse_ignore_option(paths: str) -> tuple:
         - index 1 is the `not_ignored` list
     """
     ignored, not_ignored = ([], [])
+
     for path in paths.split("|"):
         is_included = path.startswith("!")
         if path.startswith("!./" if is_included else "./"):
             path = path.replace("./", "", 1)  # relative dir is assumed
         path = path.strip()  # strip leading/trailing spaces
         if is_included:
-            not_ignored.append(path[1:])
+            not_ignored.append(path[1:])  # strip leading `!`
         else:
             ignored.append(path)
+
+    # auto detect submodules
+    if os.path.exists(".gitmodules"):
+        submodules = configparser.ConfigParser()
+        submodules.read(".gitmodules")
+        for module in submodules.sections():
+            logger.info(
+                "Appending submodule to ignored paths: %s", submodules[module]["path"]
+            )
+            path = submodules[module]["path"].replace("/", os.sep)
+            if path not in not_ignored:
+                ignored.append(path)
 
     if ignored:
         logger.info(
