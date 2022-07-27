@@ -3,3 +3,4 @@ types-PyYAML
 mypy
 pylint
 rich
+pytest
