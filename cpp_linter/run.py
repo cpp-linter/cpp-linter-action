@@ -759,15 +759,14 @@ def parse_ignore_option(paths: str) -> tuple:
             ignored.append(path)
 
     # auto detect submodules
-    if os.path.exists(".gitmodules"):
+    root_path = os.getcwd()
+    if os.path.exists(root_path + os.sep + ".gitmodules"):
         submodules = configparser.ConfigParser()
-        submodules.read(".gitmodules")
+        submodules.read(root_path + os.sep + ".gitmodules")
         for module in submodules.sections():
-            logger.info(
-                "Appending submodule to ignored paths: %s", submodules[module]["path"]
-            )
             path = submodules[module]["path"].replace("/", os.sep)
             if path not in not_ignored:
+                logger.info("Appending submodule to ignored paths: %s", path)
                 ignored.append(path)
 
     if ignored:
