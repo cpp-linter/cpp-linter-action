@@ -50,7 +50,8 @@ cli_arg_parser = argparse.ArgumentParser(
 cli_arg_parser.add_argument(
     "-v",
     "--verbosity",
-    default="10",
+    type=int,
+    default=10,
     help="The logging level. Defaults to level 20 (aka 'logging.INFO').",
 )
 cli_arg_parser.add_argument(
@@ -92,7 +93,8 @@ cli_arg_parser.add_argument(
 cli_arg_parser.add_argument(
     "-e",
     "--extensions",
-    default="c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx",
+    default=["c", "h", "C", "H", "cpp", "hpp", "cc", "hh", "c++", "h++", "cxx", "hxx"],
+    type=lambda i: [ext.strip().lstrip(".") for ext in i.split(",")],
     help="The file extensions to run the action against. This comma-separated string "
     "defaults to %(default)s.",
 )
@@ -106,7 +108,6 @@ cli_arg_parser.add_argument(
 cli_arg_parser.add_argument(
     "-i",
     "--ignore",
-    nargs="?",
     default=".github",
     help="Set this option with paths to ignore. In the case of multiple "
     "paths, you can set this option (multiple times) for each path. This can "
@@ -820,9 +821,6 @@ def main():
 
     # prepare ignored paths list
     ignored, not_ignored = parse_ignore_option(args.ignore)
-
-    # prepare extensions list
-    args.extensions = args.extensions.split(",")
 
     logger.info("processing %s event", GITHUB_EVENT_NAME)
 
