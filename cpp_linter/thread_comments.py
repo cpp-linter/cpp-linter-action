@@ -126,15 +126,17 @@ def aggregate_format_advice(lines_changed_only: int = 1) -> list:
         line = ""  # the line that concerns the fix
         for fixed_line in fmt_advice.replaced_lines:
             # clang-format can include advice that starts/ends outside the diff's domain
-            in_range = False
-            line_ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
-            ranges: List[List[int]] = (
-                Globals.FILES[index]["line_filter"][line_ranges]  # type: ignore
-            )
+            ranges: List[List[int]] = Globals.FILES[index][  # type: ignore
+                "line_filter"
+            ][
+                "diff_chunks"  # type: ignore
+                if lines_changed_only == 1
+                else "lines_added"
+            ]
             for scope in ranges:
                 if fixed_line.line in range(scope[0], scope[1] + 1):
-                    in_range = True
-            if not in_range:
+                    break
+            else:
                 continue  # line is out of scope for diff, so skip this fix
 
             # assemble the suggestion
