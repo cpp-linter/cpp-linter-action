@@ -87,8 +87,11 @@ jobs:
 
 #### `lines-changed-only`
 
-- **Description**: Set this option to true to only analyze changes in the event's diff.
-- Default: false
+- **Description**: This controls what part of the files are analyzed. The following values are accepted:
+  - false: All lines in a file are analyzed.
+  - true: All lines in the diff are analyzed (including unchanged lines but not subtractions).
+  - strict: Only lines in the diff that contain additions are analyzed.
+- Default: false.
 
 #### `files-changed-only`
 

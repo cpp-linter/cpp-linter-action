@@ -30,4 +30,4 @@ jobs:
           pylint cpp_linter/**
           pylint setup.py
       - run: mypy cpp_linter/
-      - run: pytest tests
+      - run: pytest -vv tests

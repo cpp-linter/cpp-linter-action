@@ -27,9 +27,7 @@ from . import (
     GITHUB_SHA,
     API_HEADERS,
     log_response_msg,
-    LINE_FILTER,
 )
-
 from .clang_tidy_yml import parse_tidy_suggestions_yml
 from .clang_format_xml import parse_format_replacements_xml
 from .clang_tidy import parse_tidy_output
@@ -118,9 +116,10 @@ cli_arg_parser.add_argument(
 cli_arg_parser.add_argument(
     "-l",
     "--lines-changed-only",
-    default="false",
-    type=lambda input: input.lower() == "true",
+    default=0,
+    type=lambda a: 1 if a.lower() == "true" else (2 if a.lower() == "strict" else 0),
     help="Set this option to 'true' to only analyze changes in the event's diff. "
+    "Set this to 'strict' to only analyze additions in the event's diff. "
     "Defaults to %(default)s.",
 )
 cli_arg_parser.add_argument(
@@ -231,8 +230,26 @@ def get_list_of_changed_files() -> None:
     Globals.FILES = requests.get(files_link, headers=API_HEADERS).json()
 
 
+def consolidate_list_to_ranges(just_numbers: List[int]) -> List[List[int]]:
+    """A helper function to [`filter_out_non_source_files()`] that is only used when
+    extracting the lines from a diff that contain additions."""
+    result: List[List[int]] = []
+    for i, n in enumerate(just_numbers):
+        if not i:
+            result.append([n])
+        elif n - 1 != just_numbers[i - 1]:
+            result[-1].append(just_numbers[i - 1] + 1)
+            result.append([n])
+        if i == len(just_numbers) - 1:
+            result[-1].append(n + 1)
+    return result
+
+
 def filter_out_non_source_files(
-    ext_list: list, ignored: list, not_ignored: list, lines_changed_only: bool
+    ext_list: list,
+    ignored: list,
+    not_ignored: list,
+    lines_changed_only: int,
 ) -> bool:
     """Exclude undesired files (specified by user input 'extensions'). This filter
     applies to the event's [`FILES`][cpp_linter.Globals.FILES] attribute.
@@ -264,33 +281,25 @@ def filter_out_non_source_files(
         ):
             if lines_changed_only and "patch" in file.keys():
                 # get diff details for the file's changes
-                line_filter: LINE_FILTER = dict(
-                    name=file["filename"].replace("/", os.sep),
-                    lines=[],
-                )
-                file["diff_line_map"], line_numb_in_diff = ({}, 0)
-                # diff_line_map is a dict for which each
-                #     - key is the line number in the file
-                #     - value is the line's "position" in the diff
-                for i, line in enumerate(file["patch"].splitlines()):
+                # ranges is a list of start/end line numbers shown in the diff
+                ranges: List[List[int]] = []
+                # additions is a list line numbers in the diff containing additions
+                additions: List[int] = []
+                line_numb_in_diff: int = 0
+                for line in file["patch"].splitlines():
+                    if line.startswith("+"):
+                        additions.append(line_numb_in_diff)
                     if line.startswith("@@ -"):
-                        changed_hunk = line[line.find(" +") + 2 : line.find(" @@")]
-                        changed_hunk = changed_hunk.split(",")
-                        start_line = int(changed_hunk[0])
-                        hunk_length = int(changed_hunk[1])
-                        cast(List[List[int]], line_filter["lines"]).append(
-                            [start_line, hunk_length + start_line]
-                        )
+                        hunk = line[line.find(" +") + 2 : line.find(" @@")].split(",")
+                        start_line, hunk_length = [int(x) for x in hunk]
+                        ranges.append([start_line, hunk_length + start_line])
                         line_numb_in_diff = start_line
                     elif not line.startswith("-"):
-                        file["diff_line_map"][line_numb_in_diff] = i
-                        cast(List[List[int]], line_filter["lines"])[-1][
-                            1
-                        ] = line_numb_in_diff
                         line_numb_in_diff += 1
-                file["line_filter"] = line_filter
-            elif lines_changed_only:
-                continue
+                file["line_filter"] = dict(
+                    diff_chunks=ranges,
+                    lines_added=consolidate_list_to_ranges(additions),
+                )
             files.append(file)
 
     if files:
@@ -330,7 +339,9 @@ def verify_files_are_present() -> None:
             logger.warning("Could not find %s! Did you checkout the repo?", file_name)
             logger.info("Downloading file from url: %s", file["raw_url"])
             Globals.response_buffer = requests.get(file["raw_url"])
-            with open(os.path.split(file_name)[1], "w", encoding="utf-8") as temp:
+            # retain the repo's original structure
+            os.makedirs(os.path.split(file_name)[0], exist_ok=True)
+            with open(file_name, "w", encoding="utf-8") as temp:
                 temp.write(Globals.response_buffer.text)
 
 
@@ -387,7 +398,7 @@ def run_clang_tidy(
     file_obj: dict,
     version: str,
     checks: str,
-    lines_changed_only: bool,
+    lines_changed_only: int,
     database: str,
     repo_root: str,
 ) -> None:
@@ -406,6 +417,7 @@ def run_clang_tidy(
         # clear the clang-tidy output file and exit function
         with open("clang_tidy_report.txt", "wb") as f_out:
             return
+    filename = filename.replace("/", os.sep)
     cmds = [
         "clang-tidy" + ("" if not version else f"-{version}"),
         "--export-fixes=clang_tidy_output.yml",
@@ -429,9 +441,11 @@ def run_clang_tidy(
         else:
             cmds.append(database)
     if lines_changed_only:
-        logger.info("line_filter = %s", json.dumps(file_obj["line_filter"]["lines"]))
-        cmds.append(f"--line-filter={json.dumps([file_obj['line_filter']])}")
-    cmds.append(filename.replace("/", os.sep))
+        ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
+        line_ranges = dict(name=filename, lines=file_obj["line_filter"][ranges])
+        logger.info("line_filter = %s", json.dumps([line_ranges]))
+        cmds.append(f"--line-filter={json.dumps([line_ranges])}")
+    cmds.append(filename)
     with open("clang_tidy_output.yml", "wb"):
         pass  # clear yml file's content before running clang-tidy
     logger.info('Running "%s"', " ".join(cmds))
@@ -441,14 +455,14 @@ def run_clang_tidy(
     logger.debug("Output from clang-tidy:\n%s", results.stdout.decode())
     if os.path.getsize("clang_tidy_output.yml"):
         parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
-    if results.returncode:
-        logger.warning(
-            "%s raised the following error(s):\n%s", cmds[0], results.stderr.decode()
+    if results.stderr:
+        logger.info(
+            "clang-tidy made the following summary:\n%s", results.stderr.decode()
         )
 
 
 def run_clang_format(
-    filename: str, file_obj: dict, version: str, style: str, lines_changed_only: bool
+    filename: str, file_obj: dict, version: str, style: str, lines_changed_only: int
 ) -> None:
     """Run clang-format on a certain file
 
@@ -474,7 +488,8 @@ def run_clang_format(
         logger.warning("ignoring invalid version number %s.", version)
         cmds[0] = "clang-format"
     if lines_changed_only:
-        for line_range in file_obj["line_filter"]["lines"]:
+        ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
+        for line_range in file_obj["line_filter"][ranges]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")
     cmds.append(filename.replace("/", os.sep))
     logger.info('Running "%s"', " ".join(cmds))
@@ -708,7 +723,9 @@ def post_results(use_diff_comments: bool, user_id: int = 41898282):
     set_exit_code(1 if checks_passed else 0)
 
 
-def make_annotations(style: str, file_annotations: bool) -> bool:
+def make_annotations(
+    style: str, file_annotations: bool, lines_changed_only: int
+) -> bool:
     """Use github log commands to make annotations from clang-format and
     clang-tidy output.
 
@@ -719,11 +736,21 @@ def make_annotations(style: str, file_annotations: bool) -> bool:
     # log_commander obj's verbosity is hard-coded to show debug statements
     ret_val = False
     count = 0
-    for advice in GlobalParser.format_advice:
+    files = (
+        Globals.FILES
+        if GITHUB_EVENT_NAME == "pull_request"
+        else Globals.FILES["files"]  # type: ignore
+    )
+    for advice, file in zip(GlobalParser.format_advice, files):
         if advice.replaced_lines:
             ret_val = True
+            line_filter = []
+            if lines_changed_only == 1:
+                line_filter = file["line_filter"]["diff_chunks"]
+            elif lines_changed_only == 2:
+                line_filter = file["line_filter"]["lines_added"]
             if file_annotations:
-                log_commander.info(advice.log_command(style))
+                log_commander.info(advice.log_command(style, line_filter))
             count += 1
     for note in GlobalParser.tidy_notes:
         ret_val = True
@@ -817,7 +844,7 @@ def main():
             args.extensions,
             ignored,
             not_ignored,
-            args.lines_changed_only if args.files_changed_only else False,
+            args.lines_changed_only,
         )
         if not exit_early:
             verify_files_are_present()
@@ -844,7 +871,11 @@ def main():
         )
     if args.thread_comments and thread_comments_allowed:
         post_results(False)  # False is hard-coded to disable diff comments.
-    set_exit_code(int(make_annotations(args.style, args.file_annotations)))
+    set_exit_code(
+        int(
+            make_annotations(args.style, args.file_annotations, args.lines_changed_only)
+        )
+    )
     end_log_group()
 
 

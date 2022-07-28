@@ -106,7 +106,7 @@ def aggregate_tidy_advice() -> list:
     return results
 
 
-def aggregate_format_advice() -> list:
+def aggregate_format_advice(lines_changed_only: int = 1) -> list:
     """Aggregate a list of json contents representing advice from clang-format
     suggestions."""
     results = []
@@ -127,8 +127,9 @@ def aggregate_format_advice() -> list:
         for fixed_line in fmt_advice.replaced_lines:
             # clang-format can include advice that starts/ends outside the diff's domain
             in_range = False
+            line_ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
             ranges: List[List[int]] = (
-                Globals.FILES[index]["line_filter"]["lines"]  # type: ignore
+                Globals.FILES[index]["line_filter"][line_ranges]  # type: ignore
             )
             for scope in ranges:
                 if fixed_line.line in range(scope[0], scope[1] + 1):
@@ -192,7 +193,7 @@ def concatenate_comments(tidy_advice: list, format_advice: list) -> list:
 
 def list_diff_comments() -> list:
     """Aggregate list of comments for use in the event's diff. This function assumes
-    that the CLI option `--diff-only` is set to True.
+    that the CLI option `--lines_changed_only` is set to True.
 
     Returns:
         A list of comments (each element as json content).

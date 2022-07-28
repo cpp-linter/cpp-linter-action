@@ -12,7 +12,7 @@ if TYPE_CHECKING:  # Used to avoid circular imports
     from cpp_linter.clang_tidy import TidyNotification
 
 # A type alias for custom line filter objects
-LINE_FILTER = Dict[str, Union[str, List[List[int]]]]
+LINE_FILTER = Dict[str, List[List[int]]]
 
 FOUND_RICH_LIB = False
 try:

@@ -83,7 +83,7 @@ class XMLFixit:
             f"replacements for {self.filename}>"
         )
 
-    def log_command(self, style: str) -> str:
+    def log_command(self, style: str, line_filter: List[List[int]]) -> str:
         """Output a notification as a github log command.
 
         !!! info See Also
@@ -105,13 +105,18 @@ class XMLFixit:
                 style = style.upper()
             else:
                 style = style.title()
-
+        line_list = []
+        for fix in self.replaced_lines:
+            for line_range in line_filter:
+                if fix.line in range(*line_range):
+                    line_list.append(str(fix.line))
+                    break
         return (
             "::notice file={name},title=Run clang-format on {name}::"
             "File {name} (lines {lines}): Code does not conform to {style_guide} "
             "style guidelines.".format(
                 name=self.filename,
-                lines=", ".join(str(f.line) for f in self.replaced_lines),
+                lines=", ".join(line_list),
                 style_guide=style,
             )
         )
