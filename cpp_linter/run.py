@@ -313,8 +313,8 @@ def filter_out_non_source_files(
         )
         if GITHUB_EVENT_NAME == "pull_request":
             Globals.FILES = files
-        elif isinstance(Globals.FILES, dict):
-            Globals.FILES["files"] = files
+        else:
+            cast(Dict[str, Any], Globals.FILES)["files"] = files
         if not os.getenv("CI"):  # if not executed on a github runner
             with open(".changed_files.json", "w", encoding="utf-8") as temp:
                 # dump altered json of changed files
