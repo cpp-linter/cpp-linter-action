@@ -30,8 +30,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        - os: ['windows-latest', ubuntu-latest]
-        - py: ['3.7', '3.8', '3.9', '3.10']
+        os: ['windows-latest', ubuntu-latest]
+        py: ['3.7', '3.8', '3.9', '3.10']
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
