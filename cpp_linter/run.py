@@ -41,9 +41,7 @@ GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
 GITHUB_WORKSPACE = os.getenv("GITHUB_WORKSPACE", "")
 IS_USING_DOCKER = os.getenv("USING_CLANG_TOOLS_DOCKER", "")
-RUNNER_WORKSPACE = (
-    os.getenv("RUNNER_WORKSPACE", "") if IS_USING_DOCKER else GITHUB_WORKSPACE
-)
+RUNNER_WORKSPACE = "/github/workspace" if IS_USING_DOCKER else GITHUB_WORKSPACE
 IS_ON_WINDOWS = sys.platform.startswith("win32")
 
 # setup CLI args
