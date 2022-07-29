@@ -225,11 +225,13 @@ def get_list_of_changed_files() -> None:
     files_link = f"{GITHUB_API_URL}/repos/{GITHUB_REPOSITORY}/"
     if GITHUB_EVENT_NAME == "pull_request":
         files_link += f"pulls/{Globals.EVENT_PAYLOAD['number']}/files"
-    elif GITHUB_EVENT_NAME == "push":
-        files_link += f"commits/{GITHUB_SHA}"
     else:
-        logger.warning("triggered on unsupported event.")
-        sys.exit(set_exit_code(0))
+        if GITHUB_EVENT_NAME != "push":
+            logger.warning(
+                "Triggered on unsupported event '%s'. Behaving like a push event.",
+                GITHUB_EVENT_NAME,
+            )
+        files_link += f"commits/{GITHUB_SHA}"
     logger.info("Fetching files list from url: %s", files_link)
     Globals.FILES = requests.get(files_link, headers=API_HEADERS).json()
 
