@@ -20,8 +20,8 @@ CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
         # explicit relative path to the compilation database
         (
             "../../demo",
-            ".",
-            "",
+            ".",  # only used if RUNNER_WORKSPACE is given
+            "",  # RUNNER_WORKSPACE not set
             [
                 "-p",
                 str(Path(Path(__file__).parent / "../../demo").resolve()),
@@ -30,9 +30,9 @@ CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
         ),
         # explicit absolute path to the compilation database
         (
-            str(Path(Path(__file__).parent / "../../demo")),
-            "../../",
-            "",
+            str(Path(Path(__file__).parent / "../../demo").resolve()),
+            ".",  # only used if RUNNER_WORKSPACE is given
+            "",  # RUNNER_WORKSPACE not set
             [
                 "-p",
                 str(Path(Path(__file__).parent / "../../demo").resolve()),
@@ -42,7 +42,7 @@ CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
         # explicit relative path to the compilation database w/ RUNNER_WORKSPACE
         (
             "demo",
-            ".",
+            ".",  # only used if db path is abs
             str(Path(Path(__file__).parent / "../../").resolve()),
             [
                 "-p",
