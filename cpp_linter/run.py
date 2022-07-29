@@ -821,6 +821,18 @@ def parse_ignore_option(paths: str) -> tuple:
     return (ignored, not_ignored)
 
 
+def list_toc(dir_name: str) -> List[str]:
+    """pythonic ls implementation."""
+    result = []
+    for _, dirs, files in os.walk(dir_name):
+        for name in dirs:
+            result.append(name)
+        for name in files:
+            result.append(name)
+        break  # shallow depth
+    return result
+
+
 def main():
     """The main script."""
 
@@ -834,6 +846,26 @@ def main():
     ignored, not_ignored = parse_ignore_option(args.ignore)
 
     logger.info("processing %s event", GITHUB_EVENT_NAME)
+
+    start_log_group(f"working dir: {os.getcwd()}")
+    logger.debug("\n\t%s", "\n\t".join(list_toc(os.getcwd())))
+    end_log_group()
+
+    start_log_group("ls '/'")
+    logger.debug("\n\t%s", "\n\t".join(list_toc("/")))
+    end_log_group()
+
+    start_log_group("ls '.'")
+    logger.debug("\n\t%s", "\n\t".join(list_toc(".")))
+    end_log_group()
+
+    start_log_group(f"ls {RUNNER_WORKSPACE}")
+    logger.debug("\n\t%s", "\n\t".join(list_toc(RUNNER_WORKSPACE)))
+    end_log_group()
+
+    start_log_group(f"ls {GITHUB_WORKSPACE}")
+    logger.debug("\n\t%s", "\n\t".join(list_toc(GITHUB_WORKSPACE)))
+    end_log_group()
 
     # change working directory
     os.chdir(args.repo_root)
