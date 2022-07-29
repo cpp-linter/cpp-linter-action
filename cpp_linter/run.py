@@ -39,8 +39,11 @@ GITHUB_EVENT_PATH = os.getenv("GITHUB_EVENT_PATH", "")
 GITHUB_API_URL = os.getenv("GITHUB_API_URL", "https://api.github.com")
 GITHUB_REPOSITORY = os.getenv("GITHUB_REPOSITORY", "")
 GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
-RUNNER_WORKSPACE = os.getenv("RUNNER_WORKSPACE", "")
-
+GITHUB_WORKSPACE = os.getenv("GITHUB_WORKSPACE", "")
+IS_USING_DOCKER = os.getenv("CLANG_VERSIONS", "")
+RUNNER_WORKSPACE = (
+    os.getenv("RUNNER_WORKSPACE", "") if not IS_USING_DOCKER else GITHUB_WORKSPACE
+)
 IS_ON_WINDOWS = sys.platform.startswith("win32")
 
 # setup CLI args
@@ -439,13 +442,13 @@ def run_clang_tidy(
     if database:
         cmds.append("-p")
         logger.debug("RUNNER_WORKSPACE = %s", RUNNER_WORKSPACE)
-        if RUNNER_WORKSPACE and not os.path.isabs(database):
+        if not os.path.isabs(database):
             path_to_db = RUNNER_WORKSPACE
             if repo_root and repo_root != ".":
                 path_to_db += os.sep + repo_root
-            cmds.append(os.path.join(path_to_db, database))
+            cmds.append(os.path.abspath(os.path.join(path_to_db, database)))
         else:
-            cmds.append(os.path.abspath(database))
+            cmds.append(database)
     if lines_changed_only:
         ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
         line_ranges = dict(name=filename, lines=file_obj["line_filter"][ranges])
