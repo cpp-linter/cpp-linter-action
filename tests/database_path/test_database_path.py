@@ -1,6 +1,7 @@
 """Tests specific to specifying the compilation database path."""
 import os
 from typing import Optional, List
+from pathlib import Path
 import logging
 import re
 import pytest
@@ -23,18 +24,18 @@ CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
             "",
             [
                 "-p",
-                os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../demo")),
+                str(Path(Path(__file__).parent / "../../demo").resolve()),
                 "../../demo/demo.cpp",
             ],
         ),
         # explicit absolute path to the compilation database
         (
-            os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../demo")),
+            str(Path(Path(__file__).parent / "../../demo")),
             "../../",
             "",
             [
                 "-p",
-                os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../demo")),
+                str(Path(Path(__file__).parent / "../../demo").resolve()),
                 "../../demo/demo.cpp",
             ],
         ),
@@ -42,21 +43,21 @@ CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
         (
             "demo",
             ".",
-            os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../")),
+            str(Path(Path(__file__).parent / "../../").resolve()),
             [
                 "-p",
-                os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../demo")),
+                str(Path(Path(__file__).parent / "../../demo").resolve()),
                 "../../demo/demo.cpp",
             ],
         ),
         # explicit absolute path to the compilation database w/ RUNNER_WORKSPACE
         (
-            os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../demo")),
-            ".",
-            "../../",
+            str(Path(Path(__file__).parent / "../../demo").resolve()),
+            ".",  # overridden by abs path to db
+            str(Path(Path(__file__).parent / "../../").resolve()),
             [
                 "-p",
-                os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../demo")),
+                str(Path(Path(__file__).parent / "../../demo").resolve()),
                 "../../demo/demo.cpp",
             ],
         ),
@@ -70,7 +71,7 @@ def test_db_detection(
     expected_args: List[str],
 ):
     """test clang-tidy using a implicit path to the compilation database."""
-    os.chdir(os.path.split(__file__)[0])
+    os.chdir(str(Path(__file__).parent))
     if runner:
         cpp_linter.run.RUNNER_WORKSPACE = runner
     caplog.set_level(logging.DEBUG, logger=logger.name)
