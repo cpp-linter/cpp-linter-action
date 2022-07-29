@@ -441,9 +441,10 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     if database:
         cmds.append("-p")
-        if IS_USING_DOCKER and os.path.isabs(database):
-            repo_root += os.sep  # temp non-op to make use of the arg
-            database = database.replace(GITHUB_WORKSPACE + os.sep, "")
+        if not os.path.isabs(database):
+            database = os.path.normpath(
+                os.path.join(RUNNER_WORKSPACE, repo_root, database)
+            )
         cmds.append(database)
     if lines_changed_only:
         ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
