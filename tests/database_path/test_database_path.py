@@ -1,6 +1,6 @@
 """Tests specific to specifying the compilation database path."""
 import os
-from typing import Optional, List
+from typing import List
 from pathlib import Path
 import logging
 import re
