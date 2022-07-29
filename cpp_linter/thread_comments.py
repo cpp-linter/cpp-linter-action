@@ -1,6 +1,6 @@
 """A module to house the various functions for traversing/adjusting comments"""
 import os
-from typing import Union, cast, List, Optional
+from typing import Union, cast, List, Optional, Dict, Any
 import json
 import requests
 from . import Globals, GlobalParser, logger, API_HEADERS, GITHUB_SHA, log_response_msg
@@ -59,7 +59,9 @@ def aggregate_tidy_advice() -> list:
             body += diag.name + "**\n>" + diag.message
 
             # get original code
-            filename = cast(str, Globals.FILES[index]["filename"]).replace("/", os.sep)
+            filename = cast(List[Dict[str, str]], Globals.FILES)[index][
+                "filename"
+            ].replace("/", os.sep)
             if not os.path.exists(filename):
                 # the file had to be downloaded (no git checkout).
                 # thus use only the filename (without the path to the file)
@@ -113,7 +115,9 @@ def aggregate_format_advice(lines_changed_only: int = 1) -> list:
     for index, fmt_advice in enumerate(GlobalParser.format_advice):
 
         # get original code
-        filename = cast(str, Globals.FILES[index]["filename"]).replace("/", os.sep)
+        filename = cast(List[Dict[str, str]], Globals.FILES)[index]["filename"].replace(
+            "/", os.sep
+        )
         if not os.path.exists(filename):
             # the file had to be downloaded (no git checkout).
             # thus use only the filename (without the path to the file)
@@ -126,13 +130,9 @@ def aggregate_format_advice(lines_changed_only: int = 1) -> list:
         line = ""  # the line that concerns the fix
         for fixed_line in fmt_advice.replaced_lines:
             # clang-format can include advice that starts/ends outside the diff's domain
-            ranges: List[List[int]] = Globals.FILES[index][  # type: ignore
+            ranges: List[List[int]] = cast(List[Dict[str, Any]], Globals.FILES)[index][
                 "line_filter"
-            ][
-                "diff_chunks"  # type: ignore
-                if lines_changed_only == 1
-                else "lines_added"
-            ]
+            ]["diff_chunks" if lines_changed_only == 1 else "lines_added"]
             for scope in ranges:
                 if fixed_line.line in range(scope[0], scope[1] + 1):
                     break

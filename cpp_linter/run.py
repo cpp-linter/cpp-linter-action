@@ -16,7 +16,7 @@ import sys
 import argparse
 import configparser
 import json
-from typing import cast, List
+from typing import cast, List, Dict, Any
 import requests
 from . import (
     Globals,
@@ -270,7 +270,7 @@ def filter_out_non_source_files(
     for file in (
         Globals.FILES
         if GITHUB_EVENT_NAME == "pull_request"
-        else Globals.FILES["files"]  # type: ignore
+        else cast(Dict[str, Any], Globals.FILES)["files"]
     ):
         if (
             os.path.splitext(file["filename"])[1][1:] in ext_list
@@ -310,8 +310,8 @@ def filter_out_non_source_files(
         )
         if GITHUB_EVENT_NAME == "pull_request":
             Globals.FILES = files
-        else:
-            Globals.FILES["files"] = files  # type: ignore
+        elif isinstance(Globals.FILES, dict):
+            Globals.FILES["files"] = files
         if not os.getenv("CI"):  # if not executed on a github runner
             with open(".changed_files.json", "w", encoding="utf-8") as temp:
                 # dump altered json of changed files
@@ -333,7 +333,7 @@ def verify_files_are_present() -> None:
     for file in (
         Globals.FILES
         if GITHUB_EVENT_NAME == "pull_request"
-        else Globals.FILES["files"]  # type: ignore
+        else cast(Dict[str, Any], Globals.FILES)["files"]
     ):
         file_name = file["filename"].replace("/", os.sep)
         if not os.path.exists(file_name):
@@ -381,12 +381,16 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
                 if not is_file_in_list(
                     ignored_paths, file_path, "ignored"
                 ) or is_file_in_list(not_ignored, file_path, "not ignored"):
-                    Globals.FILES.append({"filename": file_path})
+                    cast(List[Dict[str, Any]], Globals.FILES).append(
+                        {"filename": file_path}
+                    )
 
     if Globals.FILES:
         logger.info(
             "Giving attention to the following files:\n\t%s",
-            "\n\t".join([f["filename"] for f in Globals.FILES]),  # type: ignore
+            "\n\t".join(
+                [f["filename"] for f in cast(List[Dict[str, Any]], Globals.FILES)]
+            ),
         )
     else:
         logger.info("No source files found.")  # this might need to be warning
@@ -396,7 +400,7 @@ def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) ->
 
 def run_clang_tidy(
     filename: str,
-    file_obj: dict,
+    file_obj: Dict[str, Any],
     version: str,
     checks: str,
     lines_changed_only: int,
@@ -428,7 +432,7 @@ def run_clang_tidy(
         if os.path.exists(version + "\\bin"):
             cmds[0] = f"{version}\\bin\\clang-tidy.exe"
     elif not version.isdigit():
-        logger.warning("ignoring invalid version number %s.", version)
+        logger.warning("ignoring invalid version number '%s'.", version)
         cmds[0] = "clang-tidy"
     if checks:
         cmds.append(f"-checks={checks}")
@@ -463,7 +467,11 @@ def run_clang_tidy(
 
 
 def run_clang_format(
-    filename: str, file_obj: dict, version: str, style: str, lines_changed_only: int
+    filename: str,
+    file_obj: Dict[str, Any],
+    version: str,
+    style: str,
+    lines_changed_only: int,
 ) -> None:
     """Run clang-format on a certain file
 
@@ -527,7 +535,7 @@ def capture_clang_tools_output(
     for file in (
         Globals.FILES
         if GITHUB_EVENT_NAME == "pull_request" or isinstance(Globals.FILES, list)
-        else Globals.FILES["files"]  # type: ignore
+        else Globals.FILES["files"]
     ):
         filename = cast(str, file["filename"])
         if not os.path.exists(filename):
@@ -740,7 +748,7 @@ def make_annotations(
     files = (
         Globals.FILES
         if GITHUB_EVENT_NAME == "pull_request"
-        else Globals.FILES["files"]  # type: ignore
+        else cast(Dict[str, Any], Globals.FILES)["files"]
     )
     for advice, file in zip(GlobalParser.format_advice, files):
         if advice.replaced_lines:

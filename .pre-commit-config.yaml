@@ -1,0 +1,31 @@
+repos:
+  - repo: https://github.com/python/black
+    rev: '22.6.0'
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/pylint
+    rev: v2.14.5
+    hooks:
+      - id: pylint
+        name: pylint (action code)
+        types: [python]
+        exclude: "^(docs/|tests/|setup.py$)"
+        additional_dependencies: [pyyaml, requests]
+      - id: pylint
+        name: pylint (test code)
+        description: Run pylint rules on "tests/*.py" files
+        types: [python]
+        files: "^tests/"
+        additional_dependencies: [pyyaml, requests]
+  - repo: local
+    # this is a "local" hook to run mypy (see https://pre-commit.com/#repository-local-hooks)
+    # because the mypy project doesn't seem to be compatible with pre-commit hooks
+    hooks:
+      - id: mypy
+        name: mypy
+        description: type checking with mypy tool
+        language: python
+        types: [python]
+        entry: mypy
+        exclude: "^(docs/|setup.py$)"
+        additional_dependencies: [mypy, types-pyyaml, types-requests, rich]

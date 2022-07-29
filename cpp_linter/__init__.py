@@ -11,9 +11,6 @@ if TYPE_CHECKING:  # Used to avoid circular imports
     from cpp_linter.clang_tidy_yml import YMLFixit
     from cpp_linter.clang_tidy import TidyNotification
 
-# A type alias for custom line filter objects
-LINE_FILTER = Dict[str, List[List[int]]]
-
 FOUND_RICH_LIB = False
 try:
     from rich.logging import RichHandler
@@ -37,9 +34,12 @@ if not FOUND_RICH_LIB:
 IS_ON_RUNNER = bool(os.getenv("CI"))
 GITHUB_SHA = os.getenv("GITHUB_SHA", "")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", os.getenv("GIT_REST_API", ""))
-API_HEADERS = {"Accept": "application/vnd.github.v3.text+json",}
+API_HEADERS = {
+    "Accept": "application/vnd.github.v3.text+json",
+}
 if GITHUB_TOKEN:
     API_HEADERS["Authorization"] = f"token {GITHUB_TOKEN}"
+
 
 class Globals:
     """Global variables for re-use (non-constant)."""
@@ -48,7 +48,7 @@ class Globals:
     """The accumulated output of clang-tidy (gets appended to OUTPUT)"""
     OUTPUT: str = ""
     """The accumulated body of the resulting comment that gets posted."""
-    FILES: List[Dict[str, Union[str, int, LINE_FILTER]]] = []
+    FILES: Union[List[Dict[str, Any]], Dict[str, Any]] = []
     """The responding payload containing info about changed files."""
     EVENT_PAYLOAD: Dict[str, Any] = {}
     """The parsed JSON of the event payload."""
