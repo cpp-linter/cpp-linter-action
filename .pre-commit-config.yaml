@@ -11,12 +11,6 @@ repos:
         types: [python]
         exclude: "^(docs/|tests/|setup.py$)"
         additional_dependencies: [pyyaml, requests]
-      - id: pylint
-        name: pylint (test code)
-        description: Run pylint rules on "tests/*.py" files
-        types: [python]
-        files: "^tests/"
-        additional_dependencies: [pyyaml, requests]
   - repo: local
     # this is a "local" hook to run mypy (see https://pre-commit.com/#repository-local-hooks)
     # because the mypy project doesn't seem to be compatible with pre-commit hooks
@@ -28,4 +22,4 @@ repos:
         types: [python]
         entry: mypy
         exclude: "^(docs/|setup.py$)"
-        additional_dependencies: [mypy, types-pyyaml, types-requests, rich]
+        additional_dependencies: [mypy, types-pyyaml, types-requests, rich, requests, pytest, pyyaml, '.']
