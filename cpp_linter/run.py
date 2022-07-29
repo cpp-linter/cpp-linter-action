@@ -442,7 +442,7 @@ def run_clang_tidy(
     if database:
         cmds.append("-p")
         if not os.path.isabs(database):
-            database = os.path.abspath(
+            database = os.path.normpath(
                 os.path.join(RUNNER_WORKSPACE, repo_root, database)
             )
         cmds.append(database)
