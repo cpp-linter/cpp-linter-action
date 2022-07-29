@@ -444,7 +444,7 @@ def run_clang_tidy(
                 path_to_db += os.sep + repo_root
             cmds.append(os.path.join(path_to_db, database))
         else:
-            cmds.append(database)
+            cmds.append(os.path.abspath(os.path.join(repo_root, database)))
     if lines_changed_only:
         ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
         line_ranges = dict(name=filename, lines=file_obj["line_filter"][ranges])

@@ -17,7 +17,16 @@ CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
         # implicit path to the compilation database
         ("", "../../", "", ["../../demo/demo.cpp"]),
         # explicit relative path to the compilation database
-        ("../../demo", "../../", "", ["-p", "../../demo", "../../demo/demo.cpp"]),
+        (
+            "../../demo",
+            ".",
+            "",
+            [
+                "-p",
+                os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../demo")),
+                "../../demo/demo.cpp",
+            ],
+        ),
         # explicit absolute path to the compilation database
         (
             os.path.abspath(os.path.join(os.path.split(__file__)[0], "../../demo")),
