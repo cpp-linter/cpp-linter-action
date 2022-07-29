@@ -441,14 +441,11 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     if database:
         cmds.append("-p")
-        logger.debug("RUNNER_WORKSPACE = %s", RUNNER_WORKSPACE)
         if not os.path.isabs(database):
-            path_to_db = RUNNER_WORKSPACE
-            if repo_root and repo_root != ".":
-                path_to_db += os.sep + repo_root
-            cmds.append(os.path.abspath(os.path.join(path_to_db, database)))
-        else:
-            cmds.append(database)
+            database = os.path.abspath(
+                os.path.join(RUNNER_WORKSPACE, repo_root, database)
+            )
+        cmds.append(database)
     if lines_changed_only:
         ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
         line_ranges = dict(name=filename, lines=file_obj["line_filter"][ranges])
