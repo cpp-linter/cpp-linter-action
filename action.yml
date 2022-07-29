@@ -81,7 +81,7 @@ runs:
   using: "docker"
   image: "Dockerfile"
   env:
-    USING_CLANG_TOOLS_DOCKER: true
+    USING_CLANG_TOOLS_DOCKER: 'true'
   args:
     - --style=${{ inputs.style }}
     - --extensions=${{ inputs.extensions }}
