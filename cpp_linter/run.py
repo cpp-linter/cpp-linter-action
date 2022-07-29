@@ -42,7 +42,7 @@ GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
 GITHUB_WORKSPACE = os.getenv("GITHUB_WORKSPACE", "")
 IS_USING_DOCKER = os.getenv("USING_CLANG_TOOLS_DOCKER", "")
 RUNNER_WORKSPACE = (
-    os.getenv("RUNNER_WORKSPACE", "") if not IS_USING_DOCKER else GITHUB_WORKSPACE
+    os.getenv("RUNNER_WORKSPACE", "") if IS_USING_DOCKER else GITHUB_WORKSPACE
 )
 IS_ON_WINDOWS = sys.platform.startswith("win32")
 
@@ -750,7 +750,7 @@ def make_annotations(
     count = 0
     files = (
         Globals.FILES
-        if GITHUB_EVENT_NAME == "pull_request"
+        if GITHUB_EVENT_NAME == "pull_request" or isinstance(Globals.FILES, list)
         else cast(Dict[str, Any], Globals.FILES)["files"]
     )
     for advice, file in zip(GlobalParser.format_advice, files):
