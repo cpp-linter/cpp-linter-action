@@ -19,7 +19,7 @@ CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
         ("", "../../", "", ["../../demo/demo.cpp"]),
         # explicit relative path to the compilation database
         (
-            "../../demo",
+            "demo",
             ".",  # only used if RUNNER_WORKSPACE is given
             "",  # RUNNER_WORKSPACE not set
             [
