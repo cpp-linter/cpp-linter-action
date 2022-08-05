@@ -97,7 +97,6 @@ jobs:
           PYTHON: CPy${{ matrix.py }}
           CLANG: LLVM-v${{ matrix.version }}
         with:
-          # token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
           files: ./coverage.xml
           env_vars: OS,PYTHON,CLANG # optional
           fail_ci_if_error: true # optional (default = false)
