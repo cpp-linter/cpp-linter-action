@@ -1,7 +1,7 @@
 """The Base module of the `cpp_linter` package. This holds the objects shared by
 multiple modules."""
 import os
-from pathlib import Path
+import io
 import logging
 from typing import TYPE_CHECKING, List, Dict, Union, Any
 from requests import Response
@@ -85,10 +85,21 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
         - Index 0 is the line number for the given offset.
         - Index 1 is the column number for the given offset on the line.
     """
+    line_cnt = 1
+    last_lf_pos = 0
+    cols = 1
     file_path = file_path.replace("/", os.sep)
     # logger.debug("Getting line count from %s at offset %d", file_path, offset)
-    contents = Path(file_path).read_bytes()[:offset]
-    return (contents.count(b"\n") + 1, offset - contents.rfind(b"\n"))
+    with io.open(file_path, "rb") as src_file:
+        max_len = src_file.seek(0, io.SEEK_END)
+        src_file.seek(0, io.SEEK_SET)
+        while src_file.tell() != offset and src_file.tell() < max_len:
+            char = src_file.read(1)
+            if char == b"\n":
+                line_cnt += 1
+                last_lf_pos = src_file.tell() - 1  # -1 because LF is part of offset
+        cols = src_file.tell() - last_lf_pos
+    return (line_cnt, cols)
 
 
 def range_of_changed_lines(
