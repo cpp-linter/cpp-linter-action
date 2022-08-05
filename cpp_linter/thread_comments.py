@@ -2,8 +2,17 @@
 import os
 from typing import Union, cast, List, Optional, Dict, Any
 import json
+from pathlib import Path
 import requests
-from . import Globals, GlobalParser, logger, API_HEADERS, GITHUB_SHA, log_response_msg
+from . import (
+    Globals,
+    GlobalParser,
+    logger,
+    API_HEADERS,
+    GITHUB_SHA,
+    log_response_msg,
+    range_of_changed_lines,
+)
 
 
 def remove_bot_comments(comments_url: str, user_id: int):
@@ -48,27 +57,25 @@ def remove_bot_comments(comments_url: str, user_id: int):
         json.dump(comments, json_comments, indent=4)
 
 
-def aggregate_tidy_advice() -> list:
+def aggregate_tidy_advice(lines_changed_only: int) -> List[Dict[str, Any]]:
     """Aggregate a list of json contents representing advice from clang-tidy
     suggestions."""
     results = []
-    for index, fixit in enumerate(GlobalParser.tidy_advice):
+    files = Globals.FILES if isinstance(Globals.FILES, list) else Globals.FILES["files"]
+    for fixit, file in zip(GlobalParser.tidy_advice, files):
         for diag in fixit.diagnostics:
+            ranges = range_of_changed_lines(file, lines_changed_only)
+            if lines_changed_only and diag.line not in ranges:
+                continue
+
             # base body of comment
             body = "<!-- cpp linter action -->\n## :speech_balloon: Clang-tidy\n**"
             body += diag.name + "**\n>" + diag.message
 
             # get original code
-            filename = cast(List[Dict[str, str]], Globals.FILES)[index][
-                "filename"
-            ].replace("/", os.sep)
-            if not os.path.exists(filename):
-                # the file had to be downloaded (no git checkout).
-                # thus use only the filename (without the path to the file)
-                filename = os.path.split(filename)[1]
-            lines = []  # the list of lines in a file
-            with open(filename, encoding="utf-8") as temp:
-                lines = temp.readlines()
+            filename = cast(str, file["filename"]).replace("/", os.sep)
+            # the list of lines in a file
+            lines = Path(filename).read_text(encoding="utf-8").splitlines()
 
             # aggregate clang-tidy advice
             suggestion = "\n```suggestion\n"
@@ -97,46 +104,35 @@ def aggregate_tidy_advice() -> list:
                 body += suggestion
 
             results.append(
-                {
-                    "body": body,
-                    "commit_id": GITHUB_SHA,
-                    "line": diag.line,
-                    "path": fixit.filename,
-                    "side": "RIGHT",
-                }
+                dict(
+                    body=body,
+                    commit_id=GITHUB_SHA,
+                    line=diag.line,
+                    path=fixit.filename,
+                    side="RIGHT",
+                )
             )
     return results
 
 
-def aggregate_format_advice(lines_changed_only: int = 1) -> list:
+def aggregate_format_advice(lines_changed_only: int) -> List[Dict[str, Any]]:
     """Aggregate a list of json contents representing advice from clang-format
     suggestions."""
     results = []
-    for index, fmt_advice in enumerate(GlobalParser.format_advice):
+    files = Globals.FILES if isinstance(Globals.FILES, list) else Globals.FILES["files"]
+    for fmt_advice, file in zip(GlobalParser.format_advice, files):
 
         # get original code
-        filename = cast(List[Dict[str, str]], Globals.FILES)[index]["filename"].replace(
-            "/", os.sep
-        )
-        if not os.path.exists(filename):
-            # the file had to be downloaded (no git checkout).
-            # thus use only the filename (without the path to the file)
-            filename = os.path.split(filename)[1]
-        lines = []  # the list of lines from the src file
-        with open(filename, encoding="utf-8") as temp:
-            lines = temp.readlines()
+        filename = cast(str, file["filename"]).replace("/", os.sep)
+        # the list of lines from the src file
+        lines = Path(filename).read_text(encoding="utf-8").splitlines()
 
         # aggregate clang-format suggestion
         line = ""  # the line that concerns the fix
         for fixed_line in fmt_advice.replaced_lines:
             # clang-format can include advice that starts/ends outside the diff's domain
-            ranges: List[List[int]] = cast(List[Dict[str, Any]], Globals.FILES)[index][
-                "line_filter"
-            ]["diff_chunks" if lines_changed_only == 1 else "lines_added"]
-            for scope in ranges:
-                if fixed_line.line in range(scope[0], scope[1] + 1):
-                    break
-            else:
+            ranges = range_of_changed_lines(file, lines_changed_only)
+            if lines_changed_only and fixed_line.line not in ranges:
                 continue  # line is out of scope for diff, so skip this fix
 
             # assemble the suggestion
@@ -162,18 +158,20 @@ def aggregate_format_advice(lines_changed_only: int = 1) -> list:
 
             # create a suggestion from clang-format advice
             results.append(
-                {
-                    "body": body,
-                    "commit_id": GITHUB_SHA,
-                    "line": fixed_line.line,
-                    "path": fmt_advice.filename,
-                    "side": "RIGHT",
-                }
+                dict(
+                    body=body,
+                    commit_id=GITHUB_SHA,
+                    line=fixed_line.line,
+                    path=fmt_advice.filename,
+                    side="RIGHT",
+                )
             )
     return results
 
 
-def concatenate_comments(tidy_advice: list, format_advice: list) -> list:
+def concatenate_comments(
+    tidy_advice: list, format_advice: list
+) -> List[Dict[str, Union[str, int]]]:
     """Concatenate comments made to the same line of the same file."""
     # traverse comments from clang-format
     for index, comment_body in enumerate(format_advice):
@@ -193,17 +191,17 @@ def concatenate_comments(tidy_advice: list, format_advice: list) -> list:
     return tidy_advice + format_advice
 
 
-def list_diff_comments() -> list:
+def list_diff_comments(lines_changed_only: int) -> List[Dict[str, Union[str, int]]]:
     """Aggregate list of comments for use in the event's diff. This function assumes
     that the CLI option `--lines_changed_only` is set to True.
 
     Returns:
         A list of comments (each element as json content).
     """
-    tidy_advice = aggregate_tidy_advice()
-    format_advice = aggregate_format_advice()
-    results = concatenate_comments(tidy_advice, format_advice)
-    return results
+    return concatenate_comments(
+        aggregate_tidy_advice(lines_changed_only),
+        aggregate_format_advice(lines_changed_only),
+    )
 
 
 def get_review_id(reviews_url: str, user_id: int) -> Optional[int]:
@@ -243,7 +241,7 @@ def get_review_id(reviews_url: str, user_id: int) -> Optional[int]:
     return review_id
 
 
-def find_review(reviews: dict, user_id: int) -> Union[int, None]:
+def find_review(reviews: dict, user_id: int) -> Optional[int]:
     """Find a review created by a certain user ID.
 
     Args:

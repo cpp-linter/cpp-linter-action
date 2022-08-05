@@ -2,9 +2,9 @@
 import os
 import re
 from typing import Tuple, Union, List, cast
-from . import GlobalParser, IS_ON_RUNNER  # , logger
+from . import GlobalParser
 
-NOTE_HEADER = re.compile("^(.*):(\d+):(\d+):\s(\w+):(.*)\[(.*)\]$")
+NOTE_HEADER = re.compile(r"^(.*):(\d+):(\d+):\s(\w+):(.*)\[(.*)\]$")
 
 
 class TidyNotification:
@@ -50,17 +50,22 @@ class TidyNotification:
         self.fixit_lines: List[str] = []
 
     def __repr__(self) -> str:
+        concerned_code = ""
+        if self.fixit_lines:
+            concerned_code = "```{}\n{}```\n".format(
+                os.path.splitext(self.filename)[1],
+                "".join(self.fixit_lines),
+            )
         return (
             "<details open>\n<summary><strong>{}:{}:{}:</strong> {}: [{}]"
-            "\n\n> {}\n</summary><p>\n\n```{}\n{}```\n</p>\n</details>\n\n".format(
+            "\n\n> {}\n</summary><p>\n\n{}</p>\n</details>\n\n".format(
                 self.filename,
                 self.line,
                 self.cols,
                 self.note_type,
                 self.diagnostic,
                 self.note_info,
-                os.path.splitext(self.filename)[1],
-                "".join(self.fixit_lines),
+                concerned_code,
             )
         )
 
@@ -75,9 +80,7 @@ class TidyNotification:
             - [A notice message](https://docs.github.com/en/actions/learn-github-
               actions/workflow-commands-for-github-actions#setting-a-notice-message)
         """
-        filename = self.filename
-        if IS_ON_RUNNER:
-            filename = self.filename.replace(os.sep, "/")
+        filename = self.filename.replace("\\", "/")
         return (
             "::{} file={file},line={line},title={file}:{line}:{cols} [{diag}]::"
             "{info}".format(
@@ -106,18 +109,6 @@ def parse_tidy_output() -> None:
                 )
                 GlobalParser.tidy_notes.append(notification)
             elif notification is not None:
+                # append lines of code that are part of
+                # the previous line's notification
                 notification.fixit_lines.append(line)
-
-
-def print_fixits():
-    """Print out all clang-tidy notifications from stdout (which are saved to
-    clang_tidy_report.txt and allocated to
-    [`tidy_notes`][cpp_linter.GlobalParser.tidy_notes]."""
-    for notification in GlobalParser.tidy_notes:
-        print("found", len(GlobalParser.tidy_notes), "tidy_notes")
-        print(repr(notification))
-
-
-if __name__ == "__main__":
-    parse_tidy_output()
-    print_fixits()

@@ -1,7 +1,7 @@
 """The Base module of the `cpp_linter` package. This holds the objects shared by
 multiple modules."""
-import io
 import os
+from pathlib import Path
 import logging
 from typing import TYPE_CHECKING, List, Dict, Union, Any
 from requests import Response
@@ -22,7 +22,7 @@ try:
         handlers=[RichHandler(show_time=False)],
     )
 
-except ImportError:
+except ImportError:  # pragma: no cover
     logging.basicConfig()
 
 #: The logging.Logger object used for outputting data.
@@ -85,21 +85,34 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
         - Index 0 is the line number for the given offset.
         - Index 1 is the column number for the given offset on the line.
     """
-    line_cnt = 1
-    last_lf_pos = 0
-    cols = 1
     file_path = file_path.replace("/", os.sep)
     # logger.debug("Getting line count from %s at offset %d", file_path, offset)
-    with io.open(file_path, "rb") as src_file:
-        max_len = src_file.seek(0, io.SEEK_END)
-        src_file.seek(0, io.SEEK_SET)
-        while src_file.tell() != offset and src_file.tell() < max_len:
-            char = src_file.read(1)
-            if char == b"\n":
-                line_cnt += 1
-                last_lf_pos = src_file.tell() - 1  # -1 because LF is part of offset
-        cols = src_file.tell() - last_lf_pos
-    return (line_cnt, cols)
+    contents = Path(file_path).read_bytes()[:offset]
+    return (contents.count(b"\n") + 1, offset - contents.rfind(b"\n"))
+
+
+def range_of_changed_lines(
+    file_obj: Dict[str, Any], lines_changed_only: int
+) -> List[int]:
+    """Assemble a list of lines changed.
+
+    Args:
+        file_obj: The file's JSON object.
+        lines_changed_only: A flag to indicate the focus of certain lines.
+
+            - 0: focuses on all lines in file.
+            - 1: focuses on any lines shown in the event's diff
+                (may include unchanged lines).
+            - 2: focuses strictly on lines in the diff that contain additions.
+    Returns:
+        A list of line numbers for which to give attention.
+    """
+    if lines_changed_only:
+        ranges = file_obj["line_filter"][
+            "diff_chunks" if lines_changed_only == 1 else "lines_added"
+        ]
+        return [l for r in ranges for l in range(r[0], r[1])]
+    return []
 
 
 def log_response_msg() -> bool:

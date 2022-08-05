@@ -1,0 +1,32 @@
+[run]
+dynamic_context = test_function
+omit=
+    # don't include tests in coverage
+    tests/*
+
+[json]
+pretty_print=true
+
+[html]
+show_contexts=true
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug-only code:
+    def __repr__
+
+    # the point of unit tests is to test parts of main()
+    def main
+
+    # ignore any branch that makes the module executable
+    if __name__ == "__main__"
+
+    # ignore branches specific to type checking
+    if TYPE_CHECKING
+
+    # ignore the local secific debug statement related to not having rich installed
+    if not FOUND_RICH_LIB

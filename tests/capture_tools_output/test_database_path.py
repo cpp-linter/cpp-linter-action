@@ -27,11 +27,12 @@ ABS_DB_PATH = str(Path(Path(__file__).parent / "../../demo").resolve())
 )
 def test_db_detection(
     caplog: pytest.LogCaptureFixture,
+    monkeypatch: pytest.MonkeyPatch,
     database: str,
     expected_args: List[str],
 ):
     """test clang-tidy using a implicit path to the compilation database."""
-    os.chdir(str(Path(__file__).parent))
+    monkeypatch.chdir(str(Path(__file__).parent))
     demo_src = "../../demo/demo.cpp"
     rel_root = str(Path(*Path(__file__).parts[-2:]))
     cpp_linter.run.RUNNER_WORKSPACE = str(

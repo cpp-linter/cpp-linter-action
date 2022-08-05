@@ -4,3 +4,4 @@ mypy
 pylint
 rich
 pytest
+coverage

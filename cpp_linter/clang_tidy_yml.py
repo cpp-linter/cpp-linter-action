@@ -2,7 +2,7 @@
 import os
 from typing import List
 import yaml
-from . import GlobalParser, get_line_cnt_from_cols
+from . import GlobalParser, get_line_cnt_from_cols, logger
 
 
 CWD_HEADER_GUARD = bytes(
@@ -119,7 +119,7 @@ def parse_tidy_suggestions_yml():
             fix = TidyReplacement(line_cnt, cols, replacement["Length"])
             fix.text = bytes(replacement["ReplacementText"], encoding="utf-8")
             if fix.text.startswith(b"header is missing header guard"):
-                print(
+                logger.debug(
                     "filtering header guard suggestion (making relative to repo root)"
                 )
                 fix.text = fix.text.replace(CWD_HEADER_GUARD, b"")
@@ -127,18 +127,3 @@ def parse_tidy_suggestions_yml():
         fixit.diagnostics.append(diag)
         # filter out absolute header guards
     GlobalParser.tidy_advice.append(fixit)
-
-
-def print_fixits():
-    """Print all [`YMLFixit`][cpp_linter.clang_tidy_yml.YMLFixit] objects in
-    [`tidy_advice`][cpp_linter.GlobalParser.tidy_advice]."""
-    for fix in GlobalParser.tidy_advice:
-        for diag in fix.diagnostics:
-            print(repr(diag))
-            for replac in diag.replacements:
-                print("    " + repr(replac), f"\n\treplace text:\n{replac.text}")
-
-
-if __name__ == "__main__":
-    parse_tidy_suggestions_yml()
-    print_fixits()

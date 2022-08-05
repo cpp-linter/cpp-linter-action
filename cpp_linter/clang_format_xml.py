@@ -1,6 +1,6 @@
 """Parse output from clang-format's XML suggestions."""
 import os
-from typing import List
+from typing import List, Optional
 import xml.etree.ElementTree as ET
 from . import GlobalParser, get_line_cnt_from_cols
 
@@ -83,7 +83,7 @@ class XMLFixit:
             f"replacements for {self.filename}>"
         )
 
-    def log_command(self, style: str, line_filter: List[List[int]]) -> str:
+    def log_command(self, style: str, line_filter: List[int]) -> Optional[str]:
         """Output a notification as a github log command.
 
         !!! info See Also
@@ -107,10 +107,10 @@ class XMLFixit:
                 style = style.title()
         line_list = []
         for fix in self.replaced_lines:
-            for line_range in line_filter:
-                if fix.line in range(*line_range):
-                    line_list.append(str(fix.line))
-                    break
+            if not line_filter or (line_filter and fix.line in line_filter):
+                line_list.append(str(fix.line))
+        if not line_list:
+            return None
         return (
             "::notice file={name},title=Run clang-format on {name}::"
             "File {name} (lines {lines}): Code does not conform to {style_guide} "
@@ -148,21 +148,3 @@ def parse_format_replacements_xml(src_filename: str):
             elif fixit.replaced_lines and line == fixit.replaced_lines[-1].line:
                 fixit.replaced_lines[-1].replacements.append(fix)
     GlobalParser.format_advice.append(fixit)
-
-
-def print_fixits():
-    """Print all [`XMLFixit`][cpp_linter.clang_format_xml.XMLFixit] objects in
-    [`format_advice`][cpp_linter.GlobalParser.format_advice]."""
-    for fixit in GlobalParser.format_advice:
-        print(repr(fixit))
-        for line_fix in fixit.replaced_lines:
-            print("    " + repr(line_fix))
-            for fix in line_fix.replacements:
-                print("\t" + repr(fix))
-
-
-if __name__ == "__main__":
-    import sys
-
-    parse_format_replacements_xml(sys.argv[1])
-    print_fixits()

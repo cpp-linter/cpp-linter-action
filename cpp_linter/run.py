@@ -16,7 +16,7 @@ import sys
 import argparse
 import configparser
 import json
-from typing import cast, List, Dict, Any
+from typing import cast, List, Dict, Any, Tuple
 import requests
 from . import (
     Globals,
@@ -27,10 +27,11 @@ from . import (
     GITHUB_SHA,
     API_HEADERS,
     log_response_msg,
+    range_of_changed_lines,
 )
 from .clang_tidy_yml import parse_tidy_suggestions_yml
 from .clang_format_xml import parse_format_replacements_xml
-from .clang_tidy import parse_tidy_output
+from .clang_tidy import parse_tidy_output, TidyNotification
 from .thread_comments import remove_bot_comments, list_diff_comments  # , get_review_id
 
 
@@ -88,8 +89,8 @@ cli_arg_parser.add_argument(
     "--version",
     default="",
     help="The desired version of the clang tools to use. Accepted options are strings "
-    "which can be 8, 9, 10, 11, 12, 13, 14. Defaults to %(default)s. On Windows, this "
-    "can also be a path to the install location of LLVM",
+    "which can be 8, 9, 10, 11, 12, 13, 14. Defaults to '%(default)s'. On Windows, "
+    "this can also be a path to the install location of LLVM",
 )
 cli_arg_parser.add_argument(
     "-e",
@@ -166,12 +167,11 @@ def set_exit_code(override: int = None) -> int:
 
 
 # setup a separate logger for using github log commands
-log_commander = logger.getChild("LOG COMMANDER")  # create a child of our logger obj
+log_commander = logging.getLogger("LOG COMMANDER")  # create a child of our logger obj
 log_commander.setLevel(logging.DEBUG)  # be sure that log commands are output
 console_handler = logging.StreamHandler()  # Create special stdout stream handler
 console_handler.setFormatter(logging.Formatter("%(message)s"))  # no formatted log cmds
-log_commander.addHandler(console_handler)  # Use special handler for log_commander
-log_commander.propagate = False  # prevent duplicate messages in the parent logger obj
+log_commander.handlers = [console_handler]  # Use special handler for log_commander
 
 
 def start_log_group(name: str) -> None:
@@ -188,7 +188,7 @@ def end_log_group() -> None:
     log_commander.fatal("::endgroup::")
 
 
-def is_file_in_list(paths: list, file_name: str, prompt: str) -> bool:
+def is_file_in_list(paths: List[str], file_name: str, prompt: str) -> bool:
     """Determine if a file is specified in a list of paths and/or filenames.
 
     Args:
@@ -250,10 +250,9 @@ def consolidate_list_to_ranges(just_numbers: List[int]) -> List[List[int]]:
 
 
 def filter_out_non_source_files(
-    ext_list: list,
-    ignored: list,
-    not_ignored: list,
-    lines_changed_only: int,
+    ext_list: List[str],
+    ignored: List[str],
+    not_ignored: List[str],
 ) -> bool:
     """Exclude undesired files (specified by user input 'extensions'). This filter
     applies to the event's [`FILES`][cpp_linter.Globals.FILES] attribute.
@@ -283,7 +282,7 @@ def filter_out_non_source_files(
                 or is_file_in_list(not_ignored, file["filename"], "not ignored")
             )
         ):
-            if lines_changed_only and "patch" in file.keys():
+            if "patch" in file.keys():
                 # get diff details for the file's changes
                 # ranges is a list of start/end line numbers shown in the diff
                 ranges: List[List[int]] = []
@@ -349,7 +348,9 @@ def verify_files_are_present() -> None:
                 temp.write(Globals.response_buffer.text)
 
 
-def list_source_files(ext_list: list, ignored_paths: list, not_ignored: list) -> bool:
+def list_source_files(
+    ext_list: List[str], ignored_paths: List[str], not_ignored: List[str]
+) -> bool:
     """Make a list of source files to be checked. The resulting list is stored in
     [`FILES`][cpp_linter.Globals.FILES].
 
@@ -462,7 +463,7 @@ def run_clang_tidy(
     if os.path.getsize("clang_tidy_output.yml"):
         parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
     if results.stderr:
-        logger.info(
+        logger.debug(
             "clang-tidy made the following summary:\n%s", results.stderr.decode()
         )
 
@@ -485,6 +486,9 @@ def run_clang_format(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
     """
+    if not style:  # if `style` == ""
+        with open("clang_format_output.xml", "wb"):
+            return  # clear any previous output and exit
     cmds = [
         "clang-format" + ("" if not version else f"-{version}"),
         f"-style={style}",
@@ -507,16 +511,68 @@ def run_clang_format(
     with open("clang_format_output.xml", "wb") as f_out:
         f_out.write(results.stdout)
     if results.returncode:
-        logger.warning(
+        logger.debug(
             "%s raised the following error(s):\n%s", cmds[0], results.stderr.decode()
         )
+
+
+def create_comment_body(
+    filename: str,
+    file_obj: Dict[str, Any],
+    lines_changed_only: int,
+    tidy_notes: List[TidyNotification],
+):
+    """Create the content for a thread comment about a certain file.
+    This is a helper function to [`capture_clang_tools_output()`].
+
+    Args:
+        filename: The file's name (& path).
+        file_obj: The file's JSON `dict`.
+        lines_changed_only: A flag used to filter the comment based on line changes.
+        tidy_notes: A list of cached notifications from clang-tidy. This is used to
+            avoid duplicated content in comment, and it is later used again by
+            [`make_annotations()`] after [`capture_clang_tools_output()`] us finished.
+    """
+    ranges = range_of_changed_lines(file_obj, lines_changed_only)
+    if os.path.getsize("clang_tidy_report.txt"):
+        parse_tidy_output()  # get clang-tidy fixes from stdout
+        comment_output = ""
+        if Globals.PAYLOAD_TIDY:
+            Globals.PAYLOAD_TIDY += "<hr></details>"
+        for fix in GlobalParser.tidy_notes:
+            if lines_changed_only and fix.line not in ranges:
+                continue
+            comment_output += repr(fix)
+            tidy_notes.append(fix)
+        if comment_output:
+            Globals.PAYLOAD_TIDY += f"<details><summary>{filename}</summary><br>\n"
+            Globals.PAYLOAD_TIDY += comment_output
+        GlobalParser.tidy_notes.clear()  # empty list to avoid duplicated output
+
+    if os.path.getsize("clang_format_output.xml"):
+        parse_format_replacements_xml(filename.replace("/", os.sep))
+        if GlobalParser.format_advice and GlobalParser.format_advice[-1].replaced_lines:
+            should_comment = lines_changed_only == 0
+            if not should_comment:
+                for line in [
+                    replacement.line
+                    for replacement in GlobalParser.format_advice[-1].replaced_lines
+                ]:
+                    if line in ranges:
+                        should_comment = True
+                        break
+            if should_comment:
+                if not Globals.OUTPUT:
+                    Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
+                    Globals.OUTPUT += "Run `clang-format` on the following files\n"
+                Globals.OUTPUT += f"- [ ] {file_obj['filename']}\n"
 
 
 def capture_clang_tools_output(
     version: str,
     checks: str,
     style: str,
-    lines_changed_only: bool,
+    lines_changed_only: int,
     database: str,
     repo_root: str,
 ):
@@ -532,7 +588,8 @@ def capture_clang_tools_output(
         lines_changed_only: A flag that forces focus on only changes in the event's
             diff info.
     """
-    tidy_notes = []  # temporary cache of parsed notifications for use in log commands
+    # temporary cache of parsed notifications for use in log commands
+    tidy_notes: List[TidyNotification] = []
     for file in (
         Globals.FILES
         if GITHUB_EVENT_NAME == "pull_request" or isinstance(Globals.FILES, list)
@@ -547,27 +604,8 @@ def capture_clang_tools_output(
         )
         run_clang_format(filename, file, version, style, lines_changed_only)
         end_log_group()
-        if os.path.getsize("clang_tidy_report.txt"):
-            parse_tidy_output()  # get clang-tidy fixes from stdout
-            if Globals.PAYLOAD_TIDY:
-                Globals.PAYLOAD_TIDY += "<hr></details>"
-            Globals.PAYLOAD_TIDY += f"<details><summary>{filename}</summary><br>\n"
-            for fix in GlobalParser.tidy_notes:
-                Globals.PAYLOAD_TIDY += repr(fix)
-            for note in GlobalParser.tidy_notes:
-                tidy_notes.append(note)
-            GlobalParser.tidy_notes.clear()  # empty list to avoid duplicated output
 
-        if os.path.getsize("clang_format_output.xml"):
-            parse_format_replacements_xml(filename.replace("/", os.sep))
-            if (
-                GlobalParser.format_advice
-                and GlobalParser.format_advice[-1].replaced_lines
-            ):
-                if not Globals.OUTPUT:
-                    Globals.OUTPUT = "<!-- cpp linter action -->\n## :scroll: "
-                    Globals.OUTPUT += "Run `clang-format` on the following files\n"
-                Globals.OUTPUT += f"- [ ] {file['filename']}\n"
+        create_comment_body(filename, file, lines_changed_only, tidy_notes)
 
     if Globals.PAYLOAD_TIDY:
         if not Globals.OUTPUT:
@@ -618,7 +656,7 @@ def post_diff_comments(base_url: str, user_id: int) -> bool:
         output value (a soft exit code).
     """
     comments_url = base_url + "pulls/comments/"  # for use with comment_id
-    payload = list_diff_comments()
+    payload = list_diff_comments(2)  # only focus on additions in diff
     logger.info("Posting %d comments", len(payload))
 
     # uncomment the next 3 lines for debug output without posting a comment
@@ -743,8 +781,6 @@ def make_annotations(
         style: The chosen code style guidelines. The value 'file' is replaced with
             'custom style'.
     """
-    # log_commander obj's verbosity is hard-coded to show debug statements
-    ret_val = False
     count = 0
     files = (
         Globals.FILES
@@ -752,26 +788,31 @@ def make_annotations(
         else cast(Dict[str, Any], Globals.FILES)["files"]
     )
     for advice, file in zip(GlobalParser.format_advice, files):
+        line_filter = range_of_changed_lines(file, lines_changed_only)
         if advice.replaced_lines:
-            ret_val = True
-            line_filter = []
-            if lines_changed_only == 1:
-                line_filter = file["line_filter"]["diff_chunks"]
-            elif lines_changed_only == 2:
-                line_filter = file["line_filter"]["lines_added"]
             if file_annotations:
-                log_commander.info(advice.log_command(style, line_filter))
-            count += 1
+                output = advice.log_command(style, line_filter)
+                if output is not None:
+                    log_commander.info(output)
+                    count += 1
     for note in GlobalParser.tidy_notes:
-        ret_val = True
-        if file_annotations:
+        if lines_changed_only:
+            filename = note.filename.replace("\\", "/")
+            for file in files:
+                if filename == file["filename"]:
+                    line_filter = range_of_changed_lines(file, lines_changed_only)
+            if note.line in line_filter:
+                count += 1
+                log_commander.info(note.log_command())
+        else:
+            count += 1
             log_commander.info(note.log_command())
         count += 1
     logger.info("Created %d annotations", count)
-    return ret_val
+    return bool(count)
 
 
-def parse_ignore_option(paths: str) -> tuple:
+def parse_ignore_option(paths: str) -> Tuple[List[str], List[str]]:
     """Parse a given string of paths (separated by a '|') into `ignored` and
     `not_ignored` lists of strings.
 
@@ -819,18 +860,6 @@ def parse_ignore_option(paths: str) -> tuple:
     return (ignored, not_ignored)
 
 
-def list_toc(dir_name: str) -> List[str]:
-    """pythonic ls implementation."""
-    result = []
-    for _, dirs, files in os.walk(dir_name):
-        for name in dirs:
-            result.append(name)
-        for name in files:
-            result.append(name)
-        break  # shallow depth
-    return result
-
-
 def main():
     """The main script."""
 
@@ -844,26 +873,6 @@ def main():
     ignored, not_ignored = parse_ignore_option(args.ignore)
 
     logger.info("processing %s event", GITHUB_EVENT_NAME)
-
-    start_log_group(f"working dir: {os.getcwd()}")
-    logger.debug("\n\t%s", "\n\t".join(list_toc(os.getcwd())))
-    end_log_group()
-
-    start_log_group("ls '/'")
-    logger.debug("\n\t%s", "\n\t".join(list_toc("/")))
-    end_log_group()
-
-    start_log_group("ls '.'")
-    logger.debug("\n\t%s", "\n\t".join(list_toc(".")))
-    end_log_group()
-
-    start_log_group(f"ls {RUNNER_WORKSPACE}")
-    logger.debug("\n\t%s", "\n\t".join(list_toc(RUNNER_WORKSPACE)))
-    end_log_group()
-
-    start_log_group(f"ls {GITHUB_WORKSPACE}")
-    logger.debug("\n\t%s", "\n\t".join(list_toc(GITHUB_WORKSPACE)))
-    end_log_group()
 
     # change working directory
     os.chdir(args.repo_root)
@@ -883,7 +892,6 @@ def main():
             args.extensions,
             ignored,
             not_ignored,
-            args.lines_changed_only,
         )
         if not exit_early:
             verify_files_are_present()

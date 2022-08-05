@@ -59,7 +59,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 tests/*/test*.json
-tests/lines_changed_only/**/*.c
+tests/**/*.c
 
 # Translations
 *.mo

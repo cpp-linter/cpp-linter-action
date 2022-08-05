@@ -1,23 +1,31 @@
 """Tests that focus on the ``ignore`` option's parsing."""
-import os
-from cpp_linter.run import parse_ignore_option
+from pathlib import Path
+from typing import List
+import pytest
+from cpp_linter.run import parse_ignore_option, is_file_in_list
 
 
-def test_ignored():
+@pytest.mark.parametrize(
+    "user_in,is_ignored,is_not_ignored,expected",
+    [
+        ("src", "src", "src", [True, False]),
+        ("!src|./", "", "src", [True, True]),
+    ],
+)
+def test_ignore(
+    user_in: str, is_ignored: str, is_not_ignored: str, expected: List[bool]
+):
     """test ignoring of a specified path."""
-    ignored, not_ignored = parse_ignore_option("src")
-    assert "src" in ignored and not not_ignored
+    ignored, not_ignored = parse_ignore_option(user_in)
+    assert expected == [
+        is_file_in_list(ignored, is_ignored, "ignored"),
+        is_file_in_list(not_ignored, is_not_ignored, "not ignored"),
+    ]
 
 
-def test_not_ignored():
-    """test explicit inclusion of a path and ignore the root path."""
-    ignored, not_ignored = parse_ignore_option("!src|")
-    assert "src" in not_ignored and "" in ignored
-
-
-def test_ignore_submodule():
+def test_ignore_submodule(monkeypatch: pytest.MonkeyPatch):
     """test auto detection of submodules and ignore the paths appropriately."""
-    os.chdir(os.path.split(__file__)[0])
+    monkeypatch.chdir(str(Path(__file__).parent))
     ignored, not_ignored = parse_ignore_option("!pybind11")
     for ignored_submodule in ["RF24", "RF24Network", "RF24Mesh"]:
         assert ignored_submodule in ignored
