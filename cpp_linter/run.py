@@ -16,7 +16,7 @@ import sys
 import argparse
 import configparser
 import json
-from typing import cast, List, Dict, Any, Tuple
+from typing import cast, List, Dict, Any  # , Tuple
 import requests
 from . import (
     Globals,
@@ -171,7 +171,7 @@ log_commander = logging.getLogger("LOG COMMANDER")  # create a child of our logg
 log_commander.setLevel(logging.DEBUG)  # be sure that log commands are output
 console_handler = logging.StreamHandler()  # Create special stdout stream handler
 console_handler.setFormatter(logging.Formatter("%(message)s"))  # no formatted log cmds
-log_commander.handlers = [console_handler]  # Use special handler for log_commander
+log_commander.addHandler(console_handler)  # Use special handler for log_commander
 
 
 def start_log_group(name: str) -> None:
@@ -261,8 +261,6 @@ def filter_out_non_source_files(
         ext_list: A list of file extensions that are to be examined.
         ignored: A list of paths to explicitly ignore.
         not_ignored: A list of paths to explicitly not ignore.
-        lines_changed_only: A flag that forces focus on only changes in the event's
-            diff info.
 
     Returns:
         True if there are files to check. False will invoke a early exit (in
@@ -812,7 +810,7 @@ def make_annotations(
     return bool(count)
 
 
-def parse_ignore_option(paths: str) -> Tuple[List[str], List[str]]:
+def parse_ignore_option(paths: str) -> tuple:  # -> Tuple[List[str], List[str]]:
     """Parse a given string of paths (separated by a '|') into `ignored` and
     `not_ignored` lists of strings.
 
