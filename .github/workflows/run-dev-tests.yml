@@ -50,8 +50,8 @@ jobs:
           - os: 'ubuntu-latest'
             version: '13'
             tools_dir: temp
-          - version: '14'
-            tools_dir: temp
+          # - version: '14'
+          #   tools_dir: temp
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -64,40 +64,29 @@ jobs:
       - name: Install workflow deps
         run: python3 -m pip install pytest coverage .
 
-      # - name: Install clang-tools
-      #   if: matrix.tools_dir == 'temp'
-      #   run: |
-      #     python -m pip install clang-tools
-      #     clang-tools --install ${{ matrix.version }} --directory ${{ runner.temp }}/llvm
-      
       - name: Install clang-tools
-        uses: KyleMayes/install-llvm-action@v1
         if: matrix.tools_dir == 'temp'
-        with:
-          version: ${{ matrix.version }}
-          directory: ${{ runner.temp }}/llvm
+        run: |
+          python -m pip install -i https://test.pypi.org/simple/ clang-tools
+          clang-tools --install ${{ matrix.version }}  --directory ${{ runner.temp }}/clang-tools
 
-      - name: Collect Coverage (native clang)
-        if: matrix.tools_dir == 'N/A' || matrix.os == 'ubuntu-latest'
+      - name: Collect Coverage (native clang install)
+        if: matrix.tools_dir == 'N/A'
         env:
           CLANG_VERSION: ${{ matrix.version }}
         run: coverage run -m pytest -vv tests
 
-      - name: Collect Coverage (non-native clang windows)
-        if: matrix.tools_dir == 'temp' && matrix.os == 'windows-latest'
+      - name: Collect Coverage (non-native clang install)
+        if: matrix.tools_dir == 'temp'
         env:
-          CLANG_VERSION: ${{ runner.temp }}/llvm
+          CLANG_VERSION: ${{ runner.temp }}/clang-tools
         run: coverage run -m pytest -vv tests
 
       - run: coverage report && coverage xml
 
       - uses: codecov/codecov-action@v3
-        env:
-          OS: ${{ matrix.os }}
-          PYTHON: CPy${{ matrix.py }}
-          CLANG: LLVM-v${{ matrix.version }}
+        if: matrix.os == 'ubuntu-latest' && matrix.version == '12'
         with:
           files: ./coverage.xml
-          env_vars: OS,PYTHON,CLANG # optional
           fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)

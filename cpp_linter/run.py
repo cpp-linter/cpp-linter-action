@@ -28,6 +28,7 @@ from . import (
     API_HEADERS,
     log_response_msg,
     range_of_changed_lines,
+    assemble_version_exec,
 )
 from .clang_tidy_yml import parse_tidy_suggestions_yml
 from .clang_format_xml import parse_format_replacements_xml
@@ -43,7 +44,6 @@ GITHUB_EVENT_NAME = os.getenv("GITHUB_EVENT_NAME", "unknown")
 GITHUB_WORKSPACE = os.getenv("GITHUB_WORKSPACE", "")
 IS_USING_DOCKER = os.getenv("USING_CLANG_TOOLS_DOCKER", os.getenv("CLANG_VERSIONS"))
 RUNNER_WORKSPACE = "/github/workspace" if IS_USING_DOCKER else GITHUB_WORKSPACE
-IS_ON_WINDOWS = sys.platform.startswith("win32")
 
 # setup CLI args
 cli_arg_parser = argparse.ArgumentParser(
@@ -426,16 +426,9 @@ def run_clang_tidy(
             return
     filename = filename.replace("/", os.sep)
     cmds = [
-        "clang-tidy" + ("" if not version else f"-{version}"),
+        assemble_version_exec("clang-tidy", version),
         "--export-fixes=clang_tidy_output.yml",
     ]
-    if IS_ON_WINDOWS:
-        cmds[0] = "clang-tidy"
-        if os.path.exists(version + "\\bin"):
-            cmds[0] = f"{version}\\bin\\clang-tidy.exe"
-    elif not version.isdigit():
-        logger.warning("ignoring invalid version number '%s'.", version)
-        cmds[0] = "clang-tidy"
     if checks:
         cmds.append(f"-checks={checks}")
     if database:
@@ -488,17 +481,10 @@ def run_clang_format(
         with open("clang_format_output.xml", "wb"):
             return  # clear any previous output and exit
     cmds = [
-        "clang-format" + ("" if not version else f"-{version}"),
+        assemble_version_exec("clang-format", version),
         f"-style={style}",
         "--output-replacements-xml",
     ]
-    if IS_ON_WINDOWS:
-        cmds[0] = "clang-format"
-        if os.path.exists(version + "\\bin"):
-            cmds[0] = f"{version}\\bin\\clang-format.exe"
-    elif not version.isdigit():
-        logger.warning("ignoring invalid version number %s.", version)
-        cmds[0] = "clang-format"
     if lines_changed_only:
         ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
         for line_range in file_obj["line_filter"][ranges]:

@@ -2,6 +2,7 @@
 multiple modules."""
 import os
 from pathlib import Path
+import platform
 import logging
 from typing import TYPE_CHECKING, List, Dict, Union, Any
 from requests import Response
@@ -39,6 +40,7 @@ API_HEADERS = {
 }
 if GITHUB_TOKEN:
     API_HEADERS["Authorization"] = f"token {GITHUB_TOKEN}"
+IS_ON_WINDOWS = platform.system().lower() == "windows"
 
 
 class Globals:
@@ -128,3 +130,31 @@ def log_response_msg() -> bool:
         )
         return False
     return True
+
+
+def assemble_version_exec(tool_name: str, specified_version: str) -> str:
+    """Assembles the command to the executable of the given clang tool based on given
+    version information.
+
+    Args:
+        tool_name: The name of the clang tool to be executed.
+        specified_version: The version number or the installed path to a version of
+            the tool's executable.
+    """
+    suffix = ".exe" if IS_ON_WINDOWS else ""
+    if specified_version.isdigit():  # version info is not a path
+        # let's assume the exe is in the PATH env var
+        if IS_ON_WINDOWS:
+            # installs don't usually append version number to exe name on Windows
+            return f"{tool_name}{suffix}"  # omit version number
+        return f"{tool_name}-{specified_version}{suffix}"
+    version_path = Path(specified_version).resolve()  # make absolute
+    for path in [
+        # if installed via KyleMayes/install-llvm-action using the `directory` option
+        version_path / "bin" / (tool_name + suffix),
+        # if installed via clang-tools-pip pkg using the `-d` option
+        version_path / (tool_name + suffix),
+    ]:
+        if path.exists():
+            return str(path)
+    return tool_name + suffix
