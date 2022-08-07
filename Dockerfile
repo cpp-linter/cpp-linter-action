@@ -15,7 +15,7 @@ LABEL maintainer="shenxianpeng <20297606+shenxianpeng@users.noreply.github.com>"
 RUN apt-get update && apt-get -y install python3-pip
 
 COPY cpp_linter/ pkg/cpp_linter/
-COPY setup.py pkg/setup.py
+COPY pyproject.toml pkg/pyproject.toml
 RUN python3 -m pip install pkg/
 
 # github action args use the CMD option
