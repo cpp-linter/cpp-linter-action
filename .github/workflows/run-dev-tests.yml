@@ -32,7 +32,7 @@ jobs:
       matrix:
         py: ['3.7', '3.8', '3.9', '3.10']
         os: ['windows-latest', ubuntu-latest]
-        version: ['14', '13', '12', '11', '10']
+        version: ['13', '12', '11', '10']
         include:
           - tools_dir: 'N/A'
           - os: 'windows-latest'

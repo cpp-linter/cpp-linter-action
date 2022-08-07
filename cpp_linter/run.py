@@ -782,16 +782,19 @@ def make_annotations(
     for note in GlobalParser.tidy_notes:
         if lines_changed_only:
             filename = note.filename.replace("\\", "/")
+            line_filter = []
             for file in files:
                 if filename == file["filename"]:
                     line_filter = range_of_changed_lines(file, lines_changed_only)
+                    break
+            else:
+                continue
             if note.line in line_filter:
                 count += 1
                 log_commander.info(note.log_command())
         else:
             count += 1
             log_commander.info(note.log_command())
-        count += 1
     logger.info("Created %d annotations", count)
     return bool(count)
 
