@@ -1,5 +1,5 @@
 <p align="center">
-<img src="docs/images/logo_nobg.png" alt="icon">
+<img src="https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/logo_nobg.png" alt="icon">
 </p>
 <!--intro-start-->
 
@@ -44,8 +44,7 @@ jobs:
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
-        run: |
-          echo "Some files failed the linting checks!"
+        run: echo "Some files failed the linting checks!"
         # for actual deployment
         # run: exit 1
 ```
@@ -236,13 +235,13 @@ is equivalent to
 
 ### Annotations
 
-![clang-format annotations](./docs/images/annotations-clang-format.png)
+![clang-format annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/annotations-clang-format.png)
 
-![clang-tidy annotations](./docs/images/annotations-clang-tidy.png)
+![clang-tidy annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/annotations-clang-tidy.png)
 
 ### Thread Comment
 
-![sample comment](./docs/images/comment.png)
+![sample comment](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/comment.png)
 
 <!--footer-start-->
 

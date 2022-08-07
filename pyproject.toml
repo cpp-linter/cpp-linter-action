@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cpp_linter"
-description = "Install clang-tools (clang-format, clang-tidy) with pip"
+description = "Run clang-format and clang-tidy on a batch of files."
 readme = "README.md"
-keywords = ["clang", "clang-tools", "clang-extra", "clang-tidy", "clang-format"]
+keywords = ["clang", "clang-tools", "linter", "clang-tidy", "clang-format"]
 license = {text = "MIT License"}
 authors = [
     { name = "Brendan Doherty", email = "2bndy5@gmail.com" },
