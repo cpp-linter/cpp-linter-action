@@ -11,6 +11,7 @@ the entrypoint.
         https://docs.github.com/en/rest/reference/issues)
 """
 import subprocess
+from pathlib import Path
 import os
 import sys
 import argparse
@@ -172,6 +173,7 @@ log_commander.setLevel(logging.DEBUG)  # be sure that log commands are output
 console_handler = logging.StreamHandler()  # Create special stdout stream handler
 console_handler.setFormatter(logging.Formatter("%(message)s"))  # no formatted log cmds
 log_commander.addHandler(console_handler)  # Use special handler for log_commander
+log_commander.propagate = False
 
 
 def start_log_group(name: str) -> None:
@@ -864,9 +866,11 @@ def main():
     # change working directory
     os.chdir(args.repo_root)
 
+    if GITHUB_EVENT_PATH:
     # load event's json info about the workflow run
-    with open(GITHUB_EVENT_PATH, "r", encoding="utf-8") as payload:
-        Globals.EVENT_PAYLOAD = json.load(payload)
+        Globals.EVENT_PAYLOAD = json.load(
+            Path(GITHUB_EVENT_PATH).read_text(encoding="utf-8")
+        )
     if logger.getEffectiveLevel() <= logging.DEBUG:
         start_log_group("Event json from the runner")
         logger.debug(json.dumps(Globals.EVENT_PAYLOAD))
@@ -899,7 +903,7 @@ def main():
 
     start_log_group("Posting comment(s)")
     thread_comments_allowed = True
-    if "private" in Globals.EVENT_PAYLOAD["repository"]:
+    if GITHUB_EVENT_PATH and "private" in Globals.EVENT_PAYLOAD["repository"]:
         thread_comments_allowed = (
             Globals.EVENT_PAYLOAD["repository"]["private"] is not True
         )

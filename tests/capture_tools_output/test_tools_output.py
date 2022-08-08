@@ -114,6 +114,7 @@ def test_format_annotations(
     )
     assert "Output from `clang-tidy`" not in cpp_linter.Globals.OUTPUT
     caplog.set_level(logging.INFO, logger=log_commander.name)
+    log_commander.propagate = True
     make_annotations(
         style=style, file_annotations=True, lines_changed_only=lines_changed_only
     )
@@ -162,6 +163,7 @@ def test_tidy_annotations(
     )
     assert "Run `clang-format` on the following files" not in cpp_linter.Globals.OUTPUT
     caplog.set_level(logging.INFO, logger=log_commander.name)
+    log_commander.propagate = True
     make_annotations(
         style="", file_annotations=True, lines_changed_only=lines_changed_only
     )

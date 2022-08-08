@@ -32,6 +32,7 @@ def test_exit_implicit():
 def test_end_group(caplog: pytest.LogCaptureFixture):
     """Test the output that concludes a group of runner logs."""
     caplog.set_level(logging.INFO, logger=log_commander.name)
+    log_commander.propagate = True
     end_log_group()
     messages = caplog.messages
     assert "::endgroup::" in messages
@@ -41,6 +42,7 @@ def test_end_group(caplog: pytest.LogCaptureFixture):
 def test_start_group(caplog: pytest.LogCaptureFixture):
     """Test the output that begins a group of runner logs."""
     caplog.set_level(logging.INFO, logger=log_commander.name)
+    log_commander.propagate = True
     start_log_group("TEST")
     messages = caplog.messages
     assert "::group::TEST" in messages
