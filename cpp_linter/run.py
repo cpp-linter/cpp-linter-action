@@ -27,6 +27,7 @@ from . import (
     GITHUB_TOKEN,
     GITHUB_SHA,
     API_HEADERS,
+    IS_ON_RUNNER,
     log_response_msg,
     range_of_changed_lines,
     assemble_version_exec,
@@ -314,10 +315,12 @@ def filter_out_non_source_files(
             Globals.FILES = files
         else:
             cast(Dict[str, Any], Globals.FILES)["files"] = files
-        if not os.getenv("CI"):  # if not executed on a github runner
-            with open(".changed_files.json", "w", encoding="utf-8") as temp:
-                # dump altered json of changed files
-                json.dump(Globals.FILES, temp, indent=2)
+        if not IS_ON_RUNNER:  # if not executed on a github runner
+            # dump altered json of changed files
+            Path(".changed_files.json").write_text(
+                json.dumps(Globals.FILES, indent=2),
+                encoding="utf-8",
+            )
     else:
         logger.info("No source files need checking!")
         return False
@@ -344,8 +347,7 @@ def verify_files_are_present() -> None:
             Globals.response_buffer = requests.get(file["raw_url"])
             # retain the repo's original structure
             os.makedirs(os.path.split(file_name)[0], exist_ok=True)
-            with open(file_name, "w", encoding="utf-8") as temp:
-                temp.write(Globals.response_buffer.text)
+            Path(file_name).write_text(Globals.response_buffer.text, encoding="utf-8")
 
 
 def list_source_files(
@@ -424,8 +426,8 @@ def run_clang_tidy(
     """
     if checks == "-*":  # if all checks are disabled, then clang-tidy is skipped
         # clear the clang-tidy output file and exit function
-        with open("clang_tidy_report.txt", "wb") as f_out:
-            return
+        Path("clang_tidy_report.txt").write_bytes(b"")
+        return
     filename = filename.replace("/", os.sep)
     cmds = [
         assemble_version_exec("clang-tidy", version),
@@ -446,12 +448,11 @@ def run_clang_tidy(
         logger.info("line_filter = %s", json.dumps([line_ranges]))
         cmds.append(f"--line-filter={json.dumps([line_ranges])}")
     cmds.append(filename)
-    with open("clang_tidy_output.yml", "wb"):
-        pass  # clear yml file's content before running clang-tidy
+    # clear yml file's content before running clang-tidy
+    Path("clang_tidy_output.yml").write_bytes(b"")
     logger.info('Running "%s"', " ".join(cmds))
     results = subprocess.run(cmds, capture_output=True)
-    with open("clang_tidy_report.txt", "wb") as f_out:
-        f_out.write(results.stdout)
+    Path("clang_tidy_report.txt").write_bytes(results.stdout)
     logger.debug("Output from clang-tidy:\n%s", results.stdout.decode())
     if os.path.getsize("clang_tidy_output.yml"):
         parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
@@ -480,8 +481,8 @@ def run_clang_format(
             diff info.
     """
     if not style:  # if `style` == ""
-        with open("clang_format_output.xml", "wb"):
-            return  # clear any previous output and exit
+        Path("clang_format_output.xml").write_bytes(b"")
+        return  # clear any previous output and exit
     cmds = [
         assemble_version_exec("clang-format", version),
         f"-style={style}",
@@ -494,8 +495,7 @@ def run_clang_format(
     cmds.append(filename.replace("/", os.sep))
     logger.info('Running "%s"', " ".join(cmds))
     results = subprocess.run(cmds, capture_output=True)
-    with open("clang_format_output.xml", "wb") as f_out:
-        f_out.write(results.stdout)
+    Path("clang_format_output.xml").write_bytes(results.stdout)
     if results.returncode:
         logger.debug(
             "%s raised the following error(s):\n%s", cmds[0], results.stderr.decode()
@@ -867,8 +867,8 @@ def main():
     os.chdir(args.repo_root)
 
     if GITHUB_EVENT_PATH:
-    # load event's json info about the workflow run
-        Globals.EVENT_PAYLOAD = json.load(
+        # load event's json info about the workflow run
+        Globals.EVENT_PAYLOAD = json.loads(
             Path(GITHUB_EVENT_PATH).read_text(encoding="utf-8")
         )
     if logger.getEffectiveLevel() <= logging.DEBUG:

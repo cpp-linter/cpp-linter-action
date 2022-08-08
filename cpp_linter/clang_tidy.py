@@ -1,5 +1,6 @@
 """Parse output from clang-tidy's stdout"""
 import os
+from pathlib import Path
 import re
 from typing import Tuple, Union, List, cast
 from . import GlobalParser
@@ -97,18 +98,18 @@ class TidyNotification:
 def parse_tidy_output() -> None:
     """Parse clang-tidy output in a file created from stdout."""
     notification = None
-    with open("clang_tidy_report.txt", "r", encoding="utf-8") as tidy_out:
-        for line in tidy_out.readlines():
-            match = re.match(NOTE_HEADER, line)
-            if match is not None:
-                notification = TidyNotification(
-                    cast(
-                        Tuple[str, Union[int, str], Union[int, str], str, str, str],
-                        match.groups(),
-                    )
+    tidy_out = Path("clang_tidy_report.txt").read_text(encoding="utf-8")
+    for line in tidy_out.splitlines():
+        match = re.match(NOTE_HEADER, line)
+        if match is not None:
+            notification = TidyNotification(
+                cast(
+                    Tuple[str, Union[int, str], Union[int, str], str, str, str],
+                    match.groups(),
                 )
-                GlobalParser.tidy_notes.append(notification)
-            elif notification is not None:
-                # append lines of code that are part of
-                # the previous line's notification
-                notification.fixit_lines.append(line)
+            )
+            GlobalParser.tidy_notes.append(notification)
+        elif notification is not None:
+            # append lines of code that are part of
+            # the previous line's notification
+            notification.fixit_lines.append(line)

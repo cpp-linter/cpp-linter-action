@@ -1,5 +1,6 @@
 """Parse output from clang-tidy's YML format"""
 import os
+from pathlib import Path
 from typing import List
 import yaml
 from . import GlobalParser, get_line_cnt_from_cols, logger
@@ -102,9 +103,8 @@ def parse_tidy_suggestions_yml():
     """Read a YAML file from clang-tidy and create a list of suggestions from it.
     Output is saved to [`tidy_advice`][cpp_linter.GlobalParser.tidy_advice].
     """
-    yml = {}
-    with open("clang_tidy_output.yml", "r", encoding="utf-8") as yml_file:
-        yml = yaml.safe_load(yml_file)
+    yml_file = Path("clang_tidy_output.yml").read_text(encoding="utf-8")
+    yml = yaml.safe_load(yml_file)
     fixit = YMLFixit(yml["MainSourceFile"])
     for diag_results in yml["Diagnostics"]:
         diag = TidyDiagnostic(diag_results["DiagnosticName"])
