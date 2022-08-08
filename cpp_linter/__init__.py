@@ -88,7 +88,7 @@ def get_line_cnt_from_cols(file_path: str, offset: int) -> tuple:
         - Index 1 is the column number for the given offset on the line.
     """
     # logger.debug("Getting line count from %s at offset %d", file_path, offset)
-    contents = Path(file_path.replace("/", os.sep)).read_bytes()[:offset]
+    contents = Path(file_path).read_bytes()[:offset]
     return (contents.count(b"\n") + 1, offset - contents.rfind(b"\n"))
 
 

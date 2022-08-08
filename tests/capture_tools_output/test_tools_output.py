@@ -73,7 +73,7 @@ def setup_test_repo(monkeypatch: pytest.MonkeyPatch) -> None:
     repo_root = TEST_REPO.sub("\\1", cpp_linter.Globals.FILES["url"])
     return_path = test_root / repo_root
     if not return_path.exists():
-        os.mkdir(str(return_path))
+        return_path.mkdir()
     monkeypatch.chdir(str(return_path))
     verify_files_are_present()
 

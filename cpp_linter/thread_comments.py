@@ -1,5 +1,4 @@
 """A module to house the various functions for traversing/adjusting comments"""
-import os
 from typing import Union, cast, List, Optional, Dict, Any
 import json
 from pathlib import Path
@@ -73,9 +72,9 @@ def aggregate_tidy_advice(lines_changed_only: int) -> List[Dict[str, Any]]:
             body += diag.name + "**\n>" + diag.message
 
             # get original code
-            filename = cast(str, file["filename"]).replace("/", os.sep)
+            filename = Path(cast(str, file["filename"]))
             # the list of lines in a file
-            lines = Path(filename).read_text(encoding="utf-8").splitlines()
+            lines = filename.read_text(encoding="utf-8").splitlines()
 
             # aggregate clang-tidy advice
             suggestion = "\n```suggestion\n"
@@ -123,9 +122,9 @@ def aggregate_format_advice(lines_changed_only: int) -> List[Dict[str, Any]]:
     for fmt_advice, file in zip(GlobalParser.format_advice, files):
 
         # get original code
-        filename = cast(str, file["filename"]).replace("/", os.sep)
+        filename = Path(cast(str, file["filename"]))
         # the list of lines from the src file
-        lines = Path(filename).read_text(encoding="utf-8").splitlines()
+        lines = filename.read_text(encoding="utf-8").splitlines()
 
         # aggregate clang-format suggestion
         line = ""  # the line that concerns the fix

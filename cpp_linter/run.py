@@ -11,7 +11,7 @@ the entrypoint.
         https://docs.github.com/en/rest/reference/issues)
 """
 import subprocess
-from pathlib import Path
+from pathlib import Path, PurePath
 import os
 import sys
 import argparse
@@ -205,14 +205,11 @@ def is_file_in_list(paths: List[str], file_name: str, prompt: str) -> bool:
         - False if `file_name` is not in the `paths` list.
     """
     for path in paths:
-        result = os.path.commonpath([path, file_name]).replace(os.sep, "/")
-        if result == path:
+        if PurePath(file_name).is_relative_to(PurePath(path)):
             logger.debug(
-                '".%s%s" is %s as specified in the domain ".%s%s"',
-                os.sep,
+                '"./%s" is %s as specified in the domain "./%s"',
                 file_name,
                 prompt,
-                os.sep,
                 path,
             )
             return True
@@ -276,7 +273,7 @@ def filter_out_non_source_files(
         else cast(Dict[str, Any], Globals.FILES)["files"]
     ):
         if (
-            os.path.splitext(file["filename"])[1][1:] in ext_list
+            PurePath(file["filename"]).suffix[1:] in ext_list
             and not file["status"].endswith("removed")
             and (
                 not is_file_in_list(ignored, file["filename"], "ignored")
@@ -340,14 +337,14 @@ def verify_files_are_present() -> None:
         if GITHUB_EVENT_NAME == "pull_request"
         else cast(Dict[str, Any], Globals.FILES)["files"]
     ):
-        file_name = file["filename"].replace("/", os.sep)
-        if not os.path.exists(file_name):
+        file_name = Path(file["filename"])
+        if not file_name.exists():
             logger.warning("Could not find %s! Did you checkout the repo?", file_name)
             logger.info("Downloading file from url: %s", file["raw_url"])
             Globals.response_buffer = requests.get(file["raw_url"])
             # retain the repo's original structure
-            os.makedirs(os.path.split(file_name)[0], exist_ok=True)
-            Path(file_name).write_text(Globals.response_buffer.text, encoding="utf-8")
+            Path.mkdir(file_name.parent, parents=True, exist_ok=True)
+            file_name.write_text(Globals.response_buffer.text, encoding="utf-8")
 
 
 def list_source_files(
@@ -367,23 +364,23 @@ def list_source_files(
     """
     start_log_group("Get list of specified source files")
 
-    root_path = os.getcwd()
+    root_path = Path.cwd().as_posix()
     for dirpath, _, filenames in os.walk(root_path):
-        path = dirpath.replace(root_path, "").lstrip(os.sep)
-        path_parts = path.split(os.sep)
+        path = PurePath(dirpath.replace(root_path, ""))
+        path_parts = path.parents
         is_hidden = False
         for part in path_parts:
-            if part.startswith("."):
-                # logger.debug("Skipping \".%s%s\"", os.sep, path)
+            if part.as_posix().startswith("."):
+                # logger.debug("Skipping \"./%s\"", path)
                 is_hidden = True
                 break
         if is_hidden:
             continue  # skip sources in hidden directories
-        logger.debug('Crawling ".%s%s"', os.sep, path)
+        logger.debug('Crawling "./%s"', path.as_posix())
         for file in filenames:
-            if os.path.splitext(file)[1][1:] in ext_list:
-                file_path = os.path.join(path, file)
-                logger.debug('".%s%s" is a source code file', os.sep, file_path)
+            if PurePath(file).suffix.lstrip(".") in ext_list:
+                file_path = PurePath(path, file).as_posix()
+                logger.debug('"./%s" is a source code file', file_path)
                 if not is_file_in_list(
                     ignored_paths, file_path, "ignored"
                 ) or is_file_in_list(not_ignored, file_path, "not ignored"):
@@ -428,7 +425,7 @@ def run_clang_tidy(
         # clear the clang-tidy output file and exit function
         Path("clang_tidy_report.txt").write_bytes(b"")
         return
-    filename = filename.replace("/", os.sep)
+    filename = PurePath(filename).as_posix()
     cmds = [
         assemble_version_exec("clang-tidy", version),
         "--export-fixes=clang_tidy_output.yml",
@@ -437,10 +434,8 @@ def run_clang_tidy(
         cmds.append(f"-checks={checks}")
     if database:
         cmds.append("-p")
-        if not os.path.isabs(database):
-            database = os.path.normpath(
-                os.path.join(RUNNER_WORKSPACE, repo_root, database)
-            )
+        if not PurePath(database).is_absolute():
+            database = Path(RUNNER_WORKSPACE, repo_root, database).resolve().as_posix()
         cmds.append(database)
     if lines_changed_only:
         ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
@@ -454,7 +449,7 @@ def run_clang_tidy(
     results = subprocess.run(cmds, capture_output=True)
     Path("clang_tidy_report.txt").write_bytes(results.stdout)
     logger.debug("Output from clang-tidy:\n%s", results.stdout.decode())
-    if os.path.getsize("clang_tidy_output.yml"):
+    if Path("clang_tidy_output.yml").stat().st_size:
         parse_tidy_suggestions_yml()  # get clang-tidy fixes from yml
     if results.stderr:
         logger.debug(
@@ -492,7 +487,7 @@ def run_clang_format(
         ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"
         for line_range in file_obj["line_filter"][ranges]:
             cmds.append(f"--lines={line_range[0]}:{line_range[1]}")
-    cmds.append(filename.replace("/", os.sep))
+    cmds.append(PurePath(filename).as_posix())
     logger.info('Running "%s"', " ".join(cmds))
     results = subprocess.run(cmds, capture_output=True)
     Path("clang_format_output.xml").write_bytes(results.stdout)
@@ -520,7 +515,7 @@ def create_comment_body(
             [`make_annotations()`] after [`capture_clang_tools_output()`] us finished.
     """
     ranges = range_of_changed_lines(file_obj, lines_changed_only)
-    if os.path.getsize("clang_tidy_report.txt"):
+    if Path("clang_tidy_report.txt").stat().st_size:
         parse_tidy_output()  # get clang-tidy fixes from stdout
         comment_output = ""
         if Globals.PAYLOAD_TIDY:
@@ -535,8 +530,8 @@ def create_comment_body(
             Globals.PAYLOAD_TIDY += comment_output
         GlobalParser.tidy_notes.clear()  # empty list to avoid duplicated output
 
-    if os.path.getsize("clang_format_output.xml"):
-        parse_format_replacements_xml(filename.replace("/", os.sep))
+    if Path("clang_format_output.xml").stat().st_size:
+        parse_format_replacements_xml(PurePath(filename).as_posix())
         if GlobalParser.format_advice and GlobalParser.format_advice[-1].replaced_lines:
             should_comment = lines_changed_only == 0
             if not should_comment:
@@ -582,8 +577,6 @@ def capture_clang_tools_output(
         else Globals.FILES["files"]
     ):
         filename = cast(str, file["filename"])
-        if not os.path.exists(filename):
-            filename = os.path.split(cast(str, file["raw_url"]))[1]
         start_log_group(f"Performing checkup on {filename}")
         run_clang_tidy(
             filename, file, version, checks, lines_changed_only, database, repo_root
@@ -826,12 +819,12 @@ def parse_ignore_option(paths: str) -> tuple:  # -> Tuple[List[str], List[str]]:
             ignored.append(path)
 
     # auto detect submodules
-    root_path = os.getcwd()
-    if os.path.exists(root_path + os.sep + ".gitmodules"):
+    gitmodules = Path(".gitmodules")
+    if gitmodules.exists():
         submodules = configparser.ConfigParser()
-        submodules.read(root_path + os.sep + ".gitmodules")
+        submodules.read(gitmodules.resolve().as_posix())
         for module in submodules.sections():
-            path = submodules[module]["path"].replace("/", os.sep)
+            path = submodules[module]["path"]
             if path not in not_ignored:
                 logger.info("Appending submodule to ignored paths: %s", path)
                 ignored.append(path)

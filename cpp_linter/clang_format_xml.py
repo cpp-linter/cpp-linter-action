@@ -1,5 +1,5 @@
 """Parse output from clang-format's XML suggestions."""
-import os
+from pathlib import PurePath
 from typing import List, Optional
 import xml.etree.ElementTree as ET
 from . import GlobalParser, get_line_cnt_from_cols
@@ -74,7 +74,7 @@ class XMLFixit:
             filename: The source file's name for which the contents of the xml
                 file exported by clang-tidy.
         """
-        self.filename = filename.replace(os.sep, "/")
+        self.filename = PurePath(filename).as_posix()
         self.replaced_lines: List[FormatReplacementLine] = []
 
     def __repr__(self) -> str:

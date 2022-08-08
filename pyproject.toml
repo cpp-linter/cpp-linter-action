@@ -3,7 +3,7 @@ requires = ["setuptools>=45", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cpp_linter"
+name = "cpp-linter"
 description = "Run clang-format and clang-tidy on a batch of files."
 readme = "README.md"
 keywords = ["clang", "clang-tools", "linter", "clang-tidy", "clang-format"]

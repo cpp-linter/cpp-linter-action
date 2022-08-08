@@ -1,7 +1,6 @@
 """Tests specific to specifying the compilation database path."""
-import os
 from typing import List
-from pathlib import Path
+from pathlib import Path, PurePath
 import logging
 import re
 import pytest
@@ -11,7 +10,7 @@ from cpp_linter.run import run_clang_tidy
 
 CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
 
-ABS_DB_PATH = str(Path(Path(__file__).parent / "../../demo").resolve())
+ABS_DB_PATH = Path(PurePath(__file__).parent / "../../demo").resolve().as_posix()
 
 
 @pytest.mark.parametrize(
@@ -32,21 +31,21 @@ def test_db_detection(
     expected_args: List[str],
 ):
     """test clang-tidy using a implicit path to the compilation database."""
-    monkeypatch.chdir(str(Path(__file__).parent))
+    monkeypatch.chdir(PurePath(__file__).parent.as_posix())
     demo_src = "../../demo/demo.cpp"
     rel_root = str(Path(*Path(__file__).parts[-2:]))
-    cpp_linter.run.RUNNER_WORKSPACE = str(
-        Path(Path(__file__).parent / "../../").resolve()
+    cpp_linter.run.RUNNER_WORKSPACE = (
+        Path(PurePath(__file__).parent / "../../").resolve().as_posix()
     )
     caplog.set_level(logging.DEBUG, logger=logger.name)
     run_clang_tidy(
-        filename=(demo_src).replace("/", os.sep),
+        filename=(demo_src),
         file_obj={},  # only used when filtering lines
         version="",
         checks="",  # let clang-tidy use a .clang-tidy config file
         lines_changed_only=0,  # analyze complete file
-        database=database.replace("/", os.sep),
-        repo_root=rel_root.replace("/", os.sep),
+        database=database,
+        repo_root=rel_root,
     )
     matched_args = []
     for record in caplog.records:
@@ -55,4 +54,4 @@ def test_db_detection(
             matched_args = msg_match.group(0)[:-1].split()[2:]
         assert "Error while trying to load a compilation database" not in record.message
     expected_args.append(demo_src)
-    assert matched_args == [a.replace("/", os.sep) for a in expected_args]
+    assert matched_args == [a for a in expected_args]

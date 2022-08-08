@@ -1,13 +1,12 @@
 """Parse output from clang-tidy's YML format"""
-import os
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import List
 import yaml
 from . import GlobalParser, get_line_cnt_from_cols, logger
 
 
 CWD_HEADER_GUARD = bytes(
-    os.getcwd().upper().replace(os.sep, "_").replace("-", "_"), encoding="utf-8"
+    "_".join([p.upper().replace("-", "_") for p in Path.cwd().parts]), encoding="utf-8"
 )  #: The constant used to trim absolute paths from header guard suggestions.
 
 
@@ -89,7 +88,7 @@ class YMLFixit:
         Args:
             filename: The source file's name (with path) concerning the suggestion.
         """
-        self.filename = filename.replace(os.getcwd() + os.sep, "").replace(os.sep, "/")
+        self.filename = PurePath(filename).relative_to(Path.cwd()).as_posix()
         self.diagnostics: List[TidyDiagnostic] = []
 
     def __repr__(self) -> str:

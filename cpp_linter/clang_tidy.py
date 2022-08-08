@@ -1,6 +1,5 @@
 """Parse output from clang-tidy's stdout"""
-import os
-from pathlib import Path
+from pathlib import Path, PurePath
 import re
 from typing import Tuple, Union, List, cast
 from . import GlobalParser
@@ -47,14 +46,14 @@ class TidyNotification:
         self.note_type = self.note_type.strip()
         self.line = int(self.line)
         self.cols = int(self.cols)
-        self.filename = self.filename.replace(os.getcwd() + os.sep, "")
+        self.filename = PurePath(self.filename).relative_to(Path.cwd()).as_posix()
         self.fixit_lines: List[str] = []
 
     def __repr__(self) -> str:
         concerned_code = ""
         if self.fixit_lines:
             concerned_code = "```{}\n{}```\n".format(
-                os.path.splitext(self.filename)[1],
+                PurePath(self.filename).suffix.lstrip("."),
                 "".join(self.fixit_lines),
             )
         return (
