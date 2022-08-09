@@ -74,18 +74,20 @@ def test_list_src_files(extensions: List[str]):
     assert list_source_files(ext_list=extensions, ignored_paths=[], not_ignored=[])
 
 
-def test_get_changed_files():
+def test_get_changed_files(caplog: pytest.LogCaptureFixture):
     """test getting a list of changed files for an event.
 
     This is expected to fail if a github token not supplied as an env var.
     We don't need to supply one for this test because the tested code will
     execute anyway.
     """
+    caplog.set_level(logging.DEBUG, logger=cpp_linter.logger.name)
     cpp_linter.run.GITHUB_REPOSITORY = "cpp-linter/test-cpp-linter-action"
-    cpp_linter.GITHUB_SHA = "76adde5367196cd57da5bef49a4f09af6175fd3f"
+    cpp_linter.run.GITHUB_SHA = "76adde5367196cd57da5bef49a4f09af6175fd3f"
+    cpp_linter.run.GITHUB_EVENT_NAME = "push"
     get_list_of_changed_files()
     # pylint: disable=no-member
-    assert "files" not in cast(Dict[str, Any], Globals.FILES).keys()
+    assert Globals.FILES
     # pylint: enable=no-member
 
 

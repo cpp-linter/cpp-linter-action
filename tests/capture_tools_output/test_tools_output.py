@@ -45,8 +45,8 @@ def test_lines_changed_only(
     ):
         test_result = Path("expected_result.json").read_text(encoding="utf-8")
         for file, result in zip(
-            cpp_linter.Globals.FILES["files"],  # type: ignore
-            json.loads(test_result)["files"],
+            cpp_linter.Globals.FILES,
+            json.loads(test_result),
         ):
             expected = result["line_filter"]["diff_chunks"]
             assert file["line_filter"]["diff_chunks"] == expected
@@ -56,18 +56,15 @@ def test_lines_changed_only(
         raise RuntimeError("test failed to find files")
 
 
-TEST_REPO = re.compile(r"https://api.github.com/repos/(?:\w|\-|_)+/((?:\w|\-|_)+)/.*")
+TEST_REPO = re.compile(r".*github.com/(?:\w|\-|_)+/((?:\w|\-|_)+)/.*")
 
 
 @pytest.fixture(autouse=True)
 def setup_test_repo(monkeypatch: pytest.MonkeyPatch) -> None:
     """Setup a test repo to run the rest of the tests in this module."""
     test_root = Path(__file__).parent
-    cpp_linter.Globals.FILES = cast(
-        Dict[str, Any],
-        json.loads(
-            Path(test_root / "expected_result.json").read_text(encoding="utf-8")
-        ),
+    cpp_linter.Globals.FILES = json.loads(
+        Path(test_root / "expected_result.json").read_text(encoding="utf-8")
     )
     # flush output from any previous tests
     cpp_linter.Globals.OUTPUT = ""
@@ -75,7 +72,7 @@ def setup_test_repo(monkeypatch: pytest.MonkeyPatch) -> None:
     cpp_linter.GlobalParser.tidy_notes = []
     cpp_linter.GlobalParser.tidy_advice = []
 
-    repo_root = TEST_REPO.sub("\\1", cpp_linter.Globals.FILES["url"])
+    repo_root = TEST_REPO.sub("\\1", cpp_linter.Globals.FILES[0]["blob_url"])
     return_path = test_root / repo_root
     if not return_path.exists():
         return_path.mkdir()
@@ -85,7 +82,7 @@ def setup_test_repo(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def match_file_json(filename: str) -> Optional[Dict[str, Any]]:
     """A helper function to match a given filename with a file's JSON object."""
-    for file in cpp_linter.Globals.FILES["files"]:  # type: ignore
+    for file in cpp_linter.Globals.FILES:
         if file["filename"] == filename:
             return file
     print("file", filename, "not found in expected_result.json")

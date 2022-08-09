@@ -50,7 +50,7 @@ class Globals:
     """The accumulated output of clang-tidy (gets appended to OUTPUT)"""
     OUTPUT: str = ""
     """The accumulated body of the resulting comment that gets posted."""
-    FILES: Union[List[Dict[str, Any]], Dict[str, Any]] = []
+    FILES: List[Dict[str, Any]] = []
     """The responding payload containing info about changed files."""
     EVENT_PAYLOAD: Dict[str, Any] = {}
     """The parsed JSON of the event payload."""

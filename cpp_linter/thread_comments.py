@@ -60,8 +60,7 @@ def aggregate_tidy_advice(lines_changed_only: int) -> List[Dict[str, Any]]:
     """Aggregate a list of json contents representing advice from clang-tidy
     suggestions."""
     results = []
-    files = Globals.FILES if isinstance(Globals.FILES, list) else Globals.FILES["files"]
-    for fixit, file in zip(GlobalParser.tidy_advice, files):
+    for fixit, file in zip(GlobalParser.tidy_advice, Globals.FILES):
         for diag in fixit.diagnostics:
             ranges = range_of_changed_lines(file, lines_changed_only)
             if lines_changed_only and diag.line not in ranges:
@@ -118,11 +117,10 @@ def aggregate_format_advice(lines_changed_only: int) -> List[Dict[str, Any]]:
     """Aggregate a list of json contents representing advice from clang-format
     suggestions."""
     results = []
-    files = Globals.FILES if isinstance(Globals.FILES, list) else Globals.FILES["files"]
-    for fmt_advice, file in zip(GlobalParser.format_advice, files):
+    for fmt_advice, file in zip(GlobalParser.format_advice, Globals.FILES):
 
         # get original code
-        filename = Path(cast(str, file["filename"]))
+        filename = Path(file["filename"])
         # the list of lines from the src file
         lines = filename.read_text(encoding="utf-8").splitlines()
 

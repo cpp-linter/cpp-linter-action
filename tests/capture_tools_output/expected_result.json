@@ -1,409 +1,320 @@
-{
-  "sha": "3c35acde7d398c32f6fad50fa902de391f573ffa",
-  "node_id": "C_kwDOAAOGANoAKDNjMzVhY2RlN2QzOThjMzJmNmZhZDUwZmE5MDJkZTM5MWY1NzNmZmE",
-  "commit": {
-    "author": {
-      "name": "Turo Lamminen",
-      "email": "turol@users.noreply.github.com",
-      "date": "2022-07-12T17:58:17Z"
-    },
-    "committer": {
-      "name": "GitHub",
-      "email": "noreply@github.com",
-      "date": "2022-07-12T17:58:17Z"
-    },
-    "message": "Merge 1acdd067d8b168099de009b2cb625c3e4565561a into 7afbf68abcaad446c3f287ed502c6ebbb2fb10e8",
-    "tree": {
-      "sha": "61aafe76912a4e79bfe9e2e0620d5fc09792922e",
-      "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/git/trees/61aafe76912a4e79bfe9e2e0620d5fc09792922e"
-    },
-    "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/git/commits/3c35acde7d398c32f6fad50fa902de391f573ffa",
-    "comment_count": 0,
-    "verification": {
-      "verified": true,
-      "reason": "valid",
-      "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJizbY5CRBK7hj4Ov3rIwAAd90IAEK0v5LTMD8TaaSlWOiXQ6Jh\nYqjVo248+3MuFEH2Em+QFt6RVbhA/HzsaD2E1qwigyOd0VXu2PZvGUP/hvB/x4AM\nEBxFAdGpP+nLhGF3uWJTZ6K/hfuvL6r4xV+EiqCBb1mSpy13N7kbBy3phSJfWgGM\nyrzR6qv40fgZgGRtFaOkP96SWNO+XnpHzoHqpVXaqYzj3sn1kZwbF6LoZUJy+7YZ\nJJFWZUg0mxsvlGZUZBO7e0KMZmPzLXfAA+heF7UqaDE6mT/lP/FSXHrZHH8J3Iju\nWOWECb2qRgNVYGuxhqW7+iN8ZvbDPI1+lPEvRAl4u72+piN++XrQgh5zgiNzDOU=\n=+D8A\n-----END PGP SIGNATURE-----\n",
-      "payload": "tree 61aafe76912a4e79bfe9e2e0620d5fc09792922e\nparent 7afbf68abcaad446c3f287ed502c6ebbb2fb10e8\nparent 1acdd067d8b168099de009b2cb625c3e4565561a\nauthor Turo Lamminen <turol@users.noreply.github.com> 1657648697 +0000\ncommitter GitHub <noreply@github.com> 1657648697 +0000\n\nMerge 1acdd067d8b168099de009b2cb625c3e4565561a into 7afbf68abcaad446c3f287ed502c6ebbb2fb10e8\n"
+[
+  {
+    "sha": "46e082cf77c5e60affc7689f7357c926fc00cda3",
+    "filename": "opl/opl.c",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "changes": 2,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2Fopl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -50,7 +50,9 @@ static opl_driver_t *drivers[] =\n #ifdef _WIN32\n     &opl_win32_driver,\n #endif\n+#ifndef DISABLE_SDL2MIXER\n     &opl_sdl_driver,\n+#endif  // DISABLE_SDL2MIXER\n     NULL\n };\n ",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          50,
+          59
+        ]
+      ],
+      "lines_added": [
+        [
+          53,
+          54
+        ],
+        [
+          55,
+          56
+        ]
+      ]
     }
   },
-  "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/3c35acde7d398c32f6fad50fa902de391f573ffa",
-  "html_url": "https://github.com/chocolate-doom/chocolate-doom/commit/3c35acde7d398c32f6fad50fa902de391f573ffa",
-  "comments_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/3c35acde7d398c32f6fad50fa902de391f573ffa/comments",
-  "author": {
-    "login": "turol",
-    "id": 805057,
-    "node_id": "MDQ6VXNlcjgwNTA1Nw==",
-    "avatar_url": "https://avatars.githubusercontent.com/u/805057?v=4",
-    "gravatar_id": "",
-    "url": "https://api.github.com/users/turol",
-    "html_url": "https://github.com/turol",
-    "followers_url": "https://api.github.com/users/turol/followers",
-    "following_url": "https://api.github.com/users/turol/following{/other_user}",
-    "gists_url": "https://api.github.com/users/turol/gists{/gist_id}",
-    "starred_url": "https://api.github.com/users/turol/starred{/owner}{/repo}",
-    "subscriptions_url": "https://api.github.com/users/turol/subscriptions",
-    "organizations_url": "https://api.github.com/users/turol/orgs",
-    "repos_url": "https://api.github.com/users/turol/repos",
-    "events_url": "https://api.github.com/users/turol/events{/privacy}",
-    "received_events_url": "https://api.github.com/users/turol/received_events",
-    "type": "User",
-    "site_admin": false
-  },
-  "committer": {
-    "login": "web-flow",
-    "id": 19864447,
-    "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
-    "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
-    "gravatar_id": "",
-    "url": "https://api.github.com/users/web-flow",
-    "html_url": "https://github.com/web-flow",
-    "followers_url": "https://api.github.com/users/web-flow/followers",
-    "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
-    "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
-    "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
-    "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
-    "organizations_url": "https://api.github.com/users/web-flow/orgs",
-    "repos_url": "https://api.github.com/users/web-flow/repos",
-    "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
-    "received_events_url": "https://api.github.com/users/web-flow/received_events",
-    "type": "User",
-    "site_admin": false
-  },
-  "parents": [
-    {
-      "sha": "7afbf68abcaad446c3f287ed502c6ebbb2fb10e8",
-      "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/7afbf68abcaad446c3f287ed502c6ebbb2fb10e8",
-      "html_url": "https://github.com/chocolate-doom/chocolate-doom/commit/7afbf68abcaad446c3f287ed502c6ebbb2fb10e8"
-    },
-    {
-      "sha": "1acdd067d8b168099de009b2cb625c3e4565561a",
-      "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/1acdd067d8b168099de009b2cb625c3e4565561a",
-      "html_url": "https://github.com/chocolate-doom/chocolate-doom/commit/1acdd067d8b168099de009b2cb625c3e4565561a"
+  {
+    "sha": "6bd4e7e1f3374e289d3dc19972dcb1d5379d6b03",
+    "filename": "opl/opl_sdl.c",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "changes": 6,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl_sdl.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl_sdl.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2Fopl_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -33,6 +33,10 @@\n \n #include \"opl_queue.h\"\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MAX_SOUND_SLICE_TIME 100 /* ms */\n \n typedef struct\n@@ -511,3 +515,5 @@ opl_driver_t opl_sdl_driver =\n     OPL_SDL_AdjustCallbacks,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          33,
+          43
+        ],
+        [
+          515,
+          520
+        ]
+      ],
+      "lines_added": [
+        [
+          36,
+          40
+        ],
+        [
+          518,
+          520
+        ]
+      ]
     }
-  ],
-  "stats": {
-    "total": 334,
-    "additions": 297,
-    "deletions": 37
   },
-  "files": [
-    {
-      "sha": "46e082cf77c5e60affc7689f7357c926fc00cda3",
-      "filename": "opl/opl.c",
-      "status": "modified",
-      "additions": 2,
-      "deletions": 0,
-      "changes": 2,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2Fopl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -50,7 +50,9 @@ static opl_driver_t *drivers[] =\n #ifdef _WIN32\n     &opl_win32_driver,\n #endif\n+#ifndef DISABLE_SDL2MIXER\n     &opl_sdl_driver,\n+#endif  // DISABLE_SDL2MIXER\n     NULL\n };\n ",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            50,
-            59
-          ]
-        ],
-        "lines_added": [
-          [
-            53,
-            54
-          ],
-          [
-            55,
-            56
-          ]
+  {
+    "sha": "58f9b75c2affd5f1dd990aaedab79d834575bf83",
+    "filename": "pcsound/pcsound.c",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "changes": 2,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2Fpcsound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -56,7 +56,9 @@ static pcsound_driver_t *drivers[] =\n #ifdef _WIN32\n     &pcsound_win32_driver,\n #endif\n+#ifndef DISABLE_SDL2MIXER\n     &pcsound_sdl_driver,\n+#endif  // DISABLE_SDL2MIXER\n     NULL,\n };\n ",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          56,
+          65
         ]
-      }
-    },
-    {
-      "sha": "6bd4e7e1f3374e289d3dc19972dcb1d5379d6b03",
-      "filename": "opl/opl_sdl.c",
-      "status": "modified",
-      "additions": 6,
-      "deletions": 0,
-      "changes": 6,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl_sdl.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl_sdl.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2Fopl_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -33,6 +33,10 @@\n \n #include \"opl_queue.h\"\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MAX_SOUND_SLICE_TIME 100 /* ms */\n \n typedef struct\n@@ -511,3 +515,5 @@ opl_driver_t opl_sdl_driver =\n     OPL_SDL_AdjustCallbacks,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            33,
-            43
-          ],
-          [
-            515,
-            520
-          ]
+      ],
+      "lines_added": [
+        [
+          59,
+          60
         ],
-        "lines_added": [
-          [
-            36,
-            40
-          ],
-          [
-            518,
-            520
-          ]
+        [
+          61,
+          62
         ]
-      }
-    },
-    {
-      "sha": "58f9b75c2affd5f1dd990aaedab79d834575bf83",
-      "filename": "pcsound/pcsound.c",
-      "status": "modified",
-      "additions": 2,
-      "deletions": 0,
-      "changes": 2,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2Fpcsound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -56,7 +56,9 @@ static pcsound_driver_t *drivers[] =\n #ifdef _WIN32\n     &pcsound_win32_driver,\n #endif\n+#ifndef DISABLE_SDL2MIXER\n     &pcsound_sdl_driver,\n+#endif  // DISABLE_SDL2MIXER\n     NULL,\n };\n ",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            56,
-            65
-          ]
-        ],
-        "lines_added": [
-          [
-            59,
-            60
-          ],
-          [
-            61,
-            62
-          ]
-        ]
-      }
-    },
-    {
-      "sha": "e77c7b0d29de1b0c665686004dfda311c9d96719",
-      "filename": "pcsound/pcsound_sdl.c",
-      "status": "modified",
-      "additions": 6,
-      "deletions": 0,
-      "changes": 6,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound_sdl.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound_sdl.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2Fpcsound_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -24,6 +24,10 @@\n #include \"pcsound.h\"\n #include \"pcsound_internal.h\"\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MAX_SOUND_SLICE_TIME 70 /* ms */\n #define SQUARE_WAVE_AMP 0x2000\n \n@@ -248,3 +252,5 @@ pcsound_driver_t pcsound_sdl_driver =\n     PCSound_SDL_Shutdown,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            24,
-            34
-          ],
-          [
-            252,
-            257
-          ]
-        ],
-        "lines_added": [
-          [
-            27,
-            31
-          ],
-          [
-            255,
-            257
-          ]
-        ]
-      }
-    },
-    {
-      "sha": "3facce6f01d02c5e8eef3088fa60576b9e949829",
-      "filename": "src/i_musicpack.c",
-      "status": "modified",
-      "additions": 87,
-      "deletions": 1,
-      "changes": 88,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_musicpack.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_musicpack.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_musicpack.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -44,6 +44,13 @@\n #include \"w_wad.h\"\n #include \"z_zone.h\"\n \n+\n+char *music_pack_path = \"\";\n+\n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MID_HEADER_MAGIC \"MThd\"\n #define MUS_HEADER_MAGIC \"MUS\\x1a\"\n \n@@ -99,7 +106,6 @@ static boolean music_initialized = false;\n \n static boolean sdl_was_initialized = false;\n \n-char *music_pack_path = \"\";\n \n // If true, we are playing a substitute digital track rather than in-WAD\n // MIDI/MUS track, and file_metadata contains loop metadata.\n@@ -1375,3 +1381,83 @@ music_module_t music_pack_module =\n     I_MP_PollMusic,\n };\n \n+\n+#else  // DISABLE_SDL2MIXER\n+\n+\n+static boolean I_NULL_InitMusic(void)\n+{\n+    return false;\n+}\n+\n+\n+static void I_NULL_ShutdownMusic(void)\n+{\n+}\n+\n+\n+static void I_NULL_SetMusicVolume(int volume)\n+{\n+}\n+\n+\n+static void I_NULL_PauseSong(void)\n+{\n+}\n+\n+\n+static void I_NULL_ResumeSong(void)\n+{\n+}\n+\n+\n+static void *I_NULL_RegisterSong(void *data, int len)\n+{\n+    return NULL;\n+}\n+\n+\n+static void I_NULL_UnRegisterSong(void *handle)\n+{\n+}\n+\n+\n+static void I_NULL_PlaySong(void *handle, boolean looping)\n+{\n+}\n+\n+\n+static void I_NULL_StopSong(void)\n+{\n+}\n+\n+\n+static boolean I_NULL_MusicIsPlaying(void)\n+{\n+    return false;\n+}\n+\n+\n+static void I_NULL_PollMusic(void)\n+{\n+}\n+\n+music_module_t music_pack_module =\n+{\n+    NULL,\n+    0,\n+    I_NULL_InitMusic,\n+    I_NULL_ShutdownMusic,\n+    I_NULL_SetMusicVolume,\n+    I_NULL_PauseSong,\n+    I_NULL_ResumeSong,\n+    I_NULL_RegisterSong,\n+    I_NULL_UnRegisterSong,\n+    I_NULL_PlaySong,\n+    I_NULL_StopSong,\n+    I_NULL_MusicIsPlaying,\n+    I_NULL_PollMusic,\n+};\n+\n+\n+#endif  // DISABLE_SDL2MIXER",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            44,
-            57
-          ],
-          [
-            106,
-            112
-          ],
-          [
-            1381,
-            1464
-          ]
-        ],
-        "lines_added": [
-          [
-            47,
-            54
-          ],
-          [
-            1384,
-            1464
-          ]
-        ]
-      }
-    },
-    {
-      "sha": "48fedfbd7608ad8c6575a4bd82a5e1cb3646e071",
-      "filename": "src/i_sdlmusic.c",
-      "status": "modified",
-      "additions": 21,
-      "deletions": 13,
-      "changes": 34,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlmusic.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlmusic.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sdlmusic.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -44,19 +44,6 @@\n #include \"w_wad.h\"\n #include \"z_zone.h\"\n \n-#define MAXMIDLENGTH (96 * 1024)\n-\n-static boolean music_initialized = false;\n-\n-// If this is true, this module initialized SDL sound and has the \n-// responsibility to shut it down\n-\n-static boolean sdl_was_initialized = false;\n-\n-static boolean win_midi_stream_opened = false;\n-\n-static boolean musicpaused = false;\n-static int current_music_volume;\n \n char *fluidsynth_sf_path = \"\";\n char *timidity_cfg_path = \"\";\n@@ -138,6 +125,25 @@ void I_InitTimidityConfig(void)\n     }\n }\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n+#define MAXMIDLENGTH (96 * 1024)\n+\n+static boolean music_initialized = false;\n+\n+// If this is true, this module initialized SDL sound and has the\n+// responsibility to shut it down\n+\n+static boolean sdl_was_initialized = false;\n+\n+static boolean win_midi_stream_opened = false;\n+\n+static boolean musicpaused = false;\n+static int current_music_volume;\n+\n+\n // Remove the temporary config file generated by I_InitTimidityConfig().\n \n static void RemoveTimidityConfig(void)\n@@ -588,3 +594,5 @@ music_module_t music_sdl_module =\n     NULL,  // Poll\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            44,
-            50
-          ],
-          [
-            125,
-            150
-          ],
-          [
-            594,
-            599
-          ]
-        ],
-        "lines_added": [
-          [
-            128,
-            147
-          ],
-          [
-            597,
-            599
-          ]
-        ]
-      }
-    },
-    {
-      "sha": "7f2a26096b218c5323f5dc569c6f70ab399782bf",
-      "filename": "src/i_sdlsound.c",
-      "status": "modified",
-      "additions": 17,
-      "deletions": 9,
-      "changes": 26,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlsound.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlsound.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sdlsound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -41,6 +41,21 @@\n \n #include \"doomtype.h\"\n \n+\n+int use_libsamplerate = 0;\n+\n+// Scale factor used when converting libsamplerate floating point numbers\n+// to integers. Too high means the sounds can clip; too low means they\n+// will be too quiet. This is an amount that should avoid clipping most\n+// of the time: with all the Doom IWAD sound effects, at least. If a PWAD\n+// is used, clipping might occur.\n+\n+float libsamplerate_scale = 0.65f;\n+\n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define LOW_PASS_FILTER\n //#define DEBUG_DUMP_WAVS\n #define NUM_CHANNELS 16\n@@ -77,15 +92,6 @@ static allocated_sound_t *allocated_sounds_head = NULL;\n static allocated_sound_t *allocated_sounds_tail = NULL;\n static int allocated_sounds_size = 0;\n \n-int use_libsamplerate = 0;\n-\n-// Scale factor used when converting libsamplerate floating point numbers\n-// to integers. Too high means the sounds can clip; too low means they\n-// will be too quiet. This is an amount that should avoid clipping most\n-// of the time: with all the Doom IWAD sound effects, at least. If a PWAD\n-// is used, clipping might occur.\n-\n-float libsamplerate_scale = 0.65f;\n \n // Hook a sound into the linked list at the head.\n \n@@ -1135,3 +1141,5 @@ sound_module_t sound_sdl_module =\n     I_SDL_PrecacheSounds,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            41,
-            62
-          ],
-          [
-            92,
-            98
-          ],
-          [
-            1141,
-            1146
-          ]
-        ],
-        "lines_added": [
-          [
-            44,
-            59
-          ],
-          [
-            1144,
-            1146
-          ]
-        ]
-      }
-    },
-    {
-      "sha": "9cf1fd95db13504ffc6f98ead8c9150f03db72aa",
-      "filename": "src/i_sound.c",
-      "status": "modified",
-      "additions": 4,
-      "deletions": 0,
-      "changes": 4,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sound.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sound.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -99,7 +99,9 @@ static int snd_mport = 0;\n \n static sound_module_t *sound_modules[] = \n {\n+#ifndef DISABLE_SDL2MIXER\n     &sound_sdl_module,\n+#endif  // DISABLE_SDL2MIXER\n     &sound_pcsound_module,\n     NULL,\n };\n@@ -108,7 +110,9 @@ static sound_module_t *sound_modules[] =\n \n static music_module_t *music_modules[] =\n {\n+#ifndef DISABLE_SDL2MIXER\n     &music_sdl_module,\n+#endif  // DISABLE_SDL2MIXER\n     &music_opl_module,\n     NULL,\n };",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            99,
-            108
-          ],
-          [
-            110,
-            119
-          ]
-        ],
-        "lines_added": [
-          [
-            102,
-            103
-          ],
-          [
-            104,
-            105
-          ],
-          [
-            113,
-            114
-          ],
-          [
-            115,
-            116
-          ]
-        ]
-      }
-    },
-    {
-      "sha": "c1f701c0b9f653eb3a36b71627747a6eda963d8f",
-      "filename": "src/net_sdl.c",
-      "status": "modified",
-      "additions": 63,
-      "deletions": 0,
-      "changes": 63,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fnet_sdl.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fnet_sdl.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fnet_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -33,6 +33,10 @@\n // NETWORKING\n //\n \n+\n+#ifndef DISABLE_SDL2NET\n+\n+\n #include <SDL_net.h>\n \n #define DEFAULT_PORT 2342\n@@ -376,3 +380,62 @@ net_module_t net_sdl_module =\n     NET_SDL_ResolveAddress,\n };\n \n+\n+#else  // DISABLE_SDL2NET\n+\n+// no-op implementation\n+\n+\n+static boolean NET_NULL_InitClient(void)\n+{\n+    return false;\n+}\n+\n+\n+static boolean NET_NULL_InitServer(void)\n+{\n+    return false;\n+}\n+\n+\n+static void NET_NULL_SendPacket(net_addr_t *addr, net_packet_t *packet)\n+{\n+}\n+\n+\n+static boolean NET_NULL_RecvPacket(net_addr_t **addr, net_packet_t **packet)\n+{\n+    return false;\n+}\n+\n+\n+static void NET_NULL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)\n+{\n+\n+}\n+\n+\n+static void NET_NULL_FreeAddress(net_addr_t *addr)\n+{\n+}\n+\n+\n+net_addr_t *NET_NULL_ResolveAddress(const char *address)\n+{\n+    return NULL;\n+}\n+\n+\n+net_module_t net_sdl_module =\n+{\n+    NET_NULL_InitClient,\n+    NET_NULL_InitServer,\n+    NET_NULL_SendPacket,\n+    NET_NULL_RecvPacket,\n+    NET_NULL_AddrToString,\n+    NET_NULL_FreeAddress,\n+    NET_NULL_ResolveAddress,\n+};\n+\n+\n+#endif  // DISABLE_SDL2NET",
-      "line_filter": {
-        "diff_chunks": [
-          [
-            33,
-            43
-          ],
-          [
-            380,
-            442
-          ]
-        ],
-        "lines_added": [
-          [
-            36,
-            40
-          ],
-          [
-            383,
-            442
-          ]
-        ]
-      }
+      ]
     }
-  ]
-}
+  },
+  {
+    "sha": "e77c7b0d29de1b0c665686004dfda311c9d96719",
+    "filename": "pcsound/pcsound_sdl.c",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "changes": 6,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound_sdl.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound_sdl.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2Fpcsound_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -24,6 +24,10 @@\n #include \"pcsound.h\"\n #include \"pcsound_internal.h\"\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MAX_SOUND_SLICE_TIME 70 /* ms */\n #define SQUARE_WAVE_AMP 0x2000\n \n@@ -248,3 +252,5 @@ pcsound_driver_t pcsound_sdl_driver =\n     PCSound_SDL_Shutdown,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          24,
+          34
+        ],
+        [
+          252,
+          257
+        ]
+      ],
+      "lines_added": [
+        [
+          27,
+          31
+        ],
+        [
+          255,
+          257
+        ]
+      ]
+    }
+  },
+  {
+    "sha": "3facce6f01d02c5e8eef3088fa60576b9e949829",
+    "filename": "src/i_musicpack.c",
+    "status": "modified",
+    "additions": 87,
+    "deletions": 1,
+    "changes": 88,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_musicpack.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_musicpack.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_musicpack.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -44,6 +44,13 @@\n #include \"w_wad.h\"\n #include \"z_zone.h\"\n \n+\n+char *music_pack_path = \"\";\n+\n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MID_HEADER_MAGIC \"MThd\"\n #define MUS_HEADER_MAGIC \"MUS\\x1a\"\n \n@@ -99,7 +106,6 @@ static boolean music_initialized = false;\n \n static boolean sdl_was_initialized = false;\n \n-char *music_pack_path = \"\";\n \n // If true, we are playing a substitute digital track rather than in-WAD\n // MIDI/MUS track, and file_metadata contains loop metadata.\n@@ -1375,3 +1381,83 @@ music_module_t music_pack_module =\n     I_MP_PollMusic,\n };\n \n+\n+#else  // DISABLE_SDL2MIXER\n+\n+\n+static boolean I_NULL_InitMusic(void)\n+{\n+    return false;\n+}\n+\n+\n+static void I_NULL_ShutdownMusic(void)\n+{\n+}\n+\n+\n+static void I_NULL_SetMusicVolume(int volume)\n+{\n+}\n+\n+\n+static void I_NULL_PauseSong(void)\n+{\n+}\n+\n+\n+static void I_NULL_ResumeSong(void)\n+{\n+}\n+\n+\n+static void *I_NULL_RegisterSong(void *data, int len)\n+{\n+    return NULL;\n+}\n+\n+\n+static void I_NULL_UnRegisterSong(void *handle)\n+{\n+}\n+\n+\n+static void I_NULL_PlaySong(void *handle, boolean looping)\n+{\n+}\n+\n+\n+static void I_NULL_StopSong(void)\n+{\n+}\n+\n+\n+static boolean I_NULL_MusicIsPlaying(void)\n+{\n+    return false;\n+}\n+\n+\n+static void I_NULL_PollMusic(void)\n+{\n+}\n+\n+music_module_t music_pack_module =\n+{\n+    NULL,\n+    0,\n+    I_NULL_InitMusic,\n+    I_NULL_ShutdownMusic,\n+    I_NULL_SetMusicVolume,\n+    I_NULL_PauseSong,\n+    I_NULL_ResumeSong,\n+    I_NULL_RegisterSong,\n+    I_NULL_UnRegisterSong,\n+    I_NULL_PlaySong,\n+    I_NULL_StopSong,\n+    I_NULL_MusicIsPlaying,\n+    I_NULL_PollMusic,\n+};\n+\n+\n+#endif  // DISABLE_SDL2MIXER",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          44,
+          57
+        ],
+        [
+          106,
+          112
+        ],
+        [
+          1381,
+          1464
+        ]
+      ],
+      "lines_added": [
+        [
+          47,
+          54
+        ],
+        [
+          1384,
+          1464
+        ]
+      ]
+    }
+  },
+  {
+    "sha": "48fedfbd7608ad8c6575a4bd82a5e1cb3646e071",
+    "filename": "src/i_sdlmusic.c",
+    "status": "modified",
+    "additions": 21,
+    "deletions": 13,
+    "changes": 34,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlmusic.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlmusic.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sdlmusic.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -44,19 +44,6 @@\n #include \"w_wad.h\"\n #include \"z_zone.h\"\n \n-#define MAXMIDLENGTH (96 * 1024)\n-\n-static boolean music_initialized = false;\n-\n-// If this is true, this module initialized SDL sound and has the \n-// responsibility to shut it down\n-\n-static boolean sdl_was_initialized = false;\n-\n-static boolean win_midi_stream_opened = false;\n-\n-static boolean musicpaused = false;\n-static int current_music_volume;\n \n char *fluidsynth_sf_path = \"\";\n char *timidity_cfg_path = \"\";\n@@ -138,6 +125,25 @@ void I_InitTimidityConfig(void)\n     }\n }\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n+#define MAXMIDLENGTH (96 * 1024)\n+\n+static boolean music_initialized = false;\n+\n+// If this is true, this module initialized SDL sound and has the\n+// responsibility to shut it down\n+\n+static boolean sdl_was_initialized = false;\n+\n+static boolean win_midi_stream_opened = false;\n+\n+static boolean musicpaused = false;\n+static int current_music_volume;\n+\n+\n // Remove the temporary config file generated by I_InitTimidityConfig().\n \n static void RemoveTimidityConfig(void)\n@@ -588,3 +594,5 @@ music_module_t music_sdl_module =\n     NULL,  // Poll\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          44,
+          50
+        ],
+        [
+          125,
+          150
+        ],
+        [
+          594,
+          599
+        ]
+      ],
+      "lines_added": [
+        [
+          128,
+          147
+        ],
+        [
+          597,
+          599
+        ]
+      ]
+    }
+  },
+  {
+    "sha": "7f2a26096b218c5323f5dc569c6f70ab399782bf",
+    "filename": "src/i_sdlsound.c",
+    "status": "modified",
+    "additions": 17,
+    "deletions": 9,
+    "changes": 26,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlsound.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlsound.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sdlsound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -41,6 +41,21 @@\n \n #include \"doomtype.h\"\n \n+\n+int use_libsamplerate = 0;\n+\n+// Scale factor used when converting libsamplerate floating point numbers\n+// to integers. Too high means the sounds can clip; too low means they\n+// will be too quiet. This is an amount that should avoid clipping most\n+// of the time: with all the Doom IWAD sound effects, at least. If a PWAD\n+// is used, clipping might occur.\n+\n+float libsamplerate_scale = 0.65f;\n+\n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define LOW_PASS_FILTER\n //#define DEBUG_DUMP_WAVS\n #define NUM_CHANNELS 16\n@@ -77,15 +92,6 @@ static allocated_sound_t *allocated_sounds_head = NULL;\n static allocated_sound_t *allocated_sounds_tail = NULL;\n static int allocated_sounds_size = 0;\n \n-int use_libsamplerate = 0;\n-\n-// Scale factor used when converting libsamplerate floating point numbers\n-// to integers. Too high means the sounds can clip; too low means they\n-// will be too quiet. This is an amount that should avoid clipping most\n-// of the time: with all the Doom IWAD sound effects, at least. If a PWAD\n-// is used, clipping might occur.\n-\n-float libsamplerate_scale = 0.65f;\n \n // Hook a sound into the linked list at the head.\n \n@@ -1135,3 +1141,5 @@ sound_module_t sound_sdl_module =\n     I_SDL_PrecacheSounds,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          41,
+          62
+        ],
+        [
+          92,
+          98
+        ],
+        [
+          1141,
+          1146
+        ]
+      ],
+      "lines_added": [
+        [
+          44,
+          59
+        ],
+        [
+          1144,
+          1146
+        ]
+      ]
+    }
+  },
+  {
+    "sha": "9cf1fd95db13504ffc6f98ead8c9150f03db72aa",
+    "filename": "src/i_sound.c",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 0,
+    "changes": 4,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sound.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sound.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -99,7 +99,9 @@ static int snd_mport = 0;\n \n static sound_module_t *sound_modules[] = \n {\n+#ifndef DISABLE_SDL2MIXER\n     &sound_sdl_module,\n+#endif  // DISABLE_SDL2MIXER\n     &sound_pcsound_module,\n     NULL,\n };\n@@ -108,7 +110,9 @@ static sound_module_t *sound_modules[] =\n \n static music_module_t *music_modules[] =\n {\n+#ifndef DISABLE_SDL2MIXER\n     &music_sdl_module,\n+#endif  // DISABLE_SDL2MIXER\n     &music_opl_module,\n     NULL,\n };",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          99,
+          108
+        ],
+        [
+          110,
+          119
+        ]
+      ],
+      "lines_added": [
+        [
+          102,
+          103
+        ],
+        [
+          104,
+          105
+        ],
+        [
+          113,
+          114
+        ],
+        [
+          115,
+          116
+        ]
+      ]
+    }
+  },
+  {
+    "sha": "c1f701c0b9f653eb3a36b71627747a6eda963d8f",
+    "filename": "src/net_sdl.c",
+    "status": "modified",
+    "additions": 63,
+    "deletions": 0,
+    "changes": 63,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fnet_sdl.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fnet_sdl.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fnet_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -33,6 +33,10 @@\n // NETWORKING\n //\n \n+\n+#ifndef DISABLE_SDL2NET\n+\n+\n #include <SDL_net.h>\n \n #define DEFAULT_PORT 2342\n@@ -376,3 +380,62 @@ net_module_t net_sdl_module =\n     NET_SDL_ResolveAddress,\n };\n \n+\n+#else  // DISABLE_SDL2NET\n+\n+// no-op implementation\n+\n+\n+static boolean NET_NULL_InitClient(void)\n+{\n+    return false;\n+}\n+\n+\n+static boolean NET_NULL_InitServer(void)\n+{\n+    return false;\n+}\n+\n+\n+static void NET_NULL_SendPacket(net_addr_t *addr, net_packet_t *packet)\n+{\n+}\n+\n+\n+static boolean NET_NULL_RecvPacket(net_addr_t **addr, net_packet_t **packet)\n+{\n+    return false;\n+}\n+\n+\n+static void NET_NULL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)\n+{\n+\n+}\n+\n+\n+static void NET_NULL_FreeAddress(net_addr_t *addr)\n+{\n+}\n+\n+\n+net_addr_t *NET_NULL_ResolveAddress(const char *address)\n+{\n+    return NULL;\n+}\n+\n+\n+net_module_t net_sdl_module =\n+{\n+    NET_NULL_InitClient,\n+    NET_NULL_InitServer,\n+    NET_NULL_SendPacket,\n+    NET_NULL_RecvPacket,\n+    NET_NULL_AddrToString,\n+    NET_NULL_FreeAddress,\n+    NET_NULL_ResolveAddress,\n+};\n+\n+\n+#endif  // DISABLE_SDL2NET",
+    "line_filter": {
+      "diff_chunks": [
+        [
+          33,
+          43
+        ],
+        [
+          380,
+          442
+        ]
+      ],
+      "lines_added": [
+        [
+          36,
+          40
+        ],
+        [
+          383,
+          442
+        ]
+      ]
+    }
+  }
+]

@@ -1,281 +1,230 @@
-{
-  "sha": "3c35acde7d398c32f6fad50fa902de391f573ffa",
-  "node_id": "C_kwDOAAOGANoAKDNjMzVhY2RlN2QzOThjMzJmNmZhZDUwZmE5MDJkZTM5MWY1NzNmZmE",
-  "commit": {
-    "author": {
-      "name": "info-removed",
-      "email": "noreply@github.com",
-      "date": "2022-07-12T17:58:17Z"
-    },
-    "committer": {
-      "name": "GitHub",
-      "email": "noreply@github.com",
-      "date": "2022-07-12T17:58:17Z"
-    },
-    "message": "Merge 1acdd067d8b168099de009b2cb625c3e4565561a into 7afbf68abcaad446c3f287ed502c6ebbb2fb10e8",
-    "tree": {
-      "sha": "61aafe76912a4e79bfe9e2e0620d5fc09792922e",
-      "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/git/trees/61aafe76912a4e79bfe9e2e0620d5fc09792922e"
-    },
-    "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/git/commits/3c35acde7d398c32f6fad50fa902de391f573ffa",
-    "comment_count": 0
+[
+  {
+    "sha": "7f1eed09c6c07682738de7b5141fd151d16cf368",
+    "filename": "CMakeLists.txt",
+    "status": "modified",
+    "additions": 14,
+    "deletions": 2,
+    "changes": 16,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/CMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/CMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/CMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -28,9 +28,21 @@ else()\n                         \"-Wredundant-decls\")\n endif()\n \n+option(ENABLE_SDL2_NET \"Enable SDL2_net\" On)\n+option(ENABLE_SDL2_MIXER \"Enable SDL2_mixer\" On)\n+\n find_package(SDL2 2.0.7)\n-find_package(SDL2_mixer 2.0.2)\n-find_package(SDL2_net 2.0.0)\n+if(ENABLE_SDL2_MIXER)\n+    find_package(SDL2_mixer 2.0.2)\n+else()\n+    add_compile_definitions(DISABLE_SDL2MIXER=1)\n+endif()\n+\n+if(ENABLE_SDL2_NET)\n+    find_package(SDL2_net 2.0.0)\n+else()\n+    add_compile_definitions(DISABLE_SDL2NET=1)\n+endif()\n \n # Check for libsamplerate.\n find_package(samplerate)"
   },
-  "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/3c35acde7d398c32f6fad50fa902de391f573ffa",
-  "html_url": "https://github.com/chocolate-doom/chocolate-doom/commit/3c35acde7d398c32f6fad50fa902de391f573ffa",
-  "comments_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/3c35acde7d398c32f6fad50fa902de391f573ffa/comments",
-  "author": {
-    "login": "info-removed",
-    "type": "User"
+  {
+    "sha": "fd5d8bcecd8a6edb6d77c8686ae32a995b571066",
+    "filename": "configure.ac",
+    "status": "modified",
+    "additions": 17,
+    "deletions": 2,
+    "changes": 19,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/configure.ac",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/configure.ac",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/configure.ac?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -32,8 +32,23 @@ then\n fi\n \n PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.7])\n-PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])\n-PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])\n+# Check for SDL2_mixer\n+AC_ARG_ENABLE([sdl2mixer],\n+AS_HELP_STRING([--disable-sdl2mixer], [Disable SDL2_mixer support])\n+)\n+AS_IF([test \"x$enable_sdl2mixer\" != xno], [\n+    PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])], [\n+    AC_DEFINE([DISABLE_SDL2MIXER], [1], [SDL2_mixer disabled])\n+])\n+\n+# Check for networking\n+AC_ARG_ENABLE([sdl2net],\n+AS_HELP_STRING([--disable-sdl2net], [Disable SDL2_net support])\n+)\n+AS_IF([test \"x$enable_sdl2net\" != xno], [\n+    PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])], [\n+    AC_DEFINE([DISABLE_SDL2NET], [1], [SDL2_net disabled])\n+])\n \n # Check for bash-completion.\n AC_ARG_ENABLE([bash-completion],"
   },
-  "committer": {
-    "login": "info-removed",
-    "type": "User"
+  {
+    "sha": "151f7617dde7d1216f7212b45bb5aeb7661bc86b",
+    "filename": "opl/CMakeLists.txt",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 1,
+    "changes": 5,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2FCMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2FCMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -12,4 +12,7 @@ add_library(opl STATIC\n target_include_directories(opl\n                            INTERFACE \".\"\n                            PRIVATE \"${CMAKE_CURRENT_BINARY_DIR}/../\")\n-target_link_libraries(opl SDL2::mixer)\n+target_link_libraries(opl SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(opl SDL2::mixer)\n+endif()"
   },
-  "parents": [
-    {
-      "sha": "7afbf68abcaad446c3f287ed502c6ebbb2fb10e8",
-      "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/7afbf68abcaad446c3f287ed502c6ebbb2fb10e8",
-      "html_url": "https://github.com/chocolate-doom/chocolate-doom/commit/7afbf68abcaad446c3f287ed502c6ebbb2fb10e8"
-    },
-    {
-      "sha": "1acdd067d8b168099de009b2cb625c3e4565561a",
-      "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/1acdd067d8b168099de009b2cb625c3e4565561a",
-      "html_url": "https://github.com/chocolate-doom/chocolate-doom/commit/1acdd067d8b168099de009b2cb625c3e4565561a"
-    }
-  ],
-  "stats": {
-    "total": 334,
-    "additions": 297,
-    "deletions": 37
+  {
+    "sha": "46e082cf77c5e60affc7689f7357c926fc00cda3",
+    "filename": "opl/opl.c",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "changes": 2,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2Fopl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -50,7 +50,9 @@ static opl_driver_t *drivers[] =\n #ifdef _WIN32\n     &opl_win32_driver,\n #endif\n+#ifndef DISABLE_SDL2MIXER\n     &opl_sdl_driver,\n+#endif  // DISABLE_SDL2MIXER\n     NULL\n };\n "
   },
-  "files": [
-    {
-      "sha": "7f1eed09c6c07682738de7b5141fd151d16cf368",
-      "filename": "CMakeLists.txt",
-      "status": "modified",
-      "additions": 14,
-      "deletions": 2,
-      "changes": 16,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/CMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/CMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/CMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -28,9 +28,21 @@ else()\n                         \"-Wredundant-decls\")\n endif()\n \n+option(ENABLE_SDL2_NET \"Enable SDL2_net\" On)\n+option(ENABLE_SDL2_MIXER \"Enable SDL2_mixer\" On)\n+\n find_package(SDL2 2.0.7)\n-find_package(SDL2_mixer 2.0.2)\n-find_package(SDL2_net 2.0.0)\n+if(ENABLE_SDL2_MIXER)\n+    find_package(SDL2_mixer 2.0.2)\n+else()\n+    add_compile_definitions(DISABLE_SDL2MIXER=1)\n+endif()\n+\n+if(ENABLE_SDL2_NET)\n+    find_package(SDL2_net 2.0.0)\n+else()\n+    add_compile_definitions(DISABLE_SDL2NET=1)\n+endif()\n \n # Check for libsamplerate.\n find_package(samplerate)"
-    },
-    {
-      "sha": "fd5d8bcecd8a6edb6d77c8686ae32a995b571066",
-      "filename": "configure.ac",
-      "status": "modified",
-      "additions": 17,
-      "deletions": 2,
-      "changes": 19,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/configure.ac",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/configure.ac",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/configure.ac?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -32,8 +32,23 @@ then\n fi\n \n PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.7])\n-PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])\n-PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])\n+# Check for SDL2_mixer\n+AC_ARG_ENABLE([sdl2mixer],\n+AS_HELP_STRING([--disable-sdl2mixer], [Disable SDL2_mixer support])\n+)\n+AS_IF([test \"x$enable_sdl2mixer\" != xno], [\n+    PKG_CHECK_MODULES(SDLMIXER, [SDL2_mixer >= 2.0.2])], [\n+    AC_DEFINE([DISABLE_SDL2MIXER], [1], [SDL2_mixer disabled])\n+])\n+\n+# Check for networking\n+AC_ARG_ENABLE([sdl2net],\n+AS_HELP_STRING([--disable-sdl2net], [Disable SDL2_net support])\n+)\n+AS_IF([test \"x$enable_sdl2net\" != xno], [\n+    PKG_CHECK_MODULES(SDLNET, [SDL2_net >= 2.0.0])], [\n+    AC_DEFINE([DISABLE_SDL2NET], [1], [SDL2_net disabled])\n+])\n \n # Check for bash-completion.\n AC_ARG_ENABLE([bash-completion],"
-    },
-    {
-      "sha": "151f7617dde7d1216f7212b45bb5aeb7661bc86b",
-      "filename": "opl/CMakeLists.txt",
-      "status": "modified",
-      "additions": 4,
-      "deletions": 1,
-      "changes": 5,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2FCMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2FCMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -12,4 +12,7 @@ add_library(opl STATIC\n target_include_directories(opl\n                            INTERFACE \".\"\n                            PRIVATE \"${CMAKE_CURRENT_BINARY_DIR}/../\")\n-target_link_libraries(opl SDL2::mixer)\n+target_link_libraries(opl SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(opl SDL2::mixer)\n+endif()"
-    },
-    {
-      "sha": "46e082cf77c5e60affc7689f7357c926fc00cda3",
-      "filename": "opl/opl.c",
-      "status": "modified",
-      "additions": 2,
-      "deletions": 0,
-      "changes": 2,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2Fopl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -50,7 +50,9 @@ static opl_driver_t *drivers[] =\n #ifdef _WIN32\n     &opl_win32_driver,\n #endif\n+#ifndef DISABLE_SDL2MIXER\n     &opl_sdl_driver,\n+#endif  // DISABLE_SDL2MIXER\n     NULL\n };\n "
-    },
-    {
-      "sha": "6bd4e7e1f3374e289d3dc19972dcb1d5379d6b03",
-      "filename": "opl/opl_sdl.c",
-      "status": "modified",
-      "additions": 6,
-      "deletions": 0,
-      "changes": 6,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl_sdl.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl_sdl.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2Fopl_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -33,6 +33,10 @@\n \n #include \"opl_queue.h\"\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MAX_SOUND_SLICE_TIME 100 /* ms */\n \n typedef struct\n@@ -511,3 +515,5 @@ opl_driver_t opl_sdl_driver =\n     OPL_SDL_AdjustCallbacks,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER"
-    },
-    {
-      "sha": "9924263aea24261091948e455dfd2521787a04c4",
-      "filename": "pcsound/CMakeLists.txt",
-      "status": "modified",
-      "additions": 4,
-      "deletions": 1,
-      "changes": 5,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2FCMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2FCMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -8,4 +8,7 @@ add_library(pcsound STATIC\n target_include_directories(pcsound\n                            INTERFACE \".\"\n                            PRIVATE \"${CMAKE_CURRENT_BINARY_DIR}/../\")\n-target_link_libraries(pcsound SDL2::mixer)\n+target_link_libraries(pcsound SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(pcsound SDL2::mixer)\n+endif()"
-    },
-    {
-      "sha": "58f9b75c2affd5f1dd990aaedab79d834575bf83",
-      "filename": "pcsound/pcsound.c",
-      "status": "modified",
-      "additions": 2,
-      "deletions": 0,
-      "changes": 2,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2Fpcsound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -56,7 +56,9 @@ static pcsound_driver_t *drivers[] =\n #ifdef _WIN32\n     &pcsound_win32_driver,\n #endif\n+#ifndef DISABLE_SDL2MIXER\n     &pcsound_sdl_driver,\n+#endif  // DISABLE_SDL2MIXER\n     NULL,\n };\n "
-    },
-    {
-      "sha": "e77c7b0d29de1b0c665686004dfda311c9d96719",
-      "filename": "pcsound/pcsound_sdl.c",
-      "status": "modified",
-      "additions": 6,
-      "deletions": 0,
-      "changes": 6,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound_sdl.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound_sdl.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2Fpcsound_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -24,6 +24,10 @@\n #include \"pcsound.h\"\n #include \"pcsound_internal.h\"\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MAX_SOUND_SLICE_TIME 70 /* ms */\n #define SQUARE_WAVE_AMP 0x2000\n \n@@ -248,3 +252,5 @@ pcsound_driver_t pcsound_sdl_driver =\n     PCSound_SDL_Shutdown,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER"
-    },
-    {
-      "sha": "bbb877641f2a8de6e6eb7dad5b8c866e147faf7d",
-      "filename": "src/CMakeLists.txt",
-      "status": "modified",
-      "additions": 18,
-      "deletions": 3,
-      "changes": 21,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2FCMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2FCMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -32,7 +32,10 @@ set(DEDSERV_FILES\n add_executable(\"${PROGRAM_PREFIX}server\" WIN32 ${COMMON_SOURCE_FILES} ${DEDSERV_FILES})\n target_include_directories(\"${PROGRAM_PREFIX}server\"\n                            PRIVATE \"${CMAKE_CURRENT_BINARY_DIR}/../\")\n-target_link_libraries(\"${PROGRAM_PREFIX}server\" SDL2::SDL2main SDL2::net)\n+target_link_libraries(\"${PROGRAM_PREFIX}server\" SDL2::SDL2main SDL2::SDL2)\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(\"${PROGRAM_PREFIX}server\" SDL2::net)\n+endif()\n \n # Source files used by the game binaries (chocolate-doom, etc.)\n \n@@ -121,7 +124,13 @@ set(DEHACKED_SOURCE_FILES\n set(SOURCE_FILES ${COMMON_SOURCE_FILES} ${GAME_SOURCE_FILES})\n set(SOURCE_FILES_WITH_DEH ${SOURCE_FILES} ${DEHACKED_SOURCE_FILES})\n \n-set(EXTRA_LIBS SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net textscreen pcsound opl)\n+set(EXTRA_LIBS SDL2::SDL2main SDL2::SDL2 textscreen pcsound opl)\n+if(ENABLE_SDL2_MIXER)\n+    list(APPEND EXTRA_LIBS SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    list(APPEND EXTRA_LIBS SDL2::net)\n+endif()\n if(SAMPLERATE_FOUND)\n     list(APPEND EXTRA_LIBS samplerate::samplerate)\n endif()\n@@ -213,7 +222,13 @@ endif()\n \n target_include_directories(\"${PROGRAM_PREFIX}setup\"\n                            PRIVATE \"${CMAKE_CURRENT_BINARY_DIR}/../\")\n-target_link_libraries(\"${PROGRAM_PREFIX}setup\" SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net setup textscreen)\n+target_link_libraries(\"${PROGRAM_PREFIX}setup\" SDL2::SDL2main SDL2::SDL2 setup textscreen)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(\"${PROGRAM_PREFIX}setup\" SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(\"${PROGRAM_PREFIX}setup\" SDL2::net)\n+endif()\n \n if(MSVC)\n     set_target_properties(\"${PROGRAM_PREFIX}setup\" PROPERTIES"
-    },
-    {
-      "sha": "82b114b4178595085c6745bc70a570922415be1f",
-      "filename": "src/doom/CMakeLists.txt",
-      "status": "modified",
-      "additions": 7,
-      "deletions": 1,
-      "changes": 8,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fdoom%2FCMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fdoom%2FCMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fdoom%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -68,4 +68,10 @@ add_library(doom STATIC\n             wi_stuff.c      wi_stuff.h)\n \n target_include_directories(doom PRIVATE \"../\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(doom SDL2::SDL2 SDL2::mixer SDL2::net)\n+target_link_libraries(doom SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(doom SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(doom SDL2::net)\n+endif()"
-    },
-    {
-      "sha": "1ea060bfdb8b3147e36b3431fee27934c8a93b34",
-      "filename": "src/heretic/CMakeLists.txt",
-      "status": "modified",
-      "additions": 7,
-      "deletions": 1,
-      "changes": 8,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fheretic%2FCMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fheretic%2FCMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fheretic%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -54,4 +54,10 @@ add_library(heretic STATIC\n             s_sound.c           s_sound.h)\n \n target_include_directories(heretic PRIVATE \"../\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(heretic textscreen SDL2::SDL2 SDL2::mixer SDL2::net)\n+target_link_libraries(heretic textscreen SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(heretic SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(heretic SDL2::net)\n+endif()"
-    },
-    {
-      "sha": "0dbd170bfdb06c8209ec654d4d5377e334be886e",
-      "filename": "src/hexen/CMakeLists.txt",
-      "status": "modified",
-      "additions": 7,
-      "deletions": 1,
-      "changes": 8,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fhexen%2FCMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fhexen%2FCMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fhexen%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -55,4 +55,10 @@ add_library(hexen STATIC\n                                 xddefs.h)\n \n target_include_directories(hexen PRIVATE \"../\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(hexen SDL2::SDL2 SDL2::mixer SDL2::net)\n+target_link_libraries(hexen SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(hexen SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(hexen SDL2::net)\n+endif()"
-    },
-    {
-      "sha": "3facce6f01d02c5e8eef3088fa60576b9e949829",
-      "filename": "src/i_musicpack.c",
-      "status": "modified",
-      "additions": 87,
-      "deletions": 1,
-      "changes": 88,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_musicpack.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_musicpack.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_musicpack.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -44,6 +44,13 @@\n #include \"w_wad.h\"\n #include \"z_zone.h\"\n \n+\n+char *music_pack_path = \"\";\n+\n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MID_HEADER_MAGIC \"MThd\"\n #define MUS_HEADER_MAGIC \"MUS\\x1a\"\n \n@@ -99,7 +106,6 @@ static boolean music_initialized = false;\n \n static boolean sdl_was_initialized = false;\n \n-char *music_pack_path = \"\";\n \n // If true, we are playing a substitute digital track rather than in-WAD\n // MIDI/MUS track, and file_metadata contains loop metadata.\n@@ -1375,3 +1381,83 @@ music_module_t music_pack_module =\n     I_MP_PollMusic,\n };\n \n+\n+#else  // DISABLE_SDL2MIXER\n+\n+\n+static boolean I_NULL_InitMusic(void)\n+{\n+    return false;\n+}\n+\n+\n+static void I_NULL_ShutdownMusic(void)\n+{\n+}\n+\n+\n+static void I_NULL_SetMusicVolume(int volume)\n+{\n+}\n+\n+\n+static void I_NULL_PauseSong(void)\n+{\n+}\n+\n+\n+static void I_NULL_ResumeSong(void)\n+{\n+}\n+\n+\n+static void *I_NULL_RegisterSong(void *data, int len)\n+{\n+    return NULL;\n+}\n+\n+\n+static void I_NULL_UnRegisterSong(void *handle)\n+{\n+}\n+\n+\n+static void I_NULL_PlaySong(void *handle, boolean looping)\n+{\n+}\n+\n+\n+static void I_NULL_StopSong(void)\n+{\n+}\n+\n+\n+static boolean I_NULL_MusicIsPlaying(void)\n+{\n+    return false;\n+}\n+\n+\n+static void I_NULL_PollMusic(void)\n+{\n+}\n+\n+music_module_t music_pack_module =\n+{\n+    NULL,\n+    0,\n+    I_NULL_InitMusic,\n+    I_NULL_ShutdownMusic,\n+    I_NULL_SetMusicVolume,\n+    I_NULL_PauseSong,\n+    I_NULL_ResumeSong,\n+    I_NULL_RegisterSong,\n+    I_NULL_UnRegisterSong,\n+    I_NULL_PlaySong,\n+    I_NULL_StopSong,\n+    I_NULL_MusicIsPlaying,\n+    I_NULL_PollMusic,\n+};\n+\n+\n+#endif  // DISABLE_SDL2MIXER"
-    },
-    {
-      "sha": "48fedfbd7608ad8c6575a4bd82a5e1cb3646e071",
-      "filename": "src/i_sdlmusic.c",
-      "status": "modified",
-      "additions": 21,
-      "deletions": 13,
-      "changes": 34,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlmusic.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlmusic.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sdlmusic.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -44,19 +44,6 @@\n #include \"w_wad.h\"\n #include \"z_zone.h\"\n \n-#define MAXMIDLENGTH (96 * 1024)\n-\n-static boolean music_initialized = false;\n-\n-// If this is true, this module initialized SDL sound and has the \n-// responsibility to shut it down\n-\n-static boolean sdl_was_initialized = false;\n-\n-static boolean win_midi_stream_opened = false;\n-\n-static boolean musicpaused = false;\n-static int current_music_volume;\n \n char *fluidsynth_sf_path = \"\";\n char *timidity_cfg_path = \"\";\n@@ -138,6 +125,25 @@ void I_InitTimidityConfig(void)\n     }\n }\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n+#define MAXMIDLENGTH (96 * 1024)\n+\n+static boolean music_initialized = false;\n+\n+// If this is true, this module initialized SDL sound and has the\n+// responsibility to shut it down\n+\n+static boolean sdl_was_initialized = false;\n+\n+static boolean win_midi_stream_opened = false;\n+\n+static boolean musicpaused = false;\n+static int current_music_volume;\n+\n+\n // Remove the temporary config file generated by I_InitTimidityConfig().\n \n static void RemoveTimidityConfig(void)\n@@ -588,3 +594,5 @@ music_module_t music_sdl_module =\n     NULL,  // Poll\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER"
-    },
-    {
-      "sha": "7f2a26096b218c5323f5dc569c6f70ab399782bf",
-      "filename": "src/i_sdlsound.c",
-      "status": "modified",
-      "additions": 17,
-      "deletions": 9,
-      "changes": 26,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlsound.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlsound.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sdlsound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -41,6 +41,21 @@\n \n #include \"doomtype.h\"\n \n+\n+int use_libsamplerate = 0;\n+\n+// Scale factor used when converting libsamplerate floating point numbers\n+// to integers. Too high means the sounds can clip; too low means they\n+// will be too quiet. This is an amount that should avoid clipping most\n+// of the time: with all the Doom IWAD sound effects, at least. If a PWAD\n+// is used, clipping might occur.\n+\n+float libsamplerate_scale = 0.65f;\n+\n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define LOW_PASS_FILTER\n //#define DEBUG_DUMP_WAVS\n #define NUM_CHANNELS 16\n@@ -77,15 +92,6 @@ static allocated_sound_t *allocated_sounds_head = NULL;\n static allocated_sound_t *allocated_sounds_tail = NULL;\n static int allocated_sounds_size = 0;\n \n-int use_libsamplerate = 0;\n-\n-// Scale factor used when converting libsamplerate floating point numbers\n-// to integers. Too high means the sounds can clip; too low means they\n-// will be too quiet. This is an amount that should avoid clipping most\n-// of the time: with all the Doom IWAD sound effects, at least. If a PWAD\n-// is used, clipping might occur.\n-\n-float libsamplerate_scale = 0.65f;\n \n // Hook a sound into the linked list at the head.\n \n@@ -1135,3 +1141,5 @@ sound_module_t sound_sdl_module =\n     I_SDL_PrecacheSounds,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER"
-    },
-    {
-      "sha": "9cf1fd95db13504ffc6f98ead8c9150f03db72aa",
-      "filename": "src/i_sound.c",
-      "status": "modified",
-      "additions": 4,
-      "deletions": 0,
-      "changes": 4,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sound.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sound.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -99,7 +99,9 @@ static int snd_mport = 0;\n \n static sound_module_t *sound_modules[] = \n {\n+#ifndef DISABLE_SDL2MIXER\n     &sound_sdl_module,\n+#endif  // DISABLE_SDL2MIXER\n     &sound_pcsound_module,\n     NULL,\n };\n@@ -108,7 +110,9 @@ static sound_module_t *sound_modules[] =\n \n static music_module_t *music_modules[] =\n {\n+#ifndef DISABLE_SDL2MIXER\n     &music_sdl_module,\n+#endif  // DISABLE_SDL2MIXER\n     &music_opl_module,\n     NULL,\n };"
-    },
-    {
-      "sha": "c1f701c0b9f653eb3a36b71627747a6eda963d8f",
-      "filename": "src/net_sdl.c",
-      "status": "modified",
-      "additions": 63,
-      "deletions": 0,
-      "changes": 63,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fnet_sdl.c",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fnet_sdl.c",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fnet_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -33,6 +33,10 @@\n // NETWORKING\n //\n \n+\n+#ifndef DISABLE_SDL2NET\n+\n+\n #include <SDL_net.h>\n \n #define DEFAULT_PORT 2342\n@@ -376,3 +380,62 @@ net_module_t net_sdl_module =\n     NET_SDL_ResolveAddress,\n };\n \n+\n+#else  // DISABLE_SDL2NET\n+\n+// no-op implementation\n+\n+\n+static boolean NET_NULL_InitClient(void)\n+{\n+    return false;\n+}\n+\n+\n+static boolean NET_NULL_InitServer(void)\n+{\n+    return false;\n+}\n+\n+\n+static void NET_NULL_SendPacket(net_addr_t *addr, net_packet_t *packet)\n+{\n+}\n+\n+\n+static boolean NET_NULL_RecvPacket(net_addr_t **addr, net_packet_t **packet)\n+{\n+    return false;\n+}\n+\n+\n+static void NET_NULL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)\n+{\n+\n+}\n+\n+\n+static void NET_NULL_FreeAddress(net_addr_t *addr)\n+{\n+}\n+\n+\n+net_addr_t *NET_NULL_ResolveAddress(const char *address)\n+{\n+    return NULL;\n+}\n+\n+\n+net_module_t net_sdl_module =\n+{\n+    NET_NULL_InitClient,\n+    NET_NULL_InitServer,\n+    NET_NULL_SendPacket,\n+    NET_NULL_RecvPacket,\n+    NET_NULL_AddrToString,\n+    NET_NULL_FreeAddress,\n+    NET_NULL_ResolveAddress,\n+};\n+\n+\n+#endif  // DISABLE_SDL2NET"
-    },
-    {
-      "sha": "90df2114163152ff732a9ba4a8bc18ef3d45d1bd",
-      "filename": "src/setup/CMakeLists.txt",
-      "status": "modified",
-      "additions": 4,
-      "deletions": 1,
-      "changes": 5,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fsetup%2FCMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fsetup%2FCMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fsetup%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -15,4 +15,7 @@ add_library(setup STATIC\n             txt_mouseinput.c    txt_mouseinput.h)\n \n target_include_directories(setup PRIVATE \"../\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(setup textscreen SDL2::SDL2 SDL2::mixer)\n+target_link_libraries(setup textscreen SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(setup SDL2::mixer)\n+endif()"
-    },
-    {
-      "sha": "37b17ade983155369c0897c0935d40dfeb2048c7",
-      "filename": "src/strife/CMakeLists.txt",
-      "status": "modified",
-      "additions": 7,
-      "deletions": 1,
-      "changes": 8,
-      "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fstrife%2FCMakeLists.txt",
-      "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fstrife%2FCMakeLists.txt",
-      "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fstrife%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
-      "patch": "@@ -70,4 +70,10 @@ set(STRIFE_SOURCES\n add_library(strife STATIC ${STRIFE_SOURCES})\n \n target_include_directories(strife PRIVATE \"../\" \"../../win32/\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(strife textscreen SDL2::SDL2 SDL2::mixer SDL2::net)\n+target_link_libraries(strife textscreen SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(strife SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(strife SDL2::net)\n+endif()"
-    }
-  ]
-}
+  {
+    "sha": "6bd4e7e1f3374e289d3dc19972dcb1d5379d6b03",
+    "filename": "opl/opl_sdl.c",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "changes": 6,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl_sdl.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/opl%2Fopl_sdl.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/opl%2Fopl_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -33,6 +33,10 @@\n \n #include \"opl_queue.h\"\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MAX_SOUND_SLICE_TIME 100 /* ms */\n \n typedef struct\n@@ -511,3 +515,5 @@ opl_driver_t opl_sdl_driver =\n     OPL_SDL_AdjustCallbacks,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER"
+  },
+  {
+    "sha": "9924263aea24261091948e455dfd2521787a04c4",
+    "filename": "pcsound/CMakeLists.txt",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 1,
+    "changes": 5,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2FCMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2FCMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -8,4 +8,7 @@ add_library(pcsound STATIC\n target_include_directories(pcsound\n                            INTERFACE \".\"\n                            PRIVATE \"${CMAKE_CURRENT_BINARY_DIR}/../\")\n-target_link_libraries(pcsound SDL2::mixer)\n+target_link_libraries(pcsound SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(pcsound SDL2::mixer)\n+endif()"
+  },
+  {
+    "sha": "58f9b75c2affd5f1dd990aaedab79d834575bf83",
+    "filename": "pcsound/pcsound.c",
+    "status": "modified",
+    "additions": 2,
+    "deletions": 0,
+    "changes": 2,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2Fpcsound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -56,7 +56,9 @@ static pcsound_driver_t *drivers[] =\n #ifdef _WIN32\n     &pcsound_win32_driver,\n #endif\n+#ifndef DISABLE_SDL2MIXER\n     &pcsound_sdl_driver,\n+#endif  // DISABLE_SDL2MIXER\n     NULL,\n };\n "
+  },
+  {
+    "sha": "e77c7b0d29de1b0c665686004dfda311c9d96719",
+    "filename": "pcsound/pcsound_sdl.c",
+    "status": "modified",
+    "additions": 6,
+    "deletions": 0,
+    "changes": 6,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound_sdl.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/pcsound%2Fpcsound_sdl.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/pcsound%2Fpcsound_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -24,6 +24,10 @@\n #include \"pcsound.h\"\n #include \"pcsound_internal.h\"\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MAX_SOUND_SLICE_TIME 70 /* ms */\n #define SQUARE_WAVE_AMP 0x2000\n \n@@ -248,3 +252,5 @@ pcsound_driver_t pcsound_sdl_driver =\n     PCSound_SDL_Shutdown,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER"
+  },
+  {
+    "sha": "bbb877641f2a8de6e6eb7dad5b8c866e147faf7d",
+    "filename": "src/CMakeLists.txt",
+    "status": "modified",
+    "additions": 18,
+    "deletions": 3,
+    "changes": 21,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2FCMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2FCMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -32,7 +32,10 @@ set(DEDSERV_FILES\n add_executable(\"${PROGRAM_PREFIX}server\" WIN32 ${COMMON_SOURCE_FILES} ${DEDSERV_FILES})\n target_include_directories(\"${PROGRAM_PREFIX}server\"\n                            PRIVATE \"${CMAKE_CURRENT_BINARY_DIR}/../\")\n-target_link_libraries(\"${PROGRAM_PREFIX}server\" SDL2::SDL2main SDL2::net)\n+target_link_libraries(\"${PROGRAM_PREFIX}server\" SDL2::SDL2main SDL2::SDL2)\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(\"${PROGRAM_PREFIX}server\" SDL2::net)\n+endif()\n \n # Source files used by the game binaries (chocolate-doom, etc.)\n \n@@ -121,7 +124,13 @@ set(DEHACKED_SOURCE_FILES\n set(SOURCE_FILES ${COMMON_SOURCE_FILES} ${GAME_SOURCE_FILES})\n set(SOURCE_FILES_WITH_DEH ${SOURCE_FILES} ${DEHACKED_SOURCE_FILES})\n \n-set(EXTRA_LIBS SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net textscreen pcsound opl)\n+set(EXTRA_LIBS SDL2::SDL2main SDL2::SDL2 textscreen pcsound opl)\n+if(ENABLE_SDL2_MIXER)\n+    list(APPEND EXTRA_LIBS SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    list(APPEND EXTRA_LIBS SDL2::net)\n+endif()\n if(SAMPLERATE_FOUND)\n     list(APPEND EXTRA_LIBS samplerate::samplerate)\n endif()\n@@ -213,7 +222,13 @@ endif()\n \n target_include_directories(\"${PROGRAM_PREFIX}setup\"\n                            PRIVATE \"${CMAKE_CURRENT_BINARY_DIR}/../\")\n-target_link_libraries(\"${PROGRAM_PREFIX}setup\" SDL2::SDL2main SDL2::SDL2 SDL2::mixer SDL2::net setup textscreen)\n+target_link_libraries(\"${PROGRAM_PREFIX}setup\" SDL2::SDL2main SDL2::SDL2 setup textscreen)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(\"${PROGRAM_PREFIX}setup\" SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(\"${PROGRAM_PREFIX}setup\" SDL2::net)\n+endif()\n \n if(MSVC)\n     set_target_properties(\"${PROGRAM_PREFIX}setup\" PROPERTIES"
+  },
+  {
+    "sha": "82b114b4178595085c6745bc70a570922415be1f",
+    "filename": "src/doom/CMakeLists.txt",
+    "status": "modified",
+    "additions": 7,
+    "deletions": 1,
+    "changes": 8,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fdoom%2FCMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fdoom%2FCMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fdoom%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -68,4 +68,10 @@ add_library(doom STATIC\n             wi_stuff.c      wi_stuff.h)\n \n target_include_directories(doom PRIVATE \"../\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(doom SDL2::SDL2 SDL2::mixer SDL2::net)\n+target_link_libraries(doom SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(doom SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(doom SDL2::net)\n+endif()"
+  },
+  {
+    "sha": "1ea060bfdb8b3147e36b3431fee27934c8a93b34",
+    "filename": "src/heretic/CMakeLists.txt",
+    "status": "modified",
+    "additions": 7,
+    "deletions": 1,
+    "changes": 8,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fheretic%2FCMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fheretic%2FCMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fheretic%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -54,4 +54,10 @@ add_library(heretic STATIC\n             s_sound.c           s_sound.h)\n \n target_include_directories(heretic PRIVATE \"../\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(heretic textscreen SDL2::SDL2 SDL2::mixer SDL2::net)\n+target_link_libraries(heretic textscreen SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(heretic SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(heretic SDL2::net)\n+endif()"
+  },
+  {
+    "sha": "0dbd170bfdb06c8209ec654d4d5377e334be886e",
+    "filename": "src/hexen/CMakeLists.txt",
+    "status": "modified",
+    "additions": 7,
+    "deletions": 1,
+    "changes": 8,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fhexen%2FCMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fhexen%2FCMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fhexen%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -55,4 +55,10 @@ add_library(hexen STATIC\n                                 xddefs.h)\n \n target_include_directories(hexen PRIVATE \"../\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(hexen SDL2::SDL2 SDL2::mixer SDL2::net)\n+target_link_libraries(hexen SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(hexen SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(hexen SDL2::net)\n+endif()"
+  },
+  {
+    "sha": "3facce6f01d02c5e8eef3088fa60576b9e949829",
+    "filename": "src/i_musicpack.c",
+    "status": "modified",
+    "additions": 87,
+    "deletions": 1,
+    "changes": 88,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_musicpack.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_musicpack.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_musicpack.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -44,6 +44,13 @@\n #include \"w_wad.h\"\n #include \"z_zone.h\"\n \n+\n+char *music_pack_path = \"\";\n+\n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define MID_HEADER_MAGIC \"MThd\"\n #define MUS_HEADER_MAGIC \"MUS\\x1a\"\n \n@@ -99,7 +106,6 @@ static boolean music_initialized = false;\n \n static boolean sdl_was_initialized = false;\n \n-char *music_pack_path = \"\";\n \n // If true, we are playing a substitute digital track rather than in-WAD\n // MIDI/MUS track, and file_metadata contains loop metadata.\n@@ -1375,3 +1381,83 @@ music_module_t music_pack_module =\n     I_MP_PollMusic,\n };\n \n+\n+#else  // DISABLE_SDL2MIXER\n+\n+\n+static boolean I_NULL_InitMusic(void)\n+{\n+    return false;\n+}\n+\n+\n+static void I_NULL_ShutdownMusic(void)\n+{\n+}\n+\n+\n+static void I_NULL_SetMusicVolume(int volume)\n+{\n+}\n+\n+\n+static void I_NULL_PauseSong(void)\n+{\n+}\n+\n+\n+static void I_NULL_ResumeSong(void)\n+{\n+}\n+\n+\n+static void *I_NULL_RegisterSong(void *data, int len)\n+{\n+    return NULL;\n+}\n+\n+\n+static void I_NULL_UnRegisterSong(void *handle)\n+{\n+}\n+\n+\n+static void I_NULL_PlaySong(void *handle, boolean looping)\n+{\n+}\n+\n+\n+static void I_NULL_StopSong(void)\n+{\n+}\n+\n+\n+static boolean I_NULL_MusicIsPlaying(void)\n+{\n+    return false;\n+}\n+\n+\n+static void I_NULL_PollMusic(void)\n+{\n+}\n+\n+music_module_t music_pack_module =\n+{\n+    NULL,\n+    0,\n+    I_NULL_InitMusic,\n+    I_NULL_ShutdownMusic,\n+    I_NULL_SetMusicVolume,\n+    I_NULL_PauseSong,\n+    I_NULL_ResumeSong,\n+    I_NULL_RegisterSong,\n+    I_NULL_UnRegisterSong,\n+    I_NULL_PlaySong,\n+    I_NULL_StopSong,\n+    I_NULL_MusicIsPlaying,\n+    I_NULL_PollMusic,\n+};\n+\n+\n+#endif  // DISABLE_SDL2MIXER"
+  },
+  {
+    "sha": "48fedfbd7608ad8c6575a4bd82a5e1cb3646e071",
+    "filename": "src/i_sdlmusic.c",
+    "status": "modified",
+    "additions": 21,
+    "deletions": 13,
+    "changes": 34,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlmusic.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlmusic.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sdlmusic.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -44,19 +44,6 @@\n #include \"w_wad.h\"\n #include \"z_zone.h\"\n \n-#define MAXMIDLENGTH (96 * 1024)\n-\n-static boolean music_initialized = false;\n-\n-// If this is true, this module initialized SDL sound and has the \n-// responsibility to shut it down\n-\n-static boolean sdl_was_initialized = false;\n-\n-static boolean win_midi_stream_opened = false;\n-\n-static boolean musicpaused = false;\n-static int current_music_volume;\n \n char *fluidsynth_sf_path = \"\";\n char *timidity_cfg_path = \"\";\n@@ -138,6 +125,25 @@ void I_InitTimidityConfig(void)\n     }\n }\n \n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n+#define MAXMIDLENGTH (96 * 1024)\n+\n+static boolean music_initialized = false;\n+\n+// If this is true, this module initialized SDL sound and has the\n+// responsibility to shut it down\n+\n+static boolean sdl_was_initialized = false;\n+\n+static boolean win_midi_stream_opened = false;\n+\n+static boolean musicpaused = false;\n+static int current_music_volume;\n+\n+\n // Remove the temporary config file generated by I_InitTimidityConfig().\n \n static void RemoveTimidityConfig(void)\n@@ -588,3 +594,5 @@ music_module_t music_sdl_module =\n     NULL,  // Poll\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER"
+  },
+  {
+    "sha": "7f2a26096b218c5323f5dc569c6f70ab399782bf",
+    "filename": "src/i_sdlsound.c",
+    "status": "modified",
+    "additions": 17,
+    "deletions": 9,
+    "changes": 26,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlsound.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sdlsound.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sdlsound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -41,6 +41,21 @@\n \n #include \"doomtype.h\"\n \n+\n+int use_libsamplerate = 0;\n+\n+// Scale factor used when converting libsamplerate floating point numbers\n+// to integers. Too high means the sounds can clip; too low means they\n+// will be too quiet. This is an amount that should avoid clipping most\n+// of the time: with all the Doom IWAD sound effects, at least. If a PWAD\n+// is used, clipping might occur.\n+\n+float libsamplerate_scale = 0.65f;\n+\n+\n+#ifndef DISABLE_SDL2MIXER\n+\n+\n #define LOW_PASS_FILTER\n //#define DEBUG_DUMP_WAVS\n #define NUM_CHANNELS 16\n@@ -77,15 +92,6 @@ static allocated_sound_t *allocated_sounds_head = NULL;\n static allocated_sound_t *allocated_sounds_tail = NULL;\n static int allocated_sounds_size = 0;\n \n-int use_libsamplerate = 0;\n-\n-// Scale factor used when converting libsamplerate floating point numbers\n-// to integers. Too high means the sounds can clip; too low means they\n-// will be too quiet. This is an amount that should avoid clipping most\n-// of the time: with all the Doom IWAD sound effects, at least. If a PWAD\n-// is used, clipping might occur.\n-\n-float libsamplerate_scale = 0.65f;\n \n // Hook a sound into the linked list at the head.\n \n@@ -1135,3 +1141,5 @@ sound_module_t sound_sdl_module =\n     I_SDL_PrecacheSounds,\n };\n \n+\n+#endif  // DISABLE_SDL2MIXER"
+  },
+  {
+    "sha": "9cf1fd95db13504ffc6f98ead8c9150f03db72aa",
+    "filename": "src/i_sound.c",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 0,
+    "changes": 4,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sound.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fi_sound.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fi_sound.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -99,7 +99,9 @@ static int snd_mport = 0;\n \n static sound_module_t *sound_modules[] = \n {\n+#ifndef DISABLE_SDL2MIXER\n     &sound_sdl_module,\n+#endif  // DISABLE_SDL2MIXER\n     &sound_pcsound_module,\n     NULL,\n };\n@@ -108,7 +110,9 @@ static sound_module_t *sound_modules[] =\n \n static music_module_t *music_modules[] =\n {\n+#ifndef DISABLE_SDL2MIXER\n     &music_sdl_module,\n+#endif  // DISABLE_SDL2MIXER\n     &music_opl_module,\n     NULL,\n };"
+  },
+  {
+    "sha": "c1f701c0b9f653eb3a36b71627747a6eda963d8f",
+    "filename": "src/net_sdl.c",
+    "status": "modified",
+    "additions": 63,
+    "deletions": 0,
+    "changes": 63,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fnet_sdl.c",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fnet_sdl.c",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fnet_sdl.c?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -33,6 +33,10 @@\n // NETWORKING\n //\n \n+\n+#ifndef DISABLE_SDL2NET\n+\n+\n #include <SDL_net.h>\n \n #define DEFAULT_PORT 2342\n@@ -376,3 +380,62 @@ net_module_t net_sdl_module =\n     NET_SDL_ResolveAddress,\n };\n \n+\n+#else  // DISABLE_SDL2NET\n+\n+// no-op implementation\n+\n+\n+static boolean NET_NULL_InitClient(void)\n+{\n+    return false;\n+}\n+\n+\n+static boolean NET_NULL_InitServer(void)\n+{\n+    return false;\n+}\n+\n+\n+static void NET_NULL_SendPacket(net_addr_t *addr, net_packet_t *packet)\n+{\n+}\n+\n+\n+static boolean NET_NULL_RecvPacket(net_addr_t **addr, net_packet_t **packet)\n+{\n+    return false;\n+}\n+\n+\n+static void NET_NULL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)\n+{\n+\n+}\n+\n+\n+static void NET_NULL_FreeAddress(net_addr_t *addr)\n+{\n+}\n+\n+\n+net_addr_t *NET_NULL_ResolveAddress(const char *address)\n+{\n+    return NULL;\n+}\n+\n+\n+net_module_t net_sdl_module =\n+{\n+    NET_NULL_InitClient,\n+    NET_NULL_InitServer,\n+    NET_NULL_SendPacket,\n+    NET_NULL_RecvPacket,\n+    NET_NULL_AddrToString,\n+    NET_NULL_FreeAddress,\n+    NET_NULL_ResolveAddress,\n+};\n+\n+\n+#endif  // DISABLE_SDL2NET"
+  },
+  {
+    "sha": "90df2114163152ff732a9ba4a8bc18ef3d45d1bd",
+    "filename": "src/setup/CMakeLists.txt",
+    "status": "modified",
+    "additions": 4,
+    "deletions": 1,
+    "changes": 5,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fsetup%2FCMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fsetup%2FCMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fsetup%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -15,4 +15,7 @@ add_library(setup STATIC\n             txt_mouseinput.c    txt_mouseinput.h)\n \n target_include_directories(setup PRIVATE \"../\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(setup textscreen SDL2::SDL2 SDL2::mixer)\n+target_link_libraries(setup textscreen SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(setup SDL2::mixer)\n+endif()"
+  },
+  {
+    "sha": "37b17ade983155369c0897c0935d40dfeb2048c7",
+    "filename": "src/strife/CMakeLists.txt",
+    "status": "modified",
+    "additions": 7,
+    "deletions": 1,
+    "changes": 8,
+    "blob_url": "https://github.com/chocolate-doom/chocolate-doom/blob/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fstrife%2FCMakeLists.txt",
+    "raw_url": "https://github.com/chocolate-doom/chocolate-doom/raw/3c35acde7d398c32f6fad50fa902de391f573ffa/src%2Fstrife%2FCMakeLists.txt",
+    "contents_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/contents/src%2Fstrife%2FCMakeLists.txt?ref=3c35acde7d398c32f6fad50fa902de391f573ffa",
+    "patch": "@@ -70,4 +70,10 @@ set(STRIFE_SOURCES\n add_library(strife STATIC ${STRIFE_SOURCES})\n \n target_include_directories(strife PRIVATE \"../\" \"../../win32/\" \"${CMAKE_CURRENT_BINARY_DIR}/../../\")\n-target_link_libraries(strife textscreen SDL2::SDL2 SDL2::mixer SDL2::net)\n+target_link_libraries(strife textscreen SDL2::SDL2)\n+if(ENABLE_SDL2_mixer)\n+    target_link_libraries(strife SDL2::mixer)\n+endif()\n+if(ENABLE_SDL2_NET)\n+    target_link_libraries(strife SDL2::net)\n+endif()"
+  }
+]

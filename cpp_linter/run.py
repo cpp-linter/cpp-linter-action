@@ -234,7 +234,12 @@ def get_list_of_changed_files() -> None:
             )
         files_link += f"commits/{GITHUB_SHA}"
     logger.info("Fetching files list from url: %s", files_link)
-    Globals.FILES = requests.get(files_link, headers=API_HEADERS).json()
+    Globals.response_buffer = requests.get(files_link, headers=API_HEADERS)
+    log_response_msg()
+    if GITHUB_EVENT_NAME == "pull_request":
+        Globals.FILES = Globals.response_buffer.json()
+    else:
+        Globals.FILES = Globals.response_buffer.json()["files"]
 
 
 def consolidate_list_to_ranges(just_numbers: List[int]) -> List[List[int]]:
@@ -270,11 +275,7 @@ def filter_out_non_source_files(
         [`main()`][cpp_linter.run.main]) when no files to be checked.
     """
     files = []
-    for file in (
-        Globals.FILES
-        if GITHUB_EVENT_NAME == "pull_request"
-        else cast(Dict[str, Any], Globals.FILES)["files"]
-    ):
+    for file in Globals.FILES:
         if (
             PurePath(file["filename"]).suffix.lstrip(".") in ext_list
             and not file["status"].endswith("removed")
@@ -311,10 +312,7 @@ def filter_out_non_source_files(
             "Giving attention to the following files:\n\t%s",
             "\n\t".join([f["filename"] for f in files]),
         )
-        if GITHUB_EVENT_NAME == "pull_request":
-            Globals.FILES = files
-        else:
-            cast(Dict[str, Any], Globals.FILES)["files"] = files
+        Globals.FILES = files
         if not IS_ON_RUNNER:  # if not executed on a github runner
             # dump altered json of changed files
             Path(".changed_files.json").write_text(
@@ -335,11 +333,7 @@ def verify_files_are_present() -> None:
         repository. If files are not found, then they are downloaded to the working
         directory. This is bad for files with the same name from different folders.
     """
-    for file in (
-        Globals.FILES
-        if GITHUB_EVENT_NAME == "pull_request"
-        else cast(Dict[str, Any], Globals.FILES)["files"]
-    ):
+    for file in Globals.FILES:
         file_name = Path(file["filename"])
         if not file_name.exists():
             logger.warning("Could not find %s! Did you checkout the repo?", file_name)
@@ -395,7 +389,7 @@ def list_source_files(
         logger.info(
             "Giving attention to the following files:\n\t%s",
             "\n\t".join(
-                [f["filename"] for f in cast(List[Dict[str, Any]], Globals.FILES)]
+                [f["filename"] for f in Globals.FILES]
             ),
         )
     else:
@@ -574,11 +568,7 @@ def capture_clang_tools_output(
     """
     # temporary cache of parsed notifications for use in log commands
     tidy_notes: List[TidyNotification] = []
-    for file in (
-        Globals.FILES
-        if GITHUB_EVENT_NAME == "pull_request" or isinstance(Globals.FILES, list)
-        else Globals.FILES["files"]
-    ):
+    for file in Globals.FILES:
         filename = cast(str, file["filename"])
         start_log_group(f"Performing checkup on {filename}")
         run_clang_tidy(
