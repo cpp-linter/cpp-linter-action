@@ -3,8 +3,8 @@
   "node_id": "C_kwDOAAOGANoAKDNjMzVhY2RlN2QzOThjMzJmNmZhZDUwZmE5MDJkZTM5MWY1NzNmZmE",
   "commit": {
     "author": {
-      "name": "Turo Lamminen",
-      "email": "turol@users.noreply.github.com",
+      "name": "info-removed",
+      "email": "noreply@github.com",
       "date": "2022-07-12T17:58:17Z"
     },
     "committer": {
@@ -18,56 +18,18 @@
       "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/git/trees/61aafe76912a4e79bfe9e2e0620d5fc09792922e"
     },
     "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/git/commits/3c35acde7d398c32f6fad50fa902de391f573ffa",
-    "comment_count": 0,
-    "verification": {
-      "verified": true,
-      "reason": "valid",
-      "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsBcBAABCAAQBQJizbY5CRBK7hj4Ov3rIwAAd90IAEK0v5LTMD8TaaSlWOiXQ6Jh\nYqjVo248+3MuFEH2Em+QFt6RVbhA/HzsaD2E1qwigyOd0VXu2PZvGUP/hvB/x4AM\nEBxFAdGpP+nLhGF3uWJTZ6K/hfuvL6r4xV+EiqCBb1mSpy13N7kbBy3phSJfWgGM\nyrzR6qv40fgZgGRtFaOkP96SWNO+XnpHzoHqpVXaqYzj3sn1kZwbF6LoZUJy+7YZ\nJJFWZUg0mxsvlGZUZBO7e0KMZmPzLXfAA+heF7UqaDE6mT/lP/FSXHrZHH8J3Iju\nWOWECb2qRgNVYGuxhqW7+iN8ZvbDPI1+lPEvRAl4u72+piN++XrQgh5zgiNzDOU=\n=+D8A\n-----END PGP SIGNATURE-----\n",
-      "payload": "tree 61aafe76912a4e79bfe9e2e0620d5fc09792922e\nparent 7afbf68abcaad446c3f287ed502c6ebbb2fb10e8\nparent 1acdd067d8b168099de009b2cb625c3e4565561a\nauthor Turo Lamminen <turol@users.noreply.github.com> 1657648697 +0000\ncommitter GitHub <noreply@github.com> 1657648697 +0000\n\nMerge 1acdd067d8b168099de009b2cb625c3e4565561a into 7afbf68abcaad446c3f287ed502c6ebbb2fb10e8\n"
-    }
+    "comment_count": 0
   },
   "url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/3c35acde7d398c32f6fad50fa902de391f573ffa",
   "html_url": "https://github.com/chocolate-doom/chocolate-doom/commit/3c35acde7d398c32f6fad50fa902de391f573ffa",
   "comments_url": "https://api.github.com/repos/chocolate-doom/chocolate-doom/commits/3c35acde7d398c32f6fad50fa902de391f573ffa/comments",
   "author": {
-    "login": "turol",
-    "id": 805057,
-    "node_id": "MDQ6VXNlcjgwNTA1Nw==",
-    "avatar_url": "https://avatars.githubusercontent.com/u/805057?v=4",
-    "gravatar_id": "",
-    "url": "https://api.github.com/users/turol",
-    "html_url": "https://github.com/turol",
-    "followers_url": "https://api.github.com/users/turol/followers",
-    "following_url": "https://api.github.com/users/turol/following{/other_user}",
-    "gists_url": "https://api.github.com/users/turol/gists{/gist_id}",
-    "starred_url": "https://api.github.com/users/turol/starred{/owner}{/repo}",
-    "subscriptions_url": "https://api.github.com/users/turol/subscriptions",
-    "organizations_url": "https://api.github.com/users/turol/orgs",
-    "repos_url": "https://api.github.com/users/turol/repos",
-    "events_url": "https://api.github.com/users/turol/events{/privacy}",
-    "received_events_url": "https://api.github.com/users/turol/received_events",
-    "type": "User",
-    "site_admin": false
+    "login": "info-removed",
+    "type": "User"
   },
   "committer": {
-    "login": "web-flow",
-    "id": 19864447,
-    "node_id": "MDQ6VXNlcjE5ODY0NDQ3",
-    "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=4",
-    "gravatar_id": "",
-    "url": "https://api.github.com/users/web-flow",
-    "html_url": "https://github.com/web-flow",
-    "followers_url": "https://api.github.com/users/web-flow/followers",
-    "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
-    "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
-    "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
-    "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
-    "organizations_url": "https://api.github.com/users/web-flow/orgs",
-    "repos_url": "https://api.github.com/users/web-flow/repos",
-    "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
-    "received_events_url": "https://api.github.com/users/web-flow/received_events",
-    "type": "User",
-    "site_admin": false
+    "login": "info-removed",
+    "type": "User"
   },
   "parents": [
     {
