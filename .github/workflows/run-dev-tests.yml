@@ -101,7 +101,7 @@ jobs:
       - run: coverage report && coverage xml
 
       - uses: codecov/codecov-action@v3
-        if: matrix.os == 'ubuntu-latest' && matrix.version == '12'
+        if: matrix.os == 'ubuntu-latest' && matrix.version == '12' && matrix.py == '3.10'
         with:
           files: ./coverage.xml
           fail_ci_if_error: true # optional (default = false)
