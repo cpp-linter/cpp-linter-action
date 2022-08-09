@@ -25,8 +25,16 @@ jobs:
           python-version: '3.x'
       - run: python3 -m pip install pre-commit
       - run: pre-commit run --all-files
+      - name: Build wheel
+        run: python3 -m pip wheel --no-deps -w dist .
+      - name: Upload wheel as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: cpp-linter-action_wheel
+          path: ${{ github.workspace }}/dist/*.whl
 
   run-pytest:
+    needs: [check-python-sources]
     strategy:
       fail-fast: false
       matrix:
@@ -61,8 +69,16 @@ jobs:
         with:
           python-version: ${{ matrix.py }}
 
+      - name: download wheel artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: clang-linter-action_wheel
+          path: dist
+
       - name: Install workflow deps
-        run: python3 -m pip install pytest coverage .
+        # using a wildcard as filename on Windows requires a bash shell
+        shell: bash
+        run: python3 -m pip install pytest coverage dist/*.whl
 
       - name: Install clang-tools
         if: matrix.tools_dir == 'temp'
