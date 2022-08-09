@@ -22,7 +22,11 @@ CLANG_VERSION = os.getenv("CLANG_VERSION", "12")
 @pytest.mark.parametrize(
     "extensions", [(["c"]), pytest.param(["h"], marks=pytest.mark.xfail)]
 )
-def test_lines_changed_only(extensions: List[str], monkeypatch: pytest.MonkeyPatch):
+def test_lines_changed_only(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    extensions: List[str],
+):
     """Test for lines changes in diff.
 
     This checks for
@@ -30,6 +34,7 @@ def test_lines_changed_only(extensions: List[str], monkeypatch: pytest.MonkeyPat
     2. ranges of lines in diff that only contain additions.
     """
     monkeypatch.chdir(str(Path(__file__).parent))
+    caplog.set_level(logging.DEBUG, logger=cpp_linter.logger.name)
     cpp_linter.Globals.FILES = json.loads(
         Path("event_files.json").read_text(encoding="utf-8")
     )
