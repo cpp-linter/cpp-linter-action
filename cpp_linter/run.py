@@ -361,36 +361,24 @@ def list_source_files(
     """
     start_log_group("Get list of specified source files")
 
-    root_path = Path.cwd().as_posix()
-    for dirpath, _, filenames in os.walk(root_path):
-        path = PurePath(PurePath(dirpath).as_posix().replace(root_path, "").lstrip("/"))
-        path_parts = path.parents
-        is_hidden = False
-        for part in path_parts:
-            if part.as_posix().startswith("."):
-                # logger.debug("Skipping \"./%s\"", path)
-                is_hidden = True
-                break
-        if is_hidden:
-            continue  # skip sources in hidden directories
-        logger.debug('Crawling "./%s"', path.as_posix())
-        for file in filenames:
-            if PurePath(file).suffix.lstrip(".") in ext_list:
-                file_path = PurePath(path, file).as_posix()
+    root_path = Path(".")
+    for ext in ext_list:
+        for rel_path in root_path.rglob(f"*.{ext}"):
+            for parent in rel_path.parts[:-1]:
+                if parent.startswith("."):
+                    break
+            else:
+                file_path = rel_path.as_posix()
                 logger.debug('"./%s" is a source code file', file_path)
                 if not is_file_in_list(
                     ignored_paths, file_path, "ignored"
                 ) or is_file_in_list(not_ignored, file_path, "not ignored"):
-                    cast(List[Dict[str, Any]], Globals.FILES).append(
-                        {"filename": file_path}
-                    )
+                    Globals.FILES.append(dict(filename=file_path))
 
     if Globals.FILES:
         logger.info(
             "Giving attention to the following files:\n\t%s",
-            "\n\t".join(
-                [f["filename"] for f in Globals.FILES]
-            ),
+            "\n\t".join([f["filename"] for f in Globals.FILES]),
         )
     else:
         logger.info("No source files found.")  # this might need to be warning

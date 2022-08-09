@@ -1,7 +1,7 @@
 """Tests that complete coverage that aren't prone to failure."""
 import logging
 from pathlib import Path
-from typing import List, cast, Dict, Any
+from typing import List
 import pytest
 import requests
 import cpp_linter
@@ -68,9 +68,15 @@ def test_response_logs(url: str):
         pytest.param(["cxx", "h"], marks=pytest.mark.xfail),
     ],
 )
-def test_list_src_files(extensions: List[str]):
+def test_list_src_files(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    extensions: List[str],
+):
     """List the source files in the demo folder of this repo."""
     Globals.FILES = []
+    monkeypatch.chdir(Path(__file__).parent.parent.as_posix())
+    caplog.set_level(logging.DEBUG, logger=cpp_linter.logger.name)
     assert list_source_files(ext_list=extensions, ignored_paths=[], not_ignored=[])
 
 
