@@ -205,7 +205,8 @@ def is_file_in_list(paths: List[str], file_name: str, prompt: str) -> bool:
         - False if `file_name` is not in the `paths` list.
     """
     for path in paths:
-        if PurePath(file_name).is_relative_to(PurePath(path)):
+        result = os.path.commonpath([path, file_name])
+        if result == path:
             logger.debug(
                 '"./%s" is %s as specified in the domain "./%s"',
                 file_name,
@@ -273,7 +274,7 @@ def filter_out_non_source_files(
         else cast(Dict[str, Any], Globals.FILES)["files"]
     ):
         if (
-            PurePath(file["filename"]).suffix[1:] in ext_list
+            PurePath(file["filename"]).suffix.rstrip(".") in ext_list
             and not file["status"].endswith("removed")
             and (
                 not is_file_in_list(ignored, file["filename"], "ignored")
