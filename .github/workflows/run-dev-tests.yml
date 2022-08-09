@@ -72,7 +72,7 @@ jobs:
       - name: download wheel artifact
         uses: actions/download-artifact@v2
         with:
-          name: clang-linter-action_wheel
+          name: cpp-linter-action_wheel
           path: dist
 
       - name: Install workflow deps
