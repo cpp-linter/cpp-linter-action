@@ -291,7 +291,7 @@ def filter_out_non_source_files(
                 # additions is a list line numbers in the diff containing additions
                 additions: List[int] = []
                 line_numb_in_diff: int = 0
-                for line in file["patch"].splitlines():
+                for line in cast(str, file["patch"]).splitlines():
                     if line.startswith("+"):
                         additions.append(line_numb_in_diff)
                     if line.startswith("@@ -"):
@@ -363,7 +363,7 @@ def list_source_files(
 
     root_path = Path.cwd().as_posix()
     for dirpath, _, filenames in os.walk(root_path):
-        path = PurePath(dirpath.replace(root_path, ""))
+        path = PurePath(PurePath(dirpath).as_posix().replace(root_path, "").lstrip("/"))
         path_parts = path.parents
         is_hidden = False
         for part in path_parts:
