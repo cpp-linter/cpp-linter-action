@@ -46,7 +46,9 @@ class TidyNotification:
         self.note_type = self.note_type.strip()
         self.line = int(self.line)
         self.cols = int(self.cols)
-        self.filename = PurePath(self.filename).relative_to(Path.cwd()).as_posix()
+        self.filename = (
+            PurePath(self.filename).as_posix().replace(Path.cwd().as_posix(), "")
+        )
         self.fixit_lines: List[str] = []
 
     def __repr__(self) -> str:
