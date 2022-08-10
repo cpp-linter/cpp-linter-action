@@ -420,7 +420,7 @@ def run_clang_tidy(
     if database:
         cmds.append("-p")
         if not PurePath(database).is_absolute():
-            database = Path(RUNNER_WORKSPACE, repo_root, database).resolve().as_posix()
+            database = str(Path(RUNNER_WORKSPACE, repo_root, database).resolve())
         cmds.append(database)
     if lines_changed_only:
         ranges = "diff_chunks" if lines_changed_only == 1 else "lines_added"

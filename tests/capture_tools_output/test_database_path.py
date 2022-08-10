@@ -10,7 +10,7 @@ from cpp_linter.run import run_clang_tidy
 
 CLANG_TIDY_COMMAND = re.compile(r"\"clang-tidy(.*)(?:\")")
 
-ABS_DB_PATH = Path(PurePath(__file__).parent / "../../demo").resolve().as_posix()
+ABS_DB_PATH = str(Path(PurePath(__file__).parent / "../../demo").resolve())
 
 
 @pytest.mark.parametrize(
@@ -54,4 +54,4 @@ def test_db_detection(
             matched_args = msg_match.group(0)[:-1].split()[2:]
         assert "Error while trying to load a compilation database" not in record.message
     expected_args.append(demo_src)
-    assert matched_args == [a for a in expected_args]
+    assert matched_args == expected_args
