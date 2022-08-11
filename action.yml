@@ -77,19 +77,33 @@ inputs:
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
+    value: ${{ steps.set-checks-failed.outputs.checks-failed }}
 runs:
-  using: "docker"
-  image: "Dockerfile"
-  args:
-    - --style=${{ inputs.style }}
-    - --extensions=${{ inputs.extensions }}
-    - --tidy-checks=${{ inputs.tidy-checks }}
-    - --repo-root=${{ inputs.repo-root }}
-    - --version=${{ inputs.version }}
-    - --verbosity=${{ inputs.verbosity }}
-    - --lines-changed-only=${{ inputs.lines-changed-only }}
-    - --files-changed-only=${{ inputs.files-changed-only }}
-    - --thread-comments=${{ inputs.thread-comments }}
-    - --ignore=${{ inputs.ignore }}
-    - --database=${{ inputs.database }}
-    - --file-annotations=${{ inputs.file-annotations }}
+  using: "composite"
+  steps:
+    - run: |
+        echo "Install clang-tools"
+        pip install clang-tools
+        clang-tools -i ${{ inputs.version }}
+        echo "Install cpp-linter"
+        # FIXME: when cpp-linter released to pypi.
+        python3 -m pip install git+https://github.com/cpp-linter/cpp-linter-action@v1
+
+        cpp-linter \
+          --style=${{ inputs.style }} \
+          --extensions=${{ inputs.extensions }} \
+          --tidy-checks=${{ inputs.tidy-checks }} \
+          --repo-root=${{ inputs.repo-root }} \
+          --version=${{ inputs.version }} \
+          --verbosity=${{ inputs.verbosity }} \
+          --lines-changed-only=${{ inputs.lines-changed-only }} \
+          --files-changed-only=${{ inputs.files-changed-only }} \
+          --thread-comments=${{ inputs.thread-comments }} \
+          --ignore=${{ inputs.ignore }} \
+          --database=${{ inputs.database }} \
+          --file-annotations=${{ inputs.file-annotations }}
+
+      shell: bash
+    - id: set-checks-failed
+      run: echo "::set-output name=checks-failed::"
+      shell: bash
