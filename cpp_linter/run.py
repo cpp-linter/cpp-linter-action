@@ -829,6 +829,10 @@ def main():
     # The parsed CLI args
     args = cli_arg_parser.parse_args()
 
+    #  force files-changed-only to reflect value of lines-changed-only
+    if args.lines_changed_only:
+        args.files_changed_only = True
+
     # set logging verbosity
     logger.setLevel(int(args.verbosity))
 
