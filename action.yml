@@ -81,14 +81,14 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: |
-        echo "Install clang-tools"
-        pip install clang-tools
-        clang-tools -i ${{ inputs.version }}
-        echo "Install cpp-linter"
-        # FIXME: when cpp-linter released to pypi.
-        python3 -m pip install git+https://github.com/cpp-linter/cpp-linter-action@v1
-
+    - name: Install action dependencies
+      # FIXME: when cpp-linter released to pypi, use that.
+      run: python3 -m pip install clang-tools git+https://github.com/cpp-linter/cpp-linter-action@v1
+    - name: Install clang-tools binary executables
+      run: clang-tools -i ${{ inputs.version }}
+    - name: Run cpp-linter
+      id: cpp-linter
+      run: | 
         cpp-linter \
           --style=${{ inputs.style }} \
           --extensions=${{ inputs.extensions }} \
@@ -102,8 +102,5 @@ runs:
           --ignore=${{ inputs.ignore }} \
           --database=${{ inputs.database }} \
           --file-annotations=${{ inputs.file-annotations }}
-
-      shell: bash
-    - id: set-checks-failed
+    - name: set output variable
       run: echo "::set-output name=checks-failed::"
-      shell: bash
