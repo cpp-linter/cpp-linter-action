@@ -83,16 +83,16 @@ runs:
   steps:
     - name: Install action dependencies
       # FIXME: when cpp-linter released to pypi, use that.
-      shell: python
-      run: -m pip install clang-tools git+https://github.com/cpp-linter/cpp-linter-action@v1
+      shell: bash
+      run: python3 -m pip install clang-tools git+https://github.com/cpp-linter/cpp-linter-action@v1
     - name: Install clang-tools binary executables
-      shell: python
-      run: -m clang_tools.main -i ${{ inputs.version }}
+      shell: bash
+      run: clang-tools -i ${{ inputs.version }}
     - name: Run cpp-linter
       id: cpp-linter
-      shell: python
+      shell: bash
       run: | 
-        -m cpp_linter.run \
+        cpp-linter \
           --style=${{ inputs.style }} \
           --extensions=${{ inputs.extensions }} \
           --tidy-checks=${{ inputs.tidy-checks }} \
