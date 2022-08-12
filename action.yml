@@ -93,16 +93,16 @@ runs:
       shell: bash
       run: | 
         cpp-linter \
-          --style=${{ inputs.style }} \
+          --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
-          --tidy-checks=${{ inputs.tidy-checks }} \
+          --tidy-checks="${{ inputs.tidy-checks }}" \
           --repo-root=${{ inputs.repo-root }} \
           --version=${{ inputs.version }} \
           --verbosity=${{ inputs.verbosity }} \
           --lines-changed-only=${{ inputs.lines-changed-only }} \
           --files-changed-only=${{ inputs.files-changed-only }} \
           --thread-comments=${{ inputs.thread-comments }} \
-          --ignore=${{ inputs.ignore }} \
+          --ignore="${{ inputs.ignore }}" \
           --database=${{ inputs.database }} \
           --file-annotations=${{ inputs.file-annotations }}
     - name: set output variable
