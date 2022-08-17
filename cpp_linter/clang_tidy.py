@@ -53,10 +53,10 @@ class TidyNotification:
 
     def __repr__(self) -> str:
         concerned_code = ""
-        if not self.fixit_lines[-1].endswith("\n"):
-            # some notifications' code-blocks don't end in a LF
-            self.fixit_lines[-1] += "\n"  # and they should for us
         if self.fixit_lines:
+            if not self.fixit_lines[-1].endswith("\n"):
+                # some notifications' code-blocks don't end in a LF
+                self.fixit_lines[-1] += "\n"  # and they should for us
             concerned_code = "```{}\n{}```\n".format(
                 PurePath(self.filename).suffix.lstrip("."),
                 "\n".join(self.fixit_lines),
