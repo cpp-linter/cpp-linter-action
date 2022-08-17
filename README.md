@@ -1,6 +1,3 @@
-<p align="center">
-<img src="https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/logo_nobg.png" alt="icon">
-</p>
 <!--intro-start-->
 
 # C/C++ Lint Action <sub><sup>| clang-format & clang-tidy</sup></sub>
@@ -10,7 +7,6 @@
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/cpp-linter?label=cpp-linter&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/MkDocs%20Deploy?label=docs&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
 ![GitHub](https://img.shields.io/github/license/cpp-linter/cpp-linter-action?label=license&logo=github&style=flat-square)
-[![open repo in gitpod](https://img.shields.io/badge/Gitpod-Use%20Online%20IDE-B16C04?logo=gitpod&style=flat-square)](https://gitpod.io/#https://github.com/cpp-linter/cpp-linter-action)
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
 
@@ -77,7 +73,7 @@ jobs:
 
 - **Description**: The desired version of the [clang-tools](https://hub.docker.com/r/xianpengshen/clang-tools) to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8.
     - Set this option to a blank string ('') to use the platform's default installed version.
-- Default: '10'
+- Default: '12'
 
 #### `verbosity`
 
@@ -244,12 +240,6 @@ is equivalent to
 ![sample comment](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/comment.png)
 
 <!--footer-start-->
-
-## Used By
-
-- [google/flatbuffers](https://github.com/google/flatbuffers) ![GitHub Repo stars](https://img.shields.io/github/stars/google/flatbuffers?style=social)
-- [CHIP-SPV/chip-spv](https://github.com/CHIP-SPV/chip-spv) ![GitHub Repo stars](https://img.shields.io/github/stars/CHIP-SPV/chip-spv?style=social)
-- [and more](https://github.com/search?q=shenxianpeng%2Fcpp-linter-action&type=Code)
 
 ## Add C/C++ Lint Action badge in README
 

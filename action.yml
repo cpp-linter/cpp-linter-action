@@ -37,9 +37,9 @@ inputs:
     required: false
     default: "."
   version:
-    description: "The desired version of the clang tools to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8. Defaults to 10."
+    description: "The desired version of the clang tools to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8. Defaults to 12."
     required: false
-    default: "10"
+    default: "12"
   verbosity:
     description: A hidden option to control the action's log verbosity. This is the `logging` level (degaults to DEBUG)
     required: false
