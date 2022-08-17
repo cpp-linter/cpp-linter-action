@@ -1,6 +1,6 @@
 """Parse output from clang-tidy's YML format"""
 from pathlib import Path, PurePath
-from typing import List
+from typing import List, cast, Dict, Any
 import yaml
 from . import GlobalParser, get_line_cnt_from_cols, logger
 
@@ -105,13 +105,20 @@ def parse_tidy_suggestions_yml():
     yml_file = Path("clang_tidy_output.yml").read_text(encoding="utf-8")
     yml = yaml.safe_load(yml_file)
     fixit = YMLFixit(yml["MainSourceFile"])
+
     for diag_results in yml["Diagnostics"]:
         diag = TidyDiagnostic(diag_results["DiagnosticName"])
-        diag.message = diag_results["DiagnosticMessage"]["Message"]
-        diag.line, diag.cols = get_line_cnt_from_cols(
-            yml["MainSourceFile"], diag_results["DiagnosticMessage"]["FileOffset"]
-        )
-        for replacement in diag_results["DiagnosticMessage"]["Replacements"]:
+        if "DiagnosticMessage" in cast(Dict[str, Any], diag_results).keys():
+            msg = diag_results["DiagnosticMessage"]["Message"]
+            offset = diag_results["DiagnosticMessage"]["FileOffset"]
+            replacements = diag_results["DiagnosticMessage"]["Replacements"]
+        else:  # prior to clang-tidy v9, the YML output was structured differently
+            msg = diag_results["Message"]
+            offset = diag_results["FileOffset"]
+            replacements = diag_results["Replacements"]
+        diag.message = msg
+        diag.line, diag.cols = get_line_cnt_from_cols(yml["MainSourceFile"], offset)
+        for replacement in replacements:
             line_cnt, cols = get_line_cnt_from_cols(
                 yml["MainSourceFile"], replacement["Offset"]
             )
