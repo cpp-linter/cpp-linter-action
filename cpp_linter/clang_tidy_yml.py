@@ -118,7 +118,7 @@ def parse_tidy_suggestions_yml():
             replacements = diag_results["Replacements"]
         diag.message = msg
         diag.line, diag.cols = get_line_cnt_from_cols(yml["MainSourceFile"], offset)
-        for replacement in replacements:
+        for replacement in [] if replacements is None else replacements:
             line_cnt, cols = get_line_cnt_from_cols(
                 yml["MainSourceFile"], replacement["Offset"]
             )
