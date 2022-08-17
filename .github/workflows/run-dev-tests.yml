@@ -60,6 +60,12 @@ jobs:
             tools_dir: temp
           # - version: '14'
           #   tools_dir: temp
+          - version: '7'
+            tools_dir: temp
+          - version: '8'
+            tools_dir: temp
+          - version: '9'
+            tools_dir: temp
 
     runs-on: ${{ matrix.os }}
     steps:
