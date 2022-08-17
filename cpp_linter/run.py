@@ -17,7 +17,7 @@ import sys
 import argparse
 import configparser
 import json
-from typing import cast, List, Dict, Any  # , Tuple
+from typing import cast, List, Dict, Any, Tuple
 import requests
 from . import (
     Globals,
@@ -775,17 +775,16 @@ def make_annotations(
     return bool(count)
 
 
-def parse_ignore_option(paths: str) -> tuple:  # -> Tuple[List[str], List[str]]:
+def parse_ignore_option(paths: str) -> Tuple[List[str], List[str]]:
     """Parse a given string of paths (separated by a '|') into `ignored` and
     `not_ignored` lists of strings.
 
     Args:
         paths: This argument conforms to the CLI arg `--ignore` (or `-i`).
 
-    Returns:
-        A tuple of lists in which each list is a set of strings.
-        - index 0 is the `ignored` list
-        - index 1 is the `not_ignored` list
+    Returns: Returns a tuple of lists in which each list is a set of strings.
+        index 0 is the `ignored` list
+        index 1 is the `not_ignored` list
     """
     ignored, not_ignored = ([], [])
 
