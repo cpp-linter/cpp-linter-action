@@ -29,7 +29,7 @@ jobs:
     - uses: convictional/trigger-workflow-and-wait@v1.6.3
       with:
         owner: cpp-linter
-        repo: test-cpp-linter-action 
+        repo: test-cpp-linter-action
         github_token: ${{ secrets.PAT_TOKEN }}
         workflow_file_name: cpp-lint-action.yml
         ref: master
@@ -45,7 +45,7 @@ jobs:
     - uses: convictional/trigger-workflow-and-wait@v1.6.3
       with:
         owner: cpp-linter
-        repo: test-cpp-linter-action 
+        repo: test-cpp-linter-action
         github_token: ${{ secrets.PAT_TOKEN }}
         workflow_file_name: cpp-lint-package.yml
         ref: master
