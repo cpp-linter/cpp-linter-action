@@ -168,7 +168,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
 
       # this step can be skipped if the desired
       # version already comes with the runner's OS
@@ -190,7 +190,7 @@ jobs:
         # Any other OS-based runners only take the version number.
         #     Example. run: cpp-linter --version=14
         # Omit the version option if using the default version available in the OS.
-        run: cpp-linter --version=${{ runner.temp }}/llvm 
+        run: cpp-linter --version=${{ runner.temp }}/llvm
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
