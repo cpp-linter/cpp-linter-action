@@ -1,7 +1,7 @@
-types-requests
-types-PyYAML
+coverage[toml]
 mypy
 pylint
-rich
 pytest
-coverage[toml]
+rich
+types-PyYAML
+types-requests
