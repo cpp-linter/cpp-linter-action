@@ -7,6 +7,7 @@
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/cpp-linter?label=cpp-linter&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/MkDocs%20Deploy?label=docs&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
 ![GitHub](https://img.shields.io/github/license/cpp-linter/cpp-linter-action?label=license&logo=github&style=flat-square)
+[![codecov](https://codecov.io/gh/cpp-linter/cpp-linter-action/branch/master/graph/badge.svg?token=4SF7UEDEZ2)](https://codecov.io/gh/cpp-linter/cpp-linter-action)
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
 
@@ -40,8 +41,7 @@ jobs:
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
-        run: |
-          echo "Some files failed the linting checks!"
+        run: echo "Some files failed the linting checks!"
         # for actual deployment
         # run: exit 1
 ```
@@ -50,7 +50,9 @@ jobs:
 
 #### `style`
 
-- **Description**: The style rules to use. Set this to 'file' to have clang-format use the closest relative .clang-format file.
+- **Description**: The style rules to use.
+  - Set this to 'file' to have clang-format use the closest relative .clang-format file.
+  - Set this to a blank string (`''`) to disable the use of clang-format entirely.
 - Default: 'llvm'
 
 #### `extensions`
@@ -60,9 +62,9 @@ jobs:
 
 #### `tidy-checks`
 
-- **Description**: Comma-separated list of globs with optional '-' prefix. Globs are processed in order of appearance in the list. Globs without '-' prefix add checks with matching names to the set, globs with the '-' prefix remove checks with matching names from the set of enabled checks. This option's value is appended to the value of the 'Checks' option in a .clang-tidy file (if any).
-    - It is possible to disable clang-tidy entirely by setting this option to '-\*'. This allows using only clang-format to lint your source files.
-    - It is also possible to rely solely on a .clang-tidy config file by specifying this option as a blank string ('').
+- **Description**: Comma-separated list of globs with optional `-` prefix. Globs are processed in order of appearance in the list. Globs without `-` prefix add checks with matching names to the set, globs with the `-` prefix remove checks with matching names from the set of enabled checks. This option's value is appended to the value of the 'Checks' option in a .clang-tidy file (if any).
+    - It is possible to disable clang-tidy entirely by setting this option to `'-*'`.
+    - It is also possible to rely solely on a .clang-tidy config file by specifying this option as a blank string (`''`).
 - Default: 'boost-\*,bugprone-\*,performance-\*,readability-\*,portability-\*,modernize-\*,clang-analyzer-\*,cppcoreguidelines-\*'
 
 #### `repo-root`
@@ -73,39 +75,43 @@ jobs:
 #### `version`
 
 - **Description**: The desired version of the [clang-tools](https://hub.docker.com/r/xianpengshen/clang-tools) to use. Accepted options are strings which can be 14, 13, 12, 11, 10, 9, or 8.
-    - Set this option to a blank string ('') to use the platform's default installed version.
+    - Set this option to a blank string (`''`) to use the platform's default installed version.
+    - This value can also be a path to where the clang tools are installed (if using a custom install location). Because all paths specified here are converted to absolute, using a relative path as a value may not be compatible when using the docker environment (see [Running without the docker container](#running-without-the-docker-container)).
 - Default: '12'
 
 #### `verbosity`
 
-- **Description**: This controls the action's verbosity in the workflow's logs. Supported options are defined by the python logging library's log levels. This option does not affect the verbosity of resulting comments or annotations.
+- **Description**: This controls the action's verbosity in the workflow's logs. Supported options are defined by the [python logging library's log levels](https://docs.python.org/3/library/logging.html#logging-levels). This option does not affect the verbosity of resulting thread comments or file annotations.
 - Default: '10'
 
 #### `lines-changed-only`
 
-- **Description**: Set this option to true to only analyze changes in the event's diff.
-- Default: false
+- **Description**: This controls what part of the files are analyzed. The following values are accepted:
+    - false: All lines in a file are analyzed.
+    - true: Only lines in the diff that contain additions are analyzed.
+    - diff: All lines in the diff are analyzed (including unchanged lines but not subtractions).
+- Default: false.
 
 #### `files-changed-only`
 
-- **Description**: Set this option to false to analyze any source files in the repo.
+- **Description**: Set this option to false to analyze any source files in the repo. This is automatically enabled if lines-changed-only is enabled.
 - Default: true
 - NOTE: The `GITHUB_TOKEN` should be supplied when running on a private repository with this option enabled, otherwise the runner does not not have the privilege to list changed files for an event. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
 
 #### `ignore`
 
 - **Description**: Set this option with string of path(s) to ignore.
-  - In the case of multiple paths, you can use a pipe character ('|')
+  - In the case of multiple paths, you can use a pipe character (`|`)
     to separate the multiple paths. Multiple lines are forbidden as an input to this option; it must be a single string.
   - This can also have files, but the file's relative path has to be specified
     as well.
-  - There is no need to use './' for each entry; a blank string ('') represents
+  - There is no need to use `./` for each entry; a blank string (`''`) represents
     the repo-root path (specified by the `repo-root` input option).
-  - Submodules are automatically ignored. Hidden directories (beginning with a '.') are also ignored automatically.
-  - Prefix a path with a bang ('!') to make it explicitly _not_ ignored - order of
-    multiple paths does _not_ take precedence. The '!' prefix can be applied to
+  - Submodules are automatically ignored. Hidden directories (beginning with a `.`) are also ignored automatically.
+  - Prefix a path with a bang (`!`) to make it explicitly _not_ ignored. The order of
+    multiple paths does _not_ take precedence. The `!` prefix can be applied to
     a submodule's path (if desired) but not hidden directories.
-  - Glob patterns are not supported here. All asterisk characters ('\*') are literal.
+  - Glob patterns are not supported here. All asterisk characters (`*`) are literal.
 - Default: '.github'
 
 #### `thread-comments`
@@ -124,6 +130,7 @@ jobs:
 #### `database`
 
 - **Description**: The directory containing compilation database (like compile_commands.json) file.
+  - This option doesn't seems to work properly from the docker environment. Instead we recommend using this option when see [running without the docker container](#running-without-the-docker-container).
 - Default: ''
 
 ### Outputs
@@ -166,14 +173,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
 
       # this step can be skipped if the desired
       # version already comes with the runner's OS
       - name: Install clang-tools
         uses: KyleMayes/install-llvm-action@v1
         with:
-          # v12 is the recommended minimum for the Visual Studio compiler (on Windows)
+          # v13 is the recommended minimum for the Visual Studio compiler (on Windows)
           version: 14
           # specifying an install path is required (on Windows) because installing
           # multiple versions on Windows runners needs non-default install paths.
@@ -184,11 +191,11 @@ jobs:
 
       - name: run linter as a python package
         id: linter
-        # pass the installed path to the '--version' argument (Windows only).
-        # Any other OS-based runners only take the version number.
+        # Pass the installed path to the '--version' argument.
+        # Alternatively, pass the version number.
         #     Example. run: cpp-linter --version=14
         # Omit the version option if using the default version available in the OS.
-        run: cpp-linter --version=${{ runner.temp }}/llvm 
+        run: cpp-linter --version=${{ runner.temp }}/llvm
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
@@ -229,13 +236,13 @@ is equivalent to
 
 ### Annotations
 
-![clang-format annotations](./docs/images/annotations-clang-format.png)
+![clang-format annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/annotations-clang-format.png)
 
-![clang-tidy annotations](./docs/images/annotations-clang-tidy.png)
+![clang-tidy annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/annotations-clang-tidy.png)
 
 ### Thread Comment
 
-![sample comment](./docs/images/comment.png)
+![sample comment](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/comment.png)
 
 <!--footer-start-->
 

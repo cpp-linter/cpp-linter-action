@@ -48,6 +48,7 @@ plugins:
           rendering:
             # show_if_no_docstring: true
             show_source: true
+            show_signature_annotations: true
             heading_level: 2
       watch:
         - cpp_linter

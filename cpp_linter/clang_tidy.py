@@ -1,9 +1,11 @@
 """Parse output from clang-tidy's stdout"""
-import os
+from pathlib import Path, PurePath
 import re
-from . import GlobalParser, IS_ON_RUNNER  # , logger
+from typing import Tuple, Union, List, cast
+from . import GlobalParser
 
-NOTE_HEADER = re.compile("^(.*):(\d+):(\d+):\s(\w+):(.*)\[(.*)\]$")
+NOTE_HEADER = re.compile(r"^(.*):(\d+):(\d+):\s(\w+):(.*)\[(.*)\]$")
+
 
 class TidyNotification:
     """Create a object that decodes info from the clang-tidy output's initial line that
@@ -20,7 +22,10 @@ class TidyNotification:
             notification.
     """
 
-    def __init__(self, notification_line: tuple):
+    def __init__(
+        self,
+        notification_line: Tuple[str, Union[int, str], Union[int, str], str, str, str],
+    ):
         """
         Args:
             notification_line: The first line in the notification parsed into a tuple of
@@ -37,25 +42,35 @@ class TidyNotification:
             self.diagnostic,
         ) = notification_line
 
-        self.note_info: str = self.note_info.strip()
-        self.note_type: str = self.note_type.strip()
+        self.note_info = self.note_info.strip()
+        self.note_type = self.note_type.strip()
         self.line = int(self.line)
         self.cols = int(self.cols)
-        self.filename: str = self.filename.replace(os.getcwd() + os.sep, "")
-        self.fixit_lines = []
+        self.filename = (
+            PurePath(self.filename).as_posix().replace(Path.cwd().as_posix(), "")
+        )
+        self.fixit_lines: List[str] = []
 
     def __repr__(self) -> str:
+        concerned_code = ""
+        if self.fixit_lines:
+            if not self.fixit_lines[-1].endswith("\n"):
+                # some notifications' code-blocks don't end in a LF
+                self.fixit_lines[-1] += "\n"  # and they should for us
+            concerned_code = "```{}\n{}```\n".format(
+                PurePath(self.filename).suffix.lstrip("."),
+                "\n".join(self.fixit_lines),
+            )
         return (
             "<details open>\n<summary><strong>{}:{}:{}:</strong> {}: [{}]"
-            "\n\n> {}\n</summary><p>\n\n```{}\n{}```\n</p>\n</details>\n\n".format(
+            "\n\n> {}\n</summary><p>\n\n{}</p>\n</details>\n\n".format(
                 self.filename,
                 self.line,
                 self.cols,
                 self.note_type,
                 self.diagnostic,
                 self.note_info,
-                os.path.splitext(self.filename)[1],
-                "".join(self.fixit_lines),
+                concerned_code,
             )
         )
 
@@ -70,9 +85,7 @@ class TidyNotification:
             - [A notice message](https://docs.github.com/en/actions/learn-github-
               actions/workflow-commands-for-github-actions#setting-a-notice-message)
         """
-        filename = self.filename
-        if IS_ON_RUNNER:
-            filename = self.filename.replace(os.sep, "/")
+        filename = self.filename.replace("\\", "/")
         return (
             "::{} file={file},line={line},title={file}:{line}:{cols} [{diag}]::"
             "{info}".format(
@@ -89,25 +102,18 @@ class TidyNotification:
 def parse_tidy_output() -> None:
     """Parse clang-tidy output in a file created from stdout."""
     notification = None
-    with open("clang_tidy_report.txt", "r", encoding="utf-8") as tidy_out:
-        for line in tidy_out.readlines():
-            match = re.match(NOTE_HEADER, line)
-            if match is not None:
-                notification = TidyNotification(match.groups())
-                GlobalParser.tidy_notes.append(notification)
-            elif notification is not None:
-                notification.fixit_lines.append(line)
-
-
-def print_fixits():
-    """Print out all clang-tidy notifications from stdout (which are saved to
-    clang_tidy_report.txt and allocated to
-    [`tidy_notes`][cpp_linter.GlobalParser.tidy_notes]."""
-    for notification in GlobalParser.tidy_notes:
-        print("found", len(GlobalParser.tidy_notes), "tidy_notes")
-        print(repr(notification))
-
-
-if __name__ == "__main__":
-    parse_tidy_output()
-    print_fixits()
+    tidy_out = Path("clang_tidy_report.txt").read_text(encoding="utf-8")
+    for line in tidy_out.splitlines():
+        match = re.match(NOTE_HEADER, line)
+        if match is not None:
+            notification = TidyNotification(
+                cast(
+                    Tuple[str, Union[int, str], Union[int, str], str, str, str],
+                    match.groups(),
+                )
+            )
+            GlobalParser.tidy_notes.append(notification)
+        elif notification is not None:
+            # append lines of code that are part of
+            # the previous line's notification
+            notification.fixit_lines.append(line)
