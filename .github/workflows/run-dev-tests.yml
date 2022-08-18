@@ -84,7 +84,7 @@ jobs:
       - name: Install workflow deps
         # using a wildcard as filename on Windows requires a bash shell
         shell: bash
-        run: python3 -m pip install pytest coverage dist/*.whl
+        run: python3 -m pip install pytest coverage[toml] dist/*.whl
 
       - name: Install clang-tools
         if: matrix.tools_dir == 'temp'
@@ -96,13 +96,13 @@ jobs:
         if: matrix.tools_dir == 'N/A'
         env:
           CLANG_VERSION: ${{ matrix.version }}
-        run: coverage run -m pytest -vv tests
+        run: coverage run -m pytest
 
       - name: Collect Coverage (non-native clang install)
         if: matrix.tools_dir == 'temp'
         env:
           CLANG_VERSION: ${{ runner.temp }}/clang-tools
-        run: coverage run -m pytest -vv tests
+        run: coverage run -m pytest
 
       - run: coverage report && coverage xml
 

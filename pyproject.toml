@@ -58,6 +58,42 @@ fallback_version = "0.0.0"
 show_error_codes = true
 show_column_numbers = true
 
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-vv"
+testpaths = ["tests"]
+
+[tool.coverage]
+[tool.coverage.run]
+dynamic_context = "test_function"
+omit = [
+    # don't include tests in coverage
+    "tests/*",
+]
+
+[tool.coverage.json]
+pretty_print = true
+
+[tool.coverage.html]
+show_contexts = true
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don\'t complain about missing debug-only code:
+    "def __repr__",
+    # the point of unit tests is to test parts of main()
+    "def main",
+    # ignore any branch that makes the module executable
+    'if __name__ == "__main__"',
+    # ignore branches specific to type checking
+    "if TYPE_CHECKING",
+    # ignore the local secific debug statement related to not having rich installed
+    "if not FOUND_RICH_LIB",
+]
+
 [tool.pylint.main]
 # Analyse import fallback blocks. This can be used to support both Python 2 and 3
 # compatible code, which means that the block might have code that exists only in

@@ -4,4 +4,4 @@ mypy
 pylint
 rich
 pytest
-coverage
+coverage[toml]
