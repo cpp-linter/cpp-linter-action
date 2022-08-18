@@ -1,4 +1,14 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-docstring-first
+      - id: check-added-large-files
+      - id: check-yaml
+      - id: check-toml
+      - id: requirements-txt-fixer
   - repo: https://github.com/python/black
     rev: '22.6.0'
     hooks:
