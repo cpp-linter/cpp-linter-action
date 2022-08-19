@@ -122,7 +122,7 @@ cli_arg_parser.add_argument(
     "-l",
     "--lines-changed-only",
     default=0,
-    type=lambda a: 1 if a.lower() == "true" else (2 if a.lower() == "strict" else 0),
+    type=lambda a: 2 if a.lower() == "true" else (1 if a.lower() == "diff" else 0),
     help="Set this option to 'true' to only analyze changes in the event's diff. "
     "Set this to 'strict' to only analyze additions in the event's diff. "
     "Defaults to %(default)s.",
