@@ -1,7 +1,3 @@
-<p align="center">
-<img src="images/logo_nobg.png" alt="icon">
-</p>
-
 {%
    include-markdown "../README.md"
    start="<!--intro-start-->"

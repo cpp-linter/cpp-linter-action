@@ -1,11 +1,12 @@
 """Parse output from clang-tidy's YML format"""
-import os
+from pathlib import Path, PurePath
+from typing import List, cast, Dict, Any
 import yaml
-from . import GlobalParser, get_line_cnt_from_cols
+from . import GlobalParser, get_line_cnt_from_cols, logger
 
 
 CWD_HEADER_GUARD = bytes(
-    os.getcwd().upper().replace(os.sep, "_").replace("-", "_"), encoding="utf-8"
+    "_".join([p.upper().replace("-", "_") for p in Path.cwd().parts]), encoding="utf-8"
 )  #: The constant used to trim absolute paths from header guard suggestions.
 
 
@@ -34,7 +35,7 @@ class TidyDiagnostic:
         self.line = 0
         self.cols = 0
         self.null_len = 0
-        self.replacements = []
+        self.replacements: List["TidyReplacement"] = []
 
     def __repr__(self):
         """a str representation of all attributes."""
@@ -51,7 +52,7 @@ class TidyReplacement:
         line (int): The replacement content's starting line
         cols (int): The replacement content's starting columns
         null_len (int): The number of bytes discarded from `cols`
-        text (list): The replacement content's text (each `str` item is a line)
+        text (bytes): The replacement content's text.
     """
 
     def __init__(self, line_cnt: int, cols: int, length: int):
@@ -64,7 +65,7 @@ class TidyReplacement:
         self.line = line_cnt
         self.cols = cols
         self.null_len = length
-        self.text = []
+        self.text: bytes = b""
 
     def __repr__(self) -> str:
         return (
@@ -87,8 +88,8 @@ class YMLFixit:
         Args:
             filename: The source file's name (with path) concerning the suggestion.
         """
-        self.filename = filename.replace(os.getcwd() + os.sep, "").replace(os.sep, "/")
-        self.diagnostics = []
+        self.filename = PurePath(filename).relative_to(Path.cwd()).as_posix()
+        self.diagnostics: List[TidyDiagnostic] = []
 
     def __repr__(self) -> str:
         return (
@@ -101,24 +102,30 @@ def parse_tidy_suggestions_yml():
     """Read a YAML file from clang-tidy and create a list of suggestions from it.
     Output is saved to [`tidy_advice`][cpp_linter.GlobalParser.tidy_advice].
     """
-    yml = {}
-    with open("clang_tidy_output.yml", "r", encoding="utf-8") as yml_file:
-        yml = yaml.safe_load(yml_file)
+    yml_file = Path("clang_tidy_output.yml").read_text(encoding="utf-8")
+    yml = yaml.safe_load(yml_file)
     fixit = YMLFixit(yml["MainSourceFile"])
+
     for diag_results in yml["Diagnostics"]:
         diag = TidyDiagnostic(diag_results["DiagnosticName"])
-        diag.message = diag_results["DiagnosticMessage"]["Message"]
-        diag.line, diag.cols = get_line_cnt_from_cols(
-            yml["MainSourceFile"], diag_results["DiagnosticMessage"]["FileOffset"]
-        )
-        for replacement in diag_results["DiagnosticMessage"]["Replacements"]:
+        if "DiagnosticMessage" in cast(Dict[str, Any], diag_results).keys():
+            msg = diag_results["DiagnosticMessage"]["Message"]
+            offset = diag_results["DiagnosticMessage"]["FileOffset"]
+            replacements = diag_results["DiagnosticMessage"]["Replacements"]
+        else:  # prior to clang-tidy v9, the YML output was structured differently
+            msg = diag_results["Message"]
+            offset = diag_results["FileOffset"]
+            replacements = diag_results["Replacements"]
+        diag.message = msg
+        diag.line, diag.cols = get_line_cnt_from_cols(yml["MainSourceFile"], offset)
+        for replacement in [] if replacements is None else replacements:
             line_cnt, cols = get_line_cnt_from_cols(
                 yml["MainSourceFile"], replacement["Offset"]
             )
             fix = TidyReplacement(line_cnt, cols, replacement["Length"])
             fix.text = bytes(replacement["ReplacementText"], encoding="utf-8")
             if fix.text.startswith(b"header is missing header guard"):
-                print(
+                logger.debug(
                     "filtering header guard suggestion (making relative to repo root)"
                 )
                 fix.text = fix.text.replace(CWD_HEADER_GUARD, b"")
@@ -126,18 +133,3 @@ def parse_tidy_suggestions_yml():
         fixit.diagnostics.append(diag)
         # filter out absolute header guards
     GlobalParser.tidy_advice.append(fixit)
-
-
-def print_fixits():
-    """Print all [`YMLFixit`][cpp_linter.clang_tidy_yml.YMLFixit] objects in
-    [`tidy_advice`][cpp_linter.GlobalParser.tidy_advice]."""
-    for fix in GlobalParser.tidy_advice:
-        for diag in fix.diagnostics:
-            print(repr(diag))
-            for replac in diag.replacements:
-                print("    " + repr(replac), f"\n\treplace text:\n{replac.text}")
-
-
-if __name__ == "__main__":
-    parse_tidy_suggestions_yml()
-    print_fixits()

@@ -14,21 +14,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: retag latest commit for testing
         run: |
           git config user.name 'github-actions'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag --delete latest || true
           git push --delete origin latest || true
           git tag -a latest -m 'Retag latest commit'
           git push origin latest
 
   test-action:
+    needs: [add-tag]
     runs-on: ubuntu-latest
     steps:
     - uses: convictional/trigger-workflow-and-wait@v1.6.3
       with:
         owner: cpp-linter
-        repo: test-cpp-linter-action 
+        repo: test-cpp-linter-action
         github_token: ${{ secrets.PAT_TOKEN }}
         workflow_file_name: cpp-lint-action.yml
         ref: master
@@ -38,12 +42,13 @@ jobs:
         trigger_workflow: true
         wait_workflow: true
   test-package:
+    needs: [add-tag]
     runs-on: ubuntu-latest
     steps:
     - uses: convictional/trigger-workflow-and-wait@v1.6.3
       with:
         owner: cpp-linter
-        repo: test-cpp-linter-action 
+        repo: test-cpp-linter-action
         github_token: ${{ secrets.PAT_TOKEN }}
         workflow_file_name: cpp-lint-package.yml
         ref: master

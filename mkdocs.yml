@@ -16,10 +16,8 @@ nav:
 
 theme:
   name: material
-  logo: images/icon_large.png
   features:
     - navigation.top
-  favicon: images/icon_large.png
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -50,6 +48,7 @@ plugins:
           rendering:
             # show_if_no_docstring: true
             show_source: true
+            show_signature_annotations: true
             heading_level: 2
       watch:
         - cpp_linter

@@ -1,0 +1,51 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Upload Python Package
+
+on:
+  release:
+    branches: [master]
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      # use fetch --all for setuptools_scm to work
+      with:
+        fetch-depth: 0
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: python -m pip install --upgrade pip twine
+    - name: Build wheel
+      run: python -m pip wheel -w dist --no-deps .
+    - name: Check distribution
+      run: twine check dist/*
+    - name: Publish package (to TestPyPI)
+      if: github.event_name == 'workflow_dispatch' && github.repository == 'cpp-linter/cpp-linter-action'
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
+      run: twine upload --repository testpypi dist/*
+    - name: Publish package (to PyPI)
+      if: github.event_name != 'workflow_dispatch' && github.repository == 'cpp-linter/cpp-linter-action'
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: twine upload dist/*

@@ -91,7 +91,7 @@ runs:
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
-      run: | 
+      run: |
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
