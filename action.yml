@@ -105,6 +105,3 @@ runs:
           --ignore="${{ inputs.ignore }}" \
           --database=${{ inputs.database }} \
           --file-annotations=${{ inputs.file-annotations }}
-    - name: set output variable
-      shell: bash
-      run: echo "::set-output name=checks-failed::"
