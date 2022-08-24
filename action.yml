@@ -74,10 +74,10 @@ inputs:
     description: The directory containing compile_commands.json file.
     required: false
     default: ""
-outputs:
-  checks-failed:
-    description: An integer that can be used as a boolean value to indicate if all checks failed.
-    value: ${{ steps.set-checks-failed.outputs.checks-failed }}
+  quiet-fail:
+    description: A flag that can be used to exit with a non-successfull error code (not '0') if any checks failed.
+    required: false
+    default: true
 runs:
   using: "composite"
   steps:
@@ -105,3 +105,7 @@ runs:
           --ignore="${{ inputs.ignore }}" \
           --database=${{ inputs.database }} \
           --file-annotations=${{ inputs.file-annotations }}
+    - name: set output variable
+      if: steps.cpp-linter.outputs.checks-failed != 0 && inputs.quiet-fail != 'true'
+      shell: bash
+      run: exit 1
