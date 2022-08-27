@@ -11,6 +11,19 @@
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
 
+## What's New
+
+v2
+
+* Change action from using docker to composite steps
+  * improve workflow runs times from 1m 24s (currently) to 6-20s.
+  * better support for the database input option (which is currently broken with the docker env).
+  * better support cross-compilation
+  * better support 3rd party libraries
+* Includes many issues and enhancements. See [#87](https://github.com/cpp-linter/cpp-linter-action/issues/87) for details.
+
+Refer [here](https://github.com/cpp-linter/cpp-linter-action/tree/v1) for previous versions.
+
 ## Usage
 
 Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/master/.github/workflows/cpp-linter.yml)
@@ -18,21 +31,16 @@ Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows
 The content of the file should be in the following format.
 
 ```yaml
-# Workflow syntax:
-# https://help.github.com/en/articles/workflow-syntax-for-github-actions
 name: cpp-linter
 
-on:
-  pull_request:
-    types: [opened, reopened]  # let PR-synchronize events be handled by push events
-  push:
+on: pull_request
 
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: cpp-linter/cpp-linter-action@v1
+      - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
