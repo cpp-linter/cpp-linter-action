@@ -19,11 +19,10 @@ jobs:
         with:
           style: file
           files-changed-only: false
-          quiet-fail: false
+          # quiet-fail: false
 
       - name: Fail fast?!
-        if: steps.linter.outcome == 'failure'
-        run: |
-          echo "Some files failed the linting checks!"
+        if: steps.linter.outputs.checks-failed > 0
+        run: echo "some linter checks failed"
         # for actual deployment
         # run: exit 1
