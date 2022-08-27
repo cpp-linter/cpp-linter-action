@@ -106,6 +106,6 @@ runs:
           --file-annotations=${{ inputs.file-annotations }}
     - name: set output variable
       id: set-variable
-      if: steps.cpp-linter.outputs.checks-failed != 0
+      # if: steps.cpp-linter.outputs.checks-failed != 0
       shell: bash
-      run: echo "::set-output name=checks-failed::1"
+      run: echo "::set-output name=checks-failed::${{ steps.cpp-linter.outputs.checks-failed }}"
