@@ -22,7 +22,7 @@ jobs:
           # quiet-fail: false
 
       - name: Fail fast?!
-        if: steps.linter.outputs.checks-failed > 0
+        if: steps.linter.outputs.checks-failed != 0
         run: echo "some linter checks failed"
         # for actual deployment
         # run: exit 1
