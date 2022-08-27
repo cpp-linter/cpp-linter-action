@@ -82,7 +82,6 @@ runs:
   using: "composite"
   steps:
     - name: Install action dependencies
-      # FIXME: when cpp-linter released to pypi, use that.
       shell: bash
       run: python3 -m pip install clang-tools cpp-linter
     - name: Install clang-tools binary executables
