@@ -86,7 +86,7 @@ runs:
       run: python3 -m pip install clang-tools cpp-linter
     - name: Install clang-tools binary executables
       shell: bash
-      run: clang-tools -i ${{ inputs.version }}
+      run: clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
