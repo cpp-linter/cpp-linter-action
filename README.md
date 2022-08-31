@@ -7,7 +7,7 @@
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/cpp-linter?label=cpp-linter&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/MkDocs%20Deploy?label=docs&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
 ![GitHub](https://img.shields.io/github/license/cpp-linter/cpp-linter-action?label=license&logo=github&style=flat-square)
-[![codecov](https://codecov.io/gh/cpp-linter/cpp-linter-action/branch/master/graph/badge.svg?token=4SF7UEDEZ2)](https://codecov.io/gh/cpp-linter/cpp-linter-action)
+[![codecov](https://codecov.io/gh/cpp-linter/cpp-linter-action/branch/main/graph/badge.svg?token=4SF7UEDEZ2)](https://codecov.io/gh/cpp-linter/cpp-linter-action)
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
 
@@ -26,7 +26,7 @@ Refer [here](https://github.com/cpp-linter/cpp-linter-action/tree/v1) for previo
 
 ## Usage
 
-Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/master/.github/workflows/cpp-linter.yml)
+Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
 
 The content of the file should be in the following format.
 
@@ -150,13 +150,13 @@ This action creates 1 output variable named `checks-failed`. Even if the linting
 
 ### Annotations
 
-![clang-format annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/annotations-clang-format.png)
+![clang-format annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png)
 
-![clang-tidy annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/annotations-clang-tidy.png)
+![clang-tidy annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png)
 
 ### Thread Comment
 
-![sample comment](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/master/docs/images/comment.png)
+![sample comment](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/comment.png)
 
 <!--footer-start-->
 
@@ -178,6 +178,6 @@ To provide feedback (requesting a feature or reporting a bug) please post to [is
 
 ## License
 
-The scripts and documentation in this project are released under the [MIT License](https://github.com/cpp-linter/cpp-linter-action/blob/master/LICENSE)
+The scripts and documentation in this project are released under the [MIT License](https://github.com/cpp-linter/cpp-linter-action/blob/main/LICENSE)
 
 <!--footer-end-->
