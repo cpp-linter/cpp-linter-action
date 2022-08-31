@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  release:
+    branches: [main]
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'which tag to update to'
+        default: 'v2'
+        required: true
+      ref:
+        description: 'which branch, tag or SHA to update the tag on'
+        default: 'main'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  re-tag:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        ref: ${{ inputs.ref }}
+    - name: update tag
+      run: |
+        git config user.name 'github-actions'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git tag --delete ${{ inputs.tag }}  || true
+        git push --delete origin ${{ inputs.tag }} || true
+        git tag -a latest -m 'Retag ${{ inputs.tag }}'
+        git push origin ${{ inputs.tag }}
