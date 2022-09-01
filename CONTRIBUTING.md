@@ -15,5 +15,6 @@ For pull requests, please stick to the following guidelines
 * Fork cpp-linter-action on your GitHub user account, do your changes there and then create a PR against `main` branch of cpp-linter-action repository.
 * Separate unrelated changes into multiple pull requests.
 
+If you wish to contribute to the python source package used by this action, then that has moved to it's own repository named [cpp-linter](https://github.com/cpp-linter/cpp-linter) as of v2 of this action.
 
 Please note that by contributing any code or documentation to this repository (by raising pull requests, or otherwise) you explicitly agree to the [License Agreement](LICENSE).
