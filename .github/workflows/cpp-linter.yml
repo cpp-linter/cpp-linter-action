@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: cpp-linter/cpp-linter-action@composite-action
+      - uses: cpp-linter/cpp-linter-action@main
         id: linter
         continue-on-error: true
         env:
@@ -19,7 +19,6 @@ jobs:
         with:
           style: file
           files-changed-only: false
-          # quiet-fail: false
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed != 0
