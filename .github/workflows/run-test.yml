@@ -41,19 +41,3 @@ jobs:
         propagate_failure: true
         trigger_workflow: true
         wait_workflow: true
-  test-package:
-    needs: [add-tag]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: convictional/trigger-workflow-and-wait@v1.6.3
-      with:
-        owner: cpp-linter
-        repo: test-cpp-linter-action
-        github_token: ${{ secrets.PAT_TOKEN }}
-        workflow_file_name: cpp-lint-package.yml
-        ref: master
-        wait_interval: 10
-        client_payload: '{}'
-        propagate_failure: true
-        trigger_workflow: true
-        wait_workflow: true

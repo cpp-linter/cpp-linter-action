@@ -5,9 +5,8 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cpp-linter/cpp-linter-action?style=flat-square)
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-C%2FC%2B%2B%20Lint%20Action-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/c-c-lint-action)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/cpp-linter?label=cpp-linter&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/MkDocs%20Deploy?label=docs&logo=Github&style=flat-square)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cpp-linter/cpp-linter-action/MkDocs%20Deploy?label=docs&logo=Github&style=flat-square)](https://cpp-linter.github.io/cpp-linter-action)
 ![GitHub](https://img.shields.io/github/license/cpp-linter/cpp-linter-action?label=license&logo=github&style=flat-square)
-[![codecov](https://codecov.io/gh/cpp-linter/cpp-linter-action/branch/main/graph/badge.svg?token=4SF7UEDEZ2)](https://codecov.io/gh/cpp-linter/cpp-linter-action)
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
 
