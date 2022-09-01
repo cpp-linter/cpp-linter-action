@@ -1,18 +1,8 @@
-:root>* {
-    --md-code-hl-number-color: #7e9b1e;
-    --md-code-hl-special-color: #499DC7;
-    --md-code-hl-constant-color: #48C999;
-    --md-code-hl-keyword-color: #499CD6;
-    --md-code-hl-string-color: #B88451;
-    --md-code-hl-comment-color: #5E9955;
-    /* --md-typeset-table-color: #ff000085; */
-}
-
-.md-typeset table:not([class]) tbody tr:hover,
-tr:hover {
-    background-color: var(--md-accent-fg-color--transparent);
-}
-
 th {
     background-color: var(--md-default-fg-color--lightest);
+}
+
+.md-header,
+.md-nav--primary .md-nav__title[for="__drawer"] {
+    background-color: #4051b5;
 }

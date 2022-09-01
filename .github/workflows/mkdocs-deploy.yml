@@ -13,7 +13,7 @@ jobs:
         with:
           python-version: 3.x
       - name: Install python action for doc extraction
-        run: pip install . -r docs/requirements.txt
+        run: pip install -r docs/requirements.txt
       - name: check mkdocs build
         if: github.ref != 'refs/heads/main'
         run: mkdocs build

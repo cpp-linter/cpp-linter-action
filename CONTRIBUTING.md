@@ -17,4 +17,4 @@ For pull requests, please stick to the following guidelines
 
 If you wish to contribute to the python source package used by this action, then that has moved to it's own repository named [cpp-linter](https://github.com/cpp-linter/cpp-linter) as of v2 of this action.
 
-Please note that by contributing any code or documentation to this repository (by raising pull requests, or otherwise) you explicitly agree to the [License Agreement](LICENSE).
+Please note that by contributing any code or documentation to this repository (by raising pull requests, or otherwise) you explicitly agree to the [License Agreement](https://github.com/cpp-linter/cpp-linter-action/blob/main/LICENSE).

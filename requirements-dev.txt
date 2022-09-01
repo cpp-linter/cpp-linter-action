@@ -1,7 +1,0 @@
-coverage[toml]
-mypy
-pylint
-pytest
-rich
-types-PyYAML
-types-requests
