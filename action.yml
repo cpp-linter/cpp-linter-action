@@ -77,21 +77,30 @@ inputs:
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
+    value: ${{ steps.cpp-linter.outputs.checks-failed }}
 runs:
-  using: "docker"
-  image: "Dockerfile"
-  env:
-    USING_CLANG_TOOLS_DOCKER: 'true'
-  args:
-    - --style=${{ inputs.style }}
-    - --extensions=${{ inputs.extensions }}
-    - --tidy-checks=${{ inputs.tidy-checks }}
-    - --repo-root=${{ inputs.repo-root }}
-    - --version=${{ inputs.version }}
-    - --verbosity=${{ inputs.verbosity }}
-    - --lines-changed-only=${{ inputs.lines-changed-only }}
-    - --files-changed-only=${{ inputs.files-changed-only }}
-    - --thread-comments=${{ inputs.thread-comments }}
-    - --ignore=${{ inputs.ignore }}
-    - --database=${{ inputs.database }}
-    - --file-annotations=${{ inputs.file-annotations }}
+  using: "composite"
+  steps:
+    - name: Install action dependencies
+      shell: bash
+      run: python3 -m pip install clang-tools cpp-linter
+    - name: Install clang-tools binary executables
+      shell: bash
+      run: clang-tools -i ${{ inputs.version }} -b
+    - name: Run cpp-linter
+      id: cpp-linter
+      shell: bash
+      run: |
+        cpp-linter \
+          --style="${{ inputs.style }}" \
+          --extensions=${{ inputs.extensions }} \
+          --tidy-checks="${{ inputs.tidy-checks }}" \
+          --repo-root=${{ inputs.repo-root }} \
+          --version=${{ inputs.version }} \
+          --verbosity=${{ inputs.verbosity }} \
+          --lines-changed-only=${{ inputs.lines-changed-only }} \
+          --files-changed-only=${{ inputs.files-changed-only }} \
+          --thread-comments=${{ inputs.thread-comments }} \
+          --ignore="${{ inputs.ignore }}" \
+          --database=${{ inputs.database }} \
+          --file-annotations=${{ inputs.file-annotations }}

@@ -1,4 +1,4 @@
-name: "Check python code"
+name: "Test python code"
 
 on:
   push:
