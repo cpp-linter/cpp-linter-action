@@ -4,7 +4,7 @@ Thank you for investing your time in contributing to our project! We welcome fee
 
 ## New contributor guide
 
-Ours develop branch is `main` not `master` (`master` is used to be the develop branch).
+Ours develop branch is `main` not `master` (`master` used to be the develop branch for v1.x).
 
 The reason we didn't delete the `master` branch is that there are still users whose workflows point to the `master` branch.
 
