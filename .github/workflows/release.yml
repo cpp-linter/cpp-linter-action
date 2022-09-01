@@ -11,12 +11,9 @@ on:
         default: 'v2'
         required: true
       ref:
-        description: 'which branch, tag or SHA to update the tag on'
+        description: 'which branch to update the tag on'
         default: 'main'
         required: true
-
-permissions:
-  contents: read
 
 jobs:
   re-tag:
@@ -32,5 +29,5 @@ jobs:
         git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
         git tag --delete ${{ inputs.tag }}  || true
         git push --delete origin ${{ inputs.tag }} || true
-        git tag -a latest -m 'Retag ${{ inputs.tag }}'
+        git tag -a ${{ inputs.tag }} -m 'Retag ${{ inputs.tag }}'
         git push origin ${{ inputs.tag }}
