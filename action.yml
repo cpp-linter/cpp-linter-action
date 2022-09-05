@@ -1,5 +1,5 @@
-name: C/C++ Lint Action
-description: Automatically checks push & PR changes with clang-format & clang-tidy, then post annotations/comments with faulty results.
+name: C/C++ Linter
+description: Lint C/C++ code with clang-format and clang-tidy then post annotations and comments with faulty results.
 author: shenxianpeng
 branding:
   icon: "check-circle"
