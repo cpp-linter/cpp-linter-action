@@ -1,6 +1,6 @@
 <!--intro-start-->
 
-# C/C++ Lint Action <sub><sup>| clang-format & clang-tidy</sup></sub>
+# C/C++ Linter Action <sub><sup>| clang-format & clang-tidy</sup></sub>
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cpp-linter/cpp-linter-action?style=flat-square)
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-C%2FC%2B%2B%20Lint%20Action-blue?logo=github&style=flat-square)](https://github.com/marketplace/actions/c-c-lint-action)
@@ -159,9 +159,9 @@ This action creates 1 output variable named `checks-failed`. Even if the linting
 
 <!--footer-start-->
 
-## Add C/C++ Lint Action badge in README
+## Add C/C++ Linter Action badge in README
 
-You can show C/C++ Lint Action status with a badge in your repository README
+You can show C/C++ Linter Action status with a badge in your repository README
 
 Example
 
