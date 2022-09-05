@@ -13,13 +13,13 @@ jobs:
         with:
           python-version: 3.x
       - name: Install python action for doc extraction
-        run: pip install . -r docs/requirements.txt
+        run: pip install -r docs/requirements.txt
       - name: check mkdocs build
-        if: github.ref != 'refs/heads/master'
+        # if: github.ref != 'refs/heads/master'
         run: mkdocs build
-      - name: Build docs and deploy to gh-pages
-        if: github.ref == 'refs/heads/master'
-        run: |
-          git config user.name 'github-actions'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          mkdocs gh-deploy --force
+      # - name: Build docs and deploy to gh-pages
+      #   if: github.ref == 'refs/heads/master'
+      #   run: |
+      #     git config user.name 'github-actions'
+      #     git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      #     mkdocs gh-deploy --force

@@ -2,17 +2,10 @@ site_name: C/C++ Linter Action
 site_description: "Developer documentation from sources."
 site_url: "https://cpp-linter.github.io/cpp-linter-action"
 repo_url: "https://github.com/cpp-linter/cpp-linter-action"
-edit_uri: "blob/master/docs/"
+edit_uri: ""
 repo_name: "cpp-linter/cpp-linter-action"
 nav:
   - index.md
-  - 'Dev Docs':
-    - 'API Reference/cpp_linter.md'
-    - 'API Reference/cpp_linter.run.md'
-    - 'API Reference/cpp_linter.clang_tidy.md'
-    - 'API Reference/cpp_linter.clang_tidy_yml.md'
-    - 'API Reference/cpp_linter.clang_format_xml.md'
-    - 'API Reference/cpp_linter.thread_comments.md'
 
 theme:
   name: material
@@ -40,26 +33,11 @@ extra_css:
 plugins:
   - search
   - include-markdown
-  - autorefs
-  - mkdocstrings:
-      default_handler: python
-      handlers:
-        python:
-          rendering:
-            # show_if_no_docstring: true
-            show_source: true
-            show_signature_annotations: true
-            heading_level: 2
-      watch:
-        - cpp_linter
 
 markdown_extensions:
   - admonition
-  - attr_list
-  - pymdownx.details
   - pymdownx.emoji
   - pymdownx.superfences
-  - pymdownx.tabbed
   - pymdownx.tasklist
   - toc:
       permalink: true
