@@ -74,8 +74,8 @@ inputs:
     description: The directory containing compile_commands.json file.
     required: false
     default: ""
-  extra-arg:
-    description: A string of extra arguments passed to clang-tidy for use as compiler arguments.
+  extra-args:
+    description: A string of extra arguments passed to clang-tidy for use as compiler arguments. Multiple arguments are separated by spaces so the argument name and value should use an '=' sign instead of a space.
     required: false
     default: ""
 outputs:
