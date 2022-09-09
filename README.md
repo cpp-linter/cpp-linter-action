@@ -139,9 +139,9 @@ jobs:
 - **Description**: The directory containing compilation database (like compile_commands.json) file.
 - Default: ''
 
-#### `extra-arg`
+#### `extra-args`
 
-- **Description**: A string of extra arguments passed to clang-tidy for use as compiler arguments.
+- **Description**: A string of extra arguments passed to clang-tidy for use as compiler arguments (like `-std=c++14 -Wall`).
 - Default: ''
 
 ### Outputs
