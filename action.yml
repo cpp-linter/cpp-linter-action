@@ -41,15 +41,15 @@ inputs:
     required: false
     default: "12"
   verbosity:
-    description: A hidden option to control the action's log verbosity. This is the `logging` level (degaults to DEBUG)
+    description: A hidden option to control the action's log verbosity. This is the `logging` level (defaults to DEBUG).
     required: false
     default: "10"
   lines-changed-only:
-    description: Set this option to 'true' to only analyse changes in the event's diff. Defaults to 'false'.
+    description: Set this option to 'true' to only analyze changes in the event's diff. Defaults to 'false'.
     required: false
     default: false
   files-changed-only:
-    description: Set this option to 'false' to analyse any source files in the repo. Defaults to 'true'.
+    description: Set this option to 'false' to analyze any source files in the repo. Defaults to 'true'.
     required: false
     default: true
   ignore:
@@ -74,6 +74,10 @@ inputs:
     description: The directory containing compile_commands.json file.
     required: false
     default: ""
+  extra-args:
+    description: A string of extra arguments passed to clang-tidy for use as compiler arguments. Multiple arguments are separated by spaces so the argument name and value should use an '=' sign instead of a space.
+    required: false
+    default: ""
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if all checks failed.
@@ -83,7 +87,7 @@ runs:
   steps:
     - name: Install action dependencies
       shell: bash
-      run: python3 -m pip install clang-tools cpp-linter
+      run: python3 -m pip install clang-tools cpp-linter==1.4.7
     - name: Install clang-tools binary executables
       shell: bash
       run: clang-tools -i ${{ inputs.version }} -b
@@ -103,4 +107,5 @@ runs:
           --thread-comments=${{ inputs.thread-comments }} \
           --ignore="${{ inputs.ignore }}" \
           --database=${{ inputs.database }} \
-          --file-annotations=${{ inputs.file-annotations }}
+          --file-annotations=${{ inputs.file-annotations }} \
+          --extra-arg="${{ inputs.extra-args }}"

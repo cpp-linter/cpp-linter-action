@@ -139,6 +139,11 @@ jobs:
 - **Description**: The directory containing compilation database (like compile_commands.json) file.
 - Default: ''
 
+#### `extra-args`
+
+- **Description**: A string of extra arguments passed to clang-tidy for use as compiler arguments (like `-std=c++14 -Wall`).
+- Default: ''
+
 ### Outputs
 
 This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
