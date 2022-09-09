@@ -108,4 +108,4 @@ runs:
           --ignore="${{ inputs.ignore }}" \
           --database=${{ inputs.database }} \
           --file-annotations=${{ inputs.file-annotations }} \
-          --extra-arg=${{ inputs.extra-arg }}
+          --extra-arg="${{ inputs.extra-arg }}"
