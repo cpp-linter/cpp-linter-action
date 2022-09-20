@@ -87,7 +87,7 @@ runs:
   steps:
     - name: Install action dependencies
       shell: bash
-      run: python3 -m pip install clang-tools cpp-linter==1.4.7
+      run: python3 -m pip install clang-tools cpp-linter==1.4.8
     - name: Install clang-tools binary executables
       shell: bash
       run: clang-tools -i ${{ inputs.version }} -b
