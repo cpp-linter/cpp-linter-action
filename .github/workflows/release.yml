@@ -23,11 +23,21 @@ jobs:
       with:
         fetch-depth: 0
         ref: ${{ inputs.ref }}
-    - name: update tag
+    - name: Config git name and email
       run: |
         git config user.name 'github-actions'
         git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+    - name: Update tag with parameter
+      if: github.event.inputs.tag != ''
+      run: |
         git tag --delete ${{ inputs.tag }}  || true
         git push --delete origin ${{ inputs.tag }} || true
         git tag -a ${{ inputs.tag }} -m 'Retag ${{ inputs.tag }}'
         git push origin ${{ inputs.tag }}
+    - name: Update tag to v2
+      if: github.event.inputs.tag == ''
+      run: |
+        git tag --delete v2 || true
+        git push --delete origin v2 || true
+        git tag -a v2 -m 'Retag v2'
+        git push origin v2
