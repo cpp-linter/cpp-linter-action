@@ -85,6 +85,16 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Install Binaries
+      shell: bash
+      run: |
+        if [[ "${{runner.os}}"  == "Linux" ]]; then
+          sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+        elif [[ "${{runner.os}}"  == "Windows" ]]; then
+          choco install llvm --version ${{ inputs.version }} -y
+        elif [[ "${{runner.os}}"  == "macOS" ]]; then
+          homebrew install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }} 
+        fi
     - name: Install action dependencies
       shell: bash
       run: python3 -m pip install clang-tools cpp-linter==1.4.8
