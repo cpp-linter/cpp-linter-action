@@ -93,7 +93,7 @@ runs:
         elif [[ "${{runner.os}}"  == "Windows" ]]; then
           choco install llvm --version ${{ inputs.version }} -y
         elif [[ "${{runner.os}}"  == "macOS" ]]; then
-          homebrew install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }} 
+          homebrew install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
         fi
     - name: Install action dependencies
       shell: bash
