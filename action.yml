@@ -95,7 +95,7 @@ runs:
           choco install llvm --version=13.0.1 --force
           # choco install llvm --version=${{ inputs.version }} -y
         elif [[ "${{runner.os}}"  == "macOS" ]]; then
-          homebrew install clang-format clang-tidy
+          brew install clang-format clang-tidy
         fi
     - name: Install action dependencies
       shell: bash
