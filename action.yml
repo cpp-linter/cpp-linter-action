@@ -92,9 +92,10 @@ runs:
           sudo apt-get update
           sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
         elif [[ "${{runner.os}}"  == "Windows" ]]; then
-          choco install llvm --version ${{ inputs.version }} -y
+          choco install llvm --version=13.0.1
+          # choco install llvm --version=${{ inputs.version }} -y
         elif [[ "${{runner.os}}"  == "macOS" ]]; then
-          homebrew install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+          homebrew install clang-format clang-tidy
         fi
     - name: Install action dependencies
       shell: bash
