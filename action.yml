@@ -87,33 +87,17 @@ runs:
   steps:
     - name: Create Python virtual environment & Install action dependencies
       shell: bash
-      run: |
-        if [[ "$RUNNER_OS"  == "Windows" ]];then
-            python3 -m venv ${{ github.action_path }}\venv
-            ${{ github.action_path }}\venv\Scripts\activate
-        else
-            python3 -m venv ${{ github.action_path }}/venv
-            source ${{ github.action_path }}/venv/bin/activate
-        fi
-        python -m pip install -r ${{ github.action_path }}/requirements.txt
+      run: ${{ github.action_path }}/venv.sh create
     - name: Install clang-tools binary executables
       shell: bash
       run: |
-        if [[ "$RUNNER_OS"  == "Windows" ]];then
-            ${{ github.action_path }}\venv\Scripts\activate
-        else
-            source ${{ github.action_path }}/venv/bin/activate
-        fi
+        ${{ github.action_path }}/venv.sh activate
         clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
-        if [[ "$RUNNER_OS"  == "Windows" ]];then
-            ${{ github.action_path }}\venv\Scripts\activate
-        else
-            source ${{ github.action_path }}/venv/bin/activate
-        fi
+        ${{ github.action_path }}/venv.sh activate
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \

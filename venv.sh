@@ -23,15 +23,6 @@ EOF
 exit 0
 }
 
-
-create(){
-    python3 -m venv venv
-}
-
-delete(){
-    rm -rf venv
-}
-
 activate(){
     if [[ "$RUNNER_OS"  == "Windows" ]];then
         ./venv/Scripts/activate
@@ -41,10 +32,20 @@ activate(){
     export CPP_LINTER_VENV_EXE=`python -c "import sys; print(sys.executable)"`
 }
 
+create(){
+    python3 -m venv venv
+    activate
+    $CPP_LINTER_VENV_EXE -m pip install -r requirements.txt
+}
+
+delete(){
+    rm -rf venv
+}
+
 #=============#
 # MAIN starts #
 #=============#
-cd $RUNNER_TEMP
+cd $GITHUB_ACTION_PATH
 param=$1
 case "$param" in
     *create*)   create ;;
