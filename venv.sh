@@ -51,7 +51,7 @@ activate(){
         venv\Scripts\activate.bat
     else
         cd $SCRIPT_PATH
-        source venv/bin/activate
+        . ./venv/bin/activate
     fi
 }
 
