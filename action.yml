@@ -91,18 +91,18 @@ runs:
     - name: Install action dependencies
       shell: bash
       run: |
-        ${{ github.action_path }}/venv.sh activate
+        bash ${{ github.action_path }}/venv.sh activate
         python3 -m pip install -r ${{ github.action_path }}/requirements.txt
     - name: Install clang-tools binary executables
       shell: bash
       run: |
-        ${{ github.action_path }}/venv.sh activate
+        bash ${{ github.action_path }}/venv.sh activate
         clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
-        ${{ github.action_path }}/venv.sh activate
+        bash ${{ github.action_path }}/venv.sh activate
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
