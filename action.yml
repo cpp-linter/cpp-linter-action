@@ -89,18 +89,29 @@ runs:
       shell: bash
       run: |
         if [[ "${{runner.os}}"  == "macOS" ]];then
-          export PATH=$PATH:/usr/local/opt/python@3.10/bin
+          python3 -m venv venv
         fi
     - name: Install action dependencies
       shell: bash
-      run: python3 -m pip install clang-tools==0.6.2 cpp-linter==1.4.8
+      run: |
+        if [[ "${{runner.os}}"  == "macOS" ]];then
+          source venv/bin/activate
+        fi
+        python3 -m pip install clang-tools==0.6.2 cpp-linter==1.4.8
     - name: Install clang-tools binary executables
       shell: bash
-      run: clang-tools -i ${{ inputs.version }} -b
+      run: |
+        if [[ "${{runner.os}}"  == "macOS" ]];then
+          source venv/bin/activate
+        fi
+        clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
+        if [[ "${{runner.os}}"  == "macOS" ]];then
+          source venv/bin/activate
+        fi
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
