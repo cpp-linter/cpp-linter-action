@@ -87,11 +87,16 @@ runs:
   steps:
     - name: Setup action environment
       shell: bash
-      run: ${{ github.action_path }}/action-setup.sh ${{ inputs.version }}
+      run: |
+        ${{ github.action_path }}/venv.sh create
+        ${{ github.action_path }}/venv.sh activate
+        ${{ github.action_path }}/venv.sh install-deps
+        clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
+        ${{ github.action_path }}/venv.sh activate
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
