@@ -87,22 +87,22 @@ runs:
   steps:
     - name: Create Python virtual environment
       shell: bash
-      run: sh venv.sh create
+      run: cd  ${{ ${{ github.action_path }} && sh venv.sh create
     - name: Install action dependencies
       shell: bash
       run: |
-        sh venv.sh activate
+        cd  ${{ ${{ github.action_path }} && sh venv.sh activate
         python3 -m pip install -r requirements.txt
     - name: Install clang-tools binary executables
       shell: bash
       run: |
-        sh venv.sh activate
+        cd  ${{ ${{ github.action_path }} && sh venv.sh activate
         clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
-        sh venv.sh activate
+        cd  ${{ ${{ github.action_path }} && sh venv.sh activate
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
