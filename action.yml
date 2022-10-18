@@ -85,15 +85,14 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Create Python virtual environment
-      shell: bash
-      run: python3 -m venv ${{ github.action_path }}/venv
-    - name: Install action dependencies
+    - name: Create Python virtual environment & Install action dependencies
       shell: bash
       run: |
         if [[ "$RUNNER_OS"  == "Windows" ]];then
+            python3 -m venv ${{ github.action_path }}\venv
             ${{ github.action_path }}\venv\Scripts\activate
         else
+            python3 -m venv ${{ github.action_path }}/venv
             source ${{ github.action_path }}/venv/bin/activate
         fi
         python -m pip install -r ${{ github.action_path }}/requirements.txt
