@@ -25,17 +25,17 @@ exit 0
 
 activate(){
     if [[ "$RUNNER_OS"  == "Windows" ]];then
-        $GITHUB_ACTION_PATH/venv/Scripts/activate
+        "$GITHUB_ACTION_PATH/venv/Scripts/activate"
     else
         source $GITHUB_ACTION_PATH/venv/bin/activate
     fi
-    export CPP_LINTER_VENV_EXE=`python -c "import sys; print(sys.executable)"`
+    export CPP_LINTER_VENV_EXE=`python -c 'import sys; print(sys.executable.replace("\\", "/"))'`
 }
 
 create(){
-    python3 -m venv $GITHUB_ACTION_PATH/venv
+    python3 -m venv "$GITHUB_ACTION_PATH/venv"
     activate
-    $CPP_LINTER_VENV_EXE -m pip install -r $GITHUB_ACTION_PATH/requirements.txt
+    $CPP_LINTER_VENV_EXE -m pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
 }
 
 delete(){
