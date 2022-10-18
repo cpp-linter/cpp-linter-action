@@ -87,10 +87,7 @@ runs:
   steps:
     - name: Setup action environment
       shell: bash
-      run: ${{ github.action_path }}/action-setup.sh
-    - name: Install clang-tools binary executables
-      shell: bash
-      run: clang-tools -i ${{ inputs.version }} -b
+      run: ${{ github.action_path }}/action-setup.sh ${{ inputs.version }}
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash

@@ -16,9 +16,15 @@ activate_venv(){
     fi
 }
 
+install_deps(){
+    python3 -m pip install -r "${SCRIPT_PATH}/requirements.txt"
+}
+
 #=============#
 # MAIN starts #
 #=============#
+
+VERSION=$1
 
 # https://stackoverflow.com/a/29835459
 SCRIPT_PATH="$(
@@ -39,5 +45,5 @@ fi
 
 create_venv
 activate_venv
-
-python3 -m pip install -r "${SCRIPT_PATH}/requirements.txt"
+install_deps
+clang-tools -i $VERSION -b
