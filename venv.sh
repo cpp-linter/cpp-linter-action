@@ -38,7 +38,7 @@ activate(){
     else
         source ./venv/bin/activate
     fi
-    python -c "import sys; print(sys.executable)"
+    export CPP_LINTER_VENV_EXE=`python -c "import sys; print(sys.executable)"`
 }
 
 #=============#
