@@ -42,6 +42,7 @@ activate(){
 #=============#
 # MAIN starts #
 #=============#
+cd $RUNNER_TEMP
 param=$1
 case "$param" in
     *create*)   create ;;
