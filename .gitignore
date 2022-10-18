@@ -7,6 +7,9 @@ ENV/
 env.bak/
 venv.bak/
 
+#docs build artifacts
+site/
+
 # local demo specific
 .changed_files.json
 clang_format*.txt
@@ -15,3 +18,6 @@ clang_tidy_output.yml
 clang_format_output.xml
 event_payload.json
 comments.json
+
+#vscode settings
+.vscode/
