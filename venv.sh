@@ -23,13 +23,17 @@ EOF
 exit 0
 }
 
+# a global var used to set the env var of the same name
+CPP_LINTER_VENV_EXE=""
+
+
 activate(){
     if [[ "$RUNNER_OS"  == "Windows" ]];then
         "$GITHUB_ACTION_PATH/venv/Scripts/activate"
     else
         source "$GITHUB_ACTION_PATH/venv/bin/activate"
     fi
-    export CPP_LINTER_VENV_EXE=$(python -c 'import sys; print(sys.executable)') | tr "\\\\" "/"
+    export CPP_LINTER_VENV_EXE=`python -c 'import sys; print(sys.executable)'` | tr "\\\\" "/"
     echo "path to venv exe: $CPP_LINTER_VENV_EXE"
     echo "{CPP_LINTER_VENV_EXE}={$CPP_LINTER_VENV_EXE}" >> $GITHUB_ENV
 }
