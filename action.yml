@@ -85,24 +85,16 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Create Python virtual environment
+    - name: Setup action environment
       shell: bash
-      run: bash ${{ github.action_path }}/venv.sh create
-    - name: Install action dependencies
-      shell: bash
-      run: |
-        bash ${{ github.action_path }}/venv.sh activate
-        python3 -m pip install -r ${{ github.action_path }}/requirements.txt
+      run: ${{ github.action_path }}/action-setup.sh
     - name: Install clang-tools binary executables
       shell: bash
-      run: |
-        bash ${{ github.action_path }}/venv.sh activate
-        clang-tools -i ${{ inputs.version }} -b
+      run: clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
-        bash ${{ github.action_path }}/venv.sh activate
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
