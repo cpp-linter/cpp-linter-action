@@ -30,6 +30,7 @@ activate(){
         source "$GITHUB_ACTION_PATH/venv/bin/activate"
     fi
     export CPP_LINTER_VENV_EXE=$(python -c 'import sys; print(sys.executable)') | tr "\\\\" "/"
+    echo "path to venv exe: $CPP_LINTER_VENV_EXE"
     echo "{CPP_LINTER_VENV_EXE}={$CPP_LINTER_VENV_EXE}" >> $GITHUB_ENV
 }
 
