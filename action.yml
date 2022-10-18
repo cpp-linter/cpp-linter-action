@@ -85,11 +85,12 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Create Python virtual environment
+    - name: Add Python environment variable to PATH
       shell: bash
       run: |
-        python3 -m venv venv
-        source venv/bin/activate
+        if [[ "${{runner.os}}"  == "macOS" ]];then
+          export PATH=$PATH:/usr/local/opt/python@3.10/bin
+        fi
     - name: Install action dependencies
       shell: bash
       run: python3 -m pip install clang-tools==0.6.2 cpp-linter==1.4.8
