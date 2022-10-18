@@ -1,3 +1,4 @@
+#!/bin/bash
 # Create temp Python virtual environment
 # to fix https://github.com/cpp-linter/cpp-linter-action/issues/111
 # This script can be decommissioned when
