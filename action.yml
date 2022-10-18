@@ -92,7 +92,7 @@ runs:
       shell: bash
       run: |
         if [[ "$RUNNER_OS"  == "Windows" ]];then
-            ${{ github.action_path }}/venv/Scripts/activate
+            ${{ github.action_path }}\venv\Scripts\activate
         else
             source ${{ github.action_path }}/venv/bin/activate
         fi
@@ -101,7 +101,7 @@ runs:
       shell: bash
       run: |
         if [[ "$RUNNER_OS"  == "Windows" ]];then
-            ${{ github.action_path }}/venv/Scripts/activate
+            ${{ github.action_path }}\venv\Scripts\activate
         else
             source ${{ github.action_path }}/venv/bin/activate
         fi
@@ -111,7 +111,7 @@ runs:
       shell: bash
       run: |
         if [[ "$RUNNER_OS"  == "Windows" ]];then
-            ${{ github.action_path }}/venv/Scripts/activate
+            ${{ github.action_path }}\venv\Scripts\activate
         else
             source ${{ github.action_path }}/venv/bin/activate
         fi
