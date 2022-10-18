@@ -87,23 +87,35 @@ runs:
   steps:
     - name: Create Python virtual environment
       shell: bash
-      run: bash ${{ github.action_path }}/venv.sh create
+      run: python3 -m venv ${{ github.action_path }}/venv
     - name: Install action dependencies
       shell: bash
       run: |
-        bash ${{ github.action_path }}/venv.sh activate
-        $CPP_LINTER_VENV_EXE -m pip install -r ${{ github.action_path }}/requirements.txt
+        if [[ "$RUNNER_OS"  == "Windows" ]];then
+            ${{ github.action_path }}/venv/Scripts/activate
+        else
+            source ${{ github.action_path }}/venv/bin/activate
+        fi
+        python -m pip install -r ${{ github.action_path }}/requirements.txt
     - name: Install clang-tools binary executables
       shell: bash
       run: |
-        bash ${{ github.action_path }}/venv.sh activate
-        $CPP_LINTER_VENV_EXE/../clang-tools -i ${{ inputs.version }} -b
+        if [[ "$RUNNER_OS"  == "Windows" ]];then
+            ${{ github.action_path }}/venv/Scripts/activate
+        else
+            source ${{ github.action_path }}/venv/bin/activate
+        fi
+        clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
-        bash ${{ github.action_path }}/venv.sh activate
-        $CPP_LINTER_VENV_EXE/../cpp-linter \
+        if [[ "$RUNNER_OS"  == "Windows" ]];then
+            ${{ github.action_path }}/venv/Scripts/activate
+        else
+            source ${{ github.action_path }}/venv/bin/activate
+        fi
+        cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
           --tidy-checks="${{ inputs.tidy-checks }}" \
