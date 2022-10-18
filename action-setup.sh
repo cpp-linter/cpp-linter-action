@@ -5,14 +5,14 @@
 # resolve https://github.com/cpp-linter/clang-tools-pip/issues/15
 
 create_venv(){
-    python3 -m venv "$PYTHON_VENV_PATH"
+    python3 -m venv $PYTHON_VENV_PATH
 }
 
 activate_venv(){
     if [ "$RUNNER_OS"  = "Windows" ];then
-        venv\Scripts\activate.bat
+        $PYTHON_VENV_PATH\Scripts\activate.bat
     else
-        source venv/bin/activate
+        source $PYTHON_VENV_PATH/bin/activate
     fi
 }
 
@@ -30,7 +30,12 @@ SCRIPT_PATH="$(
   )
 )"
 readonly SCRIPT_PATH
-readonly PYTHON_VENV_PATH="${SCRIPT_PATH}/venv"
+
+if [ "$RUNNER_OS"  = "Windows" ];then
+    readonly PYTHON_VENV_PATH="${SCRIPT_PATH}\venv"
+else
+    readonly PYTHON_VENV_PATH="${SCRIPT_PATH}/venv"
+fi
 
 create_venv
 activate_venv
