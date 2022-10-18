@@ -85,33 +85,24 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Add Python environment variable to PATH
+    - name: Create Python virtual environment
       shell: bash
-      run: |
-        if [[ "${{runner.os}}"  == "macOS" ]];then
-          python3 -m venv venv
-        fi
+      run: sh src/venv.sh create
     - name: Install action dependencies
       shell: bash
       run: |
-        if [[ "${{runner.os}}"  == "macOS" ]];then
-          source venv/bin/activate
-        fi
-        python3 -m pip install clang-tools==0.6.2 cpp-linter==1.4.8
+        sh src/venv.sh activate
+        python3 -m pip install -r src/requirements.txt
     - name: Install clang-tools binary executables
       shell: bash
       run: |
-        if [[ "${{runner.os}}"  == "macOS" ]];then
-          source venv/bin/activate
-        fi
+        sh src/venv.sh activate
         clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
-        if [[ "${{runner.os}}"  == "macOS" ]];then
-          source venv/bin/activate
-        fi
+        sh src/venv.sh activate
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
