@@ -10,9 +10,9 @@ create_venv(){
 
 activate_venv(){
     if [ "$RUNNER_OS"  = "Windows" ];then
-        ./venv/Scripts/activate
+        venv\Scripts\activate.bat
     else
-        . ./venv/bin/activate
+        source venv/bin/activate
     fi
 }
 
