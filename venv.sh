@@ -30,10 +30,11 @@ CPP_LINTER_VENV_EXE=""
 activate(){
     if [[ "$RUNNER_OS"  == "Windows" ]];then
         "$GITHUB_ACTION_PATH/venv/Scripts/activate"
+        CPP_LINTER_VENV_EXE="$GITHUB_ACTION_PATH/venv/Scripts/python.exe" | tr "\\\\" "/"
     else
         source "$GITHUB_ACTION_PATH/venv/bin/activate"
+        CPP_LINTER_VENV_EXE="$GITHUB_ACTION_PATH/venv/bin/python"
     fi
-    CPP_LINTER_VENV_EXE=$(python -c 'import sys; print(sys.executable)') | tr "\\\\" "/"
     echo "path to venv exe: $CPP_LINTER_VENV_EXE"
     export CPP_LINTER_VENV_EXE=$CPP_LINTER_VENV_EXE
     echo "{CPP_LINTER_VENV_EXE}={$CPP_LINTER_VENV_EXE}" >> $GITHUB_ENV
