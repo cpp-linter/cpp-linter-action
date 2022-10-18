@@ -35,7 +35,7 @@ activate(){
 create(){
     python3 -m venv $GITHUB_ACTION_PATH/venv
     activate
-    $CPP_LINTER_VENV_EXE -m pip install -r requirements.txt
+    $CPP_LINTER_VENV_EXE -m pip install -r $GITHUB_ACTION_PATH/requirements.txt
 }
 
 delete(){
