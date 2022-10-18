@@ -90,7 +90,7 @@ runs:
       run: |
         ${{ github.action_path }}/venv.sh create
         ${{ github.action_path }}/venv.sh activate
-        ${{ github.action_path }}/venv.sh install-deps
+        ${{ github.action_path }}/venv.sh install_deps
         clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter

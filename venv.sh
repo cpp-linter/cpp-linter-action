@@ -59,7 +59,7 @@ delete(){
     rm -rf venv
 }
 
-install-deps(){
+install_deps(){
     python3 -m pip install -r "${SCRIPT_PATH}/requirements.txt"
 }
 
@@ -80,9 +80,9 @@ case "$param" in
     *delete*)
         delete
         ;;
-    *install-deps*)
+    *install_deps*)
         init
-        install-deps
+        install_deps
         ;;
     *)
         usage
