@@ -29,7 +29,7 @@ activate(){
     else
         source $GITHUB_ACTION_PATH/venv/bin/activate
     fi
-    export CPP_LINTER_VENV_EXE=$(python -c 'import sys; print(sys.executable)') | tr "\\" "/"
+    export CPP_LINTER_VENV_EXE=$(python -c 'import sys; print(sys.executable)') | tr "\\\\" "/"
 }
 
 create(){
