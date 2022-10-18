@@ -29,7 +29,7 @@ activate(){
     else
         source "$GITHUB_ACTION_PATH/venv/bin/activate"
     fi
-    CPP_LINTER_VENV_EXE=$(python -c 'import sys; print(sys.executable)') | tr "\\\\" "/"
+    export CPP_LINTER_VENV_EXE=$(python -c 'import sys; print(sys.executable)') | tr "\\\\" "/"
     echo "{CPP_LINTER_VENV_EXE}={$CPP_LINTER_VENV_EXE}" >> $GITHUB_ENV
 }
 
@@ -40,7 +40,7 @@ create(){
 }
 
 delete(){
-    rm -rf venv
+    rm -rf "$GITHUB_ACTION_PATH/venv"
 }
 
 #=============#
