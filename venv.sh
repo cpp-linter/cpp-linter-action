@@ -32,7 +32,7 @@ delete(){
 }
 
 activate(){
-    if [[ "${{runner.os}}"  == "Windows" ]];then
+    if [ "$RUNNER_OS"  == "Windows" ];then
         ./venv/Scripts/activate
     else
         source ./venv/bin/activate
