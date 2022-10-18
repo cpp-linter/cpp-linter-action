@@ -38,6 +38,7 @@ activate(){
     else
         source ./venv/bin/activate
     fi
+    python -c "import sys; print(sys.executable)"
 }
 
 #=============#
