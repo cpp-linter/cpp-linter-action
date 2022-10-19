@@ -99,7 +99,7 @@ runs:
       shell: bash
       run: |
         if [[ "${{runner.os}}"  == "macOS" ]];then
-          source '${{ github.action_path }}/venv/bin/activate;'
+          source '${{ github.action_path }}/venv/bin/activate'
         fi
         cpp-linter \
           --style="${{ inputs.style }}" \
