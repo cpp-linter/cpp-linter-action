@@ -91,9 +91,10 @@ runs:
       with:
         python-version: 3.x
         update-environment: false
-        cache: 'pip'
-        cache-dependency-path: '${{ github.action_path }}/requirements.txt'
+        # cache: 'pip'
+        # cache-dependency-path: '${{ github.action_path }}/requirements.txt'
     - name: Install action dependencies
+      shell: bash
       run: ${{ steps.cpy3x.outputs.python-path }} -m pip install '${{ github.action_path }}/requirements.txt'
     - name: Install clang-tools binary executables
       shell: bash
