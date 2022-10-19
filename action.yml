@@ -87,14 +87,20 @@ runs:
   steps:
     - name: Install action dependencies
       shell: bash
-      run: python3 -m pip install clang-tools==0.6.2 cpp-linter==1.4.8
-    - name: Install clang-tools binary executables
-      shell: bash
-      run: clang-tools -i ${{ inputs.version }} -b
+      run: |
+        if [[ "${{runner.os}}"  == "macOS" ]];then
+          python3 -m venv '${{ github.action_path }}/venv'
+          source '${{ github.action_path }}/venv/bin/activate'
+        fi
+        python3 -m pip install -r '${{ github.action_path }}/requirements.txt'
+        clang-tools -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
+        if [[ "${{runner.os}}"  == "macOS" ]];then
+          source '${{ github.action_path }}/venv/bin/activate'
+        fi
         cpp-linter \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
