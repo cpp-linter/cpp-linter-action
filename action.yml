@@ -99,12 +99,12 @@ runs:
     - name: Install clang-tools binary executables
       shell: bash
       run: |
-        ${{ steps.cpy3x.outputs.python-path }} -m clang-tools.main -i ${{ inputs.version }} -b
+        ${{ steps.cpy3x.outputs.python-path }} -m clang_tools.main -i ${{ inputs.version }} -b
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
-        ${{ steps.cpy3x.outputs.python-path }} -m cpp-linter.run \
+        ${{ steps.cpy3x.outputs.python-path }} -m cpp_linter.run \
           --style="${{ inputs.style }}" \
           --extensions=${{ inputs.extensions }} \
           --tidy-checks="${{ inputs.tidy-checks }}" \
