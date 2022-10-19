@@ -89,8 +89,8 @@ runs:
       shell: bash
       run: |
         if [[ "${{runner.os}}"  == "macOS" ]];then
-          python3 -m venv venv
-          source venv/bin/activate
+          python3 -m venv '${{ github.action_path }}/venv'
+          source '${{ github.action_path }}/venv/bin/activate'
         fi
         python3 -m pip install -r '${{ github.action_path }}/requirements.txt'
         clang-tools -i ${{ inputs.version }} -b
