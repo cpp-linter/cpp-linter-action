@@ -95,7 +95,7 @@ runs:
         # cache-dependency-path: '${{ github.action_path }}/requirements.txt'
     - name: Install action dependencies
       shell: bash
-      run: ${{ steps.cpy3x.outputs.python-path }} -m pip install '${{ github.action_path }}/requirements.txt'
+      run: ${{ steps.cpy3x.outputs.python-path }} -m pip install -r '${{ github.action_path }}/requirements.txt'
     - name: Install clang-tools binary executables
       shell: bash
       run: |
