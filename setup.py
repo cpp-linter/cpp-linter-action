@@ -10,6 +10,6 @@ import setuptools
 setuptools.setup(
     name="cpp-linter-deprecated",
     version="0.0.0",
-    install_requires=["cpp-linter"],
+    install_requires=["cpp-linter==1.4.9"],
     py_modules=[""],
 )
