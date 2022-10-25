@@ -88,6 +88,10 @@ runs:
     - name: Install action dependencies
       shell: bash
       run: |
+        if [[ "${{runner.os}}"  == "Linux" ]]; then
+          sudo apt-get update
+          sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+        fi
         if [[ "${{runner.os}}"  == "macOS" ]];then
           python3 -m venv '${{ github.action_path }}/venv'
           source '${{ github.action_path }}/venv/bin/activate'
