@@ -90,7 +90,7 @@ runs:
       run: |
         if [[ "${{runner.os}}"  == "Linux" ]]; then
           sudo apt-get update
-          sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+          sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }} || true
         fi
         if [[ "${{runner.os}}"  == "macOS" ]];then
           python3 -m venv '${{ github.action_path }}/venv'
