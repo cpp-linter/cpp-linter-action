@@ -60,6 +60,7 @@ jobs:
 - **Description**: The style rules to use.
   - Set this to 'file' to have clang-format use the closest relative .clang-format file.
   - Set this to a blank string (`''`) to disable the use of clang-format entirely.
+  - Any code style supported by the specified version of clang-format.
 - Default: 'llvm'
 
 #### `extensions`
