@@ -30,3 +30,4 @@ jobs:
   call-test-action:
     uses: cpp-linter/test-cpp-linter-action/.github/workflows/cpp-lint-action.yml@master
     secrets: inherit
+    needs: add-tag
