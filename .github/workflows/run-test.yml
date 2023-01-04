@@ -27,8 +27,5 @@ jobs:
           git tag -a latest -m 'Retag latest commit'
           git push origin latest
 
-  test-action:
-    needs: [add-tag]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: cpp-linter/test-cpp-linter-action/.github/workflows/cpp-lint-action.yml@master
+  call-test-action:
+    uses: cpp-linter/test-cpp-linter-action/.github/workflows/cpp-lint-action.yml@master
