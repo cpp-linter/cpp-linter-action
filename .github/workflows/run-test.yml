@@ -8,6 +8,7 @@ on:
     branches: main
     paths-ignore: "docs/**"
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   add-tag:
