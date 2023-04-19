@@ -1,6 +1,6 @@
 # Install clang-tools binaries (clang-format, clang-tidy)
 # For details please see: https://github.com/cpp-linter/clang-tools-pip
-clang-tools==0.7.1
+clang-tools==0.8.0
 
 # cpp-linter core Python executable package
 # For details please see: https://github.com/cpp-linter/cpp-linter
