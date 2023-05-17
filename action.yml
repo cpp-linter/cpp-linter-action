@@ -104,7 +104,6 @@ runs:
           wget https://apt.llvm.org/llvm.sh -O $GITHUB_ACTION_PATH/llvm_install.sh
           chmod +x $GITHUB_ACTION_PATH/llvm_install.sh
           sudo $GITHUB_ACTION_PATH/llvm_install.sh ${{ inputs.version }}
-          sudo apt-get update
           sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
 
     - name: Install universal action dependencies
