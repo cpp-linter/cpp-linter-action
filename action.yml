@@ -85,31 +85,21 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Install Linux action dependencies from Ubuntu repos
-      id: linux-dependencies-ubuntu-repos
-      if: runner.os == 'Linux'
+    - name: Install action dependencies
       shell: bash
-      continue-on-error: true
       run: |
+        if [[ "${{runner.os}}"  == "Linux" ]]; then
           sudo apt-get update
-          sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
-
-    # Only try to install from LLVM PPA if packages aren't available in Ubuntu repos
-    - name: Install Linux action dependencies from LLVM repos
-      if: runner.os == 'Linux' && steps.linux-dependencies-ubuntu-repos.outcome == 'failure'
-      shell: bash
-      continue-on-error: true # It might be provided by the cpp-linter Python package
-      run: |
-          # This LLVM script will add the relevant LLVM PPA: https://apt.llvm.org/
-          wget https://apt.llvm.org/llvm.sh -O $GITHUB_ACTION_PATH/llvm_install.sh
-          chmod +x $GITHUB_ACTION_PATH/llvm_install.sh
-          sudo $GITHUB_ACTION_PATH/llvm_install.sh ${{ inputs.version }}
-          sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
-
-    - name: Install universal action dependencies
-      shell: bash
-      run: |
-        if [[ "${{runner.os}}"  == "macOS" ]];then
+          # First try installing from default Ubuntu repositories before trying LLVM script
+          if ! sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}; then
+            # This LLVM script will add the relevant LLVM PPA: https://apt.llvm.org/
+            wget https://apt.llvm.org/llvm.sh -O $GITHUB_ACTION_PATH/llvm_install.sh
+            chmod +x $GITHUB_ACTION_PATH/llvm_install.sh
+            sudo $GITHUB_ACTION_PATH/llvm_install.sh ${{ inputs.version }}
+            sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+          fi
+        fi
+        if [[ "${{runner.os}}"  == "macOS" ]]; then
           python3 -m venv '${{ github.action_path }}/venv'
           source '${{ github.action_path }}/venv/bin/activate'
         fi
