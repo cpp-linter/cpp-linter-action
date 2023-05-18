@@ -95,8 +95,9 @@ runs:
             # This LLVM script will add the relevant LLVM PPA: https://apt.llvm.org/
             wget https://apt.llvm.org/llvm.sh -O $GITHUB_ACTION_PATH/llvm_install.sh
             chmod +x $GITHUB_ACTION_PATH/llvm_install.sh
-            sudo $GITHUB_ACTION_PATH/llvm_install.sh ${{ inputs.version }}
-            sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }} || true
+            if sudo $GITHUB_ACTION_PATH/llvm_install.sh ${{ inputs.version }}; then
+              sudo apt-get install clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+            fi
           fi
         fi
         if [[ "${{runner.os}}"  == "macOS" ]]; then
