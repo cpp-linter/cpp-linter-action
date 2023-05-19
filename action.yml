@@ -37,7 +37,7 @@ inputs:
     required: false
     default: "."
   version:
-    description: "The desired version of the clang tools to use. Accepted options are strings which can be 15, 14, 13, 12, 11, 10, 9, or 8. Defaults to 12."
+    description: "The desired version of the clang tools to use. Accepted options are strings which can be 16, 15, 14, 13, 12, 11, 10, 9, or 8. Defaults to 12."
     required: false
     default: "12"
   verbosity:

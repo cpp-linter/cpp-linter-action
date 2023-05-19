@@ -82,7 +82,7 @@ jobs:
 
 #### `version`
 
-- **Description**: The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use. Accepted options are strings which can be 15, 14, 13, 12, 11, 10, 9, 8，7, 6, 5, 4 or 3.9.
+- **Description**: The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use. Accepted options are strings which can be 16, 15, 14, 13, 12, 11, 10, 9, or 8.
     - Set this option to a blank string (`''`) to use the platform's default installed version.
     - This value can also be a path to where the clang tools are installed (if using a custom install location).
 - Default: '12'
