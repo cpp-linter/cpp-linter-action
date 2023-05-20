@@ -124,11 +124,19 @@ jobs:
 
 #### `thread-comments`
 
-- **Description**: Set this option to false to disable the use of thread comments as feedback.
+- **Description**: Set this option to true to enable the use of thread comments as feedback.
   - To use thread comments, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
     variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
 - Default: false
 - NOTE: If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
+
+#### `step-summary`
+
+- **Description**: Set this option to true to append content as part of workflow's job summary.
+  - See implementation details in GitHub's documentation about
+    [Adding a job summary](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary).
+    This option is independent of the `thread-comments` option, rather this option uses the same content that the `thread-comments` option would use.
+- Default: false
 
 #### `file-annotations`
 
