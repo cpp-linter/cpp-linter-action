@@ -6,7 +6,17 @@ branding:
   color: "green"
 inputs:
   thread-comments:
-    description: Set this option to false to disable the use of thread comments as feedback. Defaults to false.
+    description: Set this option to true to enable the use of thread comments as feedback. Defaults to false.
+    required: false
+    default: false
+  step-summary:
+    description: >
+      Set this option to true to append content as part of workflow's job summary. Defaults to false.
+
+      See implementation details in GitHub's documentation about
+      [Adding a job summary](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary).
+      This option is independent of the `thread-comments` option, rather this option uses the same content that
+      the `thread-comments` option would use.
     required: false
     default: false
   file-annotations:
@@ -124,6 +134,7 @@ runs:
           --lines-changed-only=${{ inputs.lines-changed-only }} \
           --files-changed-only=${{ inputs.files-changed-only }} \
           --thread-comments=${{ inputs.thread-comments }} \
+          --step-summary=${{ inputs.step-summary }} \
           --ignore="${{ inputs.ignore }}" \
           --database=${{ inputs.database }} \
           --file-annotations=${{ inputs.file-annotations }} \
