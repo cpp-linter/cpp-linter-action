@@ -1,5 +1,5 @@
 name: C/C++ Linter
-description: Lint C/C++ code with clang-format and clang-tidy then post annotations, comments and step summary with faulty results.
+description: Lint C/C++ code with clang-format and clang-tidy then post annotations, comments, and step summary with results.
 author: shenxianpeng
 branding:
   icon: "check-circle"
