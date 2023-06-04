@@ -8,7 +8,7 @@
 [![MkDocs Deploy](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
 ![GitHub](https://img.shields.io/github/license/cpp-linter/cpp-linter-action?label=license&logo=github)
 
-A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of thread comments and/or annotations.
+A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of annotations, thread comments, and step summary.
 
 ## What's New
 
@@ -170,6 +170,10 @@ This action creates 1 output variable named `checks-failed`. Even if the linting
 ### Thread Comment
 
 ![sample comment](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/comment.png)
+
+### Step Summary
+
+![step summary](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/step-summary.png)
 
 <!--footer-start-->
 
