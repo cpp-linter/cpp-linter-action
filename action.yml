@@ -6,9 +6,20 @@ branding:
   color: "green"
 inputs:
   thread-comments:
-    description: Set this option to true to enable the use of thread comments as feedback. Defaults to false.
+    description: >-
+      Set this option to 'true' or 'false' to enable or disable the use of
+      thread comments as feedback. Set this to 'update' to update an existing comment
+      if one exists; the value 'true' will always delete an old comment and post a new one
+      if necessary. Defaults to false.
     required: false
-    default: false
+    default: 'false'
+  no-lgtm:
+    description: >-
+      Set this option to true or false to enable or disable the use of a thread comment that
+      basically says 'Looks Good To Me' (when all checks pass). Defaults to true.
+      See `thread-comments` option for further details.
+    required: false
+    default: true
   step-summary:
     description: >
       Set this option to true to append content as part of workflow's job summary. Defaults to false.
@@ -134,6 +145,7 @@ runs:
           --lines-changed-only=${{ inputs.lines-changed-only }} \
           --files-changed-only=${{ inputs.files-changed-only }} \
           --thread-comments=${{ inputs.thread-comments }} \
+          --no-lgtm=${{ inputs.no-lgtm }} \
           --step-summary=${{ inputs.step-summary }} \
           --ignore="${{ inputs.ignore }}" \
           --database=${{ inputs.database }} \
