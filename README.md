@@ -45,6 +45,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file
+          # The following value will only update a single comment
+          # in a pull request's thread. Set it to false to disable the comment. # Set it to true to post a new comment (and delete the old comment).
+          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
@@ -124,11 +127,17 @@ jobs:
 
 #### `thread-comments`
 
-- **Description**: Set this option to true to enable the use of thread comments as feedback.
+- **Description**: Set this option to true to enable the use of thread comments as feedback. Set this to 'update' to update an existing comment if one exists; the value 'true' will always delete an old comment and post a new one if necessary.
   - To use thread comments, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
     variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
 - Default: false
 - NOTE: If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
+
+#### `no-lgtm`
+
+- **Description**: Set this option to true or false to enable or disable the use of a thread comment that basically says 'Looks Good To Me' (when all checks pass).
+  - See `thread-comments` option for further details.
+- Default: true (as is no LGTM comment used)
 
 #### `step-summary`
 
