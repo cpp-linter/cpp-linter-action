@@ -45,6 +45,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: file
+          # The following value will only update a single comment
+          # in a pull request's thread. Set it to false to disable the comment. # Set it to true to post a new comment (and delete the old comment).
+          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
