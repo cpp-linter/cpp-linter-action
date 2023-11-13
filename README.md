@@ -46,7 +46,8 @@ jobs:
         with:
           style: file
           # The following value will only update a single comment
-          # in a pull request's thread. Set it to false to disable the comment. # Set it to true to post a new comment (and delete the old comment).
+          # in a pull request's thread. Set it to false to disable the comment.
+          # Set it to true to post a new comment (and delete the old comment).
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
 
       - name: Fail fast?!
@@ -137,7 +138,7 @@ jobs:
 
 - **Description**: Set this option to true or false to enable or disable the use of a thread comment that basically says 'Looks Good To Me' (when all checks pass).
   - See `thread-comments` option for further details.
-- Default: true (as is no LGTM comment used)
+- Default: true (meaning no LGTM comment used)
 
 #### `step-summary`
 
