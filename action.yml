@@ -101,8 +101,14 @@ inputs:
     default: ""
 outputs:
   checks-failed:
-    description: An integer that can be used as a boolean value to indicate if all checks failed.
+    description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
     value: ${{ steps.cpp-linter.outputs.checks-failed }}
+  clang-tidy-checks-failed:
+    description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy only.
+    value: ${{ steps.cpp-linter.outputs.clang-tidy-checks-failed }}
+  clang-format-checks-failed:
+    description: An integer that can be used as a boolean value to indicate if any checks failed by clang-format only.
+    value: ${{ steps.cpp-linter.outputs.clang-format-checks-failed }}
 runs:
   using: "composite"
   steps:

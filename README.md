@@ -165,7 +165,19 @@ jobs:
 
 ### Outputs
 
-This action creates 1 output variable named `checks-failed`. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's output to exit the workflow early if that is desired.
+This action creates 3 output variables. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's outputs to exit the workflow early if that is desired.
+
+#### `checks-failed`
+
+The total number of concerns raised by both clang-format and clang-tidy.
+
+#### `clang-tidy-checks-failed`
+
+The total number of concerns raised by clang-tidy only.
+
+#### `clang-format-checks-failed`
+
+The total number of concerns raised by clang-format only.
 
 ## Example
 
