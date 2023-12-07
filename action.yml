@@ -136,39 +136,42 @@ runs:
         fi
 
     - name: Setup python venv
-      shell: bash
+      shell: pwsh
       run: |
-        ${{ steps.setup-python.outputs.python-path }} -m venv "$GITHUB_ACTION_PATH/venv"
-        if [[ "${{ runner.os }}"  == "macOS" || "${{ runner.os }}" == "Linux" ]]; then
-          source "$GITHUB_ACTION_PATH/venv/bin/activate"
-        else
-          "$GITHUB_ACTION_PATH/venv/Scripts/activate"
-        fi
-        pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
+        ${{ steps.setup-python.outputs.python-path }} -m venv "$env:GITHUB_ACTION_PATH/venv"
+        if ("${{ runner.os }}"  -ceq "macOS" -or "${{ runner.os }}" -ceq "Linux") {
+          Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/bin/Activate.ps1"
+        }
+        else {
+          Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
+        }
+        pip install -r "$env:GITHUB_ACTION_PATH/requirements.txt"
         clang-tools -i ${{ inputs.version }} -b
 
     - name: Run cpp-linter
       id: cpp-linter
-      shell: bash
+      shell: pwsh
       run: |
-        if [[ "${{ runner.os }}"  == "macOS" || "${{ runner.os }}" == "Linux" ]]; then
-          source "$GITHUB_ACTION_PATH/venv/bin/activate"
-        else
-          "$GITHUB_ACTION_PATH/venv/Scripts/activate"
-        fi
-        cpp-linter \
-          --style="${{ inputs.style }}" \
-          --extensions=${{ inputs.extensions }} \
-          --tidy-checks="${{ inputs.tidy-checks }}" \
-          --repo-root=${{ inputs.repo-root }} \
-          --version=${{ inputs.version }} \
-          --verbosity=${{ inputs.verbosity }} \
-          --lines-changed-only=${{ inputs.lines-changed-only }} \
-          --files-changed-only=${{ inputs.files-changed-only }} \
-          --thread-comments=${{ inputs.thread-comments }} \
-          --no-lgtm=${{ inputs.no-lgtm }} \
-          --step-summary=${{ inputs.step-summary }} \
-          --ignore="${{ inputs.ignore }}" \
-          --database=${{ inputs.database }} \
-          --file-annotations=${{ inputs.file-annotations }} \
-          --extra-arg="${{ inputs.extra-args }}"
+        if ("${{ runner.os }}"  -ceq "macOS" -or "${{ runner.os }}" -ceq "Linux") {
+          Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/bin/Activate.ps1"
+        }
+        else {
+          Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
+        }
+        $app = 'cpp-linter' +
+        ' --style="${{ inputs.style }}"' +
+        ' --extensions=${{ inputs.extensions }}' +
+        ' --tidy-checks="${{ inputs.tidy-checks }}"' +
+        ' --repo-root=${{ inputs.repo-root }}' +
+        ' --version=${{ inputs.version }}' +
+        ' --verbosity=${{ inputs.verbosity }}' +
+        ' --lines-changed-only=${{ inputs.lines-changed-only }}' +
+        ' --files-changed-only=${{ inputs.files-changed-only }}' +
+        ' --thread-comments=${{ inputs.thread-comments }}' +
+        ' --no-lgtm=${{ inputs.no-lgtm }}' +
+        ' --step-summary=${{ inputs.step-summary }}' +
+        ' --ignore="${{ inputs.ignore }}"' +
+        ' --database=${{ inputs.database }}' +
+        ' --file-annotations=${{ inputs.file-annotations }}' +
+        ' --extra-arg="${{ inputs.extra-args }}"'
+        Invoke-Expression -Command $app
