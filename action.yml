@@ -112,10 +112,17 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Install action dependencies
+    - name: Install python
+      uses: actions/setup-python@v4
+      id: setup-python
+      with:
+        python-version: '3.11'
+        update-environment: false
+
+    - name: Install Linux clang dependencies
       shell: bash
       run: |
-        if [[ "${{runner.os}}"  == "Linux" ]]; then
+        if [[ "${{ runner.os }}" == 'Linux' ]]; then
           sudo apt-get update
           # First try installing from default Ubuntu repositories before trying LLVM script
           if ! sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}; then
@@ -127,19 +134,27 @@ runs:
             fi
           fi
         fi
-        if [[ "${{runner.os}}"  == "macOS" ]]; then
-          python3 -m venv "$GITHUB_ACTION_PATH/venv"
+
+    - name: Setup python venv
+      shell: bash
+      run: |
+        ${{ steps.setup-python.outputs.python-path }} -m venv "$GITHUB_ACTION_PATH/venv"
+        if [[ "${{ runner.os }}"  == "macOS" || "${{ runner.os }}" == "Linux" ]]; then
           source "$GITHUB_ACTION_PATH/venv/bin/activate"
+        else
+          "$GITHUB_ACTION_PATH/venv/Scripts/activate"
         fi
-        python3 -m pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
+        pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
         clang-tools -i ${{ inputs.version }} -b
 
     - name: Run cpp-linter
       id: cpp-linter
       shell: bash
       run: |
-        if [[ "${{runner.os}}"  == "macOS" ]]; then
+        if [[ "${{ runner.os }}"  == "macOS" || "${{ runner.os }}" == "Linux" ]]; then
           source "$GITHUB_ACTION_PATH/venv/bin/activate"
+        else
+          "$GITHUB_ACTION_PATH/venv/Scripts/activate"
         fi
         cpp-linter \
           --style="${{ inputs.style }}" \
