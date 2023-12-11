@@ -113,7 +113,7 @@ runs:
   using: "composite"
   steps:
     - name: Install python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       id: setup-python
       with:
         python-version: '3.11'
