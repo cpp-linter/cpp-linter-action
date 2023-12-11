@@ -102,58 +102,102 @@ inputs:
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
-    value: ${{ steps.cpp-linter.outputs.checks-failed }}
+    value: ${{ steps.cpp-linter-unix.outputs.checks-failed || steps.cpp-linter-windows.outputs.checks-failed }}
   clang-tidy-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy only.
-    value: ${{ steps.cpp-linter.outputs.clang-tidy-checks-failed }}
+    value: ${{ steps.cpp-linter-unix.outputs.clang-tidy-checks-failed || steps.cpp-linter-windows.outputs.clang-tidy-checks-failed }}
   clang-format-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-format only.
-    value: ${{ steps.cpp-linter.outputs.clang-format-checks-failed }}
+    value: ${{ steps.cpp-linter-unix.outputs.clang-format-checks-failed || steps.cpp-linter-windows.outputs.clang-format-checks-failed }}
 runs:
   using: "composite"
   steps:
-    - name: Install action dependencies
+    - name: Install python
+      uses: actions/setup-python@v4
+      id: setup-python
+      with:
+        python-version: '3.11'
+        update-environment: false
+
+    - name: Install Linux clang dependencies
+      if: runner.os == 'Linux'
       shell: bash
       run: |
-        if [[ "${{runner.os}}"  == "Linux" ]]; then
-          sudo apt-get update
-          # First try installing from default Ubuntu repositories before trying LLVM script
-          if ! sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}; then
-            # This LLVM script will add the relevant LLVM PPA: https://apt.llvm.org/
-            wget https://apt.llvm.org/llvm.sh -O $GITHUB_ACTION_PATH/llvm_install.sh
-            chmod +x $GITHUB_ACTION_PATH/llvm_install.sh
-            if sudo $GITHUB_ACTION_PATH/llvm_install.sh ${{ inputs.version }}; then
-              sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
-            fi
+        sudo apt-get update
+        # First try installing from default Ubuntu repositories before trying LLVM script
+        if ! sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}; then
+          # This LLVM script will add the relevant LLVM PPA: https://apt.llvm.org/
+          wget https://apt.llvm.org/llvm.sh -O $GITHUB_ACTION_PATH/llvm_install.sh
+          chmod +x $GITHUB_ACTION_PATH/llvm_install.sh
+          if sudo $GITHUB_ACTION_PATH/llvm_install.sh ${{ inputs.version }}; then
+            sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
           fi
         fi
-        if [[ "${{runner.os}}"  == "macOS" ]]; then
-          python3 -m venv "$GITHUB_ACTION_PATH/venv"
-          source "$GITHUB_ACTION_PATH/venv/bin/activate"
-        fi
-        python3 -m pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
-        clang-tools -i ${{ inputs.version }} -b
 
-    - name: Run cpp-linter
-      id: cpp-linter
+    - name: Setup python venv (Unix)
+      if: runner.os == 'Linux' || runner.os == 'macOS'
       shell: bash
       run: |
-        if [[ "${{runner.os}}"  == "macOS" ]]; then
-          source "$GITHUB_ACTION_PATH/venv/bin/activate"
-        fi
+        ${{ steps.setup-python.outputs.python-path }} -m venv "$GITHUB_ACTION_PATH/venv"
+        source "$GITHUB_ACTION_PATH/venv/bin/activate"
+        pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
+        clang-tools -i ${{ inputs.version }} -b
+
+    - name: Run cpp-linter (Unix)
+      id: cpp-linter-unix
+      if: runner.os == 'Linux' || runner.os == 'macOS'
+      shell: bash
+      run: |
+        source "$GITHUB_ACTION_PATH/venv/bin/activate"
+
         cpp-linter \
-          --style="${{ inputs.style }}" \
-          --extensions=${{ inputs.extensions }} \
-          --tidy-checks="${{ inputs.tidy-checks }}" \
-          --repo-root=${{ inputs.repo-root }} \
-          --version=${{ inputs.version }} \
-          --verbosity=${{ inputs.verbosity }} \
-          --lines-changed-only=${{ inputs.lines-changed-only }} \
-          --files-changed-only=${{ inputs.files-changed-only }} \
-          --thread-comments=${{ inputs.thread-comments }} \
-          --no-lgtm=${{ inputs.no-lgtm }} \
-          --step-summary=${{ inputs.step-summary }} \
-          --ignore="${{ inputs.ignore }}" \
-          --database=${{ inputs.database }} \
-          --file-annotations=${{ inputs.file-annotations }} \
-          --extra-arg="${{ inputs.extra-args }}"
+         --style="${{ inputs.style }}" \
+         --extensions=${{ inputs.extensions }} \
+         --tidy-checks="${{ inputs.tidy-checks }}" \
+         --repo-root=${{ inputs.repo-root }} \
+         --version=${{ inputs.version }} \
+         --verbosity=${{ inputs.verbosity }} \
+         --lines-changed-only=${{ inputs.lines-changed-only }} \
+         --files-changed-only=${{ inputs.files-changed-only }} \
+         --thread-comments=${{ inputs.thread-comments }} \
+         --no-lgtm=${{ inputs.no-lgtm }} \
+         --step-summary=${{ inputs.step-summary }} \
+         --ignore="${{ inputs.ignore }}" \
+         --database=${{ inputs.database }} \
+         --file-annotations=${{ inputs.file-annotations }} \
+         --extra-arg="${{ inputs.extra-args }}"
+
+    - name: Setup python venv (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        ${{ steps.setup-python.outputs.python-path }} -m venv "$env:GITHUB_ACTION_PATH/venv"
+        Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
+        pip install -r "$env:GITHUB_ACTION_PATH/requirements.txt"
+        clang-tools -i ${{ inputs.version }} -b
+
+    - name: Run cpp-linter (Windows)
+      id: cpp-linter-windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
+
+        $app = 'cpp-linter' +
+        ' --style="${{ inputs.style }}"' +
+        ' --extensions=${{ inputs.extensions }}' +
+        ' --tidy-checks="${{ inputs.tidy-checks }}"' +
+        ' --repo-root=${{ inputs.repo-root }}' +
+        ' --version=${{ inputs.version }}' +
+        ' --verbosity=${{ inputs.verbosity }}' +
+        ' --lines-changed-only=${{ inputs.lines-changed-only }}' +
+        ' --files-changed-only=${{ inputs.files-changed-only }}' +
+        ' --thread-comments=${{ inputs.thread-comments }}' +
+        ' --no-lgtm=${{ inputs.no-lgtm }}' +
+        ' --step-summary=${{ inputs.step-summary }}' +
+        ' --ignore="${{ inputs.ignore }}"' +
+        ' --database=${{ inputs.database }}' +
+        ' --file-annotations=${{ inputs.file-annotations }}' +
+        ' --extra-arg="${{ inputs.extra-args }}"'
+
+        Invoke-Expression -Command $app

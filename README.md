@@ -10,6 +10,11 @@
 
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of annotations, thread comments, and step summary.
 
+> [!WARNING]
+> We only support Linux runners using a Debian based Linux OS (like Ubuntu and many others).
+>
+> MacOS and Windows runners are supported as well.
+
 ## What's New
 
 v2
