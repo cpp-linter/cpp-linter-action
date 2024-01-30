@@ -117,7 +117,6 @@ runs:
       id: setup-python
       with:
         python-version: '3.11'
-        update-environment: false
 
     - name: Install Linux clang dependencies
       if: runner.os == 'Linux'
