@@ -116,7 +116,8 @@ runs:
       uses: actions/setup-python@v5
       id: setup-python
       with:
-        python-version: '3.11'
+        # use python version shipped with latest Ubuntu LTS
+        python-version: '3.10'
         update-environment: false
 
     - name: Install Linux clang dependencies
