@@ -36,7 +36,7 @@ The content of the file should be in the following format.
 
 > [!NOTE]
 > Python 3.10 needs to be installed in the docker image if your workflows use docker images not maintained by GitHub ([#185](https://github.com/cpp-linter/cpp-linter-action/issues/185)).
-
+Our intention is to synchronize with the default python version included with Ubuntu latest LTS releases.
 ```yaml
 name: cpp-linter
 
