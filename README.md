@@ -34,7 +34,7 @@ Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows
 
 The content of the file should be in the following format.
 
-> [!WARNING]
+> [!NOTE]
 > Python 3.10 needs to be installed in the docker image if your workflows use docker images not maintained by GitHub ([#185](https://github.com/cpp-linter/cpp-linter-action/issues/185)).
 
 ```yaml
