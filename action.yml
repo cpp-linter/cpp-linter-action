@@ -64,7 +64,7 @@ inputs:
   verbosity:
     description: A hidden option to control the action's log verbosity. This is the `logging` level (defaults to DEBUG).
     required: false
-    default: "10"
+    default: info
   lines-changed-only:
     description: Set this option to 'true' to only analyze changes in the event's diff. Defaults to 'false'.
     required: false
@@ -99,6 +99,14 @@ inputs:
     description: A string of extra arguments passed to clang-tidy for use as compiler arguments. Multiple arguments are separated by spaces so the argument name and value should use an '=' sign instead of a space.
     required: false
     default: ""
+  tidy-review:
+    description: Set this to true to enable PR reviews from clang-tidy. See also https://cpp-linter.github.io/cpp-linter/pr_review_caveats.html
+    required: false
+    default: false
+  format-review:
+    description: Set this to true to enable PR reviews from clang-format.See also https://cpp-linter.github.io/cpp-linter/pr_review_caveats.html
+    required: false
+    default: false
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
@@ -166,7 +174,9 @@ runs:
          --ignore="${{ inputs.ignore }}" \
          --database=${{ inputs.database }} \
          --file-annotations=${{ inputs.file-annotations }} \
-         --extra-arg="${{ inputs.extra-args }}"
+         --extra-arg="${{ inputs.extra-args }}" \
+         --tidy-review="${{ inputs.tidy-review }}" \
+         --format-review="${{ inputs.format-review }}"
 
     - name: Setup python venv (Windows)
       if: runner.os == 'Windows'
@@ -199,6 +209,8 @@ runs:
         ' --ignore="${{ inputs.ignore }}"' +
         ' --database=${{ inputs.database }}' +
         ' --file-annotations=${{ inputs.file-annotations }}' +
-        ' --extra-arg="${{ inputs.extra-args }}"'
+        ' --extra-arg="${{ inputs.extra-args }}"' +
+        ' --tidy-review="${{ inputs.tidy-review }}"' +
+        ' --format-review="${{ inputs.format-review }}"'
 
         Invoke-Expression -Command $app
