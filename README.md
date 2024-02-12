@@ -218,6 +218,18 @@ The total number of concerns raised by clang-format only.
 
 ![step summary](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/step-summary.png)
 
+### Pull Request Review
+
+Using only clang-tidy (`tidy-review`):
+
+![sample tidy-review](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/tidy-review.png)
+
+Using only clang-format (`format-review`):
+
+![sample format-review](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-review.png)
+
+![sample tidy-review](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-suggestion.png)
+
 <!--footer-start-->
 
 ## Add C/C++ Linter Action badge in README
