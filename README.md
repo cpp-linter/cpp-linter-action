@@ -104,8 +104,9 @@ jobs:
 
 #### `verbosity`
 
-- **Description**: This controls the action's verbosity in the workflow's logs. Supported options are defined by the [python logging library's log levels](https://docs.python.org/3/library/logging.html#logging-levels). This option does not affect the verbosity of resulting thread comments or file annotations.
-- Default: '10'
+- **Description**: This controls the action's verbosity in the workflow's logs. Supported options are `info` or `debug`. This option does not affect the verbosity of resulting thread comments or file annotations.
+  - The verbosity can also be engaged by enabling debug logs when [re-running jobs or workflows](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs).
+- Default: 'info'
 
 #### `lines-changed-only`
 
@@ -174,6 +175,24 @@ jobs:
 - **Description**: A string of extra arguments passed to clang-tidy for use as compiler arguments (like `-std=c++14 -Wall`).
 - Default: ''
 
+#### `tidy-review`
+
+**Beta feature** 🚧
+
+- **Description**: Set this option to true to enable pull request reviews from clang-tidy.
+  - To use Pull Request reviews, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
+    variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
+  - See also [the PR review feature caveats](https://cpp-linter.github.io/cpp-linter/pr_review_caveats.html)
+- Default: false
+
+#### `format-review`
+
+- **Description**: Set this option to true to enable pull request reviews from clang-format.
+  - To use Pull Request reviews, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
+    variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
+  - See also [the PR review feature caveats](https://cpp-linter.github.io/cpp-linter/pr_review_caveats.html)
+- Default: false
+
 ### Outputs
 
 This action creates 3 output variables. Even if the linting checks fail for source files this action will still pass, but users' CI workflows can use this action's outputs to exit the workflow early if that is desired.
@@ -207,6 +226,18 @@ The total number of concerns raised by clang-format only.
 ### Step Summary
 
 ![step summary](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/step-summary.png)
+
+### Pull Request Review
+
+Using only clang-tidy (`tidy-review`):
+
+![sample tidy-review](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/tidy-review.png)
+
+Using only clang-format (`format-review`):
+
+![sample format-review](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-review.png)
+
+![sample tidy-review](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-suggestion.png)
 
 <!--footer-start-->
 
