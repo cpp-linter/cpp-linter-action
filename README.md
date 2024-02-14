@@ -98,7 +98,8 @@ jobs:
 
 #### `verbosity`
 
-- **Description**: This controls the action's verbosity in the workflow's logs. Supported options are defined by the [python logging library's log levels](https://docs.python.org/3/library/logging.html#logging-levels). This option does not affect the verbosity of resulting thread comments or file annotations.
+- **Description**: This controls the action's verbosity in the workflow's logs. Supported options are `info` or `debug`. This option does not affect the verbosity of resulting thread comments or file annotations.
+  - The verbosity can also be engaged by enabling debug logs when [re-running jobs or workflows](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs).
 - Default: 'info'
 
 #### `lines-changed-only`
@@ -169,6 +170,8 @@ jobs:
 - Default: ''
 
 #### `tidy-review`
+
+**Beta feature** 🚧
 
 - **Description**: Set this option to true to enable pull request reviews from clang-tidy.
   - To use Pull Request reviews, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment

@@ -62,7 +62,7 @@ inputs:
     required: false
     default: "12"
   verbosity:
-    description: A hidden option to control the action's log verbosity. This is the `logging` level (defaults to DEBUG).
+    description: A hidden option to control the action's log verbosity. This is the `logging` level (defaults to `info`).
     required: false
     default: info
   lines-changed-only:
