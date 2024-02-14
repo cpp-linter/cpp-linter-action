@@ -30,6 +30,12 @@ Refer [here](https://github.com/cpp-linter/cpp-linter-action/tree/v1) for previo
 
 ## Usage
 
+> [!NOTE]
+> Python 3.10 needs to be installed in the docker image if your workflow is
+> [running jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container)
+> (see discussion in [#185](https://github.com/cpp-linter/cpp-linter-action/issues/185)).
+> Our intention is to synchronize with the default python version included with Ubuntu latest LTS releases.
+
 Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
 
 The content of the file should be in the following format.
