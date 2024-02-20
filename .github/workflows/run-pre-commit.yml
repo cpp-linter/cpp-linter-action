@@ -7,4 +7,4 @@ on:
 
 jobs:
   run-pre-commit:
-  uses: cpp-linter/.github/.github/workflows/pre-commit.yml@reusable-workflows
+    uses: cpp-linter/.github/.github/workflows/pre-commit.yml@reusable-workflows
