@@ -8,7 +8,7 @@
 [![MkDocs Deploy](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
 ![GitHub](https://img.shields.io/github/license/cpp-linter/cpp-linter-action?label=license&logo=github)
 
-A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of annotations, thread comments, and step summary.
+A Github Action for linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of [`file-annotations`](#file-annotations), [`thread-comments`](#thread-comments), workflow [`step-summary`](#step-summary), and Pull Request reviews (with [`tidy-review`](#tidy-review) or [`format-review`](#format-review)).
 
 > [!WARNING]
 > We only support Linux runners using a Debian based Linux OS (like Ubuntu and many others).
@@ -20,8 +20,8 @@ A Github Action for linting C/C++ code integrating clang-tidy and clang-format t
 v2
 
 * Change action from using docker to composite steps
-  * improve workflow runs times from 1m 24s (currently) to 6-20s.
-  * better support for the database input option (which is currently broken with the docker env).
+  * improve workflow runs times from 1m 24s (using v1) to 6-20s (for simple workflow runs).
+  * better support for the database input option (which was broken with the docker environment in v1).
   * better support cross-compilation
   * better support 3rd party libraries
 * Includes many issues and enhancements. See [#87](https://github.com/cpp-linter/cpp-linter-action/issues/87) for details.
@@ -148,8 +148,8 @@ jobs:
 
 #### `no-lgtm`
 
-- **Description**: Set this option to true or false to enable or disable the use of a thread comment that basically says 'Looks Good To Me' (when all checks pass).
-  - See `thread-comments` option for further details.
+- **Description**: Set this option to true or false to enable or disable the use of a thread comment or pull request review that basically says 'Looks Good To Me' (when all checks pass).
+  - See [`thread-comments`](#thread-comments), [`tidy-review`](#tidy-review), and [`format-review`](#format-review) options for further details.
 - Default: true (meaning no LGTM comment used)
 
 #### `step-summary`
@@ -157,7 +157,8 @@ jobs:
 - **Description**: Set this option to true to append content as part of workflow's job summary.
   - See implementation details in GitHub's documentation about
     [Adding a job summary](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary).
-    This option is independent of the `thread-comments` option, rather this option uses the same content that the `thread-comments` option would use.
+    This option is independent of the [`thread-comments`](#thread-comments) option, rather this option uses the same content that the [`thread-comments`](#thread-comments) option would use.
+  - Note: The [`no-lgtm`](#no-lgtm) option is _not_ applied to step summaries.
 - Default: false
 
 #### `file-annotations`
@@ -179,18 +180,20 @@ jobs:
 
 **Beta feature** 🚧
 
-- **Description**: Set this option to true to enable pull request reviews from clang-tidy.
+- **Description**: Set this option to true to enable Pull Request reviews from clang-tidy.
   - To use Pull Request reviews, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
     variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
   - See also [the PR review feature caveats](https://cpp-linter.github.io/cpp-linter/pr_review_caveats.html)
+  - Note: The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
 - Default: false
 
 #### `format-review`
 
-- **Description**: Set this option to true to enable pull request reviews from clang-format.
+- **Description**: Set this option to true to enable Pull Request reviews from clang-format.
   - To use Pull Request reviews, the `GITHUB_TOKEN` (provided by Github to each repository) must be declared as an environment
     variable. See [Authenticating with the GITHUB_TOKEN](https://docs.github.com/en/actions/reference/authentication-in-a-workflow)
   - See also [the PR review feature caveats](https://cpp-linter.github.io/cpp-linter/pr_review_caveats.html)
+  - Note: The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
 - Default: false
 
 ### Outputs
@@ -215,25 +218,35 @@ The total number of concerns raised by clang-format only.
 
 ### Annotations
 
+Using [`file-annotations`](#file-annotations):
+
+#### clang-format annotations
+
 ![clang-format annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png)
+
+#### clang-tidy annotations
 
 ![clang-tidy annotations](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png)
 
 ### Thread Comment
 
+Using [`thread-comments`](#thread-comments):
+
 ![sample comment](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/comment.png)
 
 ### Step Summary
+
+Using [`step-summary`](#step-summary):
 
 ![step summary](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/step-summary.png)
 
 ### Pull Request Review
 
-Using only clang-tidy (`tidy-review`):
+Using only clang-tidy ([`tidy-review`](#tidy-review)):
 
 ![sample tidy-review](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/tidy-review.png)
 
-Using only clang-format (`format-review`):
+Using only clang-format ([`format-review`](#format-review)):
 
 ![sample format-review](https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-review.png)
 
