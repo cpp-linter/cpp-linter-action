@@ -7,5 +7,5 @@ on:
   workflow_dispatch:
 
 jobs:
-  update_release_draft:
+  draft-release:
     uses: cpp-linter/.github/.github/workflows/release-drafter.yml@reusable-workflows

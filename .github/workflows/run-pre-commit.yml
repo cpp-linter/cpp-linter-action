@@ -6,5 +6,5 @@ on:
     types: opened
 
 jobs:
-  run-pre-commit:
+  pre-commit:
     uses: cpp-linter/.github/.github/workflows/pre-commit.yml@reusable-workflows
