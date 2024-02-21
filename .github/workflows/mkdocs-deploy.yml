@@ -5,21 +5,5 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
-      - name: Install python action for doc extraction
-        run: pip install -r docs/requirements.txt
-      - name: check mkdocs build
-        if: github.ref != 'refs/heads/main'
-        run: mkdocs build
-      - name: Build docs and deploy to gh-pages
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git config user.name 'github-actions'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          mkdocs gh-deploy --force
+  build-docs:
+    uses: cpp-linter/.github/.github/workflows/mkdocs.yml@main

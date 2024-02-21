@@ -7,10 +7,5 @@ on:
   workflow_dispatch:
 
 jobs:
-  update_release_draft:
-    runs-on: ubuntu-latest
-    steps:
-      # Draft your next Release notes as Pull Requests are merged into the default branch
-      - uses: release-drafter/release-drafter@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  draft-release:
+    uses: cpp-linter/.github/.github/workflows/release-drafter.yml@main
