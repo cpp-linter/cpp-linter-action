@@ -6,4 +6,4 @@ on:
 
 jobs:
   build-docs:
-    uses: cpp-linter/.github/.github/workflows/mkdocs.yml@reusable-workflows
+    uses: cpp-linter/.github/.github/workflows/mkdocs.yml@main
