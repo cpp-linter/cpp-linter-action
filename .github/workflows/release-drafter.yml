@@ -8,4 +8,4 @@ on:
 
 jobs:
   draft-release:
-    uses: cpp-linter/.github/.github/workflows/release-drafter.yml@reusable-workflows
+    uses: cpp-linter/.github/.github/workflows/release-drafter.yml@main
