@@ -6,15 +6,37 @@ repo_name: "cpp-linter/cpp-linter-action"
 edit_uri: ""
 nav:
   - index.md
+  - inputs-outputs.md
+  - pr-review-caveats.md
+  - permissions.md
+  - examples/index.md
   - contributing-guidelines.md
 
 theme:
   name: material
   features:
     - navigation.top
+    - content.tabs.link
+    - content.tooltips
+    - content.code.annotate
+    - content.code.copy
+    - navigation.footer
+    - search.suggest
+    - search.share
+    - navigation.tracking
+    - toc.follow
   logo: images/logo.png
   favicon: images/favicon.ico
   palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      primary: blue
+      accent: cyan
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: blue
@@ -22,13 +44,19 @@ theme:
       toggle:
         icon: material/lightbulb-outline
         name: Switch to dark mode
-    - media: "(prefers-color-scheme: light)"
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: blue
       accent: cyan
       toggle:
         icon: material/lightbulb
-        name: Switch to light mode
+        name: Switch to system preference
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/cpp-linter/cpp-linter
 
 extra_css:
   - stylesheets/extra.css
@@ -39,9 +67,22 @@ plugins:
 
 markdown_extensions:
   - pymdownx.superfences
-  - pymdownx.tasklist
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - toc:
       permalink: true
   - pymdownx.highlight:
       linenums_style: pymdownx-inline
   - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      check_paths: true
+  - attr_list
+  - admonition
+  - markdown_gfm_admonition
+
+# Hooks
+hooks:
+  - docs/badge_hook.py
