@@ -3,11 +3,9 @@ name: cpp-linter
 on:
   push:
     paths:
-      - "!**"
       - "docs/examples/demo/*"
   pull_request:
     paths:
-      - "!**"
       - "docs/examples/demo/*"
 
 
@@ -24,6 +22,7 @@ jobs:
         with:
           style: file
           files-changed-only: false
+          thread-comments: false
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed != 0
