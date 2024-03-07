@@ -1,5 +1,5 @@
 name: C/C++ Linter
-description: Linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of file-annotations, thread-comments, workflow step-summary, and Pull Request reviews.
+description: Linting C/C++ code with clang-tidy or clang-format to give feedback as comments, PR reviews, and more.
 author: cpp-linter
 branding:
   icon: "check-circle"
