@@ -1,9 +1,9 @@
 name: "Test cpp-linter-action"
 
 on:
-  push:
-    branches: main
-    paths-ignore: "docs/**"
+  # push:
+  #   branches: main
+  #   paths-ignore: "docs/**"
   pull_request_target:
     branches: main
     paths-ignore: "docs/**"
