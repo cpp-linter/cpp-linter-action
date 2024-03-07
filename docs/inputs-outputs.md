@@ -43,7 +43,7 @@ The relative path to the repository root directory. This path is relative to the
 <!-- md:version 1.2.0 -->
 <!-- md:default 12 -->
 
-The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use. Accepted options are strings which can be 17, 16, 15, 14, 13, 12, 11, 10, 9, 8 or 7.
+The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use. Accepted options are strings which can be 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8 or 7.
 
 - Set this option to a blank string (`''`) to use the platform's default installed version.
 - This value can also be a path to where the clang tools are installed (if using a custom install location).

@@ -1,6 +1,6 @@
 name: C/C++ Linter
-description: Lint C/C++ code with clang-format and clang-tidy then post annotations, comments, and step summary with results.
-author: shenxianpeng
+description: Linting C/C++ code integrating clang-tidy and clang-format to collect feedback provided in the form of file-annotations, thread-comments, workflow step-summary, and Pull Request reviews.
+author: cpp-linter
 branding:
   icon: "check-circle"
   color: "green"
@@ -58,7 +58,7 @@ inputs:
     required: false
     default: "."
   version:
-    description: "The desired version of the clang tools to use. Accepted options are strings which can be 17, 16, 15, 14, 13, 12, 11, 10, 9, 8 or 7. Defaults to 12."
+    description: "The desired version of the clang tools to use. Accepted options are strings which can be 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8 or 7. Defaults to 12."
     required: false
     default: "12"
   verbosity:
