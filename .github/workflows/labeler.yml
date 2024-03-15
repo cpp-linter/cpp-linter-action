@@ -1,0 +1,10 @@
+name: PR Autolabeler
+
+on:
+  # pull_request event is required for autolabeler
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  draft-release:
+    uses: cpp-linter/.github/.github/workflows/release-drafter.yml@main
