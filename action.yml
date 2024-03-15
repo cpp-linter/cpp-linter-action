@@ -9,7 +9,7 @@ inputs:
     description: |
       The style rules to use.
 
-      - Set this to 'file' to have clang-format use the closest relative .clang-format file.
+      - Set this to `file` to have clang-format use the closest relative .clang-format file.
       - Set this to a blank string (`''`) to disable the use of clang-format entirely.
       - Any code style supported by the specified version of clang-format.
     required: false
@@ -78,7 +78,8 @@ inputs:
     required-permission: 'content: read #file-changes'
   files-changed-only:
     description: |
-      Set this option to false to analyze any source files in the repo. This is automatically enabled if lines-changed-only is enabled.
+      Set this option to false to analyze any source files in the repo.
+      This is automatically enabled if [`lines-changed-only`](#lines-changed-only) is enabled.
 
       !!! info "Important"
           This feature requires special permissions to perform successfully.
@@ -153,7 +154,7 @@ inputs:
     minimum-version: '2.6.0'
   file-annotations:
     description: |
-      Set this option to false to disable the use of file annotations as feedback. Defaults to true.
+      Set this option to false to disable the use of file annotations as feedback.
     required: false
     default: true
     minimum-version: '1.4.3'
@@ -166,7 +167,17 @@ inputs:
     description: |
       A string of extra arguments passed to clang-tidy for use as compiler arguments.
       Multiple arguments are separated by spaces so the argument name and value should
-      use an '=' sign instead of a space.
+      use an `=` sign instead of a space.
+
+      !!! example
+
+          ``` yaml
+          extra-args: '-std=c++17 -Wall'
+          ```
+          This will be passed to clang-tidy as multiple `--extra-arg` options:
+          ```
+          clang-tidy --extra-arg=-std=c++17 --extra-arg=-Wall
+          ```
     required: false
     default: ""
     minimum-version: '2.1.0'
