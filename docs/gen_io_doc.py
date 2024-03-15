@@ -24,8 +24,8 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
     for action_input, input_metadata in action_dict["inputs"].items():
         doc += f"### `{action_input}`\n\n"
 
-        assert "min-version" in input_metadata
-        min_ver = input_metadata["min-version"]
+        assert "minimum-version" in input_metadata
+        min_ver = input_metadata["minimum-version"]
         doc += f"<!-- md:version {min_ver} -->\n"
 
         assert "default" in input_metadata
@@ -56,8 +56,8 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
     for action_output, output_metadata in action_dict["outputs"].items():
         doc += f"\n### `{action_output}`\n\n"
 
-        assert "min-version" in output_metadata
-        min_ver = output_metadata["min-version"]
+        assert "minimum-version" in output_metadata
+        min_ver = output_metadata["minimum-version"]
         doc += f"<!-- md:version {min_ver} -->\n"
 
 

@@ -14,12 +14,12 @@ inputs:
       - Any code style supported by the specified version of clang-format.
     required: false
     default: "llvm"
-    min-version: '1.2.0'
+    minimum-version: '1.2.0'
   extensions:
     description: The file extensions to run the action against. This is a comma-separated string.
     required: false
     default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
-    min-version: '1.2.0'
+    minimum-version: '1.2.0'
   tidy-checks:
     description: |
       Comma-separated list of globs with optional `-` prefix.
@@ -32,14 +32,14 @@ inputs:
       - It is also possible to rely solely on a .clang-tidy config file by specifying this option as a blank string (`''`).
     required: false
     default: "boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*"
-    min-version: '1.2.0'
+    minimum-version: '1.2.0'
   repo-root:
     description: >
       The relative path to the repository root directory.
       This path is relative to the path designated as the runner's `GITHUB_WORKSPACE` environment variable.
     required: false
     default: '.'
-    min-version: '1.2.0'
+    minimum-version: '1.2.0'
   version:
     description: |
       The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use.
@@ -49,7 +49,7 @@ inputs:
       - This value can also be a path to where the clang tools are installed (if using a custom install location).
     required: false
     default: 12
-    min-version: '1.2.0'
+    minimum-version: '1.2.0'
   verbosity:
     description: |
       This controls the action's verbosity in the workflow's logs.
@@ -60,7 +60,7 @@ inputs:
       [re-running jobs or workflows](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs).
     required: false
     default: info
-    min-version: '1.3.0'
+    minimum-version: '1.3.0'
   lines-changed-only:
     description: |
       This controls what part of the files are analyzed. The following values are accepted:
@@ -74,7 +74,7 @@ inputs:
           See our [documented permissions](permissions.md)
     required: false
     default: false
-    min-version: '1.5.0'
+    minimum-version: '1.5.0'
     required-permission: 'content: read #file-changes'
   files-changed-only:
     description: |
@@ -85,7 +85,7 @@ inputs:
           See our [documented permissions](permissions.md)
     required: false
     default: true
-    min-version: '1.3.0'
+    minimum-version: '1.3.0'
     required-permission: 'content: read #file-changes'
   ignore:
     description: |
@@ -106,7 +106,7 @@ inputs:
       - Glob patterns are not supported here. All asterisk characters (`*`) are literal.
     required: false
     default: '.github'
-    min-version: '1.3.0'
+    minimum-version: '1.3.0'
   thread-comments:
     description: |
       This controls the behavior of posted thread comments as feedback. The following options are supported:
@@ -123,7 +123,7 @@ inputs:
       > If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
     required: false
     default: 'false'
-    min-version: '2.6.2'
+    minimum-version: '2.6.2'
     required-permission: 'issues: write #thread-comments'
   no-lgtm:
     description: |
@@ -135,7 +135,7 @@ inputs:
       and [`format-review`](#format-review) options for further details.
     required: false
     default: true
-    min-version: '2.6.2'
+    minimum-version: '2.6.2'
   step-summary:
     description: |
       Set this option to true to append content as part of workflow's job summary.
@@ -150,18 +150,18 @@ inputs:
       > The [`no-lgtm`](#no-lgtm) option is _not_ applied to step summaries.
     required: false
     default: false
-    min-version: '2.6.0'
+    minimum-version: '2.6.0'
   file-annotations:
     description: |
       Set this option to false to disable the use of file annotations as feedback. Defaults to true.
     required: false
     default: true
-    min-version: '1.4.3'
+    minimum-version: '1.4.3'
   database:
     description: The directory containing compilation database (like compile_commands.json) file.
     required: false
     default: ""
-    min-version: '1.4.0'
+    minimum-version: '1.4.0'
   extra-args:
     description: |
       A string of extra arguments passed to clang-tidy for use as compiler arguments.
@@ -169,7 +169,7 @@ inputs:
       use an '=' sign instead of a space.
     required: false
     default: ""
-    min-version: '2.1.0'
+    minimum-version: '2.1.0'
   tidy-review:
     description: |
       Set this option to `true` to enable Pull Request reviews from clang-tidy.
@@ -185,7 +185,7 @@ inputs:
     required: false
     default: false
     experimental: true
-    min-version: '2.9.0'
+    minimum-version: '2.9.0'
     required-permission: 'pull_request: write #pull-request-reviews'
   format-review:
     description: |
@@ -201,21 +201,21 @@ inputs:
       > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
     required: false
     default: false
-    min-version: '2.9.0'
+    minimum-version: '2.9.0'
     required-permission: 'pull_request: write #pull-request-reviews'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
     value: ${{ steps.cpp-linter-unix.outputs.checks-failed || steps.cpp-linter-windows.outputs.checks-failed }}
-    min-version: '1.2.0'
+    minimum-version: '1.2.0'
   clang-tidy-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy only.
     value: ${{ steps.cpp-linter-unix.outputs.clang-tidy-checks-failed || steps.cpp-linter-windows.outputs.clang-tidy-checks-failed }}
-    min-version: '2.7.2'
+    minimum-version: '2.7.2'
   clang-format-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-format only.
     value: ${{ steps.cpp-linter-unix.outputs.clang-format-checks-failed || steps.cpp-linter-windows.outputs.clang-format-checks-failed }}
-    min-version: '2.7.2'
+    minimum-version: '2.7.2'
 runs:
   using: "composite"
   steps:

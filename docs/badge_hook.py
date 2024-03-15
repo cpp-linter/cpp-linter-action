@@ -52,8 +52,8 @@ def _badge_for_version(text: str, page: Page, files: Files):
     icon = "material-tag-outline"
     href = f"https://github.com/cpp-linter/cpp-linter-action/releases/v{text}"
     return _badge(
-        icon=f'[:{icon}:]({href} "required version")',
-        text=f'[{text}]({href} "required version")',
+        icon=f'[:{icon}:]({href} "minimum version")',
+        text=f'[{text}]({href} "minimum version")',
     )
 
 
