@@ -9,7 +9,15 @@ updates:
     directory: /
     schedule:
       interval: "weekly"
+    groups:
+      actions:
+        patterns:
+          - "*"
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: "daily"
+    groups:
+      pip:
+        patterns:
+          - "*"
