@@ -1,0 +1,27 @@
+name: Used By
+
+on:
+  schedule:
+    # https://crontab.guru/
+    - cron: '0 9 * * 1' # At 09:00 on Monday.
+  workflow_dispatch:
+
+jobs:
+  used-by:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shenxianpeng/used-by@v0.1.0
+        with:
+          repo: '${{ github.repository }}'
+          update-badge: 'true'
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          add-paths: "README.md" # the file path to commit
+          commit-message: "chore: update used-by badge by github-actions[bot]"
+          title: "chore: automatically update used-by badge"
+          base: main
+          labels: documentation
+          delete-branch: true
