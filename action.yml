@@ -5,228 +5,118 @@ branding:
   icon: "check-circle"
   color: "green"
 inputs:
-  style:
-    description: |
-      The style rules to use.
-
-      - Set this to `file` to have clang-format use the closest relative .clang-format file.
-      - Set this to a blank string (`''`) to disable the use of clang-format entirely.
-      - Any code style supported by the specified version of clang-format.
-    required: false
-    default: "llvm"
-    minimum-version: '1.2.0'
-  extensions:
-    description: The file extensions to run the action against. This is a comma-separated string.
-    required: false
-    default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
-    minimum-version: '1.2.0'
-  tidy-checks:
-    description: |
-      Comma-separated list of globs with optional `-` prefix.
-      Globs are processed in order of appearance in the list.
-      Globs without `-` prefix add checks with matching names to the set,
-      globs with the `-` prefix remove checks with matching names from the set of enabled checks.
-      This option's value is appended to the value of the 'Checks' option in a .clang-tidy file (if any).
-
-      - It is possible to disable clang-tidy entirely by setting this option to `'-*'`.
-      - It is also possible to rely solely on a .clang-tidy config file by specifying this option as a blank string (`''`).
-    required: false
-    default: "boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*"
-    minimum-version: '1.2.0'
-  repo-root:
-    description: >
-      The relative path to the repository root directory.
-      This path is relative to the path designated as the runner's `GITHUB_WORKSPACE` environment variable.
-    required: false
-    default: '.'
-    minimum-version: '1.2.0'
-  version:
-    description: |
-      The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use.
-      Accepted options are strings which can be 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8 or 7.
-
-      - Set this option to a blank string (`''`) to use the platform's default installed version.
-      - This value can also be a path to where the clang tools are installed (if using a custom install location).
-    required: false
-    default: 12
-    minimum-version: '1.2.0'
-  verbosity:
-    description: |
-      This controls the action's verbosity in the workflow's logs.
-      Supported options are `info` or `debug`.
-      This option does not affect the verbosity of resulting thread comments or file annotations.
-
-      The verbosity can also be engaged by enabling debug logs when
-      [re-running jobs or workflows](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs).
-    required: false
-    default: info
-    minimum-version: '1.3.0'
-  lines-changed-only:
-    description: |
-      This controls what part of the files are analyzed. The following values are accepted:
-
-      - `false`: All lines in a file are analyzed.
-      - `true`: Only lines in the diff that contain additions are analyzed.
-      - `diff`: All lines in the diff are analyzed (including unchanged lines but not subtractions).
-
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md)
-    required: false
-    default: false
-    minimum-version: '1.5.0'
-    required-permission: 'content: read #file-changes'
-  files-changed-only:
-    description: |
-      Set this option to false to analyze any source files in the repo.
-      This is automatically enabled if [`lines-changed-only`](#lines-changed-only) is enabled.
-
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md)
-    required: false
-    default: true
-    minimum-version: '1.3.0'
-    required-permission: 'content: read #file-changes'
-  ignore:
-    description: |
-      Set this option with string of path(s) to ignore.
-
-      - In the case of multiple paths, you can use a pipe character (`|`)
-        to separate the multiple paths. Multiple lines are forbidden as an input to this option;
-        it must be a single string.
-      - This can also have files, but the file's relative path has to be specified
-        as well.
-      - There is no need to use `./` for each entry; a blank string (`''`) represents
-        the [`repo-root`](#repo-root) path.
-      - Submodules are automatically ignored. Hidden directories (beginning with a `.`) are also ignored
-        automatically.
-      - Prefix a path with a bang (`!`) to make it explicitly _not_ ignored. The order of
-        multiple paths does _not_ take precedence. The `!` prefix can be applied to
-        a submodule's path (if desired) but not hidden directories.
-      - Glob patterns are not supported here. All asterisk characters (`*`) are literal.
-    required: false
-    default: '.github'
-    minimum-version: '1.3.0'
   thread-comments:
-    description: |
-      This controls the behavior of posted thread comments as feedback. The following options are supported:
-
-      - `true`: enable the use of thread comments. This will always delete an outdated thread comment and post a new comment (triggering a notification for every comment).
-      - `update`: update an existing thread comment if one already exists. This option does not trigger a new notification for every thread comment update.
-      - `false`: disable the use of thread comments.
-
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md)
-
-      > [!NOTE]
-      > If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
+    description: >-
+      Set this option to 'true' or 'false' to enable or disable the use of
+      thread comments as feedback. Set this to 'update' to update an existing comment
+      if one exists; the value 'true' will always delete an old comment and post a new one
+      if necessary. Defaults to false.
     required: false
     default: 'false'
-    minimum-version: '2.6.2'
-    required-permission: 'issues: write #thread-comments'
   no-lgtm:
-    description: |
-      Set this option to true or false to enable or disable the use of a
-      thread comment or pull request review that basically says 'Looks Good To Me' (when all checks pass).
-      The default value, `true` means no LGTM comment posted.
-
-      See [`thread-comments`](#thread-comments), [`tidy-review`](#tidy-review),
-      and [`format-review`](#format-review) options for further details.
+    description: >-
+      Set this option to true or false to enable or disable the use of a thread comment that
+      basically says 'Looks Good To Me' (when all checks pass). Defaults to true.
+      See `thread-comments` option for further details.
     required: false
     default: true
-    minimum-version: '2.6.2'
   step-summary:
-    description: |
-      Set this option to true to append content as part of workflow's job summary.
+    description: >
+      Set this option to true to append content as part of workflow's job summary. Defaults to false.
 
       See implementation details in GitHub's documentation about
       [Adding a job summary](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary).
-      This option is independent of the [`thread-comments`](#thread-comments) option,
-      rather this option uses the same content that the
-      [`thread-comments`](#thread-comments) option would use.
-
-      > [!NOTE]
-      > The [`no-lgtm`](#no-lgtm) option is _not_ applied to step summaries.
+      This option is independent of the `thread-comments` option, rather this option uses the same content that
+      the `thread-comments` option would use.
     required: false
     default: false
-    minimum-version: '2.6.0'
   file-annotations:
-    description: |
-      Set this option to false to disable the use of file annotations as feedback.
+    description: Set this option to false to disable the use of file annotations as feedback. Defaults to true.
     required: false
     default: true
-    minimum-version: '1.4.3'
+  style:
+    description: >
+      The style rules to use (defaults to 'llvm').
+      Set this to 'file' to have clang-format use the closest relative .clang-format file.
+    required: false
+    default: "llvm"
+  extensions:
+    description: >
+      The file extensions to run the action against.
+      This comma-separated string defaults to 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'.
+    required: false
+    default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
+  tidy-checks:
+    description: >
+      A string of regex-like patterns specifying what checks clang-tidy will use.
+      This defaults to 'boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*'. See also clang-tidy docs for more info.
+    required: false
+    default: "boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*"
+  repo-root:
+    description: >
+      The relative path to the repository root directory. The default value '.' is relative to the runner's GITHUB_WORKSPACE environment variable.
+    required: false
+    default: "."
+  version:
+    description: "The desired version of the clang tools to use. Accepted options are strings which can be 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8 or 7. Defaults to 12."
+    required: false
+    default: "12"
+  verbosity:
+    description: A hidden option to control the action's log verbosity. This is the `logging` level (defaults to `info`).
+    required: false
+    default: info
+  lines-changed-only:
+    description: Set this option to 'true' to only analyze changes in the event's diff. Defaults to 'false'.
+    required: false
+    default: false
+  files-changed-only:
+    description: Set this option to 'false' to analyze any source files in the repo. Defaults to 'true'.
+    required: false
+    default: true
+  ignore:
+    description: >
+      Set this option with string of path(s) to ignore.
+
+      - In the case of multiple paths, you can use a pipe character ('|')
+        to separate the multiple paths. Multiple lines are forbidden as input to this option.
+      - This can also have files, but the file's relative path has to be specified
+        as well.
+      - There is no need to use './' for each entry; a blank string ('') represents
+        the repo-root path (specified by the `repo-root` input option).
+      - Path(s) containing a space should be inside single quotes.
+      - Submodules are automatically ignored.
+      - Prefix a path with a bang (`!`) to make it explicitly not ignored - order of
+        multiple paths does take precedence. The `!` prefix can be applied to
+        submodules if desired.
+      - Glob patterns are not supported here. All asterisk characters ('*') are literal.
+    required: false
+    default: ".github"
   database:
-    description: The directory containing compilation database (like compile_commands.json) file.
+    description: The directory containing compile_commands.json file.
     required: false
     default: ""
-    minimum-version: '1.4.0'
   extra-args:
-    description: |
-      A string of extra arguments passed to clang-tidy for use as compiler arguments.
-      Multiple arguments are separated by spaces so the argument name and value should
-      use an `=` sign instead of a space.
-
-      !!! example
-
-          ``` yaml
-          extra-args: '-std=c++17 -Wall'
-          ```
-          This will be passed to clang-tidy as multiple `--extra-arg` options:
-          ```
-          clang-tidy --extra-arg=-std=c++17 --extra-arg=-Wall
-          ```
+    description: A string of extra arguments passed to clang-tidy for use as compiler arguments. Multiple arguments are separated by spaces so the argument name and value should use an '=' sign instead of a space.
     required: false
     default: ""
-    minimum-version: '2.1.0'
   tidy-review:
-    description: |
-      Set this option to `true` to enable Pull Request reviews from clang-tidy.
-
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md).
-
-          See also [the PR review feature caveats](pr-review-caveats.md).
-
-      > [!NOTE]
-      > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
+    description: Set this to true to enable PR reviews from clang-tidy. See also https://cpp-linter.github.io/cpp-linter/pr_review_caveats.html
     required: false
     default: false
-    experimental: true
-    minimum-version: '2.9.0'
-    required-permission: 'pull_request: write #pull-request-reviews'
   format-review:
-    description: |
-      Set this option to `true` to enable Pull Request reviews from clang-format.
-
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md).
-
-          See also [the PR review feature caveats](pr-review-caveats.md).
-
-      > [!NOTE]
-      > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
+    description: Set this to true to enable PR reviews from clang-format.See also https://cpp-linter.github.io/cpp-linter/pr_review_caveats.html
     required: false
     default: false
-    minimum-version: '2.9.0'
-    required-permission: 'pull_request: write #pull-request-reviews'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
     value: ${{ steps.cpp-linter-unix.outputs.checks-failed || steps.cpp-linter-windows.outputs.checks-failed }}
-    minimum-version: '1.2.0'
   clang-tidy-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy only.
     value: ${{ steps.cpp-linter-unix.outputs.clang-tidy-checks-failed || steps.cpp-linter-windows.outputs.clang-tidy-checks-failed }}
-    minimum-version: '2.7.2'
   clang-format-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-format only.
     value: ${{ steps.cpp-linter-unix.outputs.clang-format-checks-failed || steps.cpp-linter-windows.outputs.clang-format-checks-failed }}
-    minimum-version: '2.7.2'
 runs:
   using: "composite"
   steps:

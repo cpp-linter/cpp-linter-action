@@ -3,7 +3,7 @@ site_description: "Developer documentation from sources."
 site_url: "https://cpp-linter.github.io/cpp-linter-action"
 repo_url: "https://github.com/cpp-linter/cpp-linter-action"
 repo_name: "cpp-linter/cpp-linter-action"
-edit_uri: "edit/main/docs/"
+edit_uri: ""
 nav:
   - index.md
   - inputs-outputs.md
@@ -20,8 +20,6 @@ theme:
     - content.tooltips
     - content.code.annotate
     - content.code.copy
-    - content.action.view
-    - content.action.edit
     - navigation.footer
     - search.suggest
     - search.share
@@ -29,8 +27,6 @@ theme:
     - toc.follow
   logo: images/logo.png
   favicon: images/favicon.ico
-  icon:
-    repo: fontawesome/brands/github
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
@@ -68,9 +64,6 @@ extra_css:
 plugins:
   - search
   - include-markdown
-  - gen-files:
-      scripts:
-        - docs/gen_io_doc.py
 
 markdown_extensions:
   - pymdownx.superfences
