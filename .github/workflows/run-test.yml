@@ -19,9 +19,10 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ github.token }}
+      - name: Display source branch name
+        run: echo "Source branch name: ${{ github.event.pull_request.head.ref }}"
       - name: retag latest commit for testing
         run: |
-          echo "Source branch name: ${{ github.event.pull_request.head.ref }}"
           git config user.name 'github-actions'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git tag --delete latest || true
