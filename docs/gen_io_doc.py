@@ -15,12 +15,22 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
     for info_key in b_dict:
         assert info_key in a_dict and isinstance(a_dict[info_key], dict)
         for k, v in a_dict[info_key].items():
+            if k not in b_dict[info_key]:
+                print(
+                    "::error file=docs/action.yml,title={title}::{message}".format(
+                        title=f"Undocumented {info_key} field `{k}` in actions.yml",
+                        message=(
+                            f"Field '{k}' not found in docs/action.yml mapping:"
+                        ),
+                    ),
+                    info_key
+                )
+                continue
             b_dict[info_key][k].update(v)
 
     doc = "".join(
         [
-            "---\ntitle: Inputs and Outputs\n---\n\n"
-            "<!--\n",
+            "---\ntitle: Inputs and Outputs\n---\n\n" "<!--\n",
             "    this page was generated from action.yml ",
             "using the gen_io_doc.py script.\n",
             "    CHANGES TO inputs-outputs.md WILL BE LOST & OVERWRITTEN\n-->\n\n",
@@ -31,14 +41,24 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
     assert "inputs" in b_dict
     doc += "\n## Inputs\n"
     for action_input, input_metadata in b_dict["inputs"].items():
-
         doc += f"### `{action_input}`\n\n"
 
-        assert "minimum-version" in input_metadata
-        min_ver = input_metadata["minimum-version"]
-        doc += f"<!-- md:version {min_ver} -->\n"
+        if "minimum-version" not in input_metadata:
+            print(
+                "\n::warning file={name}title={title}::{message}".format(
+                    name="docs/action.yml",
+                    title="Input's minimum-version not found",
+                    message="minimum-version not set for input:",
+                ),
+                action_input,
+            )
+        else:
+            min_ver = input_metadata["minimum-version"]
+            doc += f"<!-- md:version {min_ver} -->\n"
 
-        assert "default" in input_metadata
+        assert (
+            "default" in input_metadata
+        ), f"default value for `{action_input}` not set in action.yml"
         default: Union[str, bool] = input_metadata["default"]
         if isinstance(default, bool):
             default = str(default).lower()
@@ -53,7 +73,9 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
             permission = input_metadata["required-permission"]
             doc += f"<!-- md:permission {permission} -->\n"
 
-        assert "description" in input_metadata
+        assert (
+            "description" in input_metadata
+        ), f"`{action_input}` description not found in action.yml"
         doc += "\n" + input_metadata["description"] + "\n"
 
     assert "outputs" in b_dict
@@ -66,12 +88,22 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
     for action_output, output_metadata in b_dict["outputs"].items():
         doc += f"\n### `{action_output}`\n\n"
 
-        assert "minimum-version" in output_metadata
-        min_ver = output_metadata["minimum-version"]
-        doc += f"<!-- md:version {min_ver} -->\n"
+        if "minimum-version" not in output_metadata:
+            print(
+                "\n::warning file={name}title={title}::{message}".format(
+                    name="docs/action.yml",
+                    title="Output's minimum-version not found",
+                    message="minimum-version not set for output:",
+                ),
+                action_output,
+            )
+        else:
+            min_ver = output_metadata["minimum-version"]
+            doc += f"<!-- md:version {min_ver} -->\n"
 
-
-        assert "description" in output_metadata
+        assert (
+            "description" in output_metadata
+        ), f"`{action_output}` description not found in action.yml"
         doc += "\n" + output_metadata["description"] + "\n"
 
     print(doc, file=io_doc)
