@@ -34,6 +34,6 @@ jobs:
           git push origin refs/tags/latest
 
   call-test-action:
-    uses: cpp-linter/test-cpp-linter-action/.github/workflows/cpp-lint-action.yml@master
+    uses: cpp-linter/.github/.github/workflows/test-cpp-linter-action.yml@main
     secrets: inherit
     needs: add-tag
