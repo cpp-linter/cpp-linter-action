@@ -1,4 +1,5 @@
 """A mkdocs hook that injects an HTML syntax used to generate badges at build time."""
+
 import re
 from re import Match
 from mkdocs.config.defaults import MkDocsConfig
@@ -30,10 +31,12 @@ def on_page_markdown(markdown: str, *, page: Page, config: MkDocsConfig, files: 
 # -----------------------------------------------------------------------------
 # Helper functions
 
+
 def _badge_for_flags(arg, page: Page, files: Files):
     if arg == "experimental":
         return _badge_for_experimental(page, files)
     raise ValueError(f"Unsupported badge flag: {arg}")
+
 
 # Create badge
 def _badge(icon: str, text: str = ""):
@@ -50,10 +53,12 @@ def _badge(icon: str, text: str = ""):
 # Create badge for version
 def _badge_for_version(text: str, page: Page, files: Files):
     icon = "material-tag-outline"
-    href = f"https://github.com/cpp-linter/cpp-linter-action/releases/v{text}"
+    href = "https://github.com/cpp-linter/cpp-linter-action/releases/" + (
+        f"v{text}" if text[0:1].isdigit() else text
+    )
     return _badge(
-        icon=f'[:{icon}:]({href} "required version")',
-        text=f'[{text}]({href} "required version")',
+        icon=f'[:{icon}:]({href} "minimum version")',
+        text=f'[{text}]({href} "minimum version")',
     )
 
 
