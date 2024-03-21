@@ -20,7 +20,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ github.token }}
       - name: Display source branch name
-        run: echo "Source branch name: ${{ github.event.pull_request.head.ref }}"
+        run: echo "Source branch name = ${{ github.event.pull_request.head.ref }}"
       - name: retag latest commit for testing
         run: |
           git config user.name 'github-actions'
