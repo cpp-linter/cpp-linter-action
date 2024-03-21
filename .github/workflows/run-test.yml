@@ -28,8 +28,8 @@ jobs:
         run: |
           git config user.name 'github-actions'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git tag --delete latest || true
-          git push --delete origin latest || true
+          git tag --delete latest
+          git push --delete origin latest
           git tag latest "${{ github.event.pull_request.head.ref }}"
           git push origin refs/tags/latest
 
