@@ -4,7 +4,7 @@ on:
   # push:
   #   branches: main
   #   paths-ignore: "docs/**"
-  pull_request:
+  pull_request_target:
     branches: main
     paths-ignore: "docs/**"
   workflow_dispatch:
@@ -25,10 +25,8 @@ jobs:
         run: |
           git config user.name 'github-actions'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git tag --delete latest || true
-          git push --delete origin latest || true
-          git tag -a latest -m 'Retag latest commit'
-          git push origin latest
+          git tag -f latest "${{ github.event.pull_request.head.ref }}"
+          git push --force origin refs/tags/latest
 
   call-test-action:
     uses: cpp-linter/test-cpp-linter-action/.github/workflows/cpp-lint-action.yml@master
