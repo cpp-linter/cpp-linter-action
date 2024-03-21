@@ -27,8 +27,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git tag --delete latest || true
           git push --delete origin latest || true
-          git tag -f latest "${{ github.event.pull_request.head.ref }}"
-          git push --force origin refs/tags/latest
+          git tag latest "${{ github.event.pull_request.head.ref }}"
+          git push origin refs/tags/latest
 
   call-test-action:
     uses: cpp-linter/test-cpp-linter-action/.github/workflows/cpp-lint-action.yml@master
