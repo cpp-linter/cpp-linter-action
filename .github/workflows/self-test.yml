@@ -42,7 +42,7 @@ jobs:
           # to ignore all build folder contents
           ignore: build|venv
           database: build
-          verbosity: 9
+          verbosity: debug
           version: ${{ matrix.clang-version }}
           thread-comments: ${{ matrix.clang-version == '12' && 'update' }}
           file-annotations: ${{ runner.os == 'Linux' && matrix.clang-version == '12' }}
