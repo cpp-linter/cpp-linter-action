@@ -5,7 +5,7 @@ project(demo C CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_executable(demo_app 
+add_executable(demo_app
     ${CMAKE_BINARY_SOURCE_DIR}demo.hpp
     ${CMAKE_BINARY_SOURCE_DIR}demo.cpp
 )
