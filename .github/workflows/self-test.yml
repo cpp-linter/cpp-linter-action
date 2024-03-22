@@ -44,7 +44,7 @@ jobs:
           database: build
           verbosity: 9
           version: ${{ matrix.clang-version }}
-          thread-comments: ${{ matrix.clang-version == '12' }}
+          thread-comments: ${{ matrix.clang-version == '12' && 'update' }}
           file-annotations: ${{ matrix.clang-version == '12' }}
           step-summary: ${{ matrix.clang-version == '12' }}
           extra-args: -std=c++14 -Wall
