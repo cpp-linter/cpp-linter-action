@@ -40,7 +40,7 @@ jobs:
           style: file
           files-changed-only: false
           # to ignore all build folder contents
-          ignore: build
+          ignore: build|venv
           database: build
           verbosity: 9
           version: ${{ matrix.clang-version }}
