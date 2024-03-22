@@ -28,25 +28,25 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('docs/examples/demo/CMakeLists.txt', 'docs/examples/demo/demo.cpp', 'docs/examples/demo/demo.hpp') }}
 
       - name: Generate compilation database
-          if: steps.cache-build.outputs.cache-hit != 'true'
-          run: mkdir build && cmake -Bbuild docs/examples/demo
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: mkdir build && cmake -Bbuild docs/examples/demo
 
       - name: Self test action
-          uses: ./
-          id: linter
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            style: file
-            files-changed-only: false
-            # to ignore all build folder contents
-            ignore: build
-            database: build
-            verbosity: 9
-            version: ${{ matrix.clang-version }}
-            thread-comments: ${{ matrix.clang-version == '12' }}
-            file-annotations: ${{ matrix.clang-version == '12' }}
-            extra-args: -std=c++14 -Wall
+        uses: ./
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file
+          files-changed-only: false
+          # to ignore all build folder contents
+          ignore: build
+          database: build
+          verbosity: 9
+          version: ${{ matrix.clang-version }}
+          thread-comments: ${{ matrix.clang-version == '12' }}
+          file-annotations: ${{ matrix.clang-version == '12' }}
+          extra-args: -std=c++14 -Wall
 
       - name: Fail fast?!
         # if: steps.linter.outputs.checks-failed > 0
