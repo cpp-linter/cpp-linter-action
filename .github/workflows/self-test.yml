@@ -25,7 +25,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build
-          key: ${{ runner.os }}-${{ hashFiles('docs/examples/demo/CMakeLists.txt', 'docs/examples/demo/demo.cpp', 'docs/examples/demo/demo.hpp') }}
+          key: ${{ runner.os }}-${{ hashFiles('docs/examples/demo/**') }}
 
       - name: Generate compilation database
         if: steps.cache-build.outputs.cache-hit != 'true'
