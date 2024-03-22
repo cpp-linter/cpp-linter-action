@@ -1,0 +1,59 @@
+name: Self test action
+
+on:
+  push:
+    branches: main
+    paths-ignore: "docs/**"
+  pull_request:
+    branches: main
+    paths-ignore: "docs/**"
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        clang-version: ['9','10', '11', '12', '13', '14', '15', '16', '17', '18']
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache the build artifacts
+        id: cache-build
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: ${{ runner.os }}-${{ hashFiles('docs/examples/demo/**') }}
+
+      - name: Generate compilation database
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: mkdir build && cmake -Bbuild docs/examples/demo
+
+      - name: Self test action
+        uses: ./
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file
+          files-changed-only: false
+          # to ignore all build folder contents
+          ignore: build|venv
+          database: build
+          verbosity: debug
+          version: ${{ matrix.clang-version }}
+          thread-comments: ${{ matrix.clang-version == '12' && 'update' }}
+          file-annotations: ${{ runner.os == 'Linux' && matrix.clang-version == '12' }}
+          step-summary: ${{ matrix.clang-version == '12' }}
+          extra-args: -std=c++14 -Wall
+
+      - name: Fail fast?!
+        # if: steps.linter.outputs.checks-failed > 0
+        run: |
+          echo "some linter checks failed"
+          echo "${{ steps.linter.outputs.checks-failed }}"
+          echo "${{ env.checks-failed }}"
+        # for actual deployment
+        # run: exit 1
