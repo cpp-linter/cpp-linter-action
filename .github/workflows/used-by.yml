@@ -23,5 +23,5 @@ jobs:
           commit-message: "chore: update used-by badge by github-actions[bot]"
           title: "chore: automatically update used-by badge"
           base: main
-          labels: documentation,skip-changelog
+          labels: skip-changelog
           delete-branch: true
