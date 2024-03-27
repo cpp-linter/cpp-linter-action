@@ -36,10 +36,10 @@ inputs:
   tidy-review:
     experimental: true
     minimum-version: '2.9.0'
-    required-permission: 'pull_request: write #pull-request-reviews'
+    required-permission: 'pull-requests: write #pull-request-reviews'
   format-review:
     minimum-version: '2.9.0'
-    required-permission: 'pull_request: write #pull-request-reviews'
+    required-permission: 'pull-requests: write #pull-request-reviews'
 outputs:
   checks-failed:
     minimum-version: '1.2.0'

@@ -29,7 +29,7 @@ The [`thread-comments`](inputs-outputs.md#thread-comments) feature requires the 
 ```yaml
     permissions:
       issues: write # (1)!
-      pull_requests: write # (2)!
+      pull-requests: write # (2)!
 ```
 
 1. for [push events](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push)
@@ -41,5 +41,5 @@ The [`tidy-review`](inputs-outputs.md#tidy-review) and [`format-review`](inputs-
 
 ```yaml
     permissions:
-      pull_requests: write
+      pull-requests: write
 ```
