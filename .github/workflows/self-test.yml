@@ -18,6 +18,9 @@ on:
 
 jobs:
   test:
+    permissions:
+      issues: write
+      pull-requests: write
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
@@ -61,7 +64,8 @@ jobs:
         # if: steps.linter.outputs.checks-failed > 0
         run: |
           echo "some linter checks failed"
-          echo "${{ steps.linter.outputs.checks-failed }}"
-          echo "${{ env.checks-failed }}"
+          echo "total checks-failed: ${{ steps.linter.outputs.checks-failed }}"
+          echo "clang-tidy checks-failed: ${{ steps.linter.outputs.clang-tidy-checks-failed }}"
+          echo "clang-format checks-failed: ${{ steps.linter.outputs.clang-format-checks-failed }}"
         # for actual deployment
         # run: exit 1
