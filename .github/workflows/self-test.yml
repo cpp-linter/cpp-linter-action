@@ -2,24 +2,24 @@ name: Self test action
 
 on:
   push:
-    branches: main
+    branches: [main, assess-push-permission]
     paths:
       - 'action.yml'
       - 'requirements.txt'
       - 'docs/examples/demo/**'
       - '.github/workflows/self-test.yml'
-  pull_request:
-    branches: main
-    paths:
-      - 'action.yml'
-      - 'requirements.txt'
-      - 'docs/examples/demo/**'
-      - '.github/workflows/self-test.yml'
+  # pull_request:
+  #   branches: main
+  #   paths:
+  #     - 'action.yml'
+  #     - 'requirements.txt'
+  #     - 'docs/examples/demo/**'
+  #     - '.github/workflows/self-test.yml'
 
 jobs:
   test:
     permissions:
-      issues: write
+      contents: read
       pull-requests: write
     strategy:
       matrix:
