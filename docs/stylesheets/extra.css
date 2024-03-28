@@ -204,3 +204,25 @@ th {
     display: block;
     max-height: none
 }
+
+/* annotation buttons' pulse animation */
+a.md-annotation__index {
+    border-radius: 2.2ch;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 var(--md-accent-fg-color);
+        transform: scale(.95)
+    }
+
+    75% {
+        box-shadow: 0 0 0 .625em transparent;
+        transform: scale(1)
+    }
+
+    to {
+        box-shadow: 0 0 0 0 transparent;
+        transform: scale(.95)
+    }
+}

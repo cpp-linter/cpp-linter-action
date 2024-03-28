@@ -14,15 +14,15 @@ inputs:
     minimum-version: '1.3.0'
   lines-changed-only:
     minimum-version: '1.5.0'
-    required-permission: 'content: read #file-changes'
+    required-permission: 'contents: read #file-changes'
   files-changed-only:
     minimum-version: '1.3.0'
-    required-permission: 'content: read #file-changes'
+    required-permission: 'contents: read #file-changes'
   ignore:
     minimum-version: '1.3.0'
   thread-comments:
     minimum-version: '2.6.2'
-    required-permission: 'issues: write #thread-comments'
+    required-permission: 'contents: write #thread-comments'
   no-lgtm:
     minimum-version: '2.6.2'
   step-summary:
