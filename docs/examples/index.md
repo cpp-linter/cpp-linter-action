@@ -31,6 +31,7 @@ Here are some example workflows to get started quickly.
     --8<-- "docs/examples/only-PR-comments.yml"
     ```
 
-    1. See also [`style`][style]
-    2. See also [`tidy-checks`][tidy-checks]
-    3. See also [`thread-comments`][thread-comments]
+    1. See also our [token permissions document](../permissions.md)
+    2. See also [`style`][style]
+    3. See also [`tidy-checks`][tidy-checks]
+    4. See also [`thread-comments`][thread-comments]

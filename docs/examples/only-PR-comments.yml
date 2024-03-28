@@ -10,6 +10,8 @@ on:
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
+    permissions: # (1)!
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -20,9 +22,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: 'file'  # Use .clang-format config file. (1)
-          tidy-checks: '' # Use .clang-tidy config file. (2)
-          # only 'update' a single comment in a pull request's thread. (3)
+          style: 'file'  # Use .clang-format config file. (2)
+          tidy-checks: '' # Use .clang-tidy config file. (3)
+          # only 'update' a single comment in a pull request's thread. (4)
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
 
       - name: Fail fast?!

@@ -2,7 +2,7 @@ name: Self test action
 
 on:
   push:
-    branches: main
+    branches: [main]
     paths:
       - 'action.yml'
       - 'requirements.txt'
@@ -19,7 +19,7 @@ on:
 jobs:
   test:
     permissions:
-      issues: write
+      contents: write
       pull-requests: write
     strategy:
       matrix:
