@@ -19,7 +19,7 @@ on:
 jobs:
   test:
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     strategy:
       matrix:
