@@ -191,6 +191,13 @@ inputs:
       > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
     required: false
     default: false
+  jobs:
+    description: |
+      The number of jobs to run in parallel.
+      If less than or equal to 0, the number of jobs is set to
+      use the number of all available CPU cores.
+    required: false
+    default: 0
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
@@ -260,7 +267,8 @@ runs:
          --file-annotations=${{ inputs.file-annotations }} \
          --extra-arg="${{ inputs.extra-args }}" \
          --tidy-review="${{ inputs.tidy-review }}" \
-         --format-review="${{ inputs.format-review }}"
+         --format-review="${{ inputs.format-review }}" \
+         --jobs=${{ inputs.jobs }}
 
     - name: Setup python venv (Windows)
       if: runner.os == 'Windows'
@@ -295,6 +303,7 @@ runs:
         ' --file-annotations=${{ inputs.file-annotations }}' +
         ' --extra-arg="${{ inputs.extra-args }}"' +
         ' --tidy-review="${{ inputs.tidy-review }}"' +
-        ' --format-review="${{ inputs.format-review }}"'
+        ' --format-review="${{ inputs.format-review }}"' +
+        ' --jobs=${{ inputs.jobs }}'
 
         Invoke-Expression -Command $app
