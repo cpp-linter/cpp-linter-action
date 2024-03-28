@@ -1,0 +1,51 @@
+# file to hold metadata about the action.yml inputs and outputs
+inputs:
+  style:
+    minimum-version: '1.2.0'
+  extensions:
+    minimum-version: '1.2.0'
+  tidy-checks:
+    minimum-version: '1.2.0'
+  repo-root:
+    minimum-version: '1.2.0'
+  version:
+    minimum-version: '1.2.0'
+  verbosity:
+    minimum-version: '1.3.0'
+  lines-changed-only:
+    minimum-version: '1.5.0'
+    required-permission: 'contents: read #file-changes'
+  files-changed-only:
+    minimum-version: '1.3.0'
+    required-permission: 'contents: read #file-changes'
+  ignore:
+    minimum-version: '1.3.0'
+  thread-comments:
+    minimum-version: '2.6.2'
+    required-permission: 'contents: write #thread-comments'
+  no-lgtm:
+    minimum-version: '2.6.2'
+  step-summary:
+    minimum-version: '2.6.0'
+  file-annotations:
+    minimum-version: '1.4.3'
+  database:
+    minimum-version: '1.4.0'
+  extra-args:
+    minimum-version: '2.1.0'
+  tidy-review:
+    experimental: true
+    minimum-version: '2.9.0'
+    required-permission: 'pull-requests: write #pull-request-reviews'
+  format-review:
+    minimum-version: '2.9.0'
+    required-permission: 'pull-requests: write #pull-request-reviews'
+  jobs:
+    minimum-version: '2.11.0'
+outputs:
+  checks-failed:
+    minimum-version: '1.2.0'
+  clang-tidy-checks-failed:
+    minimum-version: '2.7.2'
+  clang-format-checks-failed:
+    minimum-version: '2.7.2'
