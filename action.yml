@@ -193,7 +193,9 @@ inputs:
     default: false
   jobs:
     description: |
-      The number of jobs to run in parallel. If <= 0, the number of jobs is set to use the number of all available CPU cores.
+      The number of jobs to run in parallel.
+      If less than or equal to 0, the number of jobs is set to
+      use the number of all available CPU cores.
     required: false
     default: 0
 outputs:

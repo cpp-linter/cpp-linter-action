@@ -40,6 +40,8 @@ inputs:
   format-review:
     minimum-version: '2.9.0'
     required-permission: 'pull-requests: write #pull-request-reviews'
+  jobs:
+    minimum-version: '2.11.0'
 outputs:
   checks-failed:
     minimum-version: '1.2.0'
