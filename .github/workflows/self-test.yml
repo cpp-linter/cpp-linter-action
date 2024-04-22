@@ -57,6 +57,7 @@ jobs:
         with:
           style: file
           files-changed-only: false
+          cache: true
           # to ignore all build folder contents
           ignore: build|venv
           database: build
