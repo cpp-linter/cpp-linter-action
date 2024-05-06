@@ -20,6 +20,10 @@ inputs:
     required-permission: 'contents: read #file-changes'
   ignore:
     minimum-version: '1.3.0'
+  ignore-tidy:
+    minimum-version: '2.12.0'
+  ignore-format:
+    minimum-version: '2.12.0'
   thread-comments:
     minimum-version: '2.6.2'
     required-permission: 'contents: write #thread-comments'
