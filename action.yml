@@ -234,6 +234,12 @@ runs:
           fi
         fi
 
+    - name: Install MacOS clang dependencies
+      if: runner.os == 'macOS'
+      shell: bash
+      # continue-on-error: true
+      run: brew install llvm@${{ inputs.version }}
+
     - name: Setup python venv (Unix)
       if: runner.os == 'Linux' || runner.os == 'macOS'
       shell: bash
