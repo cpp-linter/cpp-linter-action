@@ -237,8 +237,11 @@ runs:
     - name: Install MacOS clang dependencies
       if: runner.os == 'macOS'
       shell: bash
-      # continue-on-error: true
-      run: brew install llvm@${{ inputs.version }}
+      continue-on-error: true
+      run: |
+        brew install llvm@${{ inputs.version }}
+        ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-format" "/usr/local/bin/clang-format-${{ inputs.version }}"
+        ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-tidy" "/usr/local/bin/clang-tidy-${{ inputs.version }}"
 
     - name: Setup python venv (Unix)
       if: runner.os == 'Linux' || runner.os == 'macOS'
