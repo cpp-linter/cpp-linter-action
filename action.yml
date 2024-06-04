@@ -94,7 +94,20 @@ inputs:
       - Prefix a path with a bang (`!`) to make it explicitly _not_ ignored. The order of
         multiple paths does _not_ take precedence. The `!` prefix can be applied to
         a submodule's path (if desired) but not hidden directories.
-      - Glob patterns are not supported here. All asterisk characters (`*`) are literal.
+      - **As of v2.12**, glob patterns are supported here.
+        All asterisk characters (`*`) were previously literal.
+    required: false
+    default: '.github'
+  ignore-tidy:
+    description: |-
+      Use this option to allow clang-tidy to ignore certain paths/files.
+      See [`ignore`](#ignore) for more details on possible values.
+    required: false
+    default: '.github'
+  ignore-format:
+    description: |-
+      Use this option to allow clang-format to ignore certain paths/files.
+      See [`ignore`](#ignore) for more details on possible values.
     required: false
     default: '.github'
   thread-comments:
@@ -272,6 +285,8 @@ runs:
          --no-lgtm=${{ inputs.no-lgtm }} \
          --step-summary=${{ inputs.step-summary }} \
          --ignore="${{ inputs.ignore }}" \
+         --ignore-tidy="${{ inputs.ignore-tidy }}" \
+         --ignore-format="${{ inputs.ignore-format }}" \
          --database=${{ inputs.database }} \
          --file-annotations=${{ inputs.file-annotations }} \
          --extra-arg="${{ inputs.extra-args }}" \
@@ -308,6 +323,8 @@ runs:
         ' --no-lgtm=${{ inputs.no-lgtm }}' +
         ' --step-summary=${{ inputs.step-summary }}' +
         ' --ignore="${{ inputs.ignore }}"' +
+        ' --ignore-tidy="${{ inputs.ignore-tidy }}"' +
+        ' --ignore-format="${{ inputs.ignore-format }}"' +
         ' --database=${{ inputs.database }}' +
         ' --file-annotations=${{ inputs.file-annotations }}' +
         ' --extra-arg="${{ inputs.extra-args }}"' +
