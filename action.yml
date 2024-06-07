@@ -204,6 +204,11 @@ inputs:
       > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
     required: false
     default: false
+  passive-reviews:
+    description: |
+      Set this option to `true` to prevent Pull Request reviews from approving or requesting changes.
+    default: false
+    required: false
   jobs:
     description: |
       The number of jobs to run in parallel.
@@ -292,6 +297,7 @@ runs:
          --extra-arg="${{ inputs.extra-args }}" \
          --tidy-review="${{ inputs.tidy-review }}" \
          --format-review="${{ inputs.format-review }}" \
+         --passive-reviews="${{ inputs.passive-reviews }}" \
          --jobs=${{ inputs.jobs }}
 
     - name: Setup python venv (Windows)
@@ -330,6 +336,7 @@ runs:
         ' --extra-arg="${{ inputs.extra-args }}"' +
         ' --tidy-review="${{ inputs.tidy-review }}"' +
         ' --format-review="${{ inputs.format-review }}"' +
+        ' --passive-reviews="${{ inputs.passive-reviews }}"' +
         ' --jobs=${{ inputs.jobs }}'
 
         Invoke-Expression -Command $app
