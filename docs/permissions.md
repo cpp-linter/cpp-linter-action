@@ -72,7 +72,7 @@ The [`thread-comments`](inputs-outputs.md#thread-comments) feature requires the 
 
 ## Pull Request Reviews
 
-The [`tidy-review`](inputs-outputs.md#tidy-review) and [`format-review`](inputs-outputs.md#format-review) features require the following permissions:
+The [`tidy-review`](inputs-outputs.md#tidy-review), [`format-review`](inputs-outputs.md#format-review), and [`passive-reviews`](inputs-outputs.md#passive-reviews) features require the following permissions:
 
 ```yaml
     permissions:
