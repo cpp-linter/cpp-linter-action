@@ -1,14 +1,10 @@
----
 name: Report a problem
-about: Create a report to let us help you
-title: ''
-labels: []
-assignees: ''
-
+description: Create a report to let us help you
 body:
   - type: textarea
     attributes:
       label: What events trigger your workflow?
+      id: ci-triggers
       description: >-
         Please copy and paste the workflow triggers.
         If you are using a resuable workflow (`workflow_dispatch` event),
@@ -22,8 +18,11 @@ body:
           branches: [main, master, develop]
           paths: ['**.c', '**.cpp', '**.h', '**.hpp', '**.cxx', '**.hxx', '**.cc', '**.hh', '**CMakeLists.txt', 'meson.build', '**.cmake']
       render: yml
+    validations:
+      required: true
 
   - type: textarea
+    id: runner-os
     attributes:
       label: What OS does your workflow use?
       description: >-
@@ -34,8 +33,11 @@ body:
         runs-on: ubuntu-latest
         container: node:18
       render: yml
+    validations:
+      required: true
 
   - type: textarea
+    id: cpp-linter-config
     attributes:
       label: How is cpp-linter-action configured?
       description: >-
@@ -49,12 +51,17 @@ body:
             style: 'file'
             tidy-checks: ''
       render: yml
+    validations:
+      required: true
 
   - type: textarea
+    id: what-happened
     attributes:
       label: What was the unexpected behavior?
-      description: |-
+      description: >-
         Use this area to describe what behavior you expected and what behavior you observed.
         Please be clear and concise as possible. Use screenshots if that would help. Most users
         use this to paste the workflow logs.
       placeholder: You can use markdown syntax here
+    validations:
+      required: true
