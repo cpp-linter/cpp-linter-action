@@ -2,19 +2,32 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: enhancement
+labels: []
 assignees: ''
 
----
+body:
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+  - type: input
+    label: Is your idea related to an existing feature?
+    description: |-
+      If this idea is related to an already available feature(s), then please list them here.
+    placeholder: 'Example: lines-changed-only, thread-comments, ...'
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+  - type: markdown
+    label: Describe the behavior you would like
+    description: |-
+      Use this area to describe what behavior you desire.
+      Please be clear and concise as possible. Use screenshots if that would help.
+    placeholder: You can use markdown syntax here
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+  - type: markdown
+    label: Describe alternatives you have considered
+    description: |-
+      Were you able to achieve the desired behavior in some other/inconvenient way?
+    placeholder: You can use markdown syntax here
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+  - type: markdown
+    label: Additional context
+    description: |-
+      If there is anything that might be special or specific to your usage, please let us know.
+    placeholder: You can use markdown syntax here
