@@ -1,0 +1,8 @@
+# this setting will force users to use the provided issue templates
+blank_issues_enabled: false
+# if the templates provided don't fit the subject of the user feedback,
+# here we can give links to other forms of user feedback
+contact-links:
+  - name: cpp-linter discussions
+    url: https://github.com/orgs/cpp-linter/discussions
+    about: A place for feedback not specific to cpp-linter-action
