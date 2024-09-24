@@ -20,7 +20,7 @@
 # C/C++ Linter Action <sub><sup>| clang-format & clang-tidy</sup></sub>
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cpp-linter/cpp-linter-action)
-[![Used by](https://img.shields.io/static/v1?label=Used%20by&message=643&color=informational&logo=slickpic)](https://github.com/cpp-linter/cpp-linter-action/network/dependents)<!-- used by badge -->
+[![Used by](https://img.shields.io/static/v1?label=Used%20by&message=652&color=informational&logo=slickpic)](https://github.com/cpp-linter/cpp-linter-action/network/dependents)<!-- used by badge -->
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-C%2FC%2B%2B%20Linter-blue?logo=github)](https://github.com/marketplace/actions/c-c-linter)
 [![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 [![MkDocs Deploy](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
