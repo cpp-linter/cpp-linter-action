@@ -33,22 +33,9 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
 [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
 > [!WARNING]
-> We only support Linux runners using a Debian based Linux OS (like Ubuntu and many others).
+> We only support Linux runners using a Debian-based Linux OS (like Ubuntu and many others).
 >
 > MacOS and Windows runners are supported as well.
-
-## What's New
-
-v2
-
-* Change action from using docker to composite steps
-  * improve workflow runs times from 1m 24s (using v1) to 6-20s (for simple workflow runs).
-  * better support for the database input option (which was broken with the docker environment in v1).
-  * better support cross-compilation
-  * better support 3rd party libraries
-* Includes many issues and enhancements. See [#87](https://github.com/cpp-linter/cpp-linter-action/issues/87) for details.
-
-Refer [here](https://github.com/cpp-linter/cpp-linter-action/tree/v1) for previous versions.
 
 ## Usage
 
@@ -56,7 +43,7 @@ Refer [here](https://github.com/cpp-linter/cpp-linter-action/tree/v1) for previo
 > Python 3.10 needs to be installed in the docker image if your workflow is
 > [running jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container)
 > (see discussion in [#185](https://github.com/cpp-linter/cpp-linter-action/issues/185)).
-> Our intention is to synchronize with the default python version included with Ubuntu latest LTS releases.
+> Our intention is to synchronize with the default Python version included with Ubuntu's latest LTS releases.
 
 Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
 
@@ -72,7 +59,7 @@ The content of the file should be in the following format.
         with:
           style: 'file'  # Use .clang-format config file
           tidy-checks: '' # Use .clang-tidy config file
-          # only 'update' a single comment in a pull request's thread.
+          # only 'update' a single comment in a pull request thread.
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
