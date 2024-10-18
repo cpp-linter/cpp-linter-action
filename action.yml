@@ -269,6 +269,11 @@ runs:
         source "$GITHUB_ACTION_PATH/venv/bin/activate"
         pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
         clang-tools -i ${{ inputs.version }} -b
+        case "${{ env.CPP_LINTER_COLOR }}" in
+            "true" | "on" | "1")
+                pip install -r "$GITHUB_ACTION_PATH/color-requirements.txt"
+                ;;
+        esac
 
     - name: Run cpp-linter (Unix)
       id: cpp-linter-unix
@@ -308,6 +313,11 @@ runs:
         Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
         pip install -r "$env:GITHUB_ACTION_PATH/requirements.txt"
         clang-tools -i ${{ inputs.version }} -b
+        $colorEnabled = "true","on","1"
+        if ( $colorEnabled.contains("${{ env.CPP_LINTER_COLOR }}") )
+        {
+            pip install -r "$GITHUB_ACTION_PATH/color-requirements.txt"
+        }
 
     - name: Run cpp-linter (Windows)
       id: cpp-linter-windows
