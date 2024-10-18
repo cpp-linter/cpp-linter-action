@@ -269,6 +269,8 @@ runs:
         source "$GITHUB_ACTION_PATH/venv/bin/activate"
         pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
         clang-tools -i ${{ inputs.version }} -b
+
+        # Install color output requirements if enabled
         case "${{ env.CPP_LINTER_COLOR }}" in
             "true" | "on" | "1")
                 pip install -r "$GITHUB_ACTION_PATH/color-requirements.txt"
@@ -313,6 +315,8 @@ runs:
         Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
         pip install -r "$env:GITHUB_ACTION_PATH/requirements.txt"
         clang-tools -i ${{ inputs.version }} -b
+
+        # Install color output requirements if enabled
         $colorEnabled = "true","on","1"
         if ( $colorEnabled.contains("${{ env.CPP_LINTER_COLOR }}") )
         {

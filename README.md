@@ -48,7 +48,9 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
 Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
 
 > [!TIP]
-> To enable color output in the workflow logs, set the environment variable `CPP_LINTER_COLOR` to a value of `on` or `true` or `1`.
+> To enable color output in the workflow logs,
+> set the environment variable `CPP_LINTER_COLOR` to a
+> value of `on`, `true`, or `1`.
 
 The content of the file should be in the following format.
 
