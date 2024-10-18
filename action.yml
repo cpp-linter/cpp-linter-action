@@ -367,11 +367,19 @@ runs:
           or ($gh_action_debug == true)
           or ($gh_action_debug == 'true')
         )
+        let color_enabled = (
+          $env
+          | get --optional 'CPP_LINTER_COLOR'
+          | ($in == true or $in == 'true' or $in == 1 or $in == '1' or $in == 'on')
+        )
 
         print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
         mut uv_args = [sync --project $action_path --group action --no-dev --link-mode=copy]
         if $verbosity {
           $uv_args = $uv_args | append '-v'
+        }
+        if $color_enabled {
+          $uv_args = $uv_args | append [--extra color]
         }
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
@@ -435,6 +443,15 @@ runs:
         ) {
           # add ~/.local/bin to PATH (temporarily)
           $env.PATH = $env.PATH | append $local_bin
+        }
+
+        let color_enabled = (
+          $env
+          | get --optional 'CPP_LINTER_COLOR'
+          | ($in == true or $in == 'true' or $in == 1 or $in == '1' or $in == 'on')
+        )
+        if $color_enabled {
+          $env.FORCE_COLOR = 1
         }
 
         print $"\n(ansi purple)Running cpp-linter(ansi reset)"

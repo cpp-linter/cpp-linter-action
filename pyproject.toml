@@ -4,6 +4,11 @@ version = "0.0.0+private_virtual"
 requires-python = ">=3.9"
 dependencies = []
 
+[project.optional-dependencies]
+color = [
+    "rich==14.1.0"
+]
+
 [dependency-groups]
 action = [
     "clang-tools==0.15.2",
