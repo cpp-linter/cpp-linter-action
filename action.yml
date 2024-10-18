@@ -274,6 +274,7 @@ runs:
         case "$CPP_LINTER_COLOR" in
             "true" | "on" | "1")
                 pip install -r "$GITHUB_ACTION_PATH/color-requirements.txt"
+                echo "FORCE_COLOR=1" >> $GITHUB_ENV
                 ;;
         esac
 
@@ -321,6 +322,7 @@ runs:
         if ( $colorEnabled.contains("$env:CPP_LINTER_COLOR") )
         {
             pip install -r "$env:GITHUB_ACTION_PATH/color-requirements.txt"
+            echo "FORCE_COLOR=1" >> $env.GITHUB_ENV
         }
 
     - name: Run cpp-linter (Windows)
