@@ -6,8 +6,7 @@ dependencies = []
 
 [dependency-groups]
 action = [
-    "clang-tools==1.2.0",
-    "cpp-linter==1.13.0",
+    "cpp-linter==2.0.0-rc22",
 ]
 dev = [
     "mypy>=2.1.0",
@@ -22,3 +21,11 @@ docs = [
     "mkdocs-material>=9.6.16",
     "pyyaml>=6.0.2",
 ]
+
+[[tool.uv.index]]
+name = "testPyPI"
+url = "https://test.pypi.org/simple/"
+explicit = true
+
+[tool.uv.sources]
+cpp-linter = { index = "testPyPI" }
