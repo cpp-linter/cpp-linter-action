@@ -297,8 +297,9 @@ runs:
          --extra-arg="${{ inputs.extra-args }}" \
          --tidy-review="${{ inputs.tidy-review }}" \
          --format-review="${{ inputs.format-review }}" \
-         --passive-reviews="${{ inputs.passive-reviews }}" \
-         --jobs=${{ inputs.jobs }}
+         --passive-reviews="${{ inputs.passive-reviews }}"
+
+      #  --jobs=${{ inputs.jobs }}
 
     - name: Setup python venv (Windows)
       if: runner.os == 'Windows'
@@ -336,7 +337,7 @@ runs:
         ' --extra-arg="${{ inputs.extra-args }}"' +
         ' --tidy-review="${{ inputs.tidy-review }}"' +
         ' --format-review="${{ inputs.format-review }}"' +
-        ' --passive-reviews="${{ inputs.passive-reviews }}"' +
-        ' --jobs=${{ inputs.jobs }}'
+        ' --passive-reviews="${{ inputs.passive-reviews }}"'
 
         Invoke-Expression -Command $app
+      # ' --jobs=${{ inputs.jobs }}'
