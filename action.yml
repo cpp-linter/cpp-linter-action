@@ -448,6 +448,7 @@ runs:
         INPUT_EXTRA_ARGS: ${{ inputs.extra-args }}
         INPUT_TIDY_REVIEW: ${{ inputs.tidy-review }}
         INPUT_FORMAT_REVIEW: ${{ inputs.format-review }}
+        INPUT_PR_REVIEW: ${{ inputs.pr-review }}
         INPUT_PASSIVE_REVIEWS: ${{ inputs.passive-reviews }}
         INPUT_JOBS: ${{ inputs.jobs }}
         INPUT_SUMMARY_OUTPUT_FILE: ${{ inputs.summary-output-file }}
@@ -487,12 +488,12 @@ runs:
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
         let pr_review = (
-          ('${{ inputs.tidy-review }}' | into bool --relaxed)
-          or ('${{ inputs.format-review }}' | into bool --relaxed)
-          or ('${{ inputs.pr-review }}' | into bool --relaxed)
+          ($env.INPUT_TIDY_REVIEW | into bool --relaxed)
+          or ($env.INPUT_FORMAT_REVIEW | into bool --relaxed)
+          or ($env.INPUT_PR_REVIEW | into bool --relaxed)
         )
 
-        let args = [
+        mut args = [
           $"--style=($env.INPUT_STYLE)"
           $"--extensions=($env.INPUT_EXTENSIONS)"
           $"--tidy-checks=($env.INPUT_TIDY_CHECKS)"
@@ -510,8 +511,7 @@ runs:
           $"--database=($env.INPUT_DATABASE)"
           $"--file-annotations=($env.INPUT_FILE_ANNOTATIONS)"
           $"--extra-arg=($env.INPUT_EXTRA_ARGS)"
-          $"--tidy-review=($env.INPUT_TIDY_REVIEW)"
-          $"--format-review=($env.INPUT_FORMAT_REVIEW)"
+          $"--pr-review=($env.INPUT_PR_REVIEW)"
           $"--passive-reviews=($env.INPUT_PASSIVE_REVIEWS)"
           $"--jobs=($env.INPUT_JOBS)"
           $"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"
@@ -536,7 +536,7 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args cpp-linter ...$args
 
     - name: Auto-commit clang-format fixes
-      if: inputs.auto-fix == 'true' || inputs.auto-fix == true
+      if: (inputs.auto-fix == 'true' || inputs.auto-fix == true) && steps.cpp-linter.outputs.fix-patch-path != ''
       shell: nu {0}
       env:
         INPUT_REPO_ROOT: ${{ inputs.repo-root }}
@@ -546,6 +546,7 @@ runs:
         INPUT_AUTO_FIX_COMMIT_MSG: ${{ inputs.auto-fix-commit-msg }}
         PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        FIX_PATCH_PATH: ${{ steps.cpp-linter.outputs.fix-patch-path }}
       run: |
         # An empty input can reach the shell as an unset variable, so default those to ""
         load-env (
@@ -557,6 +558,7 @@ runs:
             INPUT_AUTO_FIX_COMMIT_MSG
             PR_HEAD_SHA
             PR_HEAD_REPO
+            FIX_PATCH_PATH
           ]
           | where {|n| $n not-in $env }
           | reduce --fold {} {|n, acc| $acc | insert $n "" }
@@ -605,6 +607,7 @@ runs:
         let path_specs = ($env.INPUT_EXTENSIONS | split row ',' | each { |ext| $"*.($ext | str trim)" })
         let modified = (^git ls-files --modified -- ...$path_specs | lines)
         if ($modified | is-not-empty) {
+          ^git apply $env.FIX_PATCH_PATH ...$modified
           ^git add -- ...$modified
         }
         # Count what got staged: .gitattributes rules (LF/CRLF) can normalize a
