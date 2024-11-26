@@ -1,7 +1,8 @@
+# allow pip to check for pre-releases from test-pypi
+--extra-index-url=https://test.pypi.org/simple/
 # Install clang-tools binaries (clang-format, clang-tidy)
 # For details please see: https://github.com/cpp-linter/clang-tools-pip
 clang-tools==0.13.1
-
 # cpp-linter core Python executable package
-# For details please see: https://github.com/cpp-linter/cpp-linter
-cpp-linter==1.10.4
+# For details please see: https://github.com/cpp-linter/cpp-linter-rs
+cpp-linter==2.0.0rc9
