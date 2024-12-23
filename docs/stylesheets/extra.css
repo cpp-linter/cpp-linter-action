@@ -11,9 +11,14 @@ th {
     display: none;
 }
 
-.md-header,
-.md-nav--primary .md-nav__title[for="__drawer"] {
+.md-header {
     background-color: #4051b5;
+}
+
+@media screen and (max-width: 76.2344em) {
+    .md-nav--primary .md-nav__title[for="__drawer"] {
+        background-color: #4051b5;
+    }
 }
 
 @keyframes heart {
