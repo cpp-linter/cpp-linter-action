@@ -2,6 +2,15 @@ th {
     background-color: var(--md-default-fg-color--lightest);
 }
 
+[data-md-color-scheme="default"] img.dark-only {
+    display: none;
+
+}
+
+[data-md-color-scheme="slate"] img.light-only {
+    display: none;
+}
+
 .md-header,
 .md-nav--primary .md-nav__title[for="__drawer"] {
     background-color: #4051b5;
