@@ -3,7 +3,7 @@ name: Used By
 on:
   schedule:
     # https://crontab.guru/
-    - cron: '0 9 * * 1' # At 09:00 on Monday.
+    - cron: '0 9 1 * *' # At 09:00 on day-of-month 1
   workflow_dispatch:
 
 jobs:
