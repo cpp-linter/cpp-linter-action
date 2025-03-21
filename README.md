@@ -37,6 +37,37 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
 >
 > MacOS and Windows runners are supported as well.
 
+## Used By
+
+<p align="center">
+  <img src="https://avatars.githubusercontent.com/u/6154722?s=200&v=4" alt="Microsoft" width="28"/>
+  <strong>Microsoft</strong>
+  <img src="https://avatars.githubusercontent.com/u/47359?s=200&v=4" alt="Apache " width="28"/>
+  <strong>Apache</strong>
+  <img src="https://avatars.githubusercontent.com/u/848102?s=200&v=4" alt="NASA" width="28"/>
+  <strong>NASA</strong>  
+  <img src="https://avatars.githubusercontent.com/u/6210390?s=200&v=4" alt="Samsung" width="28"/>
+  <strong>Samsung</strong>
+  <img src="https://avatars.githubusercontent.com/u/20487725?s=200&v=4" alt="TheAlgorithms" width="28"/>
+  <strong>TheAlgorithms</strong>
+  <img src="https://avatars.githubusercontent.com/u/85452089?s=200&v=4" alt="CachyOS" width="28"/>
+  <strong>CachyOS</strong>
+  <img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/>
+  <strong>Nextcloud</strong>
+  <img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/>
+  <strong>Jupyter</strong>
+  <img src="https://avatars.githubusercontent.com/u/60992508?s=200&v=4" alt="NNStreamer" width="28"/>
+  <strong>NNStreamer</strong>
+  <img src="https://avatars.githubusercontent.com/u/48099924?s=200&v=4" alt="imgproxy" width="28"/>
+  <strong>imgproxy</strong>
+  <img src="https://avatars.githubusercontent.com/u/34372050?s=200&v=4" alt="Zondax" width="28"/>
+  <strong>Zondax</strong>
+  <img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/>
+  <strong>AppNeta</strong>
+  <img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/>
+  <strong>Chocolate Doom  and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more.</strong> 
+</p>
+
 ## Usage
 
 > [!NOTE]
@@ -112,37 +143,6 @@ Using [`format-review`][format-review]:
 ![sample format-review][format-review-preview]
 
 ![sample format-suggestion][format-suggestion-preview]
-
-## Used By
-
-<p align="center">
-  <img src="https://avatars.githubusercontent.com/u/6154722?s=200&v=4" alt="Microsoft" width="28"/>
-  <strong>Microsoft</strong>
-  <img src="https://avatars.githubusercontent.com/u/47359?s=200&v=4" alt="Apache " width="28"/>
-  <strong>Apache</strong>
-  <img src="https://avatars.githubusercontent.com/u/848102?s=200&v=4" alt="NASA" width="28"/>
-  <strong>NASA</strong>  
-  <img src="https://avatars.githubusercontent.com/u/6210390?s=200&v=4" alt="Samsung" width="28"/>
-  <strong>Samsung</strong>
-  <img src="https://avatars.githubusercontent.com/u/20487725?s=200&v=4" alt="TheAlgorithms" width="28"/>
-  <strong>TheAlgorithms</strong>
-  <img src="https://avatars.githubusercontent.com/u/85452089?s=200&v=4" alt="CachyOS" width="28"/>
-  <strong>CachyOS</strong>
-  <img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/>
-  <strong>Nextcloud</strong>
-  <img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/>
-  <strong>Jupyter</strong>
-  <img src="https://avatars.githubusercontent.com/u/60992508?s=200&v=4" alt="NNStreamer" width="28"/>
-  <strong>NNStreamer</strong>
-  <img src="https://avatars.githubusercontent.com/u/48099924?s=200&v=4" alt="imgproxy" width="28"/>
-  <strong>imgproxy</strong>
-  <img src="https://avatars.githubusercontent.com/u/34372050?s=200&v=4" alt="Zondax" width="28"/>
-  <strong>Zondax</strong>
-  <img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/>
-  <strong>AppNeta</strong>
-  <img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/>
-  <strong>Chocolate Doom  and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more.</strong> 
-</p>
 
 ## Add C/C++ Linter Action badge in README
 
