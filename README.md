@@ -93,7 +93,7 @@ See also our [example recipes][recipes-doc].
   <a href="https://github.com/AppNeta"><img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/></a>
   <strong>AppNeta</strong>&nbsp;&nbsp;
   <a href="https://github.com/chocolate-doom"><img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/></a>
-  <strong>Chocolate Doom and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more.</strong>
+  <strong>Chocolate Doom and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more</a>.</strong>
 </p>
 
 ## Example
