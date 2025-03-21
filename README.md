@@ -45,7 +45,7 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
   <img src="https://avatars.githubusercontent.com/u/47359?s=200&v=4" alt="Apache " width="28"/>
   <strong>Apache</strong>
   <img src="https://avatars.githubusercontent.com/u/848102?s=200&v=4" alt="NASA" width="28"/>
-  <strong>NASA</strong>  
+  <strong>NASA</strong>
   <img src="https://avatars.githubusercontent.com/u/6210390?s=200&v=4" alt="Samsung" width="28"/>
   <strong>Samsung</strong>
   <img src="https://avatars.githubusercontent.com/u/20487725?s=200&v=4" alt="TheAlgorithms" width="28"/>
@@ -65,7 +65,7 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
   <img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/>
   <strong>AppNeta</strong>
   <img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/>
-  <strong>Chocolate Doom  and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more.</strong> 
+  <strong>Chocolate Doom  and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more.</strong>
 </p>
 
 ## Usage
