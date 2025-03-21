@@ -31,6 +31,40 @@ to collect feedback provided in the form of
 workflow [`step-summary`][step-summary], and Pull Request reviews (with
 [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
+## Usage
+
+> [!NOTE]
+> Python 3.10 needs to be installed in the docker image if your workflow is
+> [running jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container)
+> (see discussion in [#185](https://github.com/cpp-linter/cpp-linter-action/issues/185)).
+> Our intention is to synchronize with the default Python version included with Ubuntu's latest LTS releases.
+
+Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
+
+The content of the file should be in the following format.
+
+```yaml
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: 'file'  # Use .clang-format config file
+          tidy-checks: '' # Use .clang-tidy config file
+          # only 'update' a single comment in a pull request thread.
+          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+      - name: Fail fast?!
+        if: steps.linter.outputs.checks-failed > 0
+        run: exit 1
+```
+
+For all explanations of our available input parameters and output variables, see our
+[Inputs and Outputs document][io-doc].
+
+See also our [example recipes][recipes-doc].
+
 ## Used By
 
 <p align="center">
@@ -61,46 +95,6 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
   <a href="https://github.com/chocolate-doom"><img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/></a>
   <strong>Chocolate Doom and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more.</strong>
 </p>
-
-
-## Usage
-
-> [!NOTE]
-> Python 3.10 needs to be installed in the docker image if your workflow is
-> [running jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container)
-> (see discussion in [#185](https://github.com/cpp-linter/cpp-linter-action/issues/185)).
-> Our intention is to synchronize with the default Python version included with Ubuntu's latest LTS releases.
-
-> [!WARNING]
-> We only support Linux runners using a Debian-based Linux OS (like Ubuntu and many others).
->
-> MacOS and Windows runners are supported as well.
-
-Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
-
-The content of the file should be in the following format.
-
-```yaml
-    steps:
-      - uses: actions/checkout@v4
-      - uses: cpp-linter/cpp-linter-action@v2
-        id: linter
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          style: 'file'  # Use .clang-format config file
-          tidy-checks: '' # Use .clang-tidy config file
-          # only 'update' a single comment in a pull request thread.
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
-      - name: Fail fast?!
-        if: steps.linter.outputs.checks-failed > 0
-        run: exit 1
-```
-
-For all explanations of our available input parameters and output variables, see our
-[Inputs and Outputs document][io-doc].
-
-See also our [example recipes][recipes-doc].
 
 ## Example
 
