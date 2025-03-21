@@ -40,31 +40,31 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
 
 <p align="center">
   <img src="https://avatars.githubusercontent.com/u/6154722?s=200&v=4" alt="Microsoft" width="28"/>
-  <strong>Microsoft</strong>
+  <strong>Microsoft</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/47359?s=200&v=4" alt="Apache " width="28"/>
-  <strong>Apache</strong>
+  <strong>Apache</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/848102?s=200&v=4" alt="NASA" width="28"/>
-  <strong>NASA</strong>
+  <strong>NASA</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/6210390?s=200&v=4" alt="Samsung" width="28"/>
-  <strong>Samsung</strong>
+  <strong>Samsung</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/20487725?s=200&v=4" alt="TheAlgorithms" width="28"/>
-  <strong>TheAlgorithms</strong>
+  <strong>TheAlgorithms</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/85452089?s=200&v=4" alt="CachyOS" width="28"/>
-  <strong>CachyOS</strong>
+  <strong>CachyOS</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/>
-  <strong>Nextcloud</strong>
+  <strong>Nextcloud</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/>
-  <strong>Jupyter</strong>
+  <strong>Jupyter</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/60992508?s=200&v=4" alt="NNStreamer" width="28"/>
-  <strong>NNStreamer</strong>
+  <strong>NNStreamer</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/48099924?s=200&v=4" alt="imgproxy" width="28"/>
-  <strong>imgproxy</strong>
+  <strong>imgproxy</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/34372050?s=200&v=4" alt="Zondax" width="28"/>
-  <strong>Zondax</strong>
+  <strong>Zondax</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/>
-  <strong>AppNeta</strong>
+  <strong>AppNeta</strong>&nbsp;&nbsp;
   <img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/>
-  <strong>Chocolate Doom  and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more.</strong>
+  <strong>Chocolate Doom and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more.</strong>
 </p>
 
 ## Usage
