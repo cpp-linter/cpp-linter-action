@@ -31,11 +31,6 @@ to collect feedback provided in the form of
 workflow [`step-summary`][step-summary], and Pull Request reviews (with
 [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
-> [!WARNING]
-> We only support Linux runners using a Debian-based Linux OS (like Ubuntu and many others).
->
-> MacOS and Windows runners are supported as well.
-
 ## Used By
 
 <p align="center">
@@ -74,6 +69,11 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
 > [running jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container)
 > (see discussion in [#185](https://github.com/cpp-linter/cpp-linter-action/issues/185)).
 > Our intention is to synchronize with the default Python version included with Ubuntu's latest LTS releases.
+
+> [!WARNING]
+> We only support Linux runners using a Debian-based Linux OS (like Ubuntu and many others).
+>
+> MacOS and Windows runners are supported as well.
 
 Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
 
