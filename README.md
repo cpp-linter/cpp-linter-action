@@ -82,6 +82,7 @@ See also our [example recipes][recipes-doc].
   <strong>CachyOS</strong>&nbsp;&nbsp;
   <a href="https://github.com/nextcloud"><img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/></a>
   <strong>Nextcloud</strong>&nbsp;&nbsp;
+  </br>
   <a href="https://github.com/jupyter-xeus"><img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/></a>
   <strong>Jupyter</strong>&nbsp;&nbsp;
   <a href="https://github.com/nnstreamer"><img src="https://avatars.githubusercontent.com/u/60992508?s=200&v=4" alt="NNStreamer" width="28"/></a>
