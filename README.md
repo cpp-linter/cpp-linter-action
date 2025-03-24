@@ -20,7 +20,6 @@
 # C/C++ Linter Action <sub><sup>| clang-format & clang-tidy</sup></sub>
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cpp-linter/cpp-linter-action)
-[![Used by](https://img.shields.io/static/v1?label=Used%20by&message=757&color=informational&logo=slickpic)](https://github.com/cpp-linter/cpp-linter-action/network/dependents)<!-- used by badge -->
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-C%2FC%2B%2B%20Linter-blue?logo=github)](https://github.com/marketplace/actions/c-c-linter)
 [![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
 [![MkDocs Deploy](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
@@ -71,6 +70,40 @@ For all explanations of our available input parameters and output variables, see
 
 See also our [example recipes][recipes-doc].
 
+## Used By
+
+<p align="center">
+  <a href="https://github.com/Microsoft"><img src="https://avatars.githubusercontent.com/u/6154722?s=200&v=4" alt="Microsoft" width="28"/></a>
+  <strong>Microsoft</strong>&nbsp;&nbsp;
+  <a href="https://github.com/apache"><img src="https://avatars.githubusercontent.com/u/47359?s=200&v=4" alt="Apache" width="28"/></a>
+  <strong>Apache</strong>&nbsp;&nbsp;
+  <a href="https://github.com/nasa"><img src="https://avatars.githubusercontent.com/u/848102?s=200&v=4" alt="NASA" width="28"/></a>
+  <strong>NASA</strong>&nbsp;&nbsp;
+  <a href="https://github.com/samsung"><img src="https://avatars.githubusercontent.com/u/6210390?s=200&v=4" alt="Samsung" width="28"/></a>
+  <strong>Samsung</strong>&nbsp;&nbsp;
+  <a href="https://github.com/TheAlgorithms"><img src="https://avatars.githubusercontent.com/u/20487725?s=200&v=4" alt="TheAlgorithms" width="28"/></a>
+  <strong>TheAlgorithms</strong>&nbsp;&nbsp;
+  <a href="https://github.com/CachyOS"><img src="https://avatars.githubusercontent.com/u/85452089?s=200&v=4" alt="CachyOS" width="28"/></a>
+  <strong>CachyOS</strong>&nbsp;&nbsp;
+  </br>
+  <a href="https://github.com/nextcloud"><img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/></a>
+  <strong>Nextcloud</strong>&nbsp;&nbsp;
+  <a href="https://github.com/jupyter-xeus"><img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/></a>
+  <strong>Jupyter</strong>&nbsp;&nbsp;
+  <a href="https://github.com/nnstreamer"><img src="https://avatars.githubusercontent.com/u/60992508?s=200&v=4" alt="NNStreamer" width="28"/></a>
+  <strong>NNStreamer</strong>&nbsp;&nbsp;
+  <a href="https://github.com/imgproxy"><img src="https://avatars.githubusercontent.com/u/48099924?s=200&v=4" alt="imgproxy" width="28"/></a>
+  <strong>imgproxy</strong>&nbsp;&nbsp;
+  <a href="https://github.com/Zondax"><img src="https://avatars.githubusercontent.com/u/34372050?s=200&v=4" alt="Zondax" width="28"/></a>
+  <strong>Zondax</strong>&nbsp;&nbsp;
+  <a href="https://github.com/AppNeta"><img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/></a>
+  <strong>AppNeta</strong>&nbsp;&nbsp;
+  </br>
+  <a href="https://github.com/chocolate-doom"><img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/></a>
+  <strong>Chocolate Doom</strong>
+  <strong> and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more</a>.</strong>
+</p>
+
 ## Example
 
 ### Annotations
@@ -112,7 +145,6 @@ Using [`format-review`][format-review]:
 ![sample format-review][format-review-preview]
 
 ![sample format-suggestion][format-suggestion-preview]
-
 
 ## Add C/C++ Linter Action badge in README
 
