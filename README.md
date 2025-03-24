@@ -96,10 +96,11 @@ See also our [example recipes][recipes-doc].
 
 [![Microsoft] Microsoft][Microsoft-home] &nbsp; [![Apache] Apache][Apache-home] &nbsp; [![NASA] NASA][NASA-home] &nbsp;
 [![Samsung] Samsung][Samsung-home] &nbsp; [![The Algorithms] The Algorithms][The Algorithms-home] &nbsp;
-[![CachyOS] CachyOS][CachyOS-home] &nbsp; [![Nextcloud] Nextcloud][Nextcloud-home] &nbsp; [![Jupyter] Jupyter][Jupyter-home]
+[![CachyOS] CachyOS][CachyOS-home] &nbsp; [![Nextcloud] Nextcloud][Nextcloud-home]
 
-[![NNStreamer] NNStreamer][NNStreamer-home] &nbsp; [![imgproxy] imgproxy][imgproxy-home] &nbsp; [![Zondax] Zondax][Zondax-home] &nbsp;
-[![AppNeta] AppNeta][AppNeta-home] &nbsp; [![Chocolate Doom] Chocolate Doom][Chocolate Doom-home] &nbsp;
+[![Jupyter] Jupyter][Jupyter-home] &nbsp; [![NNStreamer] NNStreamer][NNStreamer-home] &nbsp;
+[![imgproxy] imgproxy][imgproxy-home] &nbsp; [![Zondax] Zondax][Zondax-home] &nbsp;
+[![AppNeta] AppNeta][AppNeta-home] &nbsp; [![Chocolate Doom] Chocolate Doom][Chocolate Doom-home]
 [and many more](https://github.com/cpp-linter/cpp-linter-action/network/dependents)
 
 ## Example
