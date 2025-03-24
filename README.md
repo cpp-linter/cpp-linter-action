@@ -67,41 +67,35 @@ See also our [example recipes][recipes-doc].
 
 ## Used By
 
-[Microsoft]: https://avatars.githubusercontent.com/u/6154722?s=28&v=4
-[Microsoft-home]: https://github.com/Microsoft
-[Apache]: https://avatars.githubusercontent.com/u/47359?s=28&v=4
-[Apache-home]: https://github.com/apache
-[NASA]: https://avatars.githubusercontent.com/u/848102?s=28&v=4
-[NASA-home]: https://github.com/nasa
-[Samsung]: https://avatars.githubusercontent.com/u/6210390?s=28&v=4
-[Samsung-home]: https://github.com/samsung
-[The Algorithms]: https://avatars.githubusercontent.com/u/20487725?s=28&v=4
-[The Algorithms-home]: https://github.com/TheAlgorithms
-[CachyOS]: https://avatars.githubusercontent.com/u/85452089?s=28&v=4
-[CachyOS-home]: https://github.com/CachyOS
-[Nextcloud]: https://avatars.githubusercontent.com/u/19211038?s=28&v=4
-[Nextcloud-home]: https://github.com/nextcloud
-[Jupyter]: https://avatars.githubusercontent.com/u/58793052?s=28&v=4
-[Jupyter-home]: https://github.com/jupyter-xeus
-[NNStreamer]: https://avatars.githubusercontent.com/u/60992508?s=28&v=4
-[NNStreamer-home]: https://github.com/nnstreamer
-[imgproxy]: https://avatars.githubusercontent.com/u/48099924?s=28&v=4
-[imgproxy-home]: https://github.com/imgproxy
-[Zondax]: https://avatars.githubusercontent.com/u/34372050?s=28&v=4
-[Zondax-home]: https://github.com/Zondax
-[AppNeta]: https://avatars.githubusercontent.com/u/3374594?s=28&v=4
-[AppNeta-home]: https://github.com/AppNeta
-[Chocolate Doom]: https://avatars.githubusercontent.com/u/6140118?s=28&v=4
-[Chocolate Doom-home]: https://github.com/chocolate-doom
-
-[![Microsoft] Microsoft][Microsoft-home] &nbsp; [![Apache] Apache][Apache-home] &nbsp; [![NASA] NASA][NASA-home] &nbsp;
-[![Samsung] Samsung][Samsung-home] &nbsp; [![The Algorithms] The Algorithms][The Algorithms-home] &nbsp;
-[![CachyOS] CachyOS][CachyOS-home] &nbsp; [![Nextcloud] Nextcloud][Nextcloud-home]
-
-[![Jupyter] Jupyter][Jupyter-home] &nbsp; [![NNStreamer] NNStreamer][NNStreamer-home] &nbsp;
-[![imgproxy] imgproxy][imgproxy-home] &nbsp; [![Zondax] Zondax][Zondax-home] &nbsp;
-[![AppNeta] AppNeta][AppNeta-home] &nbsp; [![Chocolate Doom] Chocolate Doom][Chocolate Doom-home]
-[and many more](https://github.com/cpp-linter/cpp-linter-action/network/dependents)
+<p align="center">
+  <a href="https://github.com/Microsoft"><img src="https://avatars.githubusercontent.com/u/6154722?s=200&v=4" alt="Microsoft" width="28"/></a>
+  <strong>Microsoft</strong>&nbsp;&nbsp;
+  <a href="https://github.com/apache"><img src="https://avatars.githubusercontent.com/u/47359?s=200&v=4" alt="Apache" width="28"/></a>
+  <strong>Apache</strong>&nbsp;&nbsp;
+  <a href="https://github.com/nasa"><img src="https://avatars.githubusercontent.com/u/848102?s=200&v=4" alt="NASA" width="28"/></a>
+  <strong>NASA</strong>&nbsp;&nbsp;
+  <a href="https://github.com/samsung"><img src="https://avatars.githubusercontent.com/u/6210390?s=200&v=4" alt="Samsung" width="28"/></a>
+  <strong>Samsung</strong>&nbsp;&nbsp;
+  <a href="https://github.com/TheAlgorithms"><img src="https://avatars.githubusercontent.com/u/20487725?s=200&v=4" alt="TheAlgorithms" width="28"/></a>
+  <strong>TheAlgorithms</strong>&nbsp;&nbsp;
+  <a href="https://github.com/CachyOS"><img src="https://avatars.githubusercontent.com/u/85452089?s=200&v=4" alt="CachyOS" width="28"/></a>
+  <strong>CachyOS</strong>&nbsp;&nbsp;
+  <a href="https://github.com/nextcloud"><img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/></a>
+  <strong>Nextcloud</strong>&nbsp;&nbsp;
+  </br>
+  <a href="https://github.com/jupyter-xeus"><img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/></a>
+  <strong>Jupyter</strong>&nbsp;&nbsp;
+  <a href="https://github.com/nnstreamer"><img src="https://avatars.githubusercontent.com/u/60992508?s=200&v=4" alt="NNStreamer" width="28"/></a>
+  <strong>NNStreamer</strong>&nbsp;&nbsp;
+  <a href="https://github.com/imgproxy"><img src="https://avatars.githubusercontent.com/u/48099924?s=200&v=4" alt="imgproxy" width="28"/></a>
+  <strong>imgproxy</strong>&nbsp;&nbsp;
+  <a href="https://github.com/Zondax"><img src="https://avatars.githubusercontent.com/u/34372050?s=200&v=4" alt="Zondax" width="28"/></a>
+  <strong>Zondax</strong>&nbsp;&nbsp;
+  <a href="https://github.com/AppNeta"><img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/></a>
+  <strong>AppNeta</strong>&nbsp;&nbsp;
+  <a href="https://github.com/chocolate-doom"><img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/></a>
+  <strong>Chocolate Doom and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more</a>.</strong>
+</p>
 
 ## Example
 
