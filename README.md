@@ -15,33 +15,6 @@
 [format-review-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-review.png
 [format-suggestion-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-suggestion.png
 
-[Microsoft]: https://avatars.githubusercontent.com/u/6154722?s=20&v=4
-[Microsoft-home]: https://github.com/Microsoft
-[Apache]: https://avatars.githubusercontent.com/u/47359?s=20&v=4
-[Apache-home]: https://github.com/apache
-[NASA]: https://avatars.githubusercontent.com/u/848102?s=20&v=4
-[NASA-home]: https://github.com/nasa
-[Samsung]: https://avatars.githubusercontent.com/u/6210390?s=20&v=4
-[Samsung-home]: https://github.com/samsung
-[The Algorithms]: https://avatars.githubusercontent.com/u/20487725?s=20&v=4
-[The Algorithms-home]: https://github.com/TheAlgorithms
-[CachyOS]: https://avatars.githubusercontent.com/u/85452089?s=20&v=4
-[CachyOS-home]: https://github.com/CachyOS
-[Nextcloud]: https://avatars.githubusercontent.com/u/19211038?s=20&v=4
-[Nextcloud-home]: https://github.com/nextcloud
-[Jupyter]: https://avatars.githubusercontent.com/u/58793052?s=20&v=4
-[Jupyter-home]: https://github.com/jupyter-xeus
-[NNStreamer]: https://avatars.githubusercontent.com/u/60992508?s=20&v=4
-[NNStreamer-home]: https://github.com/nnstreamer
-[imgproxy]: https://avatars.githubusercontent.com/u/48099924?s=20&v=4
-[imgproxy-home]: https://github.com/imgproxy
-[Zondax]: https://avatars.githubusercontent.com/u/34372050?s=20&v=4
-[Zondax-home]: https://github.com/Zondax
-[AppNeta]: https://avatars.githubusercontent.com/u/3374594?s=20&v=4
-[AppNeta-home]: https://github.com/AppNeta
-[Chocolate Doom]: https://avatars.githubusercontent.com/u/6140118?s=20&v=4
-[Chocolate Doom-home]: https://github.com/chocolate-doom
-
 <!--README-start-->
 
 # C/C++ Linter Action <sub><sup>| clang-format & clang-tidy</sup></sub>
@@ -93,6 +66,33 @@ For all explanations of our available input parameters and output variables, see
 See also our [example recipes][recipes-doc].
 
 ## Used By
+
+[Microsoft]: https://avatars.githubusercontent.com/u/6154722?s=25&v=4
+[Microsoft-home]: https://github.com/Microsoft
+[Apache]: https://avatars.githubusercontent.com/u/47359?s=25&v=4
+[Apache-home]: https://github.com/apache
+[NASA]: https://avatars.githubusercontent.com/u/848102?s=25&v=4
+[NASA-home]: https://github.com/nasa
+[Samsung]: https://avatars.githubusercontent.com/u/6210390?s=25&v=4
+[Samsung-home]: https://github.com/samsung
+[The Algorithms]: https://avatars.githubusercontent.com/u/20487725?s=25&v=4
+[The Algorithms-home]: https://github.com/TheAlgorithms
+[CachyOS]: https://avatars.githubusercontent.com/u/85452089?s=25&v=4
+[CachyOS-home]: https://github.com/CachyOS
+[Nextcloud]: https://avatars.githubusercontent.com/u/19211038?s=25&v=4
+[Nextcloud-home]: https://github.com/nextcloud
+[Jupyter]: https://avatars.githubusercontent.com/u/58793052?s=25&v=4
+[Jupyter-home]: https://github.com/jupyter-xeus
+[NNStreamer]: https://avatars.githubusercontent.com/u/60992508?s=25&v=4
+[NNStreamer-home]: https://github.com/nnstreamer
+[imgproxy]: https://avatars.githubusercontent.com/u/48099924?s=25&v=4
+[imgproxy-home]: https://github.com/imgproxy
+[Zondax]: https://avatars.githubusercontent.com/u/34372050?s=25&v=4
+[Zondax-home]: https://github.com/Zondax
+[AppNeta]: https://avatars.githubusercontent.com/u/3374594?s=25&v=4
+[AppNeta-home]: https://github.com/AppNeta
+[Chocolate Doom]: https://avatars.githubusercontent.com/u/6140118?s=25&v=4
+[Chocolate Doom-home]: https://github.com/chocolate-doom
 
 [![Microsoft]Microsoft][Microsoft-home] [![Apache]Apache][Apache-home] [![NASA]NASA][NASA-home] [![Samsung]Samsung][Samsung-home] [![The Algorithms]The Algorithms][The Algorithms-home] [![CachyOS]CachyOS][CachyOS-home] [![Nextcloud]Nextcloud][Nextcloud-home]
 
