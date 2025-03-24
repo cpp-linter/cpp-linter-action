@@ -94,9 +94,13 @@ See also our [example recipes][recipes-doc].
 [Chocolate Doom]: https://avatars.githubusercontent.com/u/6140118?s=28&v=4
 [Chocolate Doom-home]: https://github.com/chocolate-doom
 
-[![Microsoft]Microsoft][Microsoft-home] [![Apache]Apache][Apache-home] [![NASA]NASA][NASA-home] [![Samsung]Samsung][Samsung-home] [![The Algorithms]The Algorithms][The Algorithms-home] [![CachyOS]CachyOS][CachyOS-home] [![Nextcloud]Nextcloud][Nextcloud-home] [![Jupyter]Jupyter][Jupyter-home]
+[![Microsoft] Microsoft][Microsoft-home] &nbsp; [![Apache] Apache][Apache-home] &nbsp; [![NASA] NASA][NASA-home] &nbsp;
+[![Samsung] Samsung][Samsung-home] &nbsp; [![The Algorithms] The Algorithms][The Algorithms-home] &nbsp;
+[![CachyOS] CachyOS][CachyOS-home] &nbsp; [![Nextcloud] Nextcloud][Nextcloud-home] &nbsp; [![Jupyter] Jupyter][Jupyter-home]
 
-[![NNStreamer]NNStreamer][NNStreamer-home] [![imgproxy]imgproxy][imgproxy-home] [![Zondax]Zondax][Zondax-home] [![AppNeta]AppNeta][AppNeta-home] [![Chocolate Doom]Chocolate Doom][Chocolate Doom-home] [and many more](https://github.com/cpp-linter/cpp-linter-action/network/dependents)
+[![NNStreamer] NNStreamer][NNStreamer-home] &nbsp; [![imgproxy] imgproxy][imgproxy-home] &nbsp; [![Zondax] Zondax][Zondax-home] &nbsp;
+[![AppNeta] AppNeta][AppNeta-home] &nbsp; [![Chocolate Doom] Chocolate Doom][Chocolate Doom-home] &nbsp;
+[and many more](https://github.com/cpp-linter/cpp-linter-action/network/dependents)
 
 ## Example
 
