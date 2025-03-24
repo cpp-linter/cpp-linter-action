@@ -6,6 +6,3 @@ contact_links:
   - name: cpp-linter discussions
     url: https://github.com/orgs/cpp-linter/discussions
     about: A place for feedback not specific to cpp-linter-action
-  - name: Maintainers' note
-    url: https://github.com/cpp-linter/cpp-linter-action/issues/new
-    about: Start a discussion for maintainers only
