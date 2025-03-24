@@ -31,6 +31,11 @@ to collect feedback provided in the form of
 workflow [`step-summary`][step-summary], and Pull Request reviews (with
 [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
+> [!WARNING]
+> We only support Linux runners using a Debian-based Linux OS (like Ubuntu and many others).
+>
+> MacOS and Windows runners are supported as well.
+
 ## Usage
 
 > [!NOTE]
