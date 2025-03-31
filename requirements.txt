@@ -4,4 +4,4 @@ clang-tools==0.14.0
 
 # cpp-linter core Python executable package
 # For details please see: https://github.com/cpp-linter/cpp-linter
-cpp-linter==1.10.6
+cpp-linter==1.10.7
