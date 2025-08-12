@@ -10,7 +10,7 @@ Here are some example workflows to get started quickly.
 === "only clang-tidy"
 
     ``` yaml
-    --8<-- "docs/examples/only-clang-tidy.yml"
+    --8<-- ".github/workflows/examples/only-clang-tidy.yml"
     ```
 
     1. See also [`style`][style]
@@ -19,7 +19,7 @@ Here are some example workflows to get started quickly.
 === "only clang-format"
 
     ``` yaml
-    --8<-- "docs/examples/only-clang-format.yml"
+    --8<-- ".github/workflows/examples/only-clang-format.yml"
     ```
 
     1. See also [`style`][style]
@@ -28,7 +28,7 @@ Here are some example workflows to get started quickly.
 === "only PR comments"
 
     ``` yaml
-    --8<-- "docs/examples/only-PR-comments.yml"
+    --8<-- ".github/workflows/examples/only-PR-comments.yml"
     ```
 
     1. See also our [token permissions document](../permissions.md)
