@@ -50,7 +50,7 @@ The content of the file should be in the following format.
 
 ```yaml
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
