@@ -6,7 +6,9 @@
 version: 2
 updates:
   - package-ecosystem: github-actions
-    directory: /
+    directories: 
+      - ".github/workflows"
+      - "docs/examples"
     schedule:
       interval: "weekly"
     groups:
