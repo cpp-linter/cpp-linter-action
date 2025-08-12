@@ -6,9 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: github-actions
-    directories:
-      - "/"
-      - "docs/examples"
+    directory: "/"
     schedule:
       interval: "weekly"
     groups:
