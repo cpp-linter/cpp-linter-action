@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: github-actions
-    directories: 
+    directories:
       - ".github/workflows"
       - "docs/examples"
     schedule:
