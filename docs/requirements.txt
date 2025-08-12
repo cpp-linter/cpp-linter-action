@@ -1,0 +1,6 @@
+markdown-gfm-admonition
+mkdocs
+mkdocs-gen-files
+mkdocs-include-markdown-plugin
+mkdocs-material
+pyyaml
