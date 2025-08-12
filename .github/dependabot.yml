@@ -4,6 +4,12 @@
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
+
+multi-ecosystem-groups:
+  python:
+    schedule:
+      interval: "daily"
+
 updates:
   - package-ecosystem: github-actions
     directory: "/"
@@ -15,9 +21,7 @@ updates:
           - "*"
   - package-ecosystem: pip
     directory: /
-    schedule:
-      interval: "daily"
-    groups:
-      pip:
-        patterns:
-          - "*"
+    multi-ecosystem-group: python
+  - package-ecosystem: uv
+    directory: /
+    multi-ecosystem-group: python
