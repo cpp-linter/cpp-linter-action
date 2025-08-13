@@ -245,6 +245,12 @@ runs:
           chmod +x ${GITHUB_ACTION_PATH%/}/llvm_install.sh
           if sudo ${GITHUB_ACTION_PATH%/}/llvm_install.sh ${{ inputs.version }}; then
             sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+            case "${{ env.KEEP_DEBIAN_LLVM_PPA }}" in
+              "true" | "on" | "1");;
+              *)
+                sudo rm /etc/apt/sources.list.d/*llvm*.list || true
+                ;;
+            esac
           fi
         fi
 
