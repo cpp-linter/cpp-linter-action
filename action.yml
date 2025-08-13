@@ -229,14 +229,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Install python
-      uses: actions/setup-python@v5
-      id: setup-python
-      with:
-        # use python version shipped with latest Ubuntu LTS
-        python-version: '3.10'
-        update-environment: false
-
     - name: Install Linux clang dependencies
       if: runner.os == 'Linux'
       shell: bash
@@ -261,82 +253,89 @@ runs:
         ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-format" "/usr/local/bin/clang-format-${{ inputs.version }}"
         ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-tidy" "/usr/local/bin/clang-tidy-${{ inputs.version }}"
 
-    - name: Setup python venv (Unix)
+    - name: Setup cpp-linter dependencies (Unix)
       if: runner.os == 'Linux' || runner.os == 'macOS'
       shell: bash
+      env:
+        UV_NO_MODIFY_PATH: 1
+        UV_PROJECT_ENVIRONMENT: ${{ github.action_path }}
+        UV_INSTALL_DIR: ${{ github.action_path }}/bin
       run: |
-        ${{ steps.setup-python.outputs.python-path }} -m venv "$GITHUB_ACTION_PATH/venv"
-        source "$GITHUB_ACTION_PATH/venv/bin/activate"
-        pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
-        clang-tools -i ${{ inputs.version }} -b
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        ${{ env.UV_INSTALL_DIR }}/uv sync --config-file "${{ env.GITHUB_ACTION_PATH }}" --group action
+        ${{ env.UV_INSTALL_DIR }}/uv run clang-tools -i ${{ inputs.version }} -b
 
-    - name: Run cpp-linter (Unix)
-      id: cpp-linter-unix
-      if: runner.os == 'Linux' || runner.os == 'macOS'
-      shell: bash
-      run: |
-        source "$GITHUB_ACTION_PATH/venv/bin/activate"
-
-        cpp-linter \
-         --style="${{ inputs.style }}" \
-         --extensions=${{ inputs.extensions }} \
-         --tidy-checks="${{ inputs.tidy-checks }}" \
-         --repo-root=${{ inputs.repo-root }} \
-         --version=${{ inputs.version }} \
-         --verbosity=${{ inputs.verbosity }} \
-         --lines-changed-only=${{ inputs.lines-changed-only }} \
-         --files-changed-only=${{ inputs.files-changed-only }} \
-         --thread-comments=${{ inputs.thread-comments }} \
-         --no-lgtm=${{ inputs.no-lgtm }} \
-         --step-summary=${{ inputs.step-summary }} \
-         --ignore="${{ inputs.ignore }}" \
-         --ignore-tidy="${{ inputs.ignore-tidy }}" \
-         --ignore-format="${{ inputs.ignore-format }}" \
-         --database=${{ inputs.database }} \
-         --file-annotations=${{ inputs.file-annotations }} \
-         --extra-arg="${{ inputs.extra-args }}" \
-         --tidy-review="${{ inputs.tidy-review }}" \
-         --format-review="${{ inputs.format-review }}" \
-         --passive-reviews="${{ inputs.passive-reviews }}" \
-         --jobs=${{ inputs.jobs }}
-
-    - name: Setup python venv (Windows)
+    - name: Setup cpp-linter dependencies (Windows)
       if: runner.os == 'Windows'
       shell: pwsh
+      env:
+        UV_NO_MODIFY_PATH: 1
+        UV_INSTALL_DIR: ${{ github.action_path }}/bin
+        UV_PROJECT_ENVIRONMENT: ${{ github.action_path }}
       run: |
-        ${{ steps.setup-python.outputs.python-path }} -m venv "$env:GITHUB_ACTION_PATH/venv"
-        Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
-        pip install -r "$env:GITHUB_ACTION_PATH/requirements.txt"
-        clang-tools -i ${{ inputs.version }} -b
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/0.8.9/install.ps1 | iex"
+        ${{ env.UV_INSTALL_DIR }}/uv sync --config-file "${{ env.GITHUB_ACTION_PATH }}" --group action
+        ${{ env.UV_INSTALL_DIR }}/uv run clang-tools -i ${{ inputs.version }} -b
+
+    - name: Run cpp-linter (Unix)
+      if: runner.os == 'Linux' || runner.os == 'macOS'
+      id: cpp-linter-unix
+      shell: bash
+      env:
+        UV_PROJECT_ENVIRONMENT: ${{ github.action_path }}
+        UV_INSTALL_DIR: ${{ github.action_path }}/bin
+      run: >-
+        ${{ env.UV_INSTALL_DIR }}/uv run
+        cpp-linter
+        --style="${{ inputs.style }}"
+        --extensions=${{ inputs.extensions }}
+        --tidy-checks="${{ inputs.tidy-checks }}"
+        --repo-root=${{ inputs.repo-root }}
+        --version=${{ inputs.version }}
+        --verbosity=${{ inputs.verbosity }}
+        --lines-changed-only=${{ inputs.lines-changed-only }}
+        --files-changed-only=${{ inputs.files-changed-only }}
+        --thread-comments=${{ inputs.thread-comments }}
+        --no-lgtm=${{ inputs.no-lgtm }}
+        --step-summary=${{ inputs.step-summary }}
+        --ignore="${{ inputs.ignore }}"
+        --ignore-tidy="${{ inputs.ignore-tidy }}"
+        --ignore-format="${{ inputs.ignore-format }}"
+        --database=${{ inputs.database }}
+        --file-annotations=${{ inputs.file-annotations }}
+        --extra-arg="${{ inputs.extra-args }}"
+        --tidy-review="${{ inputs.tidy-review }}"
+        --format-review="${{ inputs.format-review }}"
+        --passive-reviews="${{ inputs.passive-reviews }}"
+        --jobs=${{ inputs.jobs }}
 
     - name: Run cpp-linter (Windows)
       id: cpp-linter-windows
-      if: runner.os == 'Windows'
       shell: pwsh
-      run: |
-        Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
-
-        $app = 'cpp-linter' +
-        ' --style="${{ inputs.style }}"' +
-        ' --extensions=${{ inputs.extensions }}' +
-        ' --tidy-checks="${{ inputs.tidy-checks }}"' +
-        ' --repo-root=${{ inputs.repo-root }}' +
-        ' --version=${{ inputs.version }}' +
-        ' --verbosity=${{ inputs.verbosity }}' +
-        ' --lines-changed-only=${{ inputs.lines-changed-only }}' +
-        ' --files-changed-only=${{ inputs.files-changed-only }}' +
-        ' --thread-comments=${{ inputs.thread-comments }}' +
-        ' --no-lgtm=${{ inputs.no-lgtm }}' +
-        ' --step-summary=${{ inputs.step-summary }}' +
-        ' --ignore="${{ inputs.ignore }}"' +
-        ' --ignore-tidy="${{ inputs.ignore-tidy }}"' +
-        ' --ignore-format="${{ inputs.ignore-format }}"' +
-        ' --database=${{ inputs.database }}' +
-        ' --file-annotations=${{ inputs.file-annotations }}' +
-        ' --extra-arg="${{ inputs.extra-args }}"' +
-        ' --tidy-review="${{ inputs.tidy-review }}"' +
-        ' --format-review="${{ inputs.format-review }}"' +
-        ' --passive-reviews="${{ inputs.passive-reviews }}"' +
-        ' --jobs=${{ inputs.jobs }}'
-
-        Invoke-Expression -Command $app
+      env:
+        UV_PROJECT_ENVIRONMENT: ${{ github.action_path }}
+        UV_INSTALL_DIR: ${{ github.action_path }}/bin
+      run: >-
+        ${{ env.UV_INSTALL_DIR }}/uv run
+        cpp-linter
+        --style="${{ inputs.style }}"
+        --extensions=${{ inputs.extensions }}
+        --tidy-checks="${{ inputs.tidy-checks }}"
+        --repo-root=${{ inputs.repo-root }}
+        --version=${{ inputs.version }}
+        --verbosity=${{ inputs.verbosity }}
+        --lines-changed-only=${{ inputs.lines-changed-only }}
+        --files-changed-only=${{ inputs.files-changed-only }}
+        --thread-comments=${{ inputs.thread-comments }}
+        --no-lgtm=${{ inputs.no-lgtm }}
+        --step-summary=${{ inputs.step-summary }}
+        --ignore="${{ inputs.ignore }}"
+        --ignore-tidy="${{ inputs.ignore-tidy }}"
+        --ignore-format="${{ inputs.ignore-format }}"
+        --database=${{ inputs.database }}
+        --file-annotations=${{ inputs.file-annotations }}
+        --extra-arg="${{ inputs.extra-args }}"
+        --tidy-review="${{ inputs.tidy-review }}"
+        --format-review="${{ inputs.format-review }}"
+        --passive-reviews="${{ inputs.passive-reviews }}"
+        --jobs=${{ inputs.jobs }}
