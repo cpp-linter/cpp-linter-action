@@ -303,13 +303,17 @@ runs:
             mkdir $env.UV_CACHE_DIR
         }
 
+        print $"\n(ansi purple)Installing uv version ($env.UV_VERSION)(ansi reset)"
         if ((sys host | get 'name') == 'Windows') {
             ^powershell -ExecutionPolicy ByPass -c $"irm https://astral.sh/uv/($env.UV_VERSION)/install.ps1 | iex"
         } else {
             ^curl -LsSf $"https://astral.sh/uv/($env.UV_VERSION)/install.sh" | sh
         }
 
+        print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
         ^$'($env.UV_INSTALL_DIR)/uv' sync --directory $action_path --group action
+
+        print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
         ^$'($env.UV_INSTALL_DIR)/uv' run clang-tools -i ${{ inputs.version }} -b
 
     - name: Run cpp-linter
@@ -345,4 +349,5 @@ runs:
             --jobs=${{ inputs.jobs }}
         ]
 
+        print $"\n(ansi purple)Running cpp-linter(ansi reset)"
         ^$'($env.UV_INSTALL_DIR)/uv' run cpp-linter ...$args
