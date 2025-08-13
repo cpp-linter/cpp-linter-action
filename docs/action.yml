@@ -49,6 +49,8 @@ inputs:
     required-permission: 'pull-requests: write #pull-request-reviews'
   jobs:
     minimum-version: '2.11.0'
+  cache-enable:
+    minimum-version: '2.16.0'
 outputs:
   checks-failed:
     minimum-version: '1.2.0'
