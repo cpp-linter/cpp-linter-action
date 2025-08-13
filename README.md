@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD033 MD041-->
+
 [file-annotations]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs/#file-annotations
 [thread-comments]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs/#thread-comments
 [step-summary]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs/#step-summary
@@ -37,12 +39,6 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
 > MacOS and Windows runners are supported as well.
 
 ## Usage
-
-> [!NOTE]
-> Python 3.10 needs to be installed in the docker image if your workflow is
-> [running jobs in a container](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container)
-> (see discussion in [#185](https://github.com/cpp-linter/cpp-linter-action/issues/185)).
-> Our intention is to synchronize with the default Python version included with Ubuntu's latest LTS releases.
 
 Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
 
