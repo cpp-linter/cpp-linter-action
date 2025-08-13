@@ -261,14 +261,11 @@ runs:
       shell: nu {0}
       run: |-
         let action_path = $env.GITHUB_ACTION_PATH | path expand
-        let req_file = $action_path | path join 'requirements.txt'
         let lock_file = $action_path | path join 'uv.lock'
         let action_file = $action_path | path join 'action.yml'
         let key = (
             if ($lock_file | path exists) {
                 open $lock_file --raw | hash sha256
-            } else if ($req_file | path exists) {
-                open $req_file --raw | hash sha256
             } else {
                 open $action_file --raw | hash sha256
             }
