@@ -216,6 +216,10 @@ inputs:
       use the number of all available CPU cores.
     required: false
     default: 0
+  cache:
+    description: enable caching of cpp-linter dependencies
+    required: false
+    default: true
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
@@ -244,6 +248,40 @@ runs:
           fi
         fi
 
+    - name: Setup nu shell
+      # I'm done writing everything twice (in bash and powershell)
+      # With nu shell, we use the same shell/script for all platforms
+      uses: hustcer/setup-nu@v3
+      with:
+        version: '0.106.1'
+
+    - name: Compute cache key
+      if: inputs.cache == 'true' || inputs.cache == true
+      id: compute-cache-key
+      shell: nu {0}
+      run: |-
+        let action_path = $env.GITHUB_ACTION_PATH | str trim --right --char '/'
+        let req_file = $action_path | path join 'requirements.txt'
+        let lock_file = $action_path | path join 'uv.lock'
+        let action_file = $action_path | path join 'action.yml'
+        let key = (
+            if ($lock_file | path exists) {
+                open $lock_file --raw | hash sha256
+            } else if ($req_file | path exists) {
+                open $req_file --raw | hash sha256
+            } else {
+                open $action_file --raw | hash sha256
+            }
+        )
+        $'key=($key)\n' | save --append $env.GITHUB_OUTPUT
+
+    - name: Enable cache
+      if: inputs.cache == 'true' || inputs.cache == true
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}/cpp-linter-action-cache
+        key: cpp-linter-action_${{ steps.compute-cache-key.outputs.key }}
+
     - name: Install MacOS clang dependencies
       if: runner.os == 'macOS'
       shell: bash
@@ -253,11 +291,6 @@ runs:
         ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-format" "/usr/local/bin/clang-format-${{ inputs.version }}"
         ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-tidy" "/usr/local/bin/clang-tidy-${{ inputs.version }}"
 
-    - name: Setup nu shell
-      uses: hustcer/setup-nu@v3
-      with:
-        version: '0.106.1'
-
     - name: Setup cpp-linter dependencies
       shell: nu {0}
       env:
@@ -266,6 +299,11 @@ runs:
         let action_path = $env.GITHUB_ACTION_PATH | str trim --right --char '/'
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_PROJECT_ENVIRONMENT = $action_path | path join '.venv'
+
+        $env.UV_CACHE_DIR = '${{ runner.temp }}' | path join 'cpp-linter-action-cache'
+        if (not ($env.UV_CACHE_DIR | path exists)) {
+            mkdir $env.UV_CACHE_DIR
+        }
 
         if ((sys host | get 'name') == 'Windows') {
             ^powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/0.8.9/install.ps1 | iex"
@@ -286,6 +324,7 @@ runs:
         )
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_PROJECT_ENVIRONMENT = $action_path | path join '.venv'
+        $env.UV_CACHE_DIR = '${{ runner.temp }}' | path join 'cpp-linter-action-cache'
 
         let args = [
             --style="${{ inputs.style }}"
