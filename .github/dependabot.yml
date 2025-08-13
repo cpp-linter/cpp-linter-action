@@ -13,11 +13,11 @@ updates:
       actions:
         patterns:
           - "*"
-  - package-ecosystem: pip
+  - package-ecosystem: uv
     directory: /
     schedule:
       interval: "daily"
     groups:
       pip:
         patterns:
-          - "*"
+          - '*'

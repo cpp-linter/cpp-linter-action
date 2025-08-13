@@ -216,27 +216,23 @@ inputs:
       use the number of all available CPU cores.
     required: false
     default: 0
+  cache-enable:
+    description: enable caching of cpp-linter dependencies
+    required: false
+    default: true
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
-    value: ${{ steps.cpp-linter-unix.outputs.checks-failed || steps.cpp-linter-windows.outputs.checks-failed }}
+    value: ${{ steps.cpp-linter.outputs.checks-failed }}
   clang-tidy-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy only.
-    value: ${{ steps.cpp-linter-unix.outputs.clang-tidy-checks-failed || steps.cpp-linter-windows.outputs.clang-tidy-checks-failed }}
+    value: ${{ steps.cpp-linter.outputs.clang-tidy-checks-failed }}
   clang-format-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-format only.
-    value: ${{ steps.cpp-linter-unix.outputs.clang-format-checks-failed || steps.cpp-linter-windows.outputs.clang-format-checks-failed }}
+    value: ${{ steps.cpp-linter.outputs.clang-format-checks-failed }}
 runs:
   using: "composite"
   steps:
-    - name: Install python
-      uses: actions/setup-python@v5
-      id: setup-python
-      with:
-        # use python version shipped with latest Ubuntu LTS
-        python-version: '3.10'
-        update-environment: false
-
     - name: Install Linux clang dependencies
       if: runner.os == 'Linux'
       shell: bash
@@ -245,12 +241,43 @@ runs:
         # First try installing from default Ubuntu repositories before trying LLVM script
         if ! sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}; then
           # This LLVM script will add the relevant LLVM PPA: https://apt.llvm.org/
-          wget https://apt.llvm.org/llvm.sh -O $GITHUB_ACTION_PATH/llvm_install.sh
-          chmod +x $GITHUB_ACTION_PATH/llvm_install.sh
-          if sudo $GITHUB_ACTION_PATH/llvm_install.sh ${{ inputs.version }}; then
+          wget https://apt.llvm.org/llvm.sh -O ${GITHUB_ACTION_PATH%/}/llvm_install.sh
+          chmod +x ${GITHUB_ACTION_PATH%/}/llvm_install.sh
+          if sudo ${GITHUB_ACTION_PATH%/}/llvm_install.sh ${{ inputs.version }}; then
             sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
           fi
         fi
+
+    - name: Setup nu shell
+      # I'm done writing everything twice (in bash and powershell)
+      # With nu shell, we use the same shell/script for all platforms
+      uses: hustcer/setup-nu@985d59ec83ae3e3418f9d36471cda38b9d8b9879 # v3.20.0
+      with:
+        version: '0.106.1'
+
+    - name: Compute cache key
+      if: inputs.cache-enable == 'true' || inputs.cache-enable == true
+      id: compute-cache-key
+      shell: nu {0}
+      run: |-
+        let action_path = $env.GITHUB_ACTION_PATH | path expand
+        let lock_file = $action_path | path join 'uv.lock'
+        let action_file = $action_path | path join 'action.yml'
+        let key = (
+            if ($lock_file | path exists) {
+                open $lock_file --raw | hash sha256
+            } else {
+                open $action_file --raw | hash sha256
+            }
+        )
+        $'key=($key)\n' | save --append $env.GITHUB_OUTPUT
+
+    - name: Enable cache
+      if: inputs.cache-enable == 'true' || inputs.cache-enable == true
+      uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+      with:
+        path: ${{ runner.temp }}/cpp-linter-action-cache
+        key: cpp-linter-action_${{ runner.os }}_${{ steps.compute-cache-key.outputs.key }}
 
     - name: Install MacOS clang dependencies
       if: runner.os == 'macOS'
@@ -261,82 +288,66 @@ runs:
         ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-format" "/usr/local/bin/clang-format-${{ inputs.version }}"
         ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-tidy" "/usr/local/bin/clang-tidy-${{ inputs.version }}"
 
-    - name: Setup python venv (Unix)
-      if: runner.os == 'Linux' || runner.os == 'macOS'
-      shell: bash
-      run: |
-        ${{ steps.setup-python.outputs.python-path }} -m venv "$GITHUB_ACTION_PATH/venv"
-        source "$GITHUB_ACTION_PATH/venv/bin/activate"
-        pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
-        clang-tools -i ${{ inputs.version }} -b
+    - name: Setup cpp-linter dependencies
+      shell: nu {0}
+      env:
+        UV_NO_MODIFY_PATH: 1
+        UV_VERSION: '0.8.9'
+      run: |-
+        let action_path = $env.GITHUB_ACTION_PATH | path expand
+        $env.UV_INSTALL_DIR = $action_path | path join 'bin'
+        $env.UV_PROJECT_ENVIRONMENT = $action_path | path join '.venv'
 
-    - name: Run cpp-linter (Unix)
-      id: cpp-linter-unix
-      if: runner.os == 'Linux' || runner.os == 'macOS'
-      shell: bash
-      run: |
-        source "$GITHUB_ACTION_PATH/venv/bin/activate"
+        $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
+        if (not ($env.UV_CACHE_DIR | path exists)) {
+            mkdir $env.UV_CACHE_DIR
+        }
 
-        cpp-linter \
-         --style="${{ inputs.style }}" \
-         --extensions=${{ inputs.extensions }} \
-         --tidy-checks="${{ inputs.tidy-checks }}" \
-         --repo-root=${{ inputs.repo-root }} \
-         --version=${{ inputs.version }} \
-         --verbosity=${{ inputs.verbosity }} \
-         --lines-changed-only=${{ inputs.lines-changed-only }} \
-         --files-changed-only=${{ inputs.files-changed-only }} \
-         --thread-comments=${{ inputs.thread-comments }} \
-         --no-lgtm=${{ inputs.no-lgtm }} \
-         --step-summary=${{ inputs.step-summary }} \
-         --ignore="${{ inputs.ignore }}" \
-         --ignore-tidy="${{ inputs.ignore-tidy }}" \
-         --ignore-format="${{ inputs.ignore-format }}" \
-         --database=${{ inputs.database }} \
-         --file-annotations=${{ inputs.file-annotations }} \
-         --extra-arg="${{ inputs.extra-args }}" \
-         --tidy-review="${{ inputs.tidy-review }}" \
-         --format-review="${{ inputs.format-review }}" \
-         --passive-reviews="${{ inputs.passive-reviews }}" \
-         --jobs=${{ inputs.jobs }}
+        print $"\n(ansi purple)Installing uv version ($env.UV_VERSION)(ansi reset)"
+        if ((sys host | get 'name') == 'Windows') {
+            ^powershell -ExecutionPolicy ByPass -c $"irm https://astral.sh/uv/($env.UV_VERSION)/install.ps1 | iex"
+        } else {
+            ^curl -LsSf $"https://astral.sh/uv/($env.UV_VERSION)/install.sh" | sh
+        }
 
-    - name: Setup python venv (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        ${{ steps.setup-python.outputs.python-path }} -m venv "$env:GITHUB_ACTION_PATH/venv"
-        Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
-        pip install -r "$env:GITHUB_ACTION_PATH/requirements.txt"
-        clang-tools -i ${{ inputs.version }} -b
+        print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
+        ^$'($env.UV_INSTALL_DIR)/uv' sync --directory $action_path --group action
 
-    - name: Run cpp-linter (Windows)
-      id: cpp-linter-windows
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: |
-        Invoke-Expression -Command "$env:GITHUB_ACTION_PATH/venv/Scripts/Activate.ps1"
+        print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
+        ^$'($env.UV_INSTALL_DIR)/uv' run clang-tools -i ${{ inputs.version }} -b
 
-        $app = 'cpp-linter' +
-        ' --style="${{ inputs.style }}"' +
-        ' --extensions=${{ inputs.extensions }}' +
-        ' --tidy-checks="${{ inputs.tidy-checks }}"' +
-        ' --repo-root=${{ inputs.repo-root }}' +
-        ' --version=${{ inputs.version }}' +
-        ' --verbosity=${{ inputs.verbosity }}' +
-        ' --lines-changed-only=${{ inputs.lines-changed-only }}' +
-        ' --files-changed-only=${{ inputs.files-changed-only }}' +
-        ' --thread-comments=${{ inputs.thread-comments }}' +
-        ' --no-lgtm=${{ inputs.no-lgtm }}' +
-        ' --step-summary=${{ inputs.step-summary }}' +
-        ' --ignore="${{ inputs.ignore }}"' +
-        ' --ignore-tidy="${{ inputs.ignore-tidy }}"' +
-        ' --ignore-format="${{ inputs.ignore-format }}"' +
-        ' --database=${{ inputs.database }}' +
-        ' --file-annotations=${{ inputs.file-annotations }}' +
-        ' --extra-arg="${{ inputs.extra-args }}"' +
-        ' --tidy-review="${{ inputs.tidy-review }}"' +
-        ' --format-review="${{ inputs.format-review }}"' +
-        ' --passive-reviews="${{ inputs.passive-reviews }}"' +
-        ' --jobs=${{ inputs.jobs }}'
+    - name: Run cpp-linter
+      id: cpp-linter
+      shell: nu {0}
+      run: |-
+        let action_path = $env.GITHUB_ACTION_PATH | path expand
+        $env.UV_INSTALL_DIR = $action_path | path join 'bin'
+        $env.UV_PROJECT_ENVIRONMENT = $action_path | path join '.venv'
+        $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
 
-        Invoke-Expression -Command $app
+        let args = [
+            --style="${{ inputs.style }}"
+            --extensions=${{ inputs.extensions }}
+            --tidy-checks="${{ inputs.tidy-checks }}"
+            --repo-root=${{ inputs.repo-root }}
+            --version=${{ inputs.version }}
+            --verbosity=${{ inputs.verbosity }}
+            --lines-changed-only=${{ inputs.lines-changed-only }}
+            --files-changed-only=${{ inputs.files-changed-only }}
+            --thread-comments=${{ inputs.thread-comments }}
+            --no-lgtm=${{ inputs.no-lgtm }}
+            --step-summary=${{ inputs.step-summary }}
+            --ignore="${{ inputs.ignore }}"
+            --ignore-tidy="${{ inputs.ignore-tidy }}"
+            --ignore-format="${{ inputs.ignore-format }}"
+            --database=${{ inputs.database }}
+            --file-annotations=${{ inputs.file-annotations }}
+            --extra-arg="${{ inputs.extra-args }}"
+            --tidy-review="${{ inputs.tidy-review }}"
+            --format-review="${{ inputs.format-review }}"
+            --passive-reviews="${{ inputs.passive-reviews }}"
+            --jobs=${{ inputs.jobs }}
+        ]
+
+        print $"\n(ansi purple)Running cpp-linter(ansi reset)"
+        ^$'($env.UV_INSTALL_DIR)/uv' run cpp-linter ...$args
