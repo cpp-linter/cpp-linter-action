@@ -260,7 +260,7 @@ runs:
       id: compute-cache-key
       shell: nu {0}
       run: |-
-        let action_path = $env.GITHUB_ACTION_PATH | str trim --right --char '/'
+        let action_path = $env.GITHUB_ACTION_PATH | path expand
         let req_file = $action_path | path join 'requirements.txt'
         let lock_file = $action_path | path join 'uv.lock'
         let action_file = $action_path | path join 'action.yml'
@@ -280,7 +280,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{ runner.temp }}/cpp-linter-action-cache
-        key: cpp-linter-action_${{ steps.compute-cache-key.outputs.key }}
+        key: cpp-linter-action_${{ runner.os }}_${{ steps.compute-cache-key.outputs.key }}
 
     - name: Install MacOS clang dependencies
       if: runner.os == 'macOS'
@@ -296,11 +296,11 @@ runs:
       env:
         UV_NO_MODIFY_PATH: 1
       run: |-
-        let action_path = $env.GITHUB_ACTION_PATH | str trim --right --char '/'
+        let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_PROJECT_ENVIRONMENT = $action_path | path join '.venv'
 
-        $env.UV_CACHE_DIR = '${{ runner.temp }}' | path join 'cpp-linter-action-cache'
+        $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
         if (not ($env.UV_CACHE_DIR | path exists)) {
             mkdir $env.UV_CACHE_DIR
         }
@@ -318,13 +318,10 @@ runs:
       id: cpp-linter
       shell: nu {0}
       run: |-
-        let action_path = (
-          $env.GITHUB_ACTION_PATH
-          | str trim --right --char '/'
-        )
+        let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_PROJECT_ENVIRONMENT = $action_path | path join '.venv'
-        $env.UV_CACHE_DIR = '${{ runner.temp }}' | path join 'cpp-linter-action-cache'
+        $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
 
         let args = [
             --style="${{ inputs.style }}"
