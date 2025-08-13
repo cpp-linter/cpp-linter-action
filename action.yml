@@ -251,7 +251,7 @@ runs:
     - name: Setup nu shell
       # I'm done writing everything twice (in bash and powershell)
       # With nu shell, we use the same shell/script for all platforms
-      uses: hustcer/setup-nu@v3
+      uses: hustcer/setup-nu@985d59ec83ae3e3418f9d36471cda38b9d8b9879 # v3.20.0
       with:
         version: '0.106.1'
 
@@ -277,7 +277,7 @@ runs:
 
     - name: Enable cache
       if: inputs.cache-enable == 'true' || inputs.cache-enable == true
-      uses: actions/cache@v4
+      uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
       with:
         path: ${{ runner.temp }}/cpp-linter-action-cache
         key: cpp-linter-action_${{ runner.os }}_${{ steps.compute-cache-key.outputs.key }}
