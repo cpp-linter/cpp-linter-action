@@ -16,7 +16,15 @@ updates:
   - package-ecosystem: uv
     directory: /
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      uv:
+        patterns:
+          - '*'
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: "weekly"
     groups:
       pip:
         patterns:
