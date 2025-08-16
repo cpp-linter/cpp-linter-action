@@ -6,7 +6,7 @@ dependencies = []
 
 [dependency-groups]
 action = [
-    "clang-tools==0.15.1",
+    "clang-tools==0.15.2",
     "cpp-linter==1.10.7",
 ]
 dev = [
