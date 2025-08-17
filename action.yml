@@ -309,13 +309,30 @@ runs:
             ^curl -LsSf $"https://astral.sh/uv/($env.UV_VERSION)/install.sh" | sh
         }
 
+        let gh_action_debug = $env | get --optional 'ACTIONS_STEP_DEBUG'
+        let action_verbosity = '${{ inputs.verbosity }}' == 'debug'
+        let verbosity = (
+            $action_verbosity
+            or ($gh_action_debug == true)
+            or ($gh_action_debug == 'true')
+        )
+
+        mut uv_args = [sync --project $action_path --group action]
+        if $verbosity {
+          $uv_args = $uv_args | append '-v'
+        }
+
         print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
-        ^$'($env.UV_INSTALL_DIR)/uv' sync -v --project $action_path --group action
+        ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
+
+        let cmd = [clang-tools -i ${{ inputs.version }} -b]
+        $uv_args = [run --no-sync --project $action_path --directory (pwd)]
+        if $verbosity {
+            $uv_args = $uv_args | append '-v'
+        }
 
         print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
-        let cmd = [clang-tools -i ${{ inputs.version }} -b]
-        let uv_args = [run --no-sync --project $action_path --directory (pwd)]
-        ^$'($env.UV_INSTALL_DIR)/uv' -v ...$uv_args ...$cmd
+        ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
 
     - name: Run cpp-linter
       id: cpp-linter
@@ -348,7 +365,18 @@ runs:
             --passive-reviews="${{ inputs.passive-reviews }}"
             --jobs=${{ inputs.jobs }}
         ]
+        mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
+
+        let gh_action_debug = $env | get --optional 'ACTIONS_STEP_DEBUG'
+        let action_verbosity = '${{ inputs.verbosity }}' == 'debug'
+        let verbosity = (
+            $action_verbosity
+            or ($gh_action_debug == true)
+            or ($gh_action_debug == 'true')
+        )
+        if $verbosity {
+            $uv_args = $uv_args | append '-v'
+        }
 
         print $"\n(ansi purple)Running cpp-linter(ansi reset)"
-        let uv_args = [run --no-sync --project $action_path --directory (pwd)]
-        ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args -v cpp-linter ...$args
+        ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args cpp-linter ...$args
