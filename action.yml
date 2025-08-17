@@ -428,7 +428,7 @@ runs:
         }
 
         let local_bin = '~/.local/bin' | path expand
-        let tmp_path = if (
+        if (
           ('${{ runner.os }}' == 'Linux')
           and ($local_bin | path exists)
           and (not ($env.PATH | any {$in == $local_bin}))

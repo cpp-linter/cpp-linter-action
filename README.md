@@ -158,12 +158,13 @@ To provide feedback (requesting a feature or reporting a bug) please post to [is
 
 ## Required tools installed
 
-As of v2.16.0, this action now uses
+As of v2.16.0, this action uses
 
 - [nushell] for cross-platform compatible scripting
 - [uv] for driving a Python virtual environment
 
-This action installs [nushell] and [uv] automatically, but only [nushell] is added to the PATH environment variable;
+This action installs [nushell] and [uv] automatically.
+Only [nushell] is added to the PATH environment variable.
 [uv], and any standalone Python distribution it downloads, are not added to the PATH environment variable.
 
 ### On Linux runners
@@ -172,7 +173,7 @@ We only support Linux runners using a Debian-based Linux OS (like Ubuntu and man
 This is because we first try to use the `apt` package manager to install clang tools.
 
 Linux workflows that use a specific [`container`][gh-container-syntax] should ensure that
-the following is installed:
+the following are installed:
 
 - GLIBC (v2.32 or later)
 - `wget` or `curl`
@@ -181,12 +182,13 @@ the following is installed:
 - `gnupg` (required by LLVM-provided install script)
 
 ```shell
+apt-get update
 apt-get install -y libc6 wget lsb-release software-properties-common gnupg
 ```
 
 Otherwise, [nushell] and/or the LLVM-provided bash script will fail to run.
 
-### On MacOS runners
+### On macOS runners
 
 The specified `version` of `clang-format` and `clang-tidy` is installed via Homebrew.
 Failing that, we attempt to use static binaries that we built ourselves;
