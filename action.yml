@@ -292,7 +292,7 @@ runs:
       shell: nu {0}
       env:
         UV_NO_MODIFY_PATH: 1
-        UV_VERSION: '0.8.9'
+        UV_VERSION: '0.8.11'
       run: |-
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
@@ -303,10 +303,17 @@ runs:
         }
 
         print $"\n(ansi purple)Installing uv version ($env.UV_VERSION)(ansi reset)"
-        if ((sys host | get 'name') == 'Windows') {
-            ^powershell -ExecutionPolicy ByPass -c $"irm https://astral.sh/uv/($env.UV_VERSION)/install.ps1 | iex"
+        let is_windows = (sys host | get 'name') == 'Windows'
+        let uv_installer_url = if $is_windows {
+            $"https://astral.sh/uv/($env.UV_VERSION)/install.ps1"
         } else {
-            ^curl -LsSf $"https://astral.sh/uv/($env.UV_VERSION)/install.sh" | sh
+            $"https://astral.sh/uv/($env.UV_VERSION)/install.sh"
+        }
+        let installer = http get --raw --redirect-mode follow $uv_installer_url
+        if $is_windows {
+            ^powershell -ExecutionPolicy ByPass $installer
+        } else {
+            $installer | ^sh
         }
 
         let gh_action_debug = $env | get --optional 'ACTIONS_STEP_DEBUG'
@@ -317,21 +324,19 @@ runs:
             or ($gh_action_debug == 'true')
         )
 
+        print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
         mut uv_args = [sync --project $action_path --group action]
         if $verbosity {
           $uv_args = $uv_args | append '-v'
         }
-
-        print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
+        print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
         let cmd = [clang-tools -i ${{ inputs.version }} -b]
         $uv_args = [run --no-sync --project $action_path --directory (pwd)]
         if $verbosity {
             $uv_args = $uv_args | append '-v'
         }
-
-        print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
 
     - name: Run cpp-linter
