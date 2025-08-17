@@ -296,7 +296,6 @@ runs:
       run: |-
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
-        $env.UV_PROJECT_ENVIRONMENT = $action_path | path join '.venv'
 
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
         if (not ($env.UV_CACHE_DIR | path exists)) {
@@ -311,10 +310,12 @@ runs:
         }
 
         print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
-        ^$'($env.UV_INSTALL_DIR)/uv' sync --directory $action_path --group action
+        ^$'($env.UV_INSTALL_DIR)/uv' sync -v --project $action_path --group action
 
         print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
-        ^$'($env.UV_INSTALL_DIR)/uv' run clang-tools -i ${{ inputs.version }} -b
+        let cmd = [clang-tools -i ${{ inputs.version }} -b]
+        let uv_args = [run --no-sync --project $action_path --directory (pwd)]
+        ^$'($env.UV_INSTALL_DIR)/uv' -v ...$uv_args ...$cmd
 
     - name: Run cpp-linter
       id: cpp-linter
@@ -322,7 +323,6 @@ runs:
       run: |-
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
-        $env.UV_PROJECT_ENVIRONMENT = $action_path | path join '.venv'
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
 
         let args = [
@@ -350,4 +350,5 @@ runs:
         ]
 
         print $"\n(ansi purple)Running cpp-linter(ansi reset)"
-        ^$'($env.UV_INSTALL_DIR)/uv' run cpp-linter ...$args
+        let uv_args = [run --no-sync --project $action_path --directory (pwd)]
+        ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args -v cpp-linter ...$args
