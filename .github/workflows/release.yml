@@ -3,7 +3,7 @@ name: Release
 on:
   release:
     branches: [main]
-    types: [published]
+    types: [released]
   workflow_dispatch:
     inputs:
       tag:
