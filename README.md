@@ -34,9 +34,7 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
 [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
 > [!WARNING]
-> We only support Linux runners using a Debian-based Linux OS (like Ubuntu and many others).
->
-> MacOS and Windows runners are supported as well.
+> See the [required tools section below](#required-tools-installed).
 
 ## Usage
 
@@ -158,8 +156,55 @@ Example
 
 To provide feedback (requesting a feature or reporting a bug) please post to [issues](https://github.com/cpp-linter/cpp-linter-action/issues).
 
+## Required tools installed
+
+As of v2.16.0, this action now uses
+
+- [nushell] for cross-platform compatible scripting
+- [uv] for driving a Python virtual environment
+
+This action installs [nushell] and [uv] automatically, but only [nushell] is added to the PATH environment variable;
+[uv], and any standalone Python distribution it downloads, are not added to the PATH environment variable.
+
+### On Linux runners
+
+We only support Linux runners using a Debian-based Linux OS (like Ubuntu and many others).
+This is because we first try to use the `apt` package manager to install clang tools.
+
+Linux workflows that use a specific [`container`][gh-container-syntax] should ensure that
+the following is installed:
+
+- GLIBC (v2.32 or later)
+- `wget` or `curl`
+- `lsb-release` (required by LLVM-provided install script)
+- `software-properties-common` (required by LLVM-provided install script)
+- `gnupg` (required by LLVM-provided install script)
+
+```shell
+apt-get install -y libc6 wget lsb-release software-properties-common gnupg
+```
+
+Otherwise, [nushell] and/or the LLVM-provided bash script will fail to run.
+
+### On MacOS runners
+
+The specified `version` of `clang-format` and `clang-tidy` is installed via Homebrew.
+Failing that, we attempt to use static binaries that we built ourselves;
+see [cpp-linter/clang-tools-pip] and [cpp-linter/clang-tools-static-binaries] projects for more detail.
+
+### On Windows runners
+
+For Windows runners, we only use clang tools built as static binaries.
+See [cpp-linter/clang-tools-pip] and [cpp-linter/clang-tools-static-binaries] projects for more detail.
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](https://github.com/cpp-linter/cpp-linter-action/blob/main/LICENSE)
+
+[nushell]: https://www.nushell.sh/
+[uv]: https://docs.astral.sh/uv/
+[cpp-linter/clang-tools-pip]: https://github.com/cpp-linter/clang-tools-pip
+[cpp-linter/clang-tools-static-binaries]: https://github.com/cpp-linter/clang-tools-static-binaries
+[gh-container-syntax]: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer
 
 <!--README-end-->
