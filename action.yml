@@ -217,7 +217,13 @@ inputs:
     required: false
     default: 0
   cache-enable:
-    description: enable caching of cpp-linter dependencies
+    description: |-
+      Controls the caching of cpp-linter dependencies.
+      The installed `clang-format` and `clang-tidy` tools are not cached.
+
+      By default, this is enabled.
+      Any cached assets are kept within the path to this action's source
+      (not in the runner's workspace or temp directory).
     required: false
     default: true
 outputs:
@@ -233,21 +239,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Install Linux clang dependencies
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo apt-get update
-        # First try installing from default Ubuntu repositories before trying LLVM script
-        if ! sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}; then
-          # This LLVM script will add the relevant LLVM PPA: https://apt.llvm.org/
-          wget https://apt.llvm.org/llvm.sh -O ${GITHUB_ACTION_PATH%/}/llvm_install.sh
-          chmod +x ${GITHUB_ACTION_PATH%/}/llvm_install.sh
-          if sudo ${GITHUB_ACTION_PATH%/}/llvm_install.sh ${{ inputs.version }}; then
-            sudo apt-get install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
-          fi
-        fi
-
     - name: Setup nu shell
       # I'm done writing everything twice (in bash and powershell)
       # With nu shell, we use the same shell/script for all platforms
@@ -279,14 +270,67 @@ runs:
         path: ${{ runner.temp }}/cpp-linter-action-cache
         key: cpp-linter-action_${{ runner.os }}_${{ steps.compute-cache-key.outputs.key }}
 
+    - name: Install Linux clang dependencies
+      if: runner.os == 'Linux'
+      shell: nu {0}
+      run: |
+        let action_path = $env.GITHUB_ACTION_PATH | path expand
+        let apt_install_args = [
+            install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+        ]
+        let has_sudo = not ((which 'sudo') | is-empty)
+
+        # First try installing from default Ubuntu repositories before trying LLVM script
+        let are_tools_present = (
+            if $has_sudo {
+                ^sudo apt-get update
+                ^sudo apt-get ...$apt_install_args
+            } else {
+                ^apt-get update
+                ^apt-get  ...$apt_install_args
+            }
+        ) | complete | $in.exit_code == 0
+        if (not $are_tools_present) {
+          # This LLVM script will add the relevant LLVM PPA: https://apt.llvm.org/
+          (
+            http get --raw --redirect-mode follow https://apt.llvm.org/llvm.sh
+            | save $"($action_path)/llvm_install.sh"
+          )
+          ^chmod +x $"($action_path)/llvm_install.sh"
+
+          let llvm_installer_result = (
+            if $has_sudo {
+                ^sudo $"($action_path)/llvm_install.sh" ${{ inputs.version }}
+            } else {
+                ^bash $"($action_path)/llvm_install.sh" ${{ inputs.version }}
+            }
+          ) | complete
+          print $llvm_installer_result
+
+          if ($llvm_installer_result.exit_code == 0) {
+            let result = (
+              if $has_sudo {
+                  ^sudo apt-get ...$apt_install_args
+              } else {
+                  ^apt-get ...$apt_install_args
+              }
+            ) | complete
+            print $result
+          }
+        }
+
     - name: Install MacOS clang dependencies
       if: runner.os == 'macOS'
-      shell: bash
-      continue-on-error: true
-      run: |
-        brew install llvm@${{ inputs.version }}
-        ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-format" "/usr/local/bin/clang-format-${{ inputs.version }}"
-        ln -s "$(brew --prefix llvm@${{ inputs.version }})/bin/clang-tidy" "/usr/local/bin/clang-tidy-${{ inputs.version }}"
+      shell: nu {0}
+      run: |-
+        let brew_install_arg = 'llvm@${{ inputs.version }}'
+        let result = (^brew install $brew_install_arg) | complete
+        print $result
+        if ($result.exit_code == 0) {
+          let brew_prefix = ^brew --prefix $brew_install_arg
+          ^ln -s $"($brew_prefix)/bin/clang-format" "/usr/local/bin/clang-format-${{ inputs.version }}"
+          ^ln -s $"($brew_prefix)/bin/clang-tidy" "/usr/local/bin/clang-tidy-${{ inputs.version }}"
+        }
 
     - name: Setup cpp-linter dependencies
       shell: nu {0}
@@ -299,29 +343,29 @@ runs:
 
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
         if (not ($env.UV_CACHE_DIR | path exists)) {
-            mkdir $env.UV_CACHE_DIR
+          mkdir $env.UV_CACHE_DIR
         }
 
         print $"\n(ansi purple)Installing uv version ($env.UV_VERSION)(ansi reset)"
         let is_windows = (sys host | get 'name') == 'Windows'
         let uv_installer_url = if $is_windows {
-            $"https://astral.sh/uv/($env.UV_VERSION)/install.ps1"
+          $"https://astral.sh/uv/($env.UV_VERSION)/install.ps1"
         } else {
-            $"https://astral.sh/uv/($env.UV_VERSION)/install.sh"
+          $"https://astral.sh/uv/($env.UV_VERSION)/install.sh"
         }
         let installer = http get --raw --redirect-mode follow $uv_installer_url
         if $is_windows {
-            ^powershell -ExecutionPolicy ByPass $installer
+          ^powershell -ExecutionPolicy ByPass $installer
         } else {
-            $installer | ^sh
+          $installer | ^sh
         }
 
         let gh_action_debug = $env | get --optional 'ACTIONS_STEP_DEBUG'
         let action_verbosity = '${{ inputs.verbosity }}' == 'debug'
         let verbosity = (
-            $action_verbosity
-            or ($gh_action_debug == true)
-            or ($gh_action_debug == 'true')
+          $action_verbosity
+          or ($gh_action_debug == true)
+          or ($gh_action_debug == 'true')
         )
 
         print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
@@ -335,7 +379,7 @@ runs:
         let cmd = [clang-tools -i ${{ inputs.version }} -b]
         $uv_args = [run --no-sync --project $action_path --directory (pwd)]
         if $verbosity {
-            $uv_args = $uv_args | append '-v'
+          $uv_args = $uv_args | append '-v'
         }
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
 
@@ -348,39 +392,39 @@ runs:
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
 
         let args = [
-            --style="${{ inputs.style }}"
-            --extensions=${{ inputs.extensions }}
-            --tidy-checks="${{ inputs.tidy-checks }}"
-            --repo-root=${{ inputs.repo-root }}
-            --version=${{ inputs.version }}
-            --verbosity=${{ inputs.verbosity }}
-            --lines-changed-only=${{ inputs.lines-changed-only }}
-            --files-changed-only=${{ inputs.files-changed-only }}
-            --thread-comments=${{ inputs.thread-comments }}
-            --no-lgtm=${{ inputs.no-lgtm }}
-            --step-summary=${{ inputs.step-summary }}
-            --ignore="${{ inputs.ignore }}"
-            --ignore-tidy="${{ inputs.ignore-tidy }}"
-            --ignore-format="${{ inputs.ignore-format }}"
-            --database=${{ inputs.database }}
-            --file-annotations=${{ inputs.file-annotations }}
-            --extra-arg="${{ inputs.extra-args }}"
-            --tidy-review="${{ inputs.tidy-review }}"
-            --format-review="${{ inputs.format-review }}"
-            --passive-reviews="${{ inputs.passive-reviews }}"
-            --jobs=${{ inputs.jobs }}
+          --style="${{ inputs.style }}"
+          --extensions=${{ inputs.extensions }}
+          --tidy-checks="${{ inputs.tidy-checks }}"
+          --repo-root=${{ inputs.repo-root }}
+          --version=${{ inputs.version }}
+          --verbosity=${{ inputs.verbosity }}
+          --lines-changed-only=${{ inputs.lines-changed-only }}
+          --files-changed-only=${{ inputs.files-changed-only }}
+          --thread-comments=${{ inputs.thread-comments }}
+          --no-lgtm=${{ inputs.no-lgtm }}
+          --step-summary=${{ inputs.step-summary }}
+          --ignore="${{ inputs.ignore }}"
+          --ignore-tidy="${{ inputs.ignore-tidy }}"
+          --ignore-format="${{ inputs.ignore-format }}"
+          --database=${{ inputs.database }}
+          --file-annotations=${{ inputs.file-annotations }}
+          --extra-arg="${{ inputs.extra-args }}"
+          --tidy-review="${{ inputs.tidy-review }}"
+          --format-review="${{ inputs.format-review }}"
+          --passive-reviews="${{ inputs.passive-reviews }}"
+          --jobs=${{ inputs.jobs }}
         ]
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
 
         let gh_action_debug = $env | get --optional 'ACTIONS_STEP_DEBUG'
         let action_verbosity = '${{ inputs.verbosity }}' == 'debug'
         let verbosity = (
-            $action_verbosity
-            or ($gh_action_debug == true)
-            or ($gh_action_debug == 'true')
+          $action_verbosity
+          or ($gh_action_debug == true)
+          or ($gh_action_debug == 'true')
         )
         if $verbosity {
-            $uv_args = $uv_args | append '-v'
+          $uv_args = $uv_args | append '-v'
         }
 
         print $"\n(ansi purple)Running cpp-linter(ansi reset)"
