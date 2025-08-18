@@ -262,6 +262,10 @@ inputs:
       use the number of all available CPU cores.
     required: false
     default: '0'
+    deprecationMessage: >-
+      The "jobs" parameter is deprecated and ignored.
+      cpp-linter will use whatever number of tasks/jobs that
+      the system can offer.
   cache-enable:
     description: |-
       Controls the caching of cpp-linter dependencies.
@@ -612,7 +616,7 @@ runs:
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
 
-        mut args = [
+        let args = [
           $"--style=($env.INPUT_STYLE)"
           $"--extensions=($env.INPUT_EXTENSIONS)"
           $"--tidy-checks=($env.INPUT_TIDY_CHECKS)"
