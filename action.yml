@@ -216,6 +216,10 @@ inputs:
       use the number of all available CPU cores.
     required: false
     default: '0'
+    deprecationMessage: >-
+      The "jobs" parameter is deprecated and ignored.
+      cpp-linter will use whatever number of tasks/jobs that
+      the system can offer.
   cache-enable:
     description: |-
       Controls the caching of cpp-linter dependencies.
@@ -454,7 +458,6 @@ runs:
           '--tidy-review=${{ inputs.tidy-review }}'
           '--format-review=${{ inputs.format-review }}'
           '--passive-reviews=${{ inputs.passive-reviews }}'
-          '--jobs=${{ inputs.jobs }}'
           '--summary-output-file=${{ inputs.summary-output-file }}'
         ]
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
