@@ -33,9 +33,6 @@ to collect feedback provided in the form of
 workflow [`step-summary`][step-summary], and Pull Request reviews (with
 [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
-> [!WARNING]
-> See the [required tools section below](#required-tools-installed).
-
 ## Usage
 
 Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
