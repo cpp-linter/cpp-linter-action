@@ -412,7 +412,7 @@ runs:
           '--tidy-review=${{ inputs.tidy-review }}'
           '--format-review=${{ inputs.format-review }}'
           '--passive-reviews=${{ inputs.passive-reviews }}'
-          '--jobs=${{ inputs.jobs }}'
+          # '--jobs=${{ inputs.jobs }}'
         ]
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
 
