@@ -15,6 +15,9 @@ on:
         default: 'main'
         required: true
 
+permissions:
+  contents: write
+
 jobs:
   re-tag:
     runs-on: ubuntu-latest
@@ -30,14 +33,10 @@ jobs:
     - name: Update tag with parameter
       if: github.event.inputs.tag != ''
       run: |
-        git tag --delete ${{ inputs.tag }}  || true
-        git push --delete origin ${{ inputs.tag }} || true
-        git tag -a ${{ inputs.tag }} -m 'Retag ${{ inputs.tag }}'
-        git push origin ${{ inputs.tag }}
-    - name: Update tag to v2
+        git tag -fa ${{ inputs.tag }} -m 'Retag ${{ inputs.tag }}'
+        git push origin ${{ inputs.tag }} --force
+    - name: Update rolling tag
       if: github.event.inputs.tag == ''
       run: |
-        git tag --delete v2 || true
-        git push --delete origin v2 || true
-        git tag -a v2 -m 'Retag v2'
-        git push origin v2
+        git tag -fa v2 -m 'Retag v2'
+        git push origin v2 --force
