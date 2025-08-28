@@ -30,13 +30,9 @@ jobs:
       run: |
         git config user.name 'github-actions'
         git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-    - name: Update tag with parameter
-      if: github.event.inputs.tag != ''
-      run: |
-        git tag -fa ${{ inputs.tag }} -m 'Retag ${{ inputs.tag }}'
-        git push origin ${{ inputs.tag }} --force
     - name: Update rolling tag
-      if: github.event.inputs.tag == ''
       run: |
-        git tag -fa v2 -m 'Retag v2'
-        git push origin v2 --force
+        # Get the major version from the latest tag
+        MAJOR_VERSION=`git tag --list --sort=-v:refname | head -n1 | cut -d. -f1`
+        git tag --force --annotate ${{ inputs.tag || '$MAJOR_VERSION' }} --message 'Retag ${{ inputs.tag || '$MAJOR_VERSION' }}'
+        git push origin ${{ inputs.tag || '$MAJOR_VERSION' }} --force
