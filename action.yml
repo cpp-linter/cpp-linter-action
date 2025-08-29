@@ -393,26 +393,26 @@ runs:
 
         let args = [
           '--style=${{ inputs.style }}'
-          --extensions '${{ inputs.extensions }}'
+          '--extensions=${{ inputs.extensions }}'
           '--tidy-checks=${{ inputs.tidy-checks }}'
-          --repo-root ${{ inputs.repo-root }}
-          --version ${{ inputs.version }}
-          --verbosity ${{ inputs.verbosity }}
-          --lines-changed-only ${{ inputs.lines-changed-only }}
-          --files-changed-only ${{ inputs.files-changed-only }}
-          --thread-comments ${{ inputs.thread-comments }}
-          --no-lgtm ${{ inputs.no-lgtm }}
-          --step-summary ${{ inputs.step-summary }}
+          '--repo-root=${{ inputs.repo-root }}'
+          '--version=${{ inputs.version }}'
+          '--verbosity=${{ inputs.verbosity }}'
+          '--lines-changed-only=${{ inputs.lines-changed-only }}'
+          '--files-changed-only=${{ inputs.files-changed-only }}'
+          '--thread-comments=${{ inputs.thread-comments }}'
+          '--no-lgtm=${{ inputs.no-lgtm }}'
+          '--step-summary=${{ inputs.step-summary }}'
           '--ignore=${{ inputs.ignore }}'
           '--ignore-tidy=${{ inputs.ignore-tidy }}'
           '--ignore-format=${{ inputs.ignore-format }}'
-          --database ${{ inputs.database }}
-          --file-annotations ${{ inputs.file-annotations }}
+          '--database=${{ inputs.database }}'
+          '--file-annotations=${{ inputs.file-annotations }}'
           '--extra-arg=${{ inputs.extra-args }}'
-          --tidy-review ${{ inputs.tidy-review }}
-          --format-review ${{ inputs.format-review }}
-          --passive-reviews ${{ inputs.passive-reviews }}
-          --jobs ${{ inputs.jobs }}
+          '--tidy-review=${{ inputs.tidy-review }}'
+          '--format-review=${{ inputs.format-review }}'
+          '--passive-reviews=${{ inputs.passive-reviews }}'
+          '--jobs=${{ inputs.jobs }}'
         ]
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
 
