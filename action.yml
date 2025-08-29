@@ -369,7 +369,7 @@ runs:
         )
 
         print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
-        mut uv_args = [sync --project $action_path --group action]
+        mut uv_args = [sync --project $action_path --group action --no-dev --link-mode=copy]
         if $verbosity {
           $uv_args = $uv_args | append '-v'
         }
@@ -392,27 +392,27 @@ runs:
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
 
         let args = [
-          --style="${{ inputs.style }}"
-          --extensions=${{ inputs.extensions }}
-          --tidy-checks="${{ inputs.tidy-checks }}"
-          --repo-root=${{ inputs.repo-root }}
-          --version=${{ inputs.version }}
-          --verbosity=${{ inputs.verbosity }}
-          --lines-changed-only=${{ inputs.lines-changed-only }}
-          --files-changed-only=${{ inputs.files-changed-only }}
-          --thread-comments=${{ inputs.thread-comments }}
-          --no-lgtm=${{ inputs.no-lgtm }}
-          --step-summary=${{ inputs.step-summary }}
-          --ignore="${{ inputs.ignore }}"
-          --ignore-tidy="${{ inputs.ignore-tidy }}"
-          --ignore-format="${{ inputs.ignore-format }}"
-          --database=${{ inputs.database }}
-          --file-annotations=${{ inputs.file-annotations }}
-          --extra-arg="${{ inputs.extra-args }}"
-          --tidy-review="${{ inputs.tidy-review }}"
-          --format-review="${{ inputs.format-review }}"
-          --passive-reviews="${{ inputs.passive-reviews }}"
-          --jobs=${{ inputs.jobs }}
+          '--style=${{ inputs.style }}'
+          '--extensions=${{ inputs.extensions }}'
+          '--tidy-checks=${{ inputs.tidy-checks }}'
+          '--repo-root=${{ inputs.repo-root }}'
+          '--version=${{ inputs.version }}'
+          '--verbosity=${{ inputs.verbosity }}'
+          '--lines-changed-only=${{ inputs.lines-changed-only }}'
+          '--files-changed-only=${{ inputs.files-changed-only }}'
+          '--thread-comments=${{ inputs.thread-comments }}'
+          '--no-lgtm=${{ inputs.no-lgtm }}'
+          '--step-summary=${{ inputs.step-summary }}'
+          '--ignore=${{ inputs.ignore }}'
+          '--ignore-tidy=${{ inputs.ignore-tidy }}'
+          '--ignore-format=${{ inputs.ignore-format }}'
+          '--database=${{ inputs.database }}'
+          '--file-annotations=${{ inputs.file-annotations }}'
+          '--extra-arg=${{ inputs.extra-args }}'
+          '--tidy-review=${{ inputs.tidy-review }}'
+          '--format-review=${{ inputs.format-review }}'
+          '--passive-reviews=${{ inputs.passive-reviews }}'
+          '--jobs=${{ inputs.jobs }}'
         ]
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
 
