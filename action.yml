@@ -323,6 +323,7 @@ runs:
       if: runner.os == 'macOS'
       shell: nu {0}
       run: |-
+        ^brew update
         let brew_install_arg = 'llvm@${{ inputs.version }}'
         let result = (^brew install $brew_install_arg) | complete
         print $result
