@@ -62,7 +62,7 @@ jobs:
           database: build
           verbosity: debug
           version: ${{ matrix.clang-version }}
-          thread-comments: ${{ matrix.clang-version == '12' && 'update' }}
+          thread-comments: ${{ github.event_name == 'pull_request' && matrix.clang-version == '12' && 'update' }}
           file-annotations: ${{ runner.os == 'Linux' && matrix.clang-version == '12' }}
           step-summary: ${{ matrix.clang-version == '12' }}
           extra-args: -std=c++14 -Wall
