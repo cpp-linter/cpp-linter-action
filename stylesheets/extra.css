@@ -1,0 +1,228 @@
+th {
+    background-color: var(--md-default-fg-color--lightest);
+}
+
+.md-header,
+.md-nav--primary .md-nav__title[for="__drawer"] {
+    background-color: #4051b5;
+}
+
+@keyframes heart {
+
+    0%,
+    40%,
+    80%,
+    to {
+        transform: scale(1)
+    }
+
+    20%,
+    60% {
+        transform: scale(1.15)
+    }
+}
+
+.md-typeset .mdx-heart {
+    animation: heart 1s infinite
+}
+
+.md-typeset .mdx-badge {
+    font-size: .85em
+}
+
+.md-typeset .mdx-badge--heart {
+    color: #ff4281;
+}
+
+.md-typeset .mdx-badge--heart.twemoji {
+    animation: heart 1s infinite
+}
+
+.md-typeset .mdx-badge--right {
+    float: right;
+    margin-left: .35em
+}
+
+[dir=ltr] .md-typeset .mdx-badge__icon {
+    border-top-left-radius: .1rem
+}
+
+[dir=rtl] .md-typeset .mdx-badge__icon {
+    border-top-right-radius: .1rem
+}
+
+[dir=ltr] .md-typeset .mdx-badge__icon {
+    border-bottom-left-radius: .1rem
+}
+
+[dir=rtl] .md-typeset .mdx-badge__icon {
+    border-bottom-right-radius: .1rem
+}
+
+.md-typeset .mdx-badge__icon {
+    background: var(--md-accent-fg-color--transparent);
+    padding: .2rem
+}
+
+.md-typeset .mdx-badge__icon:last-child {
+    border-radius: .1rem
+}
+
+[dir=ltr] .md-typeset .mdx-badge__text {
+    border-top-right-radius: .1rem
+}
+
+[dir=rtl] .md-typeset .mdx-badge__text {
+    border-top-left-radius: .1rem
+}
+
+[dir=ltr] .md-typeset .mdx-badge__text {
+    border-bottom-right-radius: .1rem
+}
+
+[dir=rtl] .md-typeset .mdx-badge__text {
+    border-bottom-left-radius: .1rem
+}
+
+.md-typeset .mdx-badge__text {
+    box-shadow: 0 0 0 1px inset var(--md-accent-fg-color--transparent);
+    padding: .2rem .3rem
+}
+
+.md-typeset .mdx-social {
+    height: min(27rem, 80vw);
+    position: relative
+}
+
+.md-typeset .mdx-social:hover .mdx-social__image {
+    background-color: #e4e4e40d
+}
+
+.md-typeset .mdx-social__layer {
+    margin-top: 4rem;
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: .25s cubic-bezier(.7, 0, .3, 1)
+}
+
+.md-typeset .mdx-social__layer:hover .mdx-social__label {
+    opacity: 1
+}
+
+.md-typeset .mdx-social__layer:hover .mdx-social__image {
+    background-color: #7f7f7ffc
+}
+
+.md-typeset .mdx-social__layer:hover~.mdx-social__layer {
+    opacity: 0
+}
+
+.md-typeset .mdx-social__image {
+    box-shadow: -.25rem .25rem .5rem #0000000d;
+    transform: rotate(-40deg) skew(15deg, 15deg) scale(.7);
+    transition: all .25s
+}
+
+.md-typeset .mdx-social__image img {
+    display: block
+}
+
+.md-typeset .mdx-social__label {
+    background-color: var(--md-default-fg-color--light);
+    color: var(--md-default-bg-color);
+    display: block;
+    opacity: 0;
+    padding: .2rem .4rem;
+    position: absolute;
+    transition: all .25s
+}
+
+.md-typeset .mdx-social:hover .mdx-social__layer:nth-child(6) {
+    transform: translateY(-30px)
+}
+
+.md-typeset .mdx-social:hover .mdx-social__layer:nth-child(5) {
+    transform: translateY(-20px)
+}
+
+.md-typeset .mdx-social:hover .mdx-social__layer:nth-child(4) {
+    transform: translateY(-10px)
+}
+
+.md-typeset .mdx-social:hover .mdx-social__layer:nth-child(3) {
+    transform: translateY(0)
+}
+
+.md-typeset .mdx-social:hover .mdx-social__layer:nth-child(2) {
+    transform: translateY(10px)
+}
+
+.md-typeset .mdx-social:hover .mdx-social__layer:first-child {
+    transform: translateY(20px)
+}
+
+.md-typeset .mdx-social:hover .mdx-social__layer:nth-child(0) {
+    transform: translateY(30px)
+}
+
+.md-banner {
+    color: var(--md-footer-fg-color--lighter)
+}
+
+.md-banner strong {
+    white-space: nowrap
+}
+
+.md-banner a,
+.md-banner strong {
+    color: var(--md-footer-fg-color)
+}
+
+.md-banner a:focus,
+.md-banner a:hover {
+    color: currentcolor
+}
+
+.md-banner a:focus .twemoji,
+.md-banner a:hover .twemoji {
+    background-color: var(--md-footer-fg-color);
+    box-shadow: none
+}
+
+.md-banner .twemoji {
+    border-radius: 100%;
+    box-shadow: inset 0 0 0 .05rem currentcolor;
+    display: inline-block;
+    height: 1.2rem;
+    padding: .25rem;
+    transition: all .25s;
+    vertical-align: bottom;
+    width: 1.2rem
+}
+
+.md-banner .twemoji svg {
+    display: block;
+    max-height: none
+}
+
+/* annotation buttons' pulse animation */
+a.md-annotation__index {
+    border-radius: 2.2ch;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 var(--md-accent-fg-color);
+        transform: scale(.95)
+    }
+
+    75% {
+        box-shadow: 0 0 0 .625em transparent;
+        transform: scale(1)
+    }
+
+    to {
+        box-shadow: 0 0 0 0 transparent;
+        transform: scale(.95)
+    }
+}
