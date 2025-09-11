@@ -84,6 +84,7 @@ markdown_extensions:
   - pymdownx.highlight:
       linenums_style: pymdownx-inline
   - pymdownx.inlinehilite
+  - pymdownx.details
   - pymdownx.snippets:
       check_paths: true
   - attr_list
