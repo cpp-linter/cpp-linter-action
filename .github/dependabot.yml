@@ -18,7 +18,7 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      action:
+      pip:
         patterns:
           - "clang-tools*"
           - "cpp-linter*"
@@ -33,13 +33,13 @@ updates:
           - "pre-commit*"
           - "ruff*"
         update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
+          - "major"
+          - "minor"
       docs:
         patterns:
           - "markdown-gfm-admonition*"
           - "mkdocs*"
           - "pyyaml*"
         update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
+          - "major"
+          - "minor"
