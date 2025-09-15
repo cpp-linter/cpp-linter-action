@@ -30,8 +30,6 @@ updates:
         update-types:
           - "major"
           - "minor"
-        schedule:
-          interval: "quarterly"
       docs:
         patterns:
           - "markdown-gfm-admonition*"
@@ -40,5 +38,3 @@ updates:
         update-types:
           - "major"
           - "minor"
-        schedule:
-          interval: "quarterly"
