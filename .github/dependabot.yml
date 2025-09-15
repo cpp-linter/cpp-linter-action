@@ -18,6 +18,28 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      pip:
+      action:
         patterns:
-          - '*'
+          - "clang-tools*"
+          - "cpp-linter*"
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: "quarterly"
+    groups:
+      dev:
+        patterns:
+          - "mypy*"
+          - "pre-commit*"
+          - "ruff*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      docs:
+        patterns:
+          - "markdown-gfm-admonition*"
+          - "mkdocs*"
+          - "pyyaml*"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
