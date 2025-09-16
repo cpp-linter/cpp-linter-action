@@ -20,21 +20,24 @@ updates:
     groups:
       pip:
         patterns:
-          - "clang-tools*"
-          - "cpp-linter*"
+          - "clang-tools"
+          - "cpp-linter"
       dev:
         patterns:
-          - "mypy*"
-          - "pre-commit*"
-          - "ruff*"
+          - "mypy"
+          - "pre-commit"
+          - "ruff"
         update-types:
           - "major"
           - "minor"
       docs:
         patterns:
-          - "markdown-gfm-admonition*"
-          - "mkdocs*"
-          - "pyyaml*"
+          - "mkdocs-gen-files"
+          - "markdown-gfm-admonition"
+          - "mkdocs-include-markdown-plugin"
+          - "mkdocs-material"
+          - "mkdocs"
+          - "pyyaml"
         update-types:
           - "major"
           - "minor"
