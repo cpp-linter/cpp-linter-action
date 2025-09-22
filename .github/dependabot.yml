@@ -27,6 +27,10 @@ updates:
     directory: /
     schedule:
       interval: "quarterly"
+    labels:
+      - "dependencies"
+      - "python:uv"
+      - "skip-changelog"
     groups:
       dev:
         patterns:
