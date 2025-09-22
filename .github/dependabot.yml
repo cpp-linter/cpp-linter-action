@@ -13,7 +13,7 @@ updates:
       actions:
         patterns:
           - "*"
-  - package-ecosystem: uv
+  - package-ecosystem: pip
     directory: /
     schedule:
       interval: "daily"
@@ -22,14 +22,17 @@ updates:
         patterns:
           - "clang-tools"
           - "cpp-linter"
+
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: "quarterly"
+    groups:
       dev:
         patterns:
           - "mypy"
           - "pre-commit"
           - "ruff"
-        update-types:
-          - "major"
-          - "minor"
       docs:
         patterns:
           - "mkdocs-gen-files"
@@ -38,6 +41,3 @@ updates:
           - "mkdocs-material"
           - "mkdocs"
           - "pyyaml"
-        update-types:
-          - "major"
-          - "minor"
