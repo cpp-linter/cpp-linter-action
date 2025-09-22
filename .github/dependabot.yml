@@ -27,9 +27,7 @@ updates:
           - "mypy"
           - "pre-commit"
           - "ruff"
-        update-types:
-          - "major"
-          - "minor"
+        applies-to: "security-updates"
       docs:
         patterns:
           - "mkdocs-gen-files"
@@ -38,6 +36,4 @@ updates:
           - "mkdocs-material"
           - "mkdocs"
           - "pyyaml"
-        update-types:
-          - "major"
-          - "minor"
+        applies-to: "security-updates"
