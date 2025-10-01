@@ -23,22 +23,18 @@ updates:
         patterns:
           - "*"
         exclude-patterns:
-          - "mypy"
-          - "pre-commit"
-          - "ruff"
-          - "mkdocs-gen-files"
-          - "markdown-gfm-admonition"
-          - "mkdocs-include-markdown-plugin"
-          - "mkdocs-material"
-          - "mkdocs"
-          - "pyyaml"
+          - "mypy*"
+          - "pre-commit*"
+          - "ruff*"
+          - "mkdocs*"
+          - "pyyaml*"
       dev:
-        # updates about everything else
+        # updates about everything else (dev and docs)
         patterns:
           - "*"
         exclude-patterns:
-          - "clang-tools"
-          - "cpp-linter"
+          - "clang-tools*"
+          - "cpp-linter*"
         update-types:
           - major
           - minor
