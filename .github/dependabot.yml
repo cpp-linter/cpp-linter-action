@@ -18,22 +18,27 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      pip:
+      org:
+        # updates about org-maintained packages
         patterns:
-          - "clang-tools"
-          - "cpp-linter"
-      dev:
-        patterns:
+          - "*"
+        exclude-patterns:
           - "mypy"
           - "pre-commit"
           - "ruff"
-        applies-to: "security-updates"
-      docs:
-        patterns:
           - "mkdocs-gen-files"
           - "markdown-gfm-admonition"
           - "mkdocs-include-markdown-plugin"
           - "mkdocs-material"
           - "mkdocs"
           - "pyyaml"
-        applies-to: "security-updates"
+      dev:
+        # updates about everything else
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "clang-tools"
+          - "cpp-linter"
+        update-types:
+          - major
+          - minor
