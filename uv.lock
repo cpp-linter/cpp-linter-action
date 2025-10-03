@@ -249,7 +249,7 @@ wheels = [
 
 [[package]]
 name = "cpp-linter"
-version = "1.11.1"
+version = "1.11.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pygit2", version = "1.15.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
@@ -257,9 +257,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0b/17/9cbed5b28f31307d340c2e85e6c9342ce9609d8dbfc40a42f797d55c681e/cpp_linter-1.11.1.tar.gz", hash = "sha256:ffba9f3dc4096d036bc011b09574c05cb27240eda57c2ea8e04db3898536e420", size = 2523276, upload-time = "2025-09-28T13:51:20.28Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/77/6a/de1a47b642ec16c8caddb45818d98d112ebae10b736352587788ee6d87a3/cpp_linter-1.11.2.tar.gz", hash = "sha256:1aa0c252869d5b262dd35ef56c9ffb1a3b08ff861d00823500ecf5198a087a9e", size = 2523294, upload-time = "2025-10-03T04:15:56.656Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ef/d4/c9b3404dfd9a0519c2c599cfaacc8f9e0639b90a5a83b3703011cac74ea0/cpp_linter-1.11.1-py3-none-any.whl", hash = "sha256:6c336b425b92298575fdb043d642af530c1d5d13cfdc84938fd17195af352240", size = 42727, upload-time = "2025-09-28T13:51:18.757Z" },
+    { url = "https://files.pythonhosted.org/packages/c0/9b/38223803edfe29cd376ed367392f6ae394fa46ccc3bde66ae57e7d3422dd/cpp_linter-1.11.2-py3-none-any.whl", hash = "sha256:dc303c353709ef3d6014910896e59cfb6403a731b0129d9cafcf6868243bcab3", size = 42732, upload-time = "2025-10-03T04:15:55.119Z" },
 ]
 
 [[package]]
@@ -291,7 +291,7 @@ docs = [
 [package.metadata.requires-dev]
 action = [
     { name = "clang-tools", specifier = "==0.15.3" },
-    { name = "cpp-linter", specifier = "==1.11.1" },
+    { name = "cpp-linter", specifier = "==1.11.2" },
 ]
 dev = [
     { name = "mypy", specifier = ">=1.17.1" },
