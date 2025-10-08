@@ -9,15 +9,7 @@
 [io-doc]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs
 [recipes-doc]: https://cpp-linter.github.io/cpp-linter-action/examples
 
-[format-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png
-[tidy-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png
-[thread-comment-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/comment.png
-[step-summary-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/step-summary.png
-[tidy-review-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/tidy-review.png
-[format-review-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-review.png
-[format-suggestion-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/format-suggestion.png
-
-<!--README-start-->
+<!-- start -->
 
 # C/C++ Linter Action <sub><sup>| clang-format & clang-tidy</sup></sub>
 
@@ -95,48 +87,78 @@ See also our [example recipes][recipes-doc].
   <strong> and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more</a>.</strong>
 </p>
 
+<!-- stop -->
 ## Example
 
 ### Annotations
 
-Using [`file-annotations`][file-annotations]:
+Using [`--file-annotations`][file-annotations]:
 
 #### clang-format annotations
 
-![clang-format annotations][format-annotations-preview]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/format-annotation-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/format-annotation-light.png">
+  <img alt="format-annotation-preview." src="docs/images/format-annotation-light.png">
+</picture>
 
 #### clang-tidy annotations
 
-![clang-tidy annotations][tidy-annotations-preview]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/tidy-annotation-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/tidy-annotation-light.png">
+  <img alt="tidy-annotation-preview." src="docs/images/tidy-annotation-light.png">
+</picture>
 
 ### Thread Comment
 
-Using [`thread-comments`][thread-comments]:
+Using [`--thread-comments`][thread-comments]:
 
-![sample thread-comment][thread-comment-preview]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/thread-comment-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/thread-comment-light.png">
+  <img alt="thread-comment-preview." src="docs/images/thread-comment-light.png">
+</picture>
 
 ### Step Summary
 
-Using [`step-summary`][step-summary]:
+Using [`--step-summary`][step-summary]:
 
-![step summary][step-summary-preview]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/step-summary-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/step-summary-light.png">
+  <img alt="step-summary-preview." src="docs/images/step-summary-light.png">
+</picture>
 
 ### Pull Request Review
 
-#### Only clang-tidy
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/review-summary-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/review-summary-light.png">
+  <img alt="review-summary-preview." src="docs/images/review-summary-light.png">
+</picture>
 
-Using [`tidy-review`][tidy-review]:
+#### clang-tidy suggestion
 
-![sample tidy-review][tidy-review-preview]
+Using [`--tidy-review`][tidy-review]:
 
-#### Only clang-format
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/tidy-review-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/tidy-review-light.png">
+  <img alt="tidy-review-preview." src="docs/images/tidy-review-light.png">
+</picture>
 
-Using [`format-review`][format-review]:
+#### clang-format suggestion
 
-![sample format-review][format-review-preview]
+Using [`--format-review`][format-review]:
 
-![sample format-suggestion][format-suggestion-preview]
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/format-review-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/format-review-light.png">
+  <img alt="format-review-preview." src="docs/images/format-review-light.png">
+</picture>
 
+<!-- resume -->
 ## Add C/C++ Linter Action badge in README
 
 You can show C/C++ Linter Action status with a badge in your repository README

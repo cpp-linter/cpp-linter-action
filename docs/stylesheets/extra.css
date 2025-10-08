@@ -2,9 +2,23 @@ th {
     background-color: var(--md-default-fg-color--lightest);
 }
 
-.md-header,
-.md-nav--primary .md-nav__title[for="__drawer"] {
+[data-md-color-scheme="default"] img.dark-only {
+    display: none;
+
+}
+
+[data-md-color-scheme="slate"] img.light-only {
+    display: none;
+}
+
+.md-header {
     background-color: #4051b5;
+}
+
+@media screen and (max-width: 76.2344em) {
+    .md-nav--primary .md-nav__title[for="__drawer"] {
+        background-color: #4051b5;
+    }
 }
 
 @keyframes heart {
