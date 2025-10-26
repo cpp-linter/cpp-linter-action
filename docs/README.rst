@@ -1,13 +1,13 @@
 How to build the docs
 =====================
 
-From the root directory of the repository, do the following to steps
+From the root directory of the repository, do the following in steps
 
 1. Install docs' dependencies
 
    .. code-block:: text
 
-       pip install -r docs/requirements.txt
+       pip install --group 'docs'
 
    On Linux, you may need to use `pip3` instead.
 
@@ -17,7 +17,7 @@ From the root directory of the repository, do the following to steps
 
        mkdocs build
 
-   or use the following command to see changes rendered in realtime.
+   Or use the following command to see changes rendered in real-time.
 
    .. code-block:: text
 
