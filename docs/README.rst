@@ -9,7 +9,6 @@ From the root directory of the repository, do the following in steps
 
        pip install --group 'docs'
 
-   On Linux, you may need to use `pip3` instead.
 
 2. Build the docs
 
