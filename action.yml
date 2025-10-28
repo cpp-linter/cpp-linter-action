@@ -242,7 +242,7 @@ runs:
     - name: Setup nu shell
       # I'm done writing everything twice (in bash and powershell)
       # With nu shell, we use the same shell/script for all platforms
-      uses: hustcer/setup-nu@985d59ec83ae3e3418f9d36471cda38b9d8b9879 # v3.20.0
+      uses: hustcer/setup-nu@3a97c8160c2bb5af321a03336e7addc28f94444e # v3.20.0
       with:
         version: '0.106.1'
 
