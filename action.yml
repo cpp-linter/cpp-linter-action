@@ -337,7 +337,7 @@ runs:
       shell: nu {0}
       env:
         UV_NO_MODIFY_PATH: 1
-        UV_VERSION: '0.8.11'
+        UV_VERSION: '0.9.5'
       run: |-
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'

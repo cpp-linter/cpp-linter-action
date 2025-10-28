@@ -5,23 +5,26 @@ on:
     branches: [main]
     paths:
       - 'action.yml'
-      - 'requirements.txt'
+      - '.python-version'
+      - 'uv.lock'
       - 'docs/examples/demo/**'
       - '.github/workflows/self-test.yml'
   pull_request:
-    branches: main
+    branches: [main]
     paths:
       - 'action.yml'
-      - 'requirements.txt'
+      - '.python-version'
+      - 'uv.lock'
       - 'docs/examples/demo/**'
       - '.github/workflows/self-test.yml'
-  pull_request_target:
-    branches: main
-    paths:
-      - 'action.yml'
-      - 'requirements.txt'
-      - 'docs/examples/demo/**'
-      - '.github/workflows/self-test.yml'
+  # pull_request_target:
+  #   branches: [main]
+  #   paths:
+  #     - 'action.yml'
+  #     - '.python-version'
+  #     - 'uv.lock'
+  #     - 'docs/examples/demo/**'
+  #     - '.github/workflows/self-test.yml'
 
 jobs:
   test:
