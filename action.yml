@@ -318,6 +318,18 @@ runs:
             print $result
           }
         }
+        let keep_ppa = (
+          $env
+          | get --optional 'KEEP_DEBIAN_LLVM_PPA'
+          | ($in == true or $in == 'true' or $in == 1 or $in == '1')
+        )
+        if $keep_ppa {
+          if $has_sudo {
+            ^sudo rm /etc/apt/sources.list.d/*llvm*.list
+          } else {
+            ^rm /etc/apt/sources.list.d/*llvm*.list
+          }
+        }
 
     - name: Install MacOS clang dependencies
       if: runner.os == 'macOS'
