@@ -391,6 +391,13 @@ runs:
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
+        # avoid passing database path with Windows-style path separators
+        let is_windows = (sys host | get 'name') == 'Windows'
+        let database = if $is_windows {
+          '${{ inputs.database }}' | str replace "\\" "/"
+        } else {
+          '${{ inputs.database }}'
+        }
 
         let args = [
           '--style=${{ inputs.style }}'
@@ -407,7 +414,7 @@ runs:
           '--ignore=${{ inputs.ignore }}'
           '--ignore-tidy=${{ inputs.ignore-tidy }}'
           '--ignore-format=${{ inputs.ignore-format }}'
-          '--database=${{ inputs.database }}'
+          $'--database=($database)'
           '--file-annotations=${{ inputs.file-annotations }}'
           '--extra-arg=${{ inputs.extra-args }}'
           '--tidy-review=${{ inputs.tidy-review }}'
