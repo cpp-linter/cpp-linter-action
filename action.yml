@@ -378,12 +378,36 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
         print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
-        let tools = ['clang-format' 'clang-tidy']
+        let version = "${{ inputs.version }}" | into int
+
+        $uv_args = [run --no-sync --project $action_path --directory (pwd)]
+        if $verbosity {
+          $uv_args = $uv_args | append '-v'
+        }
+
+        mut tools = []
+        if ("${{ inputs.tidy-checks }}" != "-*") {
+          # clang-tidy is being used
+          $tools = $tools | append "clang-tidy"
+        }
+        if ("${{ inputs.style }}" | is-not-empty) {
+          # clang-format is being used
+          $tools = $tools | append "clang-format"
+        }
+
         for tool in $tools {
-          let cmd = [clang-tools-wheel --tool $tool --version ${{ inputs.version }}]
-          $uv_args = [run --no-sync --project $action_path --directory (pwd)]
-          if $verbosity {
-            $uv_args = $uv_args | append '-v'
+          print $"Installing ($tool) ($version)"
+          let cmd = if (
+            (($version < 13) and ($tool | str ends-with "tidy"))
+            or (
+              ($version <= 9)
+              and ($tool | str ends-with "format")
+              and not ((sys host | get 'long_os_version') | str starts-with "Linux")
+            )
+          ) {
+            [clang-tools --tool $tool --install $version]
+          } else {
+            [clang-tools-wheel --tool $tool --version $version]
           }
           ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
