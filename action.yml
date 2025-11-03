@@ -40,6 +40,7 @@ inputs:
     description: |
       The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use.
       Accepted options are strings which can be 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10 or 9.
+      clang-tidy only supports versions 13 and above.
 
       - Set this option to a blank string (`''`) to use the platform's default installed version.
       - This value can also be a path to where the clang tools are installed (if using a custom install location).
@@ -377,7 +378,7 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
         print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
-        let cmd = [clang-tools -i ${{ inputs.version }} -b]
+        let cmd = [clang-tools-wheel --tool clang-format --version ${{ inputs.version }}, clang-tools-wheel --tool clang-tidy --version ${{ inputs.version }}]
         $uv_args = [run --no-sync --project $action_path --directory (pwd)]
         if $verbosity {
           $uv_args = $uv_args | append '-v'
