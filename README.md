@@ -188,13 +188,12 @@ Otherwise, [nushell] and/or the LLVM-provided bash script will fail to run.
 ### On macOS runners
 
 The specified `version` of `clang-format` and `clang-tidy` is installed via Homebrew.
-Failing that, we attempt to use static binaries that we built ourselves;
-see [cpp-linter/clang-tools-pip] and [cpp-linter/clang-tools-static-binaries] projects for more detail.
+Failing that, we attempt to use Python wheel that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
 
 ### On Windows runners
 
-For Windows runners, we only use clang tools built as static binaries.
-See [cpp-linter/clang-tools-pip] and [cpp-linter/clang-tools-static-binaries] projects for more detail.
+For Windows runners, we only use clang tools Python wheels.
+See [cpp-linter/clang-tools-pip] project for more detail.
 
 ## License
 
@@ -203,7 +202,6 @@ The scripts and documentation in this project are released under the [MIT Licens
 [nushell]: https://www.nushell.sh/
 [uv]: https://docs.astral.sh/uv/
 [cpp-linter/clang-tools-pip]: https://github.com/cpp-linter/clang-tools-pip
-[cpp-linter/clang-tools-static-binaries]: https://github.com/cpp-linter/clang-tools-static-binaries
 [gh-container-syntax]: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer
 
 <!--README-end-->
