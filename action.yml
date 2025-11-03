@@ -378,12 +378,15 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
         print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
-        let cmd = [clang-tools-wheel --tool clang-format --version ${{ inputs.version }}, clang-tools-wheel --tool clang-tidy --version ${{ inputs.version }}]
-        $uv_args = [run --no-sync --project $action_path --directory (pwd)]
-        if $verbosity {
-          $uv_args = $uv_args | append '-v'
+        let tools = ['clang-format' 'clang-tidy']
+        for tool in $tools {
+          let cmd = [clang-tools-wheel --tool $tool --version ${{ inputs.version }}]
+          $uv_args = [run --no-sync --project $action_path --directory (pwd)]
+          if $verbosity {
+            $uv_args = $uv_args | append '-v'
+          }
+          ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
-        ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
 
     - name: Run cpp-linter
       id: cpp-linter
