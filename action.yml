@@ -378,7 +378,12 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
         print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
-        let version = "${{ inputs.version }}" | into int
+        let version_str = "${{ inputs.version }}"
+        if ($version_str | is-empty) {
+          print $"(ansi yellow)Using platform default clang tools \(version not specified)(ansi reset)"
+          exit 0
+        }
+        let version = $version_str | into int
 
         $uv_args = [run --no-sync --project $action_path --directory (pwd)]
         if $verbosity {
