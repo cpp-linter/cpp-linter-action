@@ -348,7 +348,7 @@ runs:
         }
 
         print $"\n(ansi purple)Installing uv version ($env.UV_VERSION)(ansi reset)"
-        let is_windows = (sys host | get 'name') == 'Windows'
+        let is_windows = (version | get "build_os") | str starts-with "windows"
         let uv_installer_url = if $is_windows {
           $"https://astral.sh/uv/($env.UV_VERSION)/install.ps1"
         } else {
@@ -386,7 +386,7 @@ runs:
         } catch {
           print "Version is not an integer"
           if not ($version_str | path exists) {
-            print "::error title=Invalid version input::Version must be a blank sting, an integer, or a valid path"
+            print "::error title=Invalid version input::Version must be a blank string, an integer, or a valid path"
             exit 1
           } else {
             print $"(ansi yellow)Using custom clang tools installation at path: ($version_str)(ansi reset)"
@@ -417,7 +417,7 @@ runs:
             or (
               ($version <= 9)
               and ($tool | str ends-with "format")
-              and not ((sys host | get 'long_os_version') | str starts-with "Linux")
+              and not ((version | get "build_os") | str starts-with "linux")
             )
           ) {
             [clang-tools --tool $tool --install $version]
