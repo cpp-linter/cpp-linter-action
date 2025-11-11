@@ -376,7 +376,6 @@ runs:
         }
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
-        print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
         let version_str = "${{ inputs.version }}"
         if ($version_str | is-empty) {
           print $"(ansi yellow)Using platform default clang tools \(version not specified)(ansi reset)"
@@ -399,6 +398,7 @@ runs:
           $tools = $tools | append "clang-format"
         }
 
+        print $"\n(ansi purple)Ensuring ($tools | str join " and ") ${{ inputs.version }} are present(ansi reset)"
         for tool in $tools {
           print $"Installing ($tool) ($version)"
           let cmd = if (
