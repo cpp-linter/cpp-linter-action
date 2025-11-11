@@ -381,7 +381,18 @@ runs:
           print $"(ansi yellow)Using platform default clang tools \(version not specified)(ansi reset)"
           exit 0
         }
-        let version = $version_str | into int
+        let version = try {
+          $version_str | into int
+        } catch {
+          print "Version is not an integer"
+          if not ($version_str | path exists) {
+            print "::error title=Invalid version input::Version must be a blank sting, an integer, or a valid path"
+            exit 1
+          } else {
+            print $"(ansi yellow)Using custom clang tools installation at path: ($version_str)(ansi reset)"
+            exit 0
+          }
+        }
 
         $uv_args = [run --no-sync --project $action_path --directory (pwd)]
         if $verbosity {
