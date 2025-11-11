@@ -185,15 +185,25 @@ apt-get install -y libc6 wget lsb-release software-properties-common gnupg
 
 Otherwise, [nushell] and/or the LLVM-provided bash script will fail to run.
 
+If installing clang tools fails using the `apt` package manager, then we alteratively try (in order of attempts):
+
+1. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
+2. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
+
 ### On macOS runners
 
-The specified `version` of `clang-format` and `clang-tidy` is installed via Homebrew.
-Failing that, we attempt to use Python wheel that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
+The specified `version` of `clang-format` and `clang-tidy` is installed via (in order of attempts):
+
+1. Homebrew
+2. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
+3. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
 
 ### On Windows runners
 
-For Windows runners, we only use clang tools Python wheels.
-See [cpp-linter/clang-tools-pip] project for more detail.
+For Windows runners, we use clang tools installed via (in order of attempts):
+
+1. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
+2. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
 
 ## License
 
@@ -203,5 +213,7 @@ The scripts and documentation in this project are released under the [MIT Licens
 [uv]: https://docs.astral.sh/uv/
 [cpp-linter/clang-tools-pip]: https://github.com/cpp-linter/clang-tools-pip
 [gh-container-syntax]: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer
+[clang-tidy-wheel]: https://pypi.org/project/clang-tidy
+[clang-format-wheel]: https://pypi.org/project/clang-format
 
 <!--README-end-->
