@@ -348,7 +348,7 @@ runs:
         }
 
         print $"\n(ansi purple)Installing uv version ($env.UV_VERSION)(ansi reset)"
-        let is_windows = (sys host | get 'name') == 'Windows'
+        let is_windows = (version | get "build_os") | str starts-with "windows"
         let uv_installer_url = if $is_windows {
           $"https://astral.sh/uv/($env.UV_VERSION)/install.ps1"
         } else {
@@ -376,13 +376,56 @@ runs:
         }
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
-        print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
-        let cmd = [clang-tools -i ${{ inputs.version }} -b]
+        let version_str = "${{ inputs.version }}"
+        if ($version_str | is-empty) {
+          print $"(ansi yellow)Using platform default clang tools \(version not specified)(ansi reset)"
+          exit 0
+        }
+        let version = try {
+          $version_str | into int
+        } catch {
+          print "Version is not an integer"
+          if not ($version_str | path exists) {
+            print "::error title=Invalid version input::Version must be a blank string, an integer, or a valid path"
+            exit 1
+          } else {
+            print $"(ansi yellow)Using custom clang tools installation at path: ($version_str)(ansi reset)"
+            exit 0
+          }
+        }
+
         $uv_args = [run --no-sync --project $action_path --directory (pwd)]
         if $verbosity {
           $uv_args = $uv_args | append '-v'
         }
-        ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
+
+        mut tools = []
+        if ("${{ inputs.tidy-checks }}" != "-*") {
+          # clang-tidy is being used
+          $tools = $tools | append "clang-tidy"
+        }
+        if ("${{ inputs.style }}" | is-not-empty) {
+          # clang-format is being used
+          $tools = $tools | append "clang-format"
+        }
+
+        print $"\n(ansi purple)Ensuring ($tools | str join " and ") ${{ inputs.version }} are present(ansi reset)"
+        for tool in $tools {
+          print $"Installing ($tool) ($version)"
+          let cmd = if (
+            (($version < 13) and ($tool | str ends-with "tidy"))
+            or (
+              ($version <= 9)
+              and ($tool | str ends-with "format")
+              and not ((version | get "build_os") | str starts-with "linux")
+            )
+          ) {
+            [clang-tools --tool $tool --install $version]
+          } else {
+            [clang-tools-wheel --tool $tool --version $version]
+          }
+          ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
+        }
 
     - name: Run cpp-linter
       id: cpp-linter
