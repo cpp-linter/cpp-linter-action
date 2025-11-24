@@ -39,6 +39,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
+        # v6.0.0
         uses: actions/checkout@v6
 
       - name: Cache the build artifacts
