@@ -13,7 +13,7 @@ jobs:
     permissions: # (1)!
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5  # v5.0.1
+      - uses: actions/checkout@v5
 
       # ... optionally setup build env to create a compilation database
 
