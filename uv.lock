@@ -453,14 +453,14 @@ wheels = [
 
 [[package]]
 name = "markdown-gfm-admonition"
-version = "0.1.1"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "markdown" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/63/80/05c5b58356c85c336e88eaaae49bd058917531504914dd1c95b5a52a851b/markdown_gfm_admonition-0.1.1.tar.gz", hash = "sha256:a0cb00d183b2be4a4bfc355a74500ddb9818c7ce8d9ac99a63ba7f689866c13d", size = 6384, upload-time = "2024-08-01T10:42:41.277Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f4/5f/d399750bd1dbf3f41b883fd61816d07b5ad3774a2d539b12a1273bc90ee4/markdown_gfm_admonition-0.2.0.tar.gz", hash = "sha256:470c7168838a04c96b2b0d465a9986929f6658bec5e012cb04ff8e66f876d461", size = 5757, upload-time = "2025-11-25T08:44:48.902Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/62/fe/e7ccdd9e542afebf61e95f0a0ce0557c494e798d8ca39903a7f9bd83bdca/markdown_gfm_admonition-0.1.1-py3-none-any.whl", hash = "sha256:f6626287a34adf0cdc44f953086fcb9aaaf0cb698f01f3a36b46758c30f7d701", size = 8740, upload-time = "2024-08-01T10:42:40.035Z" },
+    { url = "https://files.pythonhosted.org/packages/8d/6b/4d75cd4f9ed6602e7b81248d0e2c49f75cbf4eb09019bbe8d43fcedeb607/markdown_gfm_admonition-0.2.0-py3-none-any.whl", hash = "sha256:03560199f1aaebb5a7848831e27b6fd39ab5e84903dee67a8d5c9fd4d4429fab", size = 6373, upload-time = "2025-11-25T08:44:47.816Z" },
 ]
 
 [[package]]
