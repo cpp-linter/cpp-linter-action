@@ -13,6 +13,7 @@ dev = [
     "mypy>=1.17.1",
     "pre-commit>=4.3.0",
     "ruff>=0.12.8",
+    "types-pyyaml>=6.0.12.20250915",
 ]
 docs = [
     "markdown-gfm-admonition>=0.1.1",

@@ -7,17 +7,23 @@ From the root directory of the repository, do the following in steps
 
    .. code-block:: text
 
-       pip install --group 'docs'
+       cargo install mdbook --locked
+
+    Or quicker if you have `cargo-binstall` installed:
+
+   .. code-block:: text
+
+       cargo binstall mdbook
 
 
 2. Build the docs
 
    .. code-block:: text
 
-       mkdocs build
+       mdbook build
 
    Or use the following command to see changes rendered in real-time.
 
    .. code-block:: text
 
-       mkdocs serve
+       mdbook serve

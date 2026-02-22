@@ -1,11 +1,19 @@
 from pathlib import Path
-from typing import Union, Dict, Any
+import re
+from typing import Union, Dict, Any, cast
 import yaml
-import mkdocs_gen_files
+import json
+import sys
 
-FILENAME = "inputs-outputs.md"
 
-with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
+IO_DOC = "inputs-outputs.md"
+DOC_START = "# Inputs and Outputs\n\n"
+
+
+def write_io_doc() -> str:
+    """Generates the content for the inputs-outputs.md file by
+    merging info from action.yml and docs/action.yml"""
+
     action_yml = Path(__file__).parent.parent / "action.yml"
     action_doc = Path(__file__).parent / "action.yml"
     a_dict: Dict[str, Any] = yaml.safe_load(action_yml.read_bytes())
@@ -19,27 +27,24 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
                 print(
                     "::error file=docs/action.yml,title={title}::{message}".format(
                         title=f"Undocumented {info_key} field `{k}` in actions.yml",
-                        message=(
-                            f"Field '{k}' not found in docs/action.yml mapping:"
-                        ),
+                        message=(f"Field '{k}' not found in docs/action.yml mapping:"),
                     ),
-                    info_key
+                    info_key,
                 )
                 continue
             b_dict[info_key][k].update(v)
 
     doc = "".join(
         [
-            "---\ntitle: Inputs and Outputs\n---\n\n" "<!--\n",
-            "    this page was generated from action.yml ",
+            DOC_START,
+            "<!--\nthis page was generated from action.yml ",
             "using the gen_io_doc.py script.\n",
             "    CHANGES TO inputs-outputs.md WILL BE LOST & OVERWRITTEN\n-->\n\n",
-            "# Inputs and Outputs\n\n",
             "These are the action inputs and outputs offered by cpp-linter-action.\n",
         ]
     )
     assert "inputs" in b_dict
-    doc += "\n## Inputs\n"
+    doc += "\n## Inputs\n\n"
     for action_input, input_metadata in b_dict["inputs"].items():
         doc += f"### `{action_input}`\n\n"
 
@@ -54,28 +59,28 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
             )
         else:
             min_ver = input_metadata["minimum-version"]
-            doc += f"<!-- md:version {min_ver} -->\n"
+            doc += _badge_for_version(min_ver) + "\n"
 
-        assert (
-            "default" in input_metadata
-        ), f"default value for `{action_input}` not set in action.yml"
+        assert "default" in input_metadata, (
+            f"default value for `{action_input}` not set in action.yml"
+        )
         default: Union[str, bool] = input_metadata["default"]
         if isinstance(default, bool):
             default = str(default).lower()
         elif isinstance(default, str):
             default = repr(default)  # add quotes around value
-        doc += f"<!-- md:default {default} -->\n"
+        doc += _badge_for_default(default) + "\n"
 
         if "experimental" in input_metadata and input_metadata["experimental"] is True:
-            doc += "<!-- md:flag experimental -->\n"
+            doc += _badge_for_experimental() + "\n"
 
         if "required-permission" in input_metadata:
             permission = input_metadata["required-permission"]
-            doc += f"<!-- md:permission {permission} -->\n"
+            doc += _badge_for_permissions(permission) + "\n"
 
-        assert (
-            "description" in input_metadata
-        ), f"`{action_input}` description not found in action.yml"
+        assert "description" in input_metadata, (
+            f"`{action_input}` description not found in action.yml"
+        )
         doc += "\n" + input_metadata["description"] + "\n"
 
     assert "outputs" in b_dict
@@ -99,13 +104,87 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
             )
         else:
             min_ver = output_metadata["minimum-version"]
-            doc += f"<!-- md:version {min_ver} -->\n"
+            doc += _badge_for_version(min_ver) + "\n"
 
-        assert (
-            "description" in output_metadata
-        ), f"`{action_output}` description not found in action.yml"
+        assert "description" in output_metadata, (
+            f"`{action_output}` description not found in action.yml"
+        )
         doc += "\n" + output_metadata["description"] + "\n"
 
-    print(doc, file=io_doc)
+    return doc
 
-mkdocs_gen_files.set_edit_path(FILENAME, "gen_io_doc.py")
+
+def _badge(icon: str, text: str = "") -> str:
+    """Create badge"""
+    return "".join(
+        [
+            '<span class="mdx-badge">',
+            *([f'<span class="mdx-badge__icon">{icon}</span>'] if icon else []),
+            *([f'<span class="mdx-badge__text">{text}</span>'] if text else []),
+            "</span>",
+        ]
+    )
+
+
+def _badge_for_version(text: str) -> str:
+    """Create badge for version"""
+    icon = '<i class="fa-solid fa-tag"></i>'
+    href = "https://github.com/cpp-linter/cpp-linter-action/releases/" + (
+        f"v{text}" if text[0:1].isdigit() else text
+    )
+    return _badge(
+        icon=f'[{icon}]({href} "minimum version")',
+        text=f'[{text}]({href} "minimum version")',
+    )
+
+
+def _badge_for_default(text: str) -> str:
+    """Create badge for default value"""
+    return _badge(icon="Default", text=f"`{text}`")
+
+
+def _badge_for_permissions(args: str) -> str:
+    """Create badge for required value flag"""
+    match_permission = re.match(r"([^#]+)(.*)", args)
+    if match_permission is None:
+        raise ValueError(f"failed to parse permissions from {args}")
+    permission, link = match_permission.groups()[:2]
+    permission = permission.strip()
+    link = "permissions.md" + link
+    icon = '<i class="fa-solid fa-lock"></i>'
+    return _badge(
+        icon=f'[{icon}]({link} "required permissions")',
+        text=f'[`{permission}`]({link} "required permission")',
+    )
+
+
+def _badge_for_experimental() -> str:
+    """Create badge for experimental flag"""
+    icon = '<i class="fa-solid fa-flask mdx-badge--heart"></i>'
+    return _badge(icon=icon, text="experimental")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:  # we check if we received any argument
+        if sys.argv[1] == "supports":
+            # then we are good to return an exit status code of 0, since the other argument will just be the renderer's name
+            sys.exit(0)
+
+    # load both the context and the book representations from stdin
+    context, book = json.load(sys.stdin)
+    # and now, we can just modify the content of the first chapter
+    for item in book["items"]:
+        if (
+            "Chapter" in item
+            and "source_path" in item["Chapter"]
+            and isinstance(item["Chapter"]["source_path"], str)
+            and item["Chapter"]["source_path"] == IO_DOC
+            and "content" in item["Chapter"]
+            and isinstance(item["Chapter"]["content"], str)
+        ):
+            if not cast(str, item["Chapter"]["content"]).startswith(DOC_START):
+                item["Chapter"]["content"] = write_io_doc()
+            break
+    # we are done with the book's modification, we can just print it to stdout,
+    # print(json.dumps(book, indent=2), file=sys.stderr)
+    print(json.dumps(book))

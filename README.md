@@ -76,7 +76,7 @@ See also our [example recipes][recipes-doc].
   <strong>TheAlgorithms</strong>&nbsp;&nbsp;
   <a href="https://github.com/CachyOS"><img src="https://avatars.githubusercontent.com/u/85452089?s=200&v=4" alt="CachyOS" width="28"/></a>
   <strong>CachyOS</strong>&nbsp;&nbsp;
-  </br>
+  <br/>
   <a href="https://github.com/nextcloud"><img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/></a>
   <strong>Nextcloud</strong>&nbsp;&nbsp;
   <a href="https://github.com/jupyter-xeus"><img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/></a>
@@ -89,7 +89,7 @@ See also our [example recipes][recipes-doc].
   <strong>Zondax</strong>&nbsp;&nbsp;
   <a href="https://github.com/AppNeta"><img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/></a>
   <strong>AppNeta</strong>&nbsp;&nbsp;
-  </br>
+  <br/>
   <a href="https://github.com/chocolate-doom"><img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/></a>
   <strong>Chocolate Doom</strong>
   <strong> and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more</a>.</strong>

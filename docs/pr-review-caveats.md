@@ -10,25 +10,27 @@
 [lines-changed-only]: inputs-outputs.md#lines-changed-only
 [style]: inputs-outputs.md#style
 
-!!! abstract
-    This information is specific to GitHub Pull Requests (often abbreviated as "PR").
+> [!note]
+> This information is specific to GitHub Pull Requests (often abbreviated as "PR").
 
 While the Pull Request review feature has been diligently tested, there are still some caveats to
 beware of when using Pull Request reviews.
 
 ## Bot Permissions required
+
 The "GitHub Actions" bot may need to be allowed to approve Pull Requests.
 By default, the bot cannot approve Pull Request changes, only request more changes.
 This will show as a warning in the workflow logs if the given token (set to the
 environment variable `GITHUB_TOKEN`) isn't configured with the proper permissions.
 
-!!! note "See also"
-    Refer to the GitHub documentation for [repository settings][] or [organization settings][]
-    about adjusting the required permissions for GitHub Actions's `secrets.GITHUB_TOKEN`.
-
-    See our [documented permissions](permissions.md#pull-request-reviews).
+> [!note]
+> Refer to the GitHub documentation for [repository settings] or [organization settings]
+> about adjusting the required permissions for GitHub Actions's `secrets.GITHUB_TOKEN`.
+>
+> See our [documented permissions](permissions.md#pull-request-reviews).
 
 ## Auto-disabled for certain event types
+
 The feature is auto-disabled for
 
 - closed Pull Requests
@@ -36,6 +38,7 @@ The feature is auto-disabled for
 - push events
 
 ## Posts a new review on each run
+
 Clang-tidy and clang-format suggestions are shown in 1 Pull Request review.
 
 - Users are encouraged to choose either [`tidy-review`][tidy-review] or [`format-review`][format-review].
@@ -49,20 +52,21 @@ Clang-tidy and clang-format suggestions are shown in 1 Pull Request review.
   Also, the outdated review's summary comment is not automatically hidden.
   To reduce the Pull Request's thread noise, users interaction is required.
 
-!!! note "See also"
-    Refer to GitHub's documentation about [hiding a comment][].
-    Hiding a Pull Request review's summary comment will not resolve the suggestions in the diff.
-    Please also refer to [resolve a conversion][] to collapse outdated or duplicate suggestions
-    in the diff.
+> [!note]
+> Refer to GitHub's documentation about [hiding a comment].
+> Hiding a Pull Request review's summary comment will not resolve the suggestions in the diff.
+> Please also refer to [resolve a conversion] to collapse outdated or duplicate suggestions
+> in the diff.
 
 GitHub REST API does not provide a way to hide comments or mark review suggestions as resolved.
 
-!!! tip
-    We do support an environment variable named `CPP_LINTER_PR_REVIEW_SUMMARY_ONLY`.
-    If the variable is set to ``true``, then the review only contains a summary comment
-    with no suggestions posted in the diff.
+> [!tip]
+> We do support an environment variable named `CPP_LINTER_PR_REVIEW_SUMMARY_ONLY`.
+> If the variable is set to `true`, then the review only contains a summary comment
+> with no suggestions posted in the diff.
 
 ## Probable non-exhaustive reviews
+
 If any suggestions did not fit within the Pull Request diff, then the review's summary comment will
 indicate how many suggestions were left out.
 The full patch of suggestions is always included as a collapsed code block in the review summary

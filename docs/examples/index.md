@@ -7,31 +7,31 @@
 
 Here are some example workflows to get started quickly.
 
-=== "only clang-tidy"
+## only clang-tidy
 
-    ``` yaml
-    --8<-- ".github/workflows/examples/only-clang-tidy.yml"
-    ```
+``` yaml
+{{#include ../../.github/workflows/examples/only-clang-tidy.yml}}
+```
 
-    1. See also [`style`][style]
-    2. See also [`tidy-checks`][tidy-checks]
+1. See also [`style`][style]
+2. See also [`tidy-checks`][tidy-checks]
 
-=== "only clang-format"
+## only clang-format
 
-    ``` yaml
-    --8<-- ".github/workflows/examples/only-clang-format.yml"
-    ```
+``` yaml
+{{#include ../../.github/workflows/examples/only-clang-format.yml}}
+```
 
-    1. See also [`style`][style]
-    2. See also [`tidy-checks`][tidy-checks]
+1. See also [`style`][style]
+2. See also [`tidy-checks`][tidy-checks]
 
-=== "only PR comments"
+## only PR comments
 
-    ``` yaml
-    --8<-- ".github/workflows/examples/only-PR-comments.yml"
-    ```
+``` yaml
+{{#include ../../.github/workflows/examples/only-PR-comments.yml}}
+```
 
-    1. See also our [token permissions document](../permissions.md)
-    2. See also [`style`][style]
-    3. See also [`tidy-checks`][tidy-checks]
-    4. See also [`thread-comments`][thread-comments]
+1. See also our [token permissions document](../permissions.md)
+2. See also [`style`][style]
+3. See also [`tidy-checks`][tidy-checks]
+4. See also [`thread-comments`][thread-comments]

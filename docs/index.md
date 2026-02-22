@@ -1,3 +1,4 @@
+
 [file-annotations]: inputs-outputs.md#file-annotations
 [thread-comments]: inputs-outputs.md#thread-comments
 [step-summary]: inputs-outputs.md#step-summary
@@ -15,8 +16,4 @@
 [format-review-preview]: images/format-review.png
 [format-suggestion-preview]: images/format-suggestion.png
 
-{%
-   include-markdown "../README.md"
-   start="<!--README-start-->"
-   end="<!--README-end-->"
-%}
+{{#include ../README.md}}

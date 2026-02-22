@@ -44,7 +44,7 @@ inputs:
       - Set this option to a blank string (`''`) to use the platform's default installed version.
       - This value can also be a path to where the clang tools are installed (if using a custom install location).
     required: false
-    default: 18
+    default: '18'
   verbosity:
     description: |
       This controls the action's verbosity in the workflow's logs.
@@ -54,7 +54,7 @@ inputs:
       The verbosity can also be engaged by enabling debug logs when
       [re-running jobs or workflows](https://docs.github.com/en/actions/managing-workflow-runs/re-running-workflows-and-jobs).
     required: false
-    default: info
+    default: 'info'
   lines-changed-only:
     description: |
       This controls what part of the files are analyzed. The following values are accepted:
@@ -63,21 +63,21 @@ inputs:
       - `true`: Only lines in the diff that contain additions are analyzed.
       - `diff`: All lines in the diff are analyzed (including unchanged lines but not subtractions).
 
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md)
+      > [!IMPORTANT]
+      > This feature requires special permissions to perform successfully.
+      > See our [documented permissions](permissions.md)
     required: false
-    default: false
+    default: 'false'
   files-changed-only:
     description: |
       Set this option to false to analyze any source files in the repo.
       This is automatically enabled if [`lines-changed-only`](#lines-changed-only) is enabled.
 
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md)
+      > [!IMPORTANT]
+      > This feature requires special permissions to perform successfully.
+      > See our [documented permissions](permissions.md)
     required: false
-    default: true
+    default: 'true'
   ignore:
     description: |
       Set this option with string of path(s) to ignore.
@@ -118,9 +118,9 @@ inputs:
       - `update`: update an existing thread comment if one already exists. This option does not trigger a new notification for every thread comment update.
       - `false`: disable the use of thread comments.
 
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md)
+      > [!IMPORTANT]
+      > This feature requires special permissions to perform successfully.
+      > See our [documented permissions](permissions.md)
 
       > [!NOTE]
       > If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
@@ -135,7 +135,7 @@ inputs:
       See [`thread-comments`](#thread-comments), [`tidy-review`](#tidy-review),
       and [`format-review`](#format-review) options for further details.
     required: false
-    default: true
+    default: 'true'
   step-summary:
     description: |
       Set this option to true to append content as part of workflow's job summary.
@@ -149,14 +149,15 @@ inputs:
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is _not_ applied to step summaries.
     required: false
-    default: false
+    default: 'false'
   file-annotations:
     description: |
       Set this option to false to disable the use of file annotations as feedback.
     required: false
-    default: true
+    default: 'true'
   database:
-    description: The directory containing compilation database (like compile_commands.json) file.
+    description: |
+      The directory containing compilation database (like compile_commands.json) file.
     required: false
     default: ""
   extra-args:
@@ -165,49 +166,51 @@ inputs:
       Multiple arguments are separated by spaces so the argument name and value should
       use an `=` sign instead of a space.
 
-      !!! example
-
-          ``` yaml
-          extra-args: '-std=c++17 -Wall'
-          ```
-          This will be passed to clang-tidy as multiple `--extra-arg` options:
-          ```
-          clang-tidy --extra-arg=-std=c++17 --extra-arg=-Wall
-          ```
+      > [!TIP]
+      >
+      > ``` yaml
+      > extra-args: '-std=c++17 -Wall'
+      > ```
+      >
+      > This will be passed to clang-tidy as multiple `--extra-arg` options:
+      >
+      > ```
+      > clang-tidy --extra-arg=-std=c++17 --extra-arg=-Wall
+      > ```
     required: false
     default: ""
   tidy-review:
     description: |
       Set this option to `true` to enable Pull Request reviews from clang-tidy.
 
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md).
-
-          See also [the PR review feature caveats](pr-review-caveats.md).
+      > [!IMPORTANT]
+      > This feature requires special permissions to perform successfully.
+      > See our [documented permissions](permissions.md).
+      >
+      > See also [the PR review feature caveats](pr-review-caveats.md).
 
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
     required: false
-    default: false
+    default: 'false'
   format-review:
     description: |
       Set this option to `true` to enable Pull Request reviews from clang-format.
 
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md).
-
-          See also [the PR review feature caveats](pr-review-caveats.md).
+      > [!IMPORTANT]
+      > This feature requires special permissions to perform successfully.
+      > See our [documented permissions](permissions.md).
+      >
+      > See also [the PR review feature caveats](pr-review-caveats.md).
 
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
     required: false
-    default: false
+    default: 'false'
   passive-reviews:
     description: |
       Set this option to `true` to prevent Pull Request reviews from approving or requesting changes.
-    default: false
+    default: 'false'
     required: false
   jobs:
     description: |
@@ -215,7 +218,7 @@ inputs:
       If less than or equal to 0, the number of jobs is set to
       use the number of all available CPU cores.
     required: false
-    default: 0
+    default: '0'
   cache-enable:
     description: |-
       Controls the caching of cpp-linter dependencies.
@@ -225,7 +228,7 @@ inputs:
       Any cached assets are kept within the path to this action's source
       (not in the runner's workspace or temp directory).
     required: false
-    default: true
+    default: 'true'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.

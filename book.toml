@@ -1,0 +1,15 @@
+[book]
+title = '"C/C++ Linter Action"'
+authors = ["Brendan"]
+language = "en"
+src = "docs"
+
+[output.html]
+git-repository-url = "https://github.com/cpp-linter/cpp-linter-action"
+edit-url-template = "https://github.com/cpp-linter/cpp-linter-action/edit/main/docs/{path}"
+additional-css = ["docs/stylesheets/extra.css"]
+
+[preprocessor.gen_io_doc]
+# custom preprocessor to generate the inputs-outputs.md file content from action.yml
+command = "uv run docs/gen_io_doc.py"
+before = ["links"]

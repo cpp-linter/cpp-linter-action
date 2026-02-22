@@ -1,8 +1,2 @@
----
-hide:
-  - toc
----
 
-{%
-   include-markdown "../CONTRIBUTING.md"
-%}
+{{#include ../CONTRIBUTING.md}}
