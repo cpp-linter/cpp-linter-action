@@ -186,7 +186,7 @@ apt-get install -y libc6 wget lsb-release software-properties-common gnupg
 Otherwise, [nushell] and/or the LLVM-provided bash script will fail to run.
 
 If installing clang tools fails using the `apt` package manager, then
-we alteratively try the following sources in order:
+we alternatively try the following sources in order:
 
 1. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
 2. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
