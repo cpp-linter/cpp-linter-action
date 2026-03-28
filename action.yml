@@ -409,7 +409,7 @@ runs:
           $tools = $tools | append "clang-format"
         }
 
-        print $"\n(ansi purple)Ensuring ($tools | str join " and ") ${{ inputs.version }} are present(ansi reset)"
+        print $"\n(ansi purple)Ensuring ($tools | str join ' and ') ${{ inputs.version }} are present(ansi reset)"
         for tool in $tools {
           print $"Installing ($tool) ($version)"
           let cmd = if (

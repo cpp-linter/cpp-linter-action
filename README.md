@@ -194,7 +194,7 @@ we alternatively try the following sources in order:
 ### On macOS runners
 
 The specified `version` of `clang-format` and `clang-tidy` is installed via
-the following sources in order (which ever succeeds first):
+the following sources in order (whichever succeeds first):
 
 1. Homebrew
 2. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
@@ -203,7 +203,7 @@ the following sources in order (which ever succeeds first):
 ### On Windows runners
 
 For Windows runners, we use clang tools installed via
-the following sources in order (which ever succeeds first):
+the following sources in order (whichever succeeds first):
 
 1. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
 2. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
