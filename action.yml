@@ -381,7 +381,7 @@ runs:
           print $"(ansi yellow)Using platform default clang tools \(version not specified)(ansi reset)"
           exit 0
         }
-        let version = try {
+        let clang_version = try {
           $version_str | into int
         } catch {
           print "Version is not an integer"
