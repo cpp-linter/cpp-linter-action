@@ -44,7 +44,7 @@ inputs:
       - Set this option to a blank string (`''`) to use the platform's default installed version.
       - This value can also be a path to where the clang tools are installed (if using a custom install location).
     required: false
-    default: 20
+    default: '20'
   verbosity:
     description: |
       This controls the action's verbosity in the workflow's logs.
@@ -67,7 +67,7 @@ inputs:
           This feature requires special permissions to perform successfully.
           See our [documented permissions](permissions.md)
     required: false
-    default: false
+    default: 'false'
   files-changed-only:
     description: |
       Set this option to false to analyze any source files in the repo.
@@ -77,7 +77,7 @@ inputs:
           This feature requires special permissions to perform successfully.
           See our [documented permissions](permissions.md)
     required: false
-    default: true
+    default: 'true'
   ignore:
     description: |
       Set this option with string of path(s) to ignore.
@@ -135,7 +135,7 @@ inputs:
       See [`thread-comments`](#thread-comments), [`tidy-review`](#tidy-review),
       and [`format-review`](#format-review) options for further details.
     required: false
-    default: true
+    default: 'true'
   step-summary:
     description: |
       Set this option to true to append content as part of workflow's job summary.
@@ -149,12 +149,12 @@ inputs:
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is _not_ applied to step summaries.
     required: false
-    default: false
+    default: 'false'
   file-annotations:
     description: |
       Set this option to false to disable the use of file annotations as feedback.
     required: false
-    default: true
+    default: 'true'
   database:
     description: The directory containing compilation database (like compile_commands.json) file.
     required: false
@@ -189,7 +189,7 @@ inputs:
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
     required: false
-    default: false
+    default: 'false'
   format-review:
     description: |
       Set this option to `true` to enable Pull Request reviews from clang-format.
@@ -203,11 +203,11 @@ inputs:
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
     required: false
-    default: false
+    default: 'false'
   passive-reviews:
     description: |
       Set this option to `true` to prevent Pull Request reviews from approving or requesting changes.
-    default: false
+    default: 'false'
     required: false
   jobs:
     description: |
@@ -215,7 +215,7 @@ inputs:
       If less than or equal to 0, the number of jobs is set to
       use the number of all available CPU cores.
     required: false
-    default: 0
+    default: '0'
   cache-enable:
     description: |-
       Controls the caching of cpp-linter dependencies.
@@ -225,7 +225,7 @@ inputs:
       Any cached assets are kept within the path to this action's source
       (not in the runner's workspace or temp directory).
     required: false
-    default: true
+    default: 'true'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
@@ -348,7 +348,7 @@ runs:
         }
 
         print $"\n(ansi purple)Installing uv version ($env.UV_VERSION)(ansi reset)"
-        let is_windows = (sys host | get 'name') == 'Windows'
+        let is_windows = (version | get "build_os") | str starts-with "windows"
         let uv_installer_url = if $is_windows {
           $"https://astral.sh/uv/($env.UV_VERSION)/install.ps1"
         } else {
@@ -376,13 +376,56 @@ runs:
         }
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
-        print $"\n(ansi purple)Ensuring clang-format and clang-tidy ${{ inputs.version }} are present(ansi reset)"
-        let cmd = [clang-tools -i ${{ inputs.version }} -b]
+        let version_str = '${{ inputs.version }}'
+        if ($version_str | is-empty) {
+          print $"(ansi yellow)Using platform default clang tools \(version not specified)(ansi reset)"
+          exit 0
+        }
+        let version = try {
+          $version_str | into int
+        } catch {
+          print "Version is not an integer"
+          if not ($version_str | path exists) {
+            print "::error title=Invalid version input::Version must be a blank string, an integer, or a valid path"
+            exit 1
+          } else {
+            print $"(ansi yellow)Using custom clang tools installation at path: ($version_str)(ansi reset)"
+            exit 0
+          }
+        }
+
         $uv_args = [run --no-sync --project $action_path --directory (pwd)]
         if $verbosity {
           $uv_args = $uv_args | append '-v'
         }
-        ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
+
+        mut tools = []
+        if ("${{ inputs.tidy-checks }}" != "-*") {
+          # clang-tidy is being used
+          $tools = $tools | append "clang-tidy"
+        }
+        if ("${{ inputs.style }}" | is-not-empty) {
+          # clang-format is being used
+          $tools = $tools | append "clang-format"
+        }
+
+        print $"\n(ansi purple)Ensuring ($tools | str join ' and ') ($version_str) are present(ansi reset)"
+        for tool in $tools {
+          print $"Installing ($tool) ($version)"
+          let cmd = if (
+            (($version < 13) and ($tool | str ends-with "tidy"))
+            or (
+              ($version <= 9)
+              and ($tool | str ends-with "format")
+              and not ((version | get "build_os") | str starts-with "linux")
+            )
+          ) {
+            [clang-tools --tool $tool --install $version]
+          } else {
+            [clang-tools-wheel --tool $tool --version $version]
+          }
+          ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
+        }
 
     - name: Run cpp-linter
       id: cpp-linter
