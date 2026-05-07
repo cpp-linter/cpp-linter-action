@@ -10,7 +10,7 @@ action = [
     "cpp-linter==1.12.1",
 ]
 dev = [
-    "mypy>=1.17.1",
+    "mypy>=2.0.0",
     "pre-commit>=4.3.0",
     "ruff>=0.12.8",
 ]
