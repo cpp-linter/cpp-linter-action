@@ -12,7 +12,7 @@ action = [
 dev = [
     "mypy>=1.17.1",
     "pre-commit>=4.3.0",
-    "ruff>=0.12.8",
+    "ruff>=0.15.13",
 ]
 docs = [
     "markdown-gfm-admonition>=0.1.1",
