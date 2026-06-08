@@ -209,6 +209,24 @@ inputs:
       Set this option to `true` to prevent Pull Request reviews from approving or requesting changes.
     default: 'false'
     required: false
+  auto-fix:
+    description: |
+      Set this option to `true` to automatically apply clang-format fixes
+      and commit them back to the PR branch.
+
+      When enabled, cpp-linter runs with ``--fix``, which applies
+      ``clang-format -i`` on files with style issues. After that,
+      a new commit is pushed to the PR branch with the formatted changes.
+
+      This option has no effect on clang-tidy issues.
+    default: 'false'
+    required: false
+  fix-commit-msg:
+    description: |
+      Custom commit message for the auto-fix commit.
+      Only used when ``auto-fix`` is ``true``.
+    default: 'style: apply styling format fix'
+    required: false
   jobs:
     description: |
       The number of jobs to run in parallel.
@@ -457,6 +475,9 @@ runs:
           '--jobs=${{ inputs.jobs }}'
           '--summary-output-file=${{ inputs.summary-output-file }}'
         ]
+        if '${{ inputs.auto-fix }}' == 'true' {
+          $args = ($args | append ['--fix'])
+        }
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
 
         let gh_action_debug = $env | get --optional 'ACTIONS_STEP_DEBUG'
@@ -482,3 +503,28 @@ runs:
 
         print $"\n(ansi purple)Running cpp-linter(ansi reset)"
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args cpp-linter ...$args
+
+    - name: Auto-commit clang-format fixes
+      if: inputs.auto-fix == 'true' || inputs.auto-fix == true
+      shell: nu {0}
+      run: |
+        let has_changes = (^git diff --exit-code) | complete | $in.exit_code != 0
+        if $has_changes {
+          ^git config user.name 'github-actions[bot]'
+          ^git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          ^git add -A
+          let commit_msg = if ('${{ inputs.fix-commit-msg }}' | is-empty) {
+            'style: apply styling format fix'
+          } else {
+            '${{ inputs.fix-commit-msg }}'
+          }
+          ^git commit -m $"($commit_msg)"
+          let push_result = (^git push) | complete
+          if $push_result.exit_code != 0 {
+            print $"(ansi yellow)::warning title=Auto-fix push failed::($push_result.stderr)(ansi reset)"
+          } else {
+            print $"(ansi green)Auto-fix commit pushed successfully(ansi reset)"
+          }
+        } else {
+          print $"(ansi green)No formatting changes to commit(ansi reset)"
+        }

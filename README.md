@@ -67,6 +67,37 @@ For all explanations of our available input parameters and output variables, see
 
 See also our [example recipes][recipes-doc].
 
+### Auto-fix clang-format issues
+
+You can enable automatic fixing of clang-format issues by setting `auto-fix: 'true'`.
+When enabled, the action will:
+
+1. Run clang-format detection as usual
+2. Apply `clang-format -i` to fix any files with style issues
+3. Commit and push the formatted changes back to the PR branch
+
+```yaml
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: 'file'
+          auto-fix: 'true'  # automatically fix format issues
+```
+
+> [!TIP]
+> To prevent the auto-fix commit from triggering another CI run, include a
+> `[skip ci]` (or `[ci skip]`, `[no ci]`, etc.) tag in your custom commit message:
+>
+> ```yaml
+>     with:
+>       auto-fix: 'true'
+>       fix-commit-msg: 'style: apply styling format fix [skip ci]'
+> ```
+
 ## Used By
 
 <p align="center">
