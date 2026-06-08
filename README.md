@@ -33,6 +33,12 @@ to collect feedback provided in the form of
 workflow [`step-summary`][step-summary], and Pull Request reviews (with
 [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
+> [!TIP]
+> Prefer pre-commit hooks over GitHub Actions? Check out
+> **[cpp-linter-hooks](https://github.com/cpp-linter/cpp-linter-hooks)** —
+> a pre-commit hook repository that runs `clang-format` and `clang-tidy`
+> consistently on developer machines and in CI, with no manual LLVM installs.
+
 ## Usage
 
 Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
