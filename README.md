@@ -35,7 +35,7 @@ workflow [`step-summary`][step-summary], and Pull Request reviews (with
 
 > [!TIP]
 > Prefer pre-commit hooks over GitHub Actions? Check out
-> **[cpp-linter-hooks](https://github.com/cpp-linter/cpp-linter-hooks)** —
+> [**cpp-linter-hooks**](https://github.com/cpp-linter/cpp-linter-hooks) —
 > a pre-commit hook repository that runs `clang-format` and `clang-tidy`
 > consistently on developer machines and in CI, with no manual LLVM installs.
 
