@@ -27,6 +27,8 @@
 [![MkDocs Deploy](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
 ![GitHub](https://img.shields.io/github/license/cpp-linter/cpp-linter-action?label=license&logo=github)
 
+> 🏠 [← Back to cpp-linter hub](https://cpp-linter.github.io/)
+
 A Github Action for linting C/C++ code integrating clang-tidy and clang-format
 to collect feedback provided in the form of
 [`file-annotations`][file-annotations], [`thread-comments`][thread-comments],
