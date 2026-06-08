@@ -95,7 +95,7 @@ When enabled, the action will:
 > ```yaml
 >     with:
 >       auto-fix: 'true'
->       fix-commit-msg: 'style: apply styling format fix [skip ci]'
+>       auto-fix-commit-msg: 'style: apply styling format fix [skip ci]'
 > ```
 
 ## Used By

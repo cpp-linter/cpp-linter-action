@@ -50,7 +50,7 @@ inputs:
   auto-fix:
     minimum-version: '2.19.0'
     required-permission: 'contents: write #auto-fix'
-  fix-commit-msg:
+  auto-fix-commit-msg:
     minimum-version: '2.19.0'
   jobs:
     minimum-version: '2.11.0'
