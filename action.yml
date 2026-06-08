@@ -221,7 +221,7 @@ inputs:
       This option has no effect on clang-tidy issues.
     default: 'false'
     required: false
-  fix-commit-msg:
+  auto-fix-commit-msg:
     description: |
       Custom commit message for the auto-fix commit.
       Only used when ``auto-fix`` is ``true``.
@@ -514,10 +514,10 @@ runs:
           ^git config user.name 'github-actions[bot]'
           ^git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           ^git add -A
-          let commit_msg = if ('${{ inputs.fix-commit-msg }}' | is-empty) {
+          let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
             'style: apply styling format fix'
           } else {
-            '${{ inputs.fix-commit-msg }}'
+            '${{ inputs.auto-fix-commit-msg }}'
           }
           ^git commit -m $"($commit_msg)"
           let push_result = (^git push) | complete
