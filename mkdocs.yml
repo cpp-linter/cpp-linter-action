@@ -11,7 +11,7 @@ nav:
   - permissions.md
   - examples/index.md
   - contributing-guidelines.md
-  - ":material-arrow-left: cpp-linter org": https://cpp-linter.github.io/
+  - "← cpp-linter org": https://cpp-linter.github.io/
 
 theme:
   name: material
