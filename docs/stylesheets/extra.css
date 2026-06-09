@@ -2,11 +2,6 @@ th {
     background-color: var(--md-default-fg-color--lightest);
 }
 
-.md-header,
-.md-nav--primary .md-nav__title[for="__drawer"] {
-    background-color: #4051b5;
-}
-
 @keyframes heart {
 
     0%,
