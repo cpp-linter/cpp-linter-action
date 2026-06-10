@@ -78,3 +78,15 @@ The [`tidy-review`](inputs-outputs.md#tidy-review), [`format-review`](inputs-out
     permissions:
       pull-requests: write
 ```
+
+## Auto-fix
+
+The [`auto-fix`](inputs-outputs.md#auto-fix) feature requires the following permission
+in addition to any other permissions needed for other features:
+
+```yaml
+    permissions:
+      contents: write # (1)!
+```
+
+1. Needed to commit and push the formatted changes back to the PR branch.
