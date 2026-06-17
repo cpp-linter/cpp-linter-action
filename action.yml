@@ -376,6 +376,11 @@ runs:
         }
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
+        # Ensure pip is available in the virtual environment (uv doesn't include pip by default)
+        # clang-tools wheel installer uses `python -m pip install` under the hood
+        print $"(ansi purple)Ensuring pip is available in the virtual environment(ansi reset)"
+        ^$'($env.UV_INSTALL_DIR)/uv' pip install pip --project $action_path
+
         let version_str = '${{ inputs.version }}'
         if ($version_str | is-empty) {
           print $"(ansi yellow)Using platform default clang tools \(version not specified)(ansi reset)"
