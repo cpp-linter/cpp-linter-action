@@ -422,7 +422,7 @@ runs:
           ) {
             [clang-tools install $version --tool $tool --binary]
           } else {
-            [clang-tools install $tool --version $version --wheel]
+            [clang-tools install $version --tool $tool --wheel]
           }
           ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
