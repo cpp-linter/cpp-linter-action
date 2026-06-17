@@ -370,7 +370,7 @@ runs:
         )
 
         print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
-        mut uv_args = [sync --project $action_path --group action --no-dev --link-mode=copy]
+        mut uv_args = [sync --project $action_path --group action --no-dev --link-mode=copy --seed]
         if $verbosity {
           $uv_args = $uv_args | append '-v'
         }
