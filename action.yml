@@ -370,11 +370,12 @@ runs:
         )
 
         print $"\n(ansi purple)Installing workflow dependencies(ansi reset)"
-        mut uv_args = [sync --project $action_path --group action --no-dev --link-mode=copy --seed]
+        mut uv_args = [sync --project $action_path --group action --no-dev --link-mode=copy]
         if $verbosity {
           $uv_args = $uv_args | append '-v'
         }
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
+        ^$'($env.UV_INSTALL_DIR)/uv' pip install pip
 
         let version_str = '${{ inputs.version }}'
         if ($version_str | is-empty) {
