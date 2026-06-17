@@ -420,7 +420,7 @@ runs:
               and not ((version | get "build_os") | str starts-with "linux")
             )
           ) {
-            [clang-tools install $tool --install $version --binary]
+            [clang-tools install $version --tool $tool --binary]
           } else {
             [clang-tools install $tool --version $version --wheel]
           }
