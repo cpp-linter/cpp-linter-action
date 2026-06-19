@@ -412,7 +412,7 @@ runs:
         print $"\n(ansi purple)Ensuring ($tools | str join ' and ') ($version_str) are present(ansi reset)"
         for tool in $tools {
           print $"Installing ($tool) ($version)"
-          let cmd = [clang-tools install $tool --version $version --binary]
+          let cmd = [clang-tools install $tool --version $version]
           ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
 
