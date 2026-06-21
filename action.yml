@@ -178,27 +178,23 @@ inputs:
     default: ""
   tidy-review:
     description: |
-      Set this option to `true` to enable Pull Request reviews from clang-tidy.
-
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md).
-
-          See also [the PR review feature caveats](pr-review-caveats.md).
-
-      > [!NOTE]
-      > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
+      Since cpp-linter v2.0, this is now an alias for the `pr-review`.
+    deprecationMessage: >-
+      The "tidy-review" parameter is deprecated and will be removed in a future release.
+      Please use the "pr-review" parameter instead, which has the same behavior.
     required: false
     default: 'false'
   format-review:
     description: |
-      Set this option to `true` to enable Pull Request reviews from clang-format.
-
-      !!! info "Important"
-          This feature requires special permissions to perform successfully.
-          See our [documented permissions](permissions.md).
-
-          See also [the PR review feature caveats](pr-review-caveats.md).
+      Since cpp-linter v2.0, this is now an alias for the `pr-review`.
+    deprecationMessage: >-
+      The "format-review" parameter is deprecated and will be removed in a future release.
+      Please use the "pr-review" parameter instead, which has the same behavior.
+    required: false
+    default: 'false'
+  pr-review:
+    description: |
+      Set this option to `true` to enable Pull Request reviews.
 
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is applicable to Pull Request reviews.
@@ -333,6 +329,11 @@ runs:
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
+        let pr_review = (
+          ('${{ inputs.tidy-review }}' | into bool --relaxed)
+          or ('${{ inputs.format-review }}' | into bool --relaxed)
+          or ('${{ inputs.pr-review }}' | into bool --relaxed)
+        )
 
         let args = [
           '--style=${{ inputs.style }}'
@@ -352,8 +353,7 @@ runs:
           '--database=${{ inputs.database }}'
           '--file-annotations=${{ inputs.file-annotations }}'
           '--extra-arg=${{ inputs.extra-args }}'
-          '--tidy-review=${{ inputs.tidy-review }}'
-          '--format-review=${{ inputs.format-review }}'
+          $"--pr-review=($pr_review)"
           '--passive-reviews=${{ inputs.passive-reviews }}'
           '--summary-output-file=${{ inputs.summary-output-file }}'
         ]
