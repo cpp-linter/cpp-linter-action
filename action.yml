@@ -412,18 +412,7 @@ runs:
         print $"\n(ansi purple)Ensuring ($tools | str join ' and ') ($version_str) are present(ansi reset)"
         for tool in $tools {
           print $"Installing ($tool) ($version)"
-          let cmd = if (
-            (($version < 13) and ($tool | str ends-with "tidy"))
-            or (
-              ($version <= 9)
-              and ($tool | str ends-with "format")
-              and not ((version | get "build_os") | str starts-with "linux")
-            )
-          ) {
-            [clang-tools --tool $tool --install $version]
-          } else {
-            [clang-tools-wheel --tool $tool --version $version]
-          }
+          let cmd = [clang-tools install $tool --version $version]
           ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
 
