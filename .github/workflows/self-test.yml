@@ -45,7 +45,7 @@ jobs:
 
       - name: Cache the build artifacts
         id: cache-build
-        uses: actions/cache@v5
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: build
           key: ${{ runner.os }}-${{ hashFiles('docs/examples/demo/**') }}
