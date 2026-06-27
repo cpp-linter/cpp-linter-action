@@ -226,6 +226,15 @@ inputs:
       (not in the runner's workspace or temp directory).
     required: false
     default: 'true'
+  summary-output-file:
+    description: |-
+      Supply a path to which the step summary will be written.
+      Leave empty to not write summary to a file.
+
+      > [!NOTE]
+      > Any relative path shall be relative to the [`repo-root`](#repo-root) path.
+    required: false
+    default: ''
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
@@ -265,7 +274,7 @@ runs:
 
     - name: Enable cache
       if: inputs.cache-enable == 'true' || inputs.cache-enable == true
-      uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+      uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
       with:
         path: ${{ runner.temp }}/cpp-linter-action-cache
         key: cpp-linter-action_${{ runner.os }}_${{ steps.compute-cache-key.outputs.key }}
@@ -446,6 +455,7 @@ runs:
           '--format-review=${{ inputs.format-review }}'
           '--passive-reviews=${{ inputs.passive-reviews }}'
           '--jobs=${{ inputs.jobs }}'
+          '--summary-output-file=${{ inputs.summary-output-file }}'
         ]
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
 

@@ -7,7 +7,7 @@ dependencies = []
 [dependency-groups]
 action = [
     "clang-tools==1.1.0",
-    "cpp-linter==1.12.1",
+    "cpp-linter==1.13.0",
 ]
 dev = [
     "mypy>=2.1.0",
