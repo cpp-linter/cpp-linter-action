@@ -219,10 +219,10 @@ wheels = [
 
 [[package]]
 name = "clang-tools"
-version = "1.1.0"
+version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b8/bf/af0bd56176d7a3aeb24f85933a44b4de58a7b8ef30e65acfaf99e54b64a1/clang_tools-1.1.0-py3-none-any.whl", hash = "sha256:d3881d4337eabd91c375428018ece6466691d6587a6404851d49dec2819fe71f", size = 15180, upload-time = "2026-06-19T01:59:26.081Z" },
+    { url = "https://files.pythonhosted.org/packages/52/b0/a0771e5b089350511297e89d5ac0bfcfea311027614154f9144abe430ba5/clang_tools-1.2.0-py3-none-any.whl", hash = "sha256:46b5bd41302a32d350262928992d7a6b01c94c2424086e85b85b3e2b280a5c7a", size = 16581, upload-time = "2026-07-02T17:46:12.191Z" },
 ]
 
 [[package]]
@@ -288,7 +288,7 @@ docs = [
 
 [package.metadata.requires-dev]
 action = [
-    { name = "clang-tools", specifier = "==1.1.0" },
+    { name = "clang-tools", specifier = "==1.2.0" },
     { name = "cpp-linter", specifier = "==1.13.0" },
 ]
 dev = [
