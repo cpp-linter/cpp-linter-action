@@ -98,6 +98,8 @@ See also our [example recipes][recipes-doc].
   </br>
   <a href="https://github.com/chocolate-doom"><img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/></a>
   <strong>Chocolate Doom</strong>
+  <a href="https://github.com/bloomberg"><img src="https://avatars.githubusercontent.com/u/1416818?s=200&v=4" alt="Bloomberg" width="28"/></a>
+  <strong>Bloomberg</strong>
   <strong> and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more</a>.</strong>
 </p>
 
