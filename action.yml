@@ -463,7 +463,7 @@ runs:
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
 
-        let args = [
+        mut args = [
           '--style=${{ inputs.style }}'
           '--extensions=${{ inputs.extensions }}'
           '--tidy-checks=${{ inputs.tidy-checks }}'
