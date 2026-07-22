@@ -538,7 +538,12 @@ runs:
           let branch = $env.GITHUB_HEAD_REF | default $env.GITHUB_REF_NAME
           let push_result = (^git push origin $"HEAD:refs/heads/($branch)") | complete
           if $push_result.exit_code != 0 {
-            print $"::warning title=Auto-fix push failed::(ansi yellow)($push_result.stderr)(ansi reset)"
+            let stderr_lower = ($push_result.stderr | str downcase)
+            if ($stderr_lower | str contains "403") or ($stderr_lower | str contains "refused") or ($stderr_lower | str contains "not have permission") {
+              print $"::warning title=Auto-fix push failed::This action does not have permission to push to this branch. When using auto-fix on pull_request events from a third-party fork, the GITHUB_TOKEN cannot write to the fork repository. See docs/permissions.md for details.(ansi reset)"
+            } else {
+              print $"::warning title=Auto-fix push failed::(ansi yellow)($push_result.stderr)(ansi reset)"
+            }
           } else {
             print $"(ansi green)Auto-fix commit pushed successfully(ansi reset)"
           }

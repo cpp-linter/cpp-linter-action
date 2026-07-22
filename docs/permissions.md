@@ -81,7 +81,7 @@ The [`tidy-review`](inputs-outputs.md#tidy-review), [`format-review`](inputs-out
 
 ## Auto-fix
 
-The [`auto-fix`](inputs-outputs.md#auto-fix) feature requires the following permission
+The [`auto-fix`](inputs-outputs.md#auto-fix) feature requires `contents: write` permission
 in addition to any other permissions needed for other features:
 
 ```yaml
@@ -90,3 +90,28 @@ in addition to any other permissions needed for other features:
 ```
 
 1. Needed to commit and push the formatted changes back to the PR branch.
+
+!!! warning "CI re-triggering with auto-fix"
+
+    The default `GITHUB_TOKEN` **cannot** trigger new CI runs when pushing
+    a commit. If you need the auto-fix commit to trigger CI checks
+    (e.g. to verify the fix builds clean), use a personal access token
+    (PAT) with `contents: write` scope:
+
+    ```yaml
+    - uses: actions/checkout@v5
+      with:
+        token: ${{ secrets.MY_PAT }}
+    ```
+
+    When using the default `GITHUB_TOKEN`, you can include `[skip ci]` in
+    the auto-fix commit message to avoid unnecessary CI runs on the
+    fix commit itself. See the [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg) input.
+
+!!! warning "Pull requests from third-party forks"
+
+    Auto-fix does not work on pull requests from third-party forks. The
+    `GITHUB_TOKEN` lacks write permission to the fork repository, and
+    `git push` to the fork's branch is not possible. Consider
+    restricting `auto-fix` to `push` events or pull requests from the
+    same repository.
