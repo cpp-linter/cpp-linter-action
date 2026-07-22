@@ -78,7 +78,7 @@ When enabled, the action will:
 
 ```yaml
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
