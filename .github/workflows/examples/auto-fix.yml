@@ -11,7 +11,7 @@ jobs:
       contents: write  # needed for auto-fix commits
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         # For auto-fix commits to trigger new CI runs, use a PAT instead:
         #   with:
         #     token: ${{ secrets.MY_PAT }}

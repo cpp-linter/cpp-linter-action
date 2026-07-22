@@ -99,7 +99,7 @@ in addition to any other permissions needed for other features:
     (PAT) with `contents: write` scope:
 
     ```yaml
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v7
       with:
         token: ${{ secrets.MY_PAT }}
     ```
