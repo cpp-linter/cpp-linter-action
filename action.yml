@@ -443,6 +443,18 @@ runs:
           ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
 
+    - name: Checkout PR branch for auto-fix push capability
+      if: (inputs.auto-fix == 'true' || inputs.auto-fix == true) && github.event_name == 'pull_request'
+      shell: nu {0}
+      run: |
+        let head_ref = $env.GITHUB_HEAD_REF
+        if ($head_ref | is-not-empty) {
+          print $"(ansi purple)Fetching PR branch \"($head_ref)\" for auto-fix(ansi reset)"
+          ^git fetch origin --depth=1 $"($head_ref):refs/remotes/origin/($head_ref)"
+          ^git checkout --force -B $head_ref $"refs/remotes/origin/($head_ref)"
+          print $"(ansi green)Switched to PR branch \"($head_ref)\"(ansi reset)"
+        }
+
     - name: Run cpp-linter
       id: cpp-linter
       shell: nu {0}
@@ -508,10 +520,14 @@ runs:
       if: inputs.auto-fix == 'true' || inputs.auto-fix == true
       shell: nu {0}
       run: |
-        let has_changes = (^git diff --exit-code) | complete | $in.exit_code != 0
+        # Refresh index first so stat-only differences don't create false positives
+        ^git update-index -q --refresh
+        let has_changes = (^git diff-index --name-status --exit-code HEAD -- | complete | $in.exit_code == 1)
         if $has_changes {
-          ^git config user.name 'github-actions[bot]'
-          ^git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          let actor_name = $env.GITHUB_ACTOR
+          let actor_id = $env.GITHUB_ACTOR_ID
+          ^git config user.name $"($actor_name)"
+          ^git config user.email $"($actor_id)+($actor_name)@users.noreply.github.com"
           ^git add -A
           let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
             'style: apply styling format fix'
@@ -519,9 +535,10 @@ runs:
             '${{ inputs.auto-fix-commit-msg }}'
           }
           ^git commit -m $"($commit_msg)"
-          let push_result = (^git push) | complete
+          let branch = $env.GITHUB_HEAD_REF | default $env.GITHUB_REF_NAME
+          let push_result = (^git push origin $"HEAD:refs/heads/($branch)") | complete
           if $push_result.exit_code != 0 {
-            print $"(ansi yellow)::warning title=Auto-fix push failed::($push_result.stderr)(ansi reset)"
+            print $"::warning title=Auto-fix push failed::(ansi yellow)($push_result.stderr)(ansi reset)"
           } else {
             print $"(ansi green)Auto-fix commit pushed successfully(ansi reset)"
           }
