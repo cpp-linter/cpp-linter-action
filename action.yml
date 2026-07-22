@@ -526,15 +526,15 @@ runs:
         if $has_changes {
           let actor_name = $env.GITHUB_ACTOR
           let actor_id = $env.GITHUB_ACTOR_ID
-          ^git config user.name $"($actor_name)"
-          ^git config user.email $"($actor_id)+($actor_name)@users.noreply.github.com"
+          let git_user = $"user.name=($actor_name)"
+          let git_email = $"user.email=($actor_id)+($actor_name)@users.noreply.github.com"
           ^git add -A
           let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
             'style: apply styling format fix'
           } else {
             '${{ inputs.auto-fix-commit-msg }}'
           }
-          ^git commit -m $"($commit_msg)"
+          ^git -c $git_user -c $git_email commit -m $"($commit_msg)"
           let branch = $env.GITHUB_HEAD_REF | default $env.GITHUB_REF_NAME
           let push_result = (^git push origin $"HEAD:refs/heads/($branch)") | complete
           if $push_result.exit_code != 0 {
