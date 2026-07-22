@@ -227,6 +227,20 @@ inputs:
       Only used when ``auto-fix`` is ``true``.
     default: 'style: apply styling format fix'
     required: false
+  auto-fix-git-user:
+    description: |-
+      Git username for the auto-fix commit.
+      Defaults to ``$GITHUB_ACTOR`` (the user who triggered the workflow).
+      Only used when ``auto-fix`` is ``true``.
+    default: ''
+    required: false
+  auto-fix-git-email:
+    description: |-
+      Git email for the auto-fix commit.
+      Defaults to ``$GITHUB_ACTOR_ID+$GITHUB_ACTOR@users.noreply.github.com``.
+      Only used when ``auto-fix`` is ``true``.
+    default: ''
+    required: false
   jobs:
     description: |
       The number of jobs to run in parallel.
@@ -526,8 +540,18 @@ runs:
         if $has_changes {
           let actor_name = $env.GITHUB_ACTOR
           let actor_id = $env.GITHUB_ACTOR_ID
-          let git_user = $"user.name=($actor_name)"
-          let git_email = $"user.email=($actor_id)+($actor_name)@users.noreply.github.com"
+          let git_user_name = if ('${{ inputs.auto-fix-git-user }}' | is-empty) {
+            $actor_name
+          } else {
+            '${{ inputs.auto-fix-git-user }}'
+          }
+          let git_user_email = if ('${{ inputs.auto-fix-git-email }}' | is-empty) {
+            $"($actor_id)+($actor_name)@users.noreply.github.com"
+          } else {
+            '${{ inputs.auto-fix-git-email }}'
+          }
+          let git_user = $"user.name=($git_user_name)"
+          let git_email = $"user.email=($git_user_email)"
           ^git add -A
           let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
             'style: apply styling format fix'
