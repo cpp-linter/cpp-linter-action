@@ -458,7 +458,10 @@ runs:
         }
 
     - name: Checkout PR branch for auto-fix push capability
-      if: (inputs.auto-fix == 'true' || inputs.auto-fix == true) && github.event_name == 'pull_request'
+      if: >-
+        (inputs.auto-fix == 'true' || inputs.auto-fix == true)
+        && github.event_name == 'pull_request'
+        && github.event.pull_request.head.repo.full_name == github.repository
       shell: nu {0}
       run: |
         let head_ref = $env.GITHUB_HEAD_REF
@@ -468,6 +471,15 @@ runs:
           ^git checkout --force -B $head_ref $"refs/remotes/origin/($head_ref)"
           print $"(ansi green)Switched to PR branch \"($head_ref)\"(ansi reset)"
         }
+
+    - name: Warn that auto-fix is skipped on forked pull requests
+      if: >-
+        (inputs.auto-fix == 'true' || inputs.auto-fix == true)
+        && github.event_name == 'pull_request'
+        && github.event.pull_request.head.repo.full_name != github.repository
+      shell: nu {0}
+      run: |
+        print "::warning title=Auto-fix skipped::auto-fix cannot push to a third-party fork's branch, so no formatting commit was made. Apply clang-format fixes from within the fork or run cpp-linter locally."
 
     - name: Run cpp-linter
       id: cpp-linter
@@ -531,9 +543,28 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args cpp-linter ...$args
 
     - name: Auto-commit clang-format fixes
-      if: inputs.auto-fix == 'true' || inputs.auto-fix == true
+      if: >-
+        (inputs.auto-fix == 'true' || inputs.auto-fix == true)
+        && (github.event_name != 'pull_request'
+        || github.event.pull_request.head.repo.full_name == github.repository)
       shell: nu {0}
       run: |
+        # Determine the destination branch up-front: the PR head ref, or the
+        # pushed branch. Bail out on tag refs (or anything that is not a branch)
+        # so we never push HEAD to refs/heads/<tag> and create a stray branch.
+        let head_ref = $env.GITHUB_HEAD_REF
+        let branch = if ($head_ref | is-not-empty) {
+          $head_ref
+        } else if ($env.GITHUB_REF | str starts-with "refs/heads/") {
+          $env.GITHUB_REF_NAME
+        } else {
+          ""
+        }
+        if ($branch | is-empty) {
+          print $"::notice title=Auto-fix skipped::($env.GITHUB_REF) is not a branch or pull request ref; skipping auto-fix commit."
+          exit 0
+        }
+
         # Refresh index first so stat-only differences don't create false positives
         ^git update-index -q --refresh
         let has_changes = (^git diff-index --name-status --exit-code HEAD -- | complete | $in.exit_code == 1)
@@ -550,19 +581,20 @@ runs:
           }
           let git_user = $"user.name=($git_user_name)"
           let git_email = $"user.email=($git_user_email)"
-          ^git add -A
+          # Stage only tracked modifications (clang-format edits existing sources).
+          # Avoid `git add -A`, which would also sweep in unrelated untracked files.
+          ^git add -u
           let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
             'style: apply styling format fix'
           } else {
             '${{ inputs.auto-fix-commit-msg }}'
           }
           ^git -c $git_user -c $git_email commit -m $"($commit_msg)"
-          let branch = $env.GITHUB_HEAD_REF | default $env.GITHUB_REF_NAME
           let push_result = (^git push origin $"HEAD:refs/heads/($branch)") | complete
           if $push_result.exit_code != 0 {
             let stderr_lower = ($push_result.stderr | str downcase)
             if ($stderr_lower | str contains "403") or ($stderr_lower | str contains "refused") or ($stderr_lower | str contains "not have permission") {
-              print $"::warning title=Auto-fix push failed::This action does not have permission to push to this branch. When using auto-fix on pull_request events from a third-party fork, the GITHUB_TOKEN cannot write to the fork repository. See docs/permissions.md for details.(ansi reset)"
+              print $"::warning title=Auto-fix push failed::This action does not have permission to push to this branch. Ensure the token used by actions/checkout has `contents: write` (branch protection rules may also block the push). See docs/permissions.md for details."
             } else {
               print $"::warning title=Auto-fix push failed::(ansi yellow)($push_result.stderr)(ansi reset)"
             }
