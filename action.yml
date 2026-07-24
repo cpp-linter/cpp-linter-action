@@ -225,7 +225,7 @@ inputs:
     description: |
       Custom commit message for the auto-fix commit.
       Only used when ``auto-fix`` is ``true``.
-    default: 'style: apply styling format fix'
+    default: 'style: apply clang-format fixes'
     required: false
   auto-fix-git-user:
     description: |-
@@ -585,7 +585,7 @@ runs:
           # Avoid `git add -A`, which would also sweep in unrelated untracked files.
           ^git add -u
           let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
-            'style: apply styling format fix'
+            'style: apply clang-format fixes'
           } else {
             '${{ inputs.auto-fix-commit-msg }}'
           }
