@@ -7,7 +7,7 @@ dependencies = []
 [dependency-groups]
 action = [
     "clang-tools==1.2.0",
-    "cpp-linter==1.13.0",
+    "cpp-linter @ git+https://github.com/cpp-linter/cpp-linter.git@feature/auto-fix",
 ]
 dev = [
     "mypy>=2.3.0",
