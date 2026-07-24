@@ -230,14 +230,14 @@ inputs:
   auto-fix-git-user:
     description: |-
       Git username for the auto-fix commit.
-      Defaults to ``$GITHUB_ACTOR`` (the user who triggered the workflow).
+      Defaults to the value of ``$GITHUB_ACTOR``.
       Only used when ``auto-fix`` is ``true``.
     default: ''
     required: false
   auto-fix-git-email:
     description: |-
       Git email for the auto-fix commit.
-      Defaults to ``$GITHUB_ACTOR_ID+$GITHUB_ACTOR@users.noreply.github.com``.
+      Defaults to the value of ``$GITHUB_ACTOR_ID+$GITHUB_ACTOR@users.noreply.github.com``.
       Only used when ``auto-fix`` is ``true``.
     default: ''
     required: false
@@ -538,15 +538,13 @@ runs:
         ^git update-index -q --refresh
         let has_changes = (^git diff-index --name-status --exit-code HEAD -- | complete | $in.exit_code == 1)
         if $has_changes {
-          let actor_name = $env.GITHUB_ACTOR
-          let actor_id = $env.GITHUB_ACTOR_ID
           let git_user_name = if ('${{ inputs.auto-fix-git-user }}' | is-empty) {
-            $actor_name
+            $env.GITHUB_ACTOR
           } else {
             '${{ inputs.auto-fix-git-user }}'
           }
           let git_user_email = if ('${{ inputs.auto-fix-git-email }}' | is-empty) {
-            $"($actor_id)+($actor_name)@users.noreply.github.com"
+            $"($env.GITHUB_ACTOR_ID)+($env.GITHUB_ACTOR)@users.noreply.github.com"
           } else {
             '${{ inputs.auto-fix-git-email }}'
           }
