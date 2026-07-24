@@ -89,14 +89,15 @@ in addition to any other permissions needed for other features:
       contents: write # (1)!
 ```
 
-1. Needed to commit and push the formatted changes back to the PR branch.
+1. Needed by the token used in `actions/checkout` to commit and push the
+   formatted changes back to the branch.
 
 !!! warning "CI re-triggering with auto-fix"
 
     The default `GITHUB_TOKEN` **cannot** trigger new CI runs when pushing
     a commit. If you need the auto-fix commit to trigger CI checks
     (e.g. to verify the fix builds clean), use a personal access token
-    (PAT) with `contents: write` scope:
+    (PAT) with `contents: write` scope on the checkout step:
 
     ```yaml
     - uses: actions/checkout@v7
@@ -104,14 +105,16 @@ in addition to any other permissions needed for other features:
         token: ${{ secrets.MY_PAT }}
     ```
 
-    When using the default `GITHUB_TOKEN`, you can include `[skip ci]` in
-    the auto-fix commit message to avoid unnecessary CI runs on the
-    fix commit itself. See the [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg) input.
+    Conversely, if you use a PAT or GitHub App token (whose pushes **do**
+    trigger CI) but do not want the auto-fix commit itself to start a new
+    run, include `[skip ci]` in the commit message via the
+    [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg) input.
+    With the default `GITHUB_TOKEN`, `[skip ci]` is unnecessary since the
+    push does not trigger CI anyway.
 
 !!! warning "Pull requests from third-party forks"
 
-    Auto-fix does not work on pull requests from third-party forks. The
-    `GITHUB_TOKEN` lacks write permission to the fork repository, and
-    `git push` to the fork's branch is not possible. Consider
-    restricting `auto-fix` to `push` events or pull requests from the
-    same repository.
+    Auto-fix is automatically skipped for pull requests from third-party
+    forks: the `GITHUB_TOKEN` cannot push to the fork's branch, so the
+    action emits a warning and makes no commit. Use `auto-fix` on `push`
+    events or on pull requests from the same repository.
