@@ -15,6 +15,7 @@ words:
   - Nextcloud
   - nushell
   - pymdownx
+  - pymdown
   - pyyaml
   - superfences
   - twemoji
