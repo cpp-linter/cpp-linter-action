@@ -8,6 +8,7 @@
 
 [io-doc]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs
 [recipes-doc]: https://cpp-linter.github.io/cpp-linter-action/examples
+[permissions-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions
 
 [format-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png
 [tidy-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png
@@ -89,14 +90,18 @@ When enabled, the action will:
 ```
 
 > [!TIP]
-> To prevent the auto-fix commit from triggering another CI run, include a
-> `[skip ci]` (or `[ci skip]`, `[no ci]`, etc.) tag in your custom commit message:
+> The default `GITHUB_TOKEN` cannot start new workflow runs, so the auto-fix
+> commit does not re-run your CI. Check out with a PAT or GitHub App token if you
+> want it to — and then, to keep a particular auto-fix commit from re-running CI
+> anyway, tag its message with `[skip ci]` (or `[ci skip]`, `[no ci]`, etc.):
 >
 > ```yaml
 >     with:
 >       auto-fix: 'true'
 >       auto-fix-commit-msg: 'style: apply clang-format fixes [skip ci]'
 > ```
+>
+> See [our documented permissions][permissions-doc] for both setups.
 
 ## Used By
 

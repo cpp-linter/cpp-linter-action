@@ -218,6 +218,11 @@ inputs:
       ``clang-format -i`` on files with style issues. After that,
       a new commit is pushed to the PR branch with the formatted changes.
 
+      Fixes respect [`lines-changed-only`](#lines-changed-only): only the lines
+      it selects are reformatted. With it enabled, a file can come out of
+      auto-fix still not satisfying `.clang-format` as a whole, because the
+      lines outside the diff are left as they were.
+
       This option has no effect on clang-tidy issues.
     default: 'false'
     required: false
