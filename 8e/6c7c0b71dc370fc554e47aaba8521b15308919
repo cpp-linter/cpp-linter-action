@@ -1,0 +1,19 @@
+.github/dependabot.yml
+  s_0da9b18608c2a0::t_0af566d971b726 24-25,27-28,30-31,35-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8e6c7c0b71dc370fc554e47aaba8521b15308919",
+  "prompts": {},
+  "sessions": {
+    "s_0da9b18608c2a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c1ae0c79-9ddb-4e6b-a8e1-2213cfd3c2b6",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  }
+}
