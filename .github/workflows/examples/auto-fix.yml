@@ -1,0 +1,30 @@
+name: cpp-linter (auto-fix)
+on:
+  pull_request:
+    branches: [main, master, develop]
+    paths: ['**.c', '**.cpp', '**.h', '**.hpp', '**.cxx', '**.hxx', '**.cc', '**.hh', '**CMakeLists.txt', 'meson.build', '**.cmake']
+
+jobs:
+  cpp-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed for auto-fix commits
+      pull-requests: read  # needed to list changed files on pull_request events
+    steps:
+      - uses: actions/checkout@v7
+        # For auto-fix commits to trigger new CI runs, use a PAT instead:
+        #   with:
+        #     token: ${{ secrets.MY_PAT }}
+
+      - uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: 'file'  # Use .clang-format config file
+          tidy-checks: '-*'  # disable clang-tidy
+          auto-fix: 'true'  # auto-apply clang-format fixes
+
+      - name: Fail fast?!
+        if: steps.linter.outputs.clang-format-checks-failed > 0
+        run: exit 1

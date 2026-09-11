@@ -2,10 +2,21 @@
 [style]: ../inputs-outputs.md#style
 [tidy-checks]: ../inputs-outputs.md#tidy-checks
 [thread-comments]: ../inputs-outputs.md#thread-comments
+[auto-fix]: ../inputs-outputs.md#auto-fix
 
 # Recipes
 
 Here are some example workflows to get started quickly.
+
+=== "auto-fix clang-format"
+
+    ``` yaml
+    --8<-- ".github/workflows/examples/auto-fix.yml"
+    ```
+
+    1. See also [`auto-fix`][auto-fix]
+    2. See also [`style`][style]
+    3. See also [`tidy-checks`][tidy-checks]
 
 === "only clang-tidy"
 

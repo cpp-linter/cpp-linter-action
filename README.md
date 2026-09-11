@@ -8,6 +8,7 @@
 
 [io-doc]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs
 [recipes-doc]: https://cpp-linter.github.io/cpp-linter-action/examples
+[permissions-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions
 
 [format-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png
 [tidy-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png
@@ -66,6 +67,41 @@ For all explanations of our available input parameters and output variables, see
 [Inputs and Outputs document][io-doc].
 
 See also our [example recipes][recipes-doc].
+
+### Auto-fix clang-format issues
+
+You can enable automatic fixing of clang-format issues by setting `auto-fix: 'true'`.
+When enabled, the action will:
+
+1. Run clang-format detection as usual
+2. Apply `clang-format -i` to fix any files with style issues
+3. Commit and push the formatted changes back to the PR branch
+
+```yaml
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: 'file'
+          auto-fix: 'true'  # automatically fix format issues
+```
+
+> [!TIP]
+> The default `GITHUB_TOKEN` cannot start new workflow runs, so the auto-fix
+> commit does not re-run your CI. Check out with a PAT or GitHub App token if you
+> want it to — and then, to keep a particular auto-fix commit from re-running CI
+> anyway, tag its message with `[skip ci]` (or `[ci skip]`, `[no ci]`, etc.):
+>
+> ```yaml
+>     with:
+>       auto-fix: 'true'
+>       auto-fix-commit-msg: 'style: apply clang-format fixes [skip ci]'
+> ```
+>
+> See [our documented permissions][permissions-doc] for both setups.
 
 ## Used By
 

@@ -47,6 +47,15 @@ inputs:
   passive-reviews:
     minimum-version: '2.12.0'
     required-permission: 'pull-requests: write #pull-request-reviews'
+  auto-fix:
+    minimum-version: '2.19.0'
+    required-permission: 'contents: write #auto-fix'
+  auto-fix-commit-msg:
+    minimum-version: '2.19.0'
+  auto-fix-git-user:
+    minimum-version: '2.19.0'
+  auto-fix-git-email:
+    minimum-version: '2.19.0'
   jobs:
     minimum-version: '2.11.0'
   cache-enable:

@@ -78,3 +78,43 @@ The [`tidy-review`](inputs-outputs.md#tidy-review), [`format-review`](inputs-out
     permissions:
       pull-requests: write
 ```
+
+## Auto-fix
+
+The [`auto-fix`](inputs-outputs.md#auto-fix) feature requires `contents: write` permission
+in addition to any other permissions needed for other features:
+
+```yaml
+    permissions:
+      contents: write # (1)!
+```
+
+1. Needed by the token used in `actions/checkout` to commit and push the
+   formatted changes back to the branch.
+
+!!! warning "CI re-triggering with auto-fix"
+
+    The default `GITHUB_TOKEN` **cannot** trigger new CI runs when pushing
+    a commit. If you need the auto-fix commit to trigger CI checks
+    (e.g. to verify the fix builds clean), use a personal access token
+    (PAT) with `contents: write` scope on the checkout step:
+
+    ```yaml
+    - uses: actions/checkout@v7
+      with:
+        token: ${{ secrets.MY_PAT }}
+    ```
+
+    Conversely, if you use a PAT or GitHub App token (whose pushes **do**
+    trigger CI) but do not want the auto-fix commit itself to start a new
+    run, include `[skip ci]` in the commit message via the
+    [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg) input.
+    With the default `GITHUB_TOKEN`, `[skip ci]` is unnecessary since the
+    push does not trigger CI anyway.
+
+!!! warning "Pull requests from third-party forks"
+
+    Auto-fix is automatically skipped for pull requests from third-party
+    forks: the `GITHUB_TOKEN` cannot push to the fork's branch, so the
+    action emits a warning and makes no commit. Use `auto-fix` on `push`
+    events or on pull requests from the same repository.
