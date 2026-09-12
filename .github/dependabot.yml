@@ -21,22 +21,21 @@ updates:
     open-pull-requests-limit: 10
     groups:
       org:
-        # updates about org-maintained packages
+        # org-maintained packages (the "action" dependency group)
+        applies-to: version-updates
         patterns:
-          - "*"
-        exclude-patterns:
-          - "mypy*"
-          - "pre-commit*"
-          - "ruff*"
-          - "mkdocs*"
-          - "pyyaml*"
+          - "clang-tools"
+          - "cpp-linter"
       dev:
-        # updates about everything else (dev and docs)
+        # everything else: dev tooling + docs (major/minor/patch all in one PR)
+        applies-to: version-updates
         patterns:
           - "*"
         exclude-patterns:
-          - "clang-tools*"
-          - "cpp-linter*"
-        update-types:
-          - major
-          - minor
+          - "clang-tools"
+          - "cpp-linter"
+      security:
+        # keep security fixes grouped too (previously happened only by accident)
+        applies-to: security-updates
+        patterns:
+          - "*"
