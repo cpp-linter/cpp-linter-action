@@ -39,7 +39,7 @@ inputs:
   version:
     description: |
       The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use.
-      Accepted options are strings which can be 22, 21, 20, 19, 18, 17, 16, 15, 14, 13 or 12.
+      Accepted options are strings which can be 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13 or 12.
 
       - Set this option to a blank string (`''`) to use the platform's default installed version.
       - This value can also be a path to where the clang tools are installed (if using a custom install location).
