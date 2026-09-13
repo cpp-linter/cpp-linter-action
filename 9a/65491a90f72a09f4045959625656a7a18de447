@@ -1,0 +1,19 @@
+action.yml
+  s_292ea2a59b0765::t_5e742d8236ea41 472-476,478-482,484-489,587-591
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9a65491a90f72a09f4045959625656a7a18de447",
+  "prompts": {},
+  "sessions": {
+    "s_292ea2a59b0765": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ed1abca8-7243-41fd-9923-6d77a97b04c0",
+        "model": "claude-opus-5"
+      },
+      "human_author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  }
+}
