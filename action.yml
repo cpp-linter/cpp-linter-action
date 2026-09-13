@@ -460,19 +460,41 @@ runs:
           ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
 
-    - name: Checkout PR branch for auto-fix push capability
+    - name: Check out the pull request head for auto-fix
+      id: auto-fix-head
       if: >-
         (inputs.auto-fix == 'true' || inputs.auto-fix == true)
         && github.event_name == 'pull_request'
         && github.event.pull_request.head.repo.full_name == github.repository
       shell: nu {0}
       run: |
-        let head_ref = $env.GITHUB_HEAD_REF
-        if ($head_ref | is-not-empty) {
-          print $"(ansi purple)Fetching PR branch \"($head_ref)\" for auto-fix(ansi reset)"
-          ^git fetch origin --depth=1 $"($head_ref):refs/remotes/origin/($head_ref)"
-          ^git checkout --force -B $head_ref $"refs/remotes/origin/($head_ref)"
-          print $"(ansi green)Switched to PR branch \"($head_ref)\"(ansi reset)"
+        # On pull_request events, actions/checkout provides the merge commit
+        # (refs/pull/N/merge), not the branch. A commit made on top of it would
+        # carry that merge into the PR branch, so format the head commit instead.
+        # Nothing is forced: a dirty working tree or a failed checkout skips
+        # auto-fix with a warning.
+        let head_sha = '${{ github.event.pull_request.head.sha }}'
+        let current = (^git rev-parse HEAD | str trim)
+        if $current == $head_sha {
+          print $"(ansi green)Pull request head ($head_sha) is already checked out(ansi reset)"
+          exit 0
+        }
+        let dirty = (^git status --porcelain --untracked-files=no | str trim)
+        if ($dirty | is-not-empty) {
+          print "::warning title=Auto-fix skipped::The working tree has uncommitted changes to tracked files, so the pull request head was not checked out and no formatting commit was made. Make sure earlier steps leave tracked files unchanged, or check out the pull request head commit yourself."
+          $"skip=true\n" | save --append $env.GITHUB_OUTPUT
+          exit 0
+        }
+        print $"(ansi purple)Checking out pull request head ($head_sha) for auto-fix(ansi reset)"
+        let fetched = (^git fetch origin --depth=1 $head_sha | complete)
+        let checked_out = if $fetched.exit_code == 0 {
+          ^git checkout --detach $head_sha | complete
+        } else {
+          $fetched
+        }
+        if $checked_out.exit_code != 0 {
+          print $"::warning title=Auto-fix skipped::Could not check out the pull request head commit ($head_sha), so no formatting commit was made: ($checked_out.stderr | str trim)"
+          $"skip=true\n" | save --append $env.GITHUB_OUTPUT
         }
 
     - name: Warn that auto-fix is skipped on forked pull requests
@@ -550,6 +572,7 @@ runs:
         (inputs.auto-fix == 'true' || inputs.auto-fix == true)
         && (github.event_name != 'pull_request'
         || github.event.pull_request.head.repo.full_name == github.repository)
+        && steps.auto-fix-head.outputs.skip != 'true'
       shell: nu {0}
       run: |
         # Determine the destination branch up-front: the PR head ref, or the
@@ -568,10 +591,16 @@ runs:
           exit 0
         }
 
-        # Refresh index first so stat-only differences don't create false positives
+        # Refresh the index first so stat-only differences don't create false positives
         ^git update-index -q --refresh
-        let has_changes = (^git diff-index --name-status --exit-code HEAD -- | complete | $in.exit_code == 1)
-        if $has_changes {
+        # Only source files can have been touched by clang-format, so limit the
+        # commit to the configured extensions. Anything else modified by earlier
+        # steps stays out of it.
+        let pathspecs = ('${{ inputs.extensions }}' | split row ',' | each { |ext| $"*.($ext | str trim)" })
+        let changed = (^git ls-files --modified -- ...$pathspecs | lines | where { |line| ($line | str trim | is-not-empty) })
+        if ($changed | is-not-empty) {
+          print $"(ansi purple)Committing ($changed | length) formatted file\(s\)(ansi reset)"
+          for file in $changed { print $"  ($file)" }
           let git_user_name = if ('${{ inputs.auto-fix-git-user }}' | is-empty) {
             $env.GITHUB_ACTOR
           } else {
@@ -584,9 +613,7 @@ runs:
           }
           let git_user = $"user.name=($git_user_name)"
           let git_email = $"user.email=($git_user_email)"
-          # Stage only tracked modifications (clang-format edits existing sources).
-          # Avoid `git add -A`, which would also sweep in unrelated untracked files.
-          ^git add -u
+          ^git add -- ...$changed
           let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
             'style: apply clang-format fixes'
           } else {
