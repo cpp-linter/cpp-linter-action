@@ -7,7 +7,7 @@ on:
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
-    permissions:
+    permissions: # explicit permissions granted to the `secrets.GITHUB_TOKEN`
       contents: write  # needed for auto-fix commits
       pull-requests: read  # needed to list changed files on pull_request events
     steps:
