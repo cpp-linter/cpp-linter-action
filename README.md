@@ -104,6 +104,16 @@ When enabled, the action will:
 >
 > See [our documented permissions][permissions-doc] for the required scopes.
 
+### Use your own GitHub App
+
+Every feature above can run with a token minted from a GitHub App that you own
+instead of the default `GITHUB_TOKEN`. Comments and reviews are then posted
+under your App's name rather than `github-actions[bot]`, and commits pushed by
+`auto-fix` do start new workflow runs. The token is minted inside the job, so
+there is no server or webhook handling to host.
+
+See [GitHub App token][app-token-doc] for the setup steps.
+
 ## Used By
 
 <p align="center">
