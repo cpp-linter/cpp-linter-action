@@ -1,0 +1,21 @@
+docs/index.md
+  s_292ea2a59b0765::t_b6806e43ea4289 9-10
+README.md
+  s_292ea2a59b0765::t_12d1f47c854643 107-116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c19c564426d702bbe74a825d7ef8fe385dba1ba6",
+  "prompts": {},
+  "sessions": {
+    "s_292ea2a59b0765": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ed1abca8-7243-41fd-9923-6d77a97b04c0",
+        "model": "claude-opus-5"
+      },
+      "human_author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  }
+}
