@@ -12,9 +12,9 @@ jobs:
       pull-requests: read  # needed to list changed files on pull_request events
     steps:
       - uses: actions/checkout@v7
-        # For auto-fix commits to trigger new CI runs, use a PAT instead:
-        #   with:
-        #     token: ${{ secrets.MY_PAT }}
+        # Pushes made with the default GITHUB_TOKEN do not start new workflow
+        # runs. To have the auto-fix commit re-checked by CI, check out and run
+        # the action with a GitHub App token; see the permissions docs.
 
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter

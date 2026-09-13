@@ -94,27 +94,58 @@ in addition to any other permissions needed for other features:
 
 !!! warning "CI re-triggering with auto-fix"
 
-    The default `GITHUB_TOKEN` **cannot** trigger new CI runs when pushing
-    a commit. If you need the auto-fix commit to trigger CI checks
-    (e.g. to verify the fix builds clean), use a personal access token
-    (PAT) with `contents: write` scope on the checkout step:
+    Commits pushed with the default `GITHUB_TOKEN` do not start new workflow
+    runs, so CI does not re-check the auto-fix commit. If you need that, push
+    with a [GitHub App token](#github-app-token) or a personal access token
+    that has `contents: write`.
 
-    ```yaml
-    - uses: actions/checkout@v7
-      with:
-        token: ${{ secrets.MY_PAT }}
-    ```
-
-    Conversely, if you use a PAT or GitHub App token (whose pushes **do**
-    trigger CI) but do not want the auto-fix commit itself to start a new
-    run, include `[skip ci]` in the commit message via the
-    [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg) input.
-    With the default `GITHUB_TOKEN`, `[skip ci]` is unnecessary since the
-    push does not trigger CI anyway.
+    If your token does trigger CI and you want to keep a particular auto-fix
+    commit from starting a run, add `[skip ci]` to
+    [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg).
 
 !!! warning "Pull requests from third-party forks"
 
-    Auto-fix is automatically skipped for pull requests from third-party
-    forks: the `GITHUB_TOKEN` cannot push to the fork's branch, so the
-    action emits a warning and makes no commit. Use `auto-fix` on `push`
-    events or on pull requests from the same repository.
+    Auto-fix is skipped for pull requests from forks. The `GITHUB_TOKEN`
+    cannot push to the fork's branch, and workflows triggered by fork pull
+    requests receive no secrets, so an App token or PAT is not available there
+    either. The action prints a warning and makes no commit. Use `auto-fix` on
+    `push` events or on pull requests from the same repository.
+
+## GitHub App token
+
+A token minted from a GitHub App you own replaces the default `GITHUB_TOKEN`
+for every feature on this page. Pushes made with it start workflow runs, and
+comments and reviews are posted under the App's name instead of
+`github-actions[bot]`.
+
+1. [Register a GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app)
+   with the repository permissions **Contents: Read and write** and
+   **Pull requests: Read and write**, then install it on the repository.
+2. Store the App ID as a repository variable and the private key as a secret.
+3. Mint the token at the start of the job and pass it to both `actions/checkout`
+   and cpp-linter:
+
+```yaml
+    steps:
+      - uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ vars.CPP_LINTER_APP_ID }}
+          private-key: ${{ secrets.CPP_LINTER_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }} # (1)!
+      - uses: cpp-linter/cpp-linter-action@v2
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }} # (2)!
+        with:
+          style: 'file'
+          auto-fix: 'true'
+```
+
+1. The auto-fix commit is pushed with this token, so the push triggers your
+   other workflows.
+2. Thread comments and pull request reviews are posted with this token.
+
+The job's `permissions` block only applies to `GITHUB_TOKEN`; the App token's
+permissions come from the App's settings.
