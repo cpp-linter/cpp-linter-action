@@ -81,6 +81,8 @@ When enabled, the action will:
 ```yaml
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}  # the PR head, not the merge commit
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
@@ -89,6 +91,10 @@ When enabled, the action will:
           style: 'file'
           auto-fix: 'true'  # automatically fix format issues
 ```
+
+On `pull_request` events `actions/checkout` checks out the merge commit by default. Auto-fix
+commits on the pull request's head commit, so set `ref` as above; without it the action prints
+a warning and makes no commit.
 
 > [!TIP]
 > Commits pushed with the default `GITHUB_TOKEN` do not start new workflow runs,

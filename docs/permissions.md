@@ -92,6 +92,21 @@ in addition to any other permissions needed for other features:
 1. Needed by the token used in `actions/checkout` to commit and push the
    formatted changes back to the branch.
 
+!!! info "Check out the pull request head"
+
+    On `pull_request` events `actions/checkout` provides the merge commit
+    (`refs/pull/N/merge`), not the branch. A commit made on it would carry that
+    merge into the pull request, so auto-fix only commits when the head commit
+    is checked out, and prints a warning otherwise:
+
+    ```yaml
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    ```
+
+    The expression is empty on `push` events, so the same step works for both.
+
 !!! warning "CI re-triggering with auto-fix"
 
     Commits pushed with the default `GITHUB_TOKEN` do not start new workflow
@@ -135,6 +150,7 @@ comments and reviews are posted under the App's name instead of
       - uses: actions/checkout@v7
         with:
           token: ${{ steps.app-token.outputs.token }} # (1)!
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: cpp-linter/cpp-linter-action@v2
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }} # (2)!

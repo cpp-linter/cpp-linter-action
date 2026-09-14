@@ -12,6 +12,10 @@ jobs:
       pull-requests: read  # needed to list changed files on pull_request events
     steps:
       - uses: actions/checkout@v7
+        with:
+          # auto-fix commits on the pull request's head commit; the default
+          # checkout is the merge commit (empty on push events, so harmless).
+          ref: ${{ github.event.pull_request.head.sha }}
         # Pushes made with the default GITHUB_TOKEN do not start new workflow
         # runs. To have the auto-fix commit re-checked by CI, check out and run
         # the action with a GitHub App token; see the permissions docs.
