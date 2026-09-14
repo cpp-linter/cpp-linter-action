@@ -1,0 +1,25 @@
+.github/workflows/examples/auto-fix.yml
+  s_0da9b18608c2a0::t_4d17c0b5fc2f92 15-18
+README.md
+  s_0da9b18608c2a0::t_cb5453a4a2168c 84-85,95-98
+action.yml
+  s_0da9b18608c2a0::t_ca59073d8671db 224-228,561-573
+docs/permissions.md
+  s_0da9b18608c2a0::t_5b1df2032b6854 95-109,153
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "eebbabe5c13ad74e957c6c7e4957eed40a5cbdb1",
+  "prompts": {},
+  "sessions": {
+    "s_0da9b18608c2a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c1ae0c79-9ddb-4e6b-a8e1-2213cfd3c2b6",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  }
+}
