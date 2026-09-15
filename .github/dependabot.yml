@@ -19,6 +19,13 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    cooldown:
+      # GitHub applies a 3-day cooldown to version updates by default; keep it
+      # for third-party packages, but not for the ones this org publishes.
+      default-days: 3
+      exclude:
+        - "cpp-linter"
+        - "clang-tools"
     groups:
       org:
         # org-maintained packages (the "action" dependency group)
