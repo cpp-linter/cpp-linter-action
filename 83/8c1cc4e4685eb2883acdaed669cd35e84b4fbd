@@ -1,0 +1,14 @@
+.github/dependabot.yml
+  h_20d8fd5fdd9091 22-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "838c1cc4e4685eb2883acdaed669cd35e84b4fbd",
+  "prompts": {},
+  "humans": {
+    "h_20d8fd5fdd9091": {
+      "author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
