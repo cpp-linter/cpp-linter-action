@@ -6,6 +6,8 @@
 
 [io-doc]: inputs-outputs.md
 [recipes-doc]: examples/index.md
+[permissions-doc]: permissions.md
+[app-token-doc]: permissions.md#github-app-token
 
 [format-annotations-preview]: images/annotations-clang-format.png
 [tidy-annotations-preview]: images/annotations-clang-tidy.png
