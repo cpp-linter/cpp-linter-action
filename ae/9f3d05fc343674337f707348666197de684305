@@ -1,0 +1,18 @@
+README.md
+  h_20d8fd5fdd9091 74-75,91-93
+action.yml
+  h_20d8fd5fdd9091 214-217,219-222,525,528-535,562-564,589,592-593
+docs/permissions.md
+  h_20d8fd5fdd9091 110,113,115-117,119-121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ae9f3d05fc343674337f707348666197de684305",
+  "prompts": {},
+  "humans": {
+    "h_20d8fd5fdd9091": {
+      "author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
