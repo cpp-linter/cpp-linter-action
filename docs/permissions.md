@@ -107,24 +107,18 @@ in addition to any other permissions needed for other features:
 
     The expression is empty on `push` events, so the same step works for both.
 
-!!! warning "CI re-triggering with auto-fix"
+!!! warning "Limits"
 
     Commits pushed with the default `GITHUB_TOKEN` do not start new workflow
-    runs, so CI does not re-check the auto-fix commit. If you need that, push
+    runs, so CI does not re-check the auto-fix commit. To change that, push
     with a [GitHub App token](#github-app-token) or a personal access token
-    that has `contents: write`.
+    that has `contents: write`; add `[skip ci]` to
+    [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg) if a
+    particular auto-fix commit should not start a run.
 
-    If your token does trigger CI and you want to keep a particular auto-fix
-    commit from starting a run, add `[skip ci]` to
-    [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg).
-
-!!! warning "Pull requests from third-party forks"
-
-    Auto-fix is skipped for pull requests from forks. The `GITHUB_TOKEN`
-    cannot push to the fork's branch, and workflows triggered by fork pull
-    requests receive no secrets, so an App token or PAT is not available there
-    either. The action prints a warning and makes no commit. Use `auto-fix` on
-    `push` events or on pull requests from the same repository.
+    Pull requests from forks are skipped with a warning: `GITHUB_TOKEN` cannot
+    push to the fork's branch, and fork pull requests receive no secrets, so an
+    App token or PAT is not available there either.
 
 ## GitHub App token
 

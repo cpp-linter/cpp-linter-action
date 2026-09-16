@@ -211,20 +211,15 @@ inputs:
     required: false
   auto-fix:
     description: |
-      Set this option to `true` to automatically apply clang-format fixes
-      and commit them back to the PR branch.
+      Set this option to `true` to apply clang-format fixes (`clang-format -i`)
+      and commit them to the branch. Fixes respect
+      [`lines-changed-only`](#lines-changed-only): Only the changed lines are
+      reformatted accordingly.
 
-      When enabled, cpp-linter runs with ``--fix``, which applies
-      ``clang-format -i`` on files with style issues. After that,
-      a new commit is pushed to the PR branch with the formatted changes.
-
-      Fixes respect [`lines-changed-only`](#lines-changed-only): Only the
-      changed lines are reformatted accordingly.
-
-      On `pull_request` events, check out the pull request's head commit
-      (`ref: github.event.pull_request.head.sha` in `actions/checkout`).
-      The default checkout is the merge commit, and auto-fix is skipped with
-      a warning when that is what is checked out.
+      On `pull_request` events check out the pull request's head commit
+      (`ref: github.event.pull_request.head.sha` in `actions/checkout`); the
+      default checkout is the merge commit, and auto-fix then skips with a
+      warning. Pull requests from forks are skipped as well.
 
       This option has no effect on clang-tidy issues.
     default: 'false'
@@ -465,15 +460,6 @@ runs:
           ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
 
-    - name: Warn that auto-fix is skipped on forked pull requests
-      if: >-
-        (inputs.auto-fix == 'true' || inputs.auto-fix == true)
-        && github.event_name == 'pull_request'
-        && github.event.pull_request.head.repo.full_name != github.repository
-      shell: nu {0}
-      run: |
-        print "::warning title=Auto-fix skipped::auto-fix cannot push to a third-party fork's branch, so no formatting commit was made. Apply clang-format fixes from within the fork or run cpp-linter locally."
-
     - name: Run cpp-linter
       id: cpp-linter
       shell: nu {0}
@@ -536,15 +522,17 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args cpp-linter ...$args
 
     - name: Auto-commit clang-format fixes
-      if: >-
-        (inputs.auto-fix == 'true' || inputs.auto-fix == true)
-        && (github.event_name != 'pull_request'
-        || github.event.pull_request.head.repo.full_name == github.repository)
+      if: inputs.auto-fix == 'true' || inputs.auto-fix == true
       shell: nu {0}
       run: |
-        # Determine the destination branch up-front: the PR head ref, or the
-        # pushed branch. Bail out on tag refs (or anything that is not a branch)
-        # so we never push HEAD to refs/heads/<tag> and create a stray branch.
+        # The token cannot push to a third-party fork's branch.
+        if '${{ github.event_name }}' == 'pull_request' and '${{ github.event.pull_request.head.repo.full_name }}' != '${{ github.repository }}' {
+          print "::warning title=Auto-fix skipped::auto-fix cannot push to a third-party fork's branch, so no formatting commit was made. Apply clang-format fixes from within the fork or run cpp-linter locally."
+          exit 0
+        }
+
+        # Destination branch: the PR head ref, or the pushed branch. Tags and
+        # other refs are skipped so HEAD never lands on refs/heads/<tag>.
         let head_ref = $env.GITHUB_HEAD_REF
         let branch = if ($head_ref | is-not-empty) {
           $head_ref
@@ -571,11 +559,10 @@ runs:
           }
         }
 
-        # Refresh the index first so stat-only differences don't create false positives
+        # Refresh stat info so untouched files don't show as modified, then stage
+        # only source files (the configured extensions): anything else an earlier
+        # step modified stays out of the commit.
         ^git update-index -q --refresh
-        # Only source files can have been touched by clang-format, so limit the
-        # commit to the configured extensions. Anything else modified by earlier
-        # steps stays out of it.
         let pathspecs = ('${{ inputs.extensions }}' | split row ',' | each { |ext| $"*.($ext | str trim)" })
         let changed = (^git ls-files --modified -- ...$pathspecs | lines | where { |line| ($line | str trim | is-not-empty) })
         if ($changed | is-not-empty) {
@@ -599,15 +586,11 @@ runs:
           } else {
             '${{ inputs.auto-fix-commit-msg }}'
           }
-          ^git -c $git_user -c $git_email commit -m $"($commit_msg)"
+          ^git -c $git_user -c $git_email commit -m $commit_msg
           let push_result = (^git push origin $"HEAD:refs/heads/($branch)") | complete
           if $push_result.exit_code != 0 {
-            let stderr_lower = ($push_result.stderr | str downcase)
-            if ($stderr_lower | str contains "403") or ($stderr_lower | str contains "refused") or ($stderr_lower | str contains "not have permission") {
-              print $"::warning title=Auto-fix push failed::This action does not have permission to push to this branch. Ensure the token used by actions/checkout has `contents: write` (branch protection rules may also block the push). See docs/permissions.md for details."
-            } else {
-              print $"::warning title=Auto-fix push failed::(ansi yellow)($push_result.stderr)(ansi reset)"
-            }
+            let reason = ($push_result.stderr | str replace --all "\n" " " | str trim)
+            print $"::warning title=Auto-fix push failed::($reason) The token used by actions/checkout needs `contents: write` and branch protection must allow the push; see https://cpp-linter.github.io/cpp-linter-action/permissions/#auto-fix"
           } else {
             print $"(ansi green)Auto-fix commit pushed successfully(ansi reset)"
           }

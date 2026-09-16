@@ -71,12 +71,8 @@ See also our [example recipes][recipes-doc].
 
 ### Auto-fix clang-format issues
 
-You can enable automatic fixing of clang-format issues by setting `auto-fix: 'true'`.
-When enabled, the action will:
-
-1. Run clang-format detection as usual
-2. Apply `clang-format -i` to fix any files with style issues
-3. Commit and push the formatted changes back to the PR branch
+Set `auto-fix: 'true'` and the action applies `clang-format -i` to the files with style
+issues and commits the result to the branch:
 
 ```yaml
     steps:
@@ -92,9 +88,9 @@ When enabled, the action will:
           auto-fix: 'true'  # automatically fix format issues
 ```
 
-On `pull_request` events `actions/checkout` checks out the merge commit by default. Auto-fix
-commits on the pull request's head commit, so set `ref` as above; without it the action prints
-a warning and makes no commit.
+On `pull_request` events `actions/checkout` checks out the merge commit by default; auto-fix
+needs the head commit, so set `ref` as above. Without it the action prints a warning and makes
+no commit.
 
 > [!TIP]
 > Commits pushed with the default `GITHUB_TOKEN` do not start new workflow runs,
