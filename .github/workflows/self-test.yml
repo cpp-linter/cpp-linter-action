@@ -88,7 +88,10 @@ jobs:
     # read), so the push is rejected on purpose and the demo sources stay
     # mis-formatted for the other jobs; the last step proves nothing left the
     # runner. pull_request only: on a push the target branch would be main.
-    if: github.event_name == 'pull_request'
+    # Not on forks: auto-fix skips them, so there would be no commit to check.
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.head.repo.full_name == github.repository
     permissions:
       contents: read
       pull-requests: read
@@ -101,7 +104,6 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-          ref: ${{ github.event.pull_request.head.sha }}  # auto-fix commits on the PR head
 
       - name: Self test auto-fix
         uses: ./
