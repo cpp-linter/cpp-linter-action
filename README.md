@@ -77,8 +77,6 @@ issues and commits the result to the branch:
 ```yaml
     steps:
       - uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}  # the PR head, not the merge commit
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
@@ -88,9 +86,8 @@ issues and commits the result to the branch:
           auto-fix: 'true'  # automatically fix format issues
 ```
 
-On `pull_request` events `actions/checkout` checks out the merge commit by default; auto-fix
-needs the head commit, so set `ref` as above. Without it the action prints a warning and makes
-no commit.
+On `pull_request` events `actions/checkout` checks out the merge commit, so the action switches
+the workspace to the pull request's head commit before it lints and commits.
 
 > [!TIP]
 > Commits pushed with the default `GITHUB_TOKEN` do not start new workflow runs,

@@ -216,10 +216,10 @@ inputs:
       [`lines-changed-only`](#lines-changed-only): Only the changed lines are
       reformatted accordingly.
 
-      On `pull_request` events check out the pull request's head commit
-      (`ref: github.event.pull_request.head.sha` in `actions/checkout`); the
-      default checkout is the merge commit, and auto-fix then skips with a
-      warning. Pull requests from forks are skipped as well.
+      On `pull_request` events the action checks out the pull request's head
+      commit before linting: the default checkout is the merge commit, and a fix
+      committed on it would carry that merge into the branch. Pull requests from
+      forks are skipped.
 
       This option has no effect on clang-tidy issues.
     default: 'false'
@@ -460,6 +460,35 @@ runs:
           ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args ...$cmd
         }
 
+    - name: Check out the pull request head for auto-fix
+      if: >-
+        (inputs.auto-fix == 'true' || inputs.auto-fix == true)
+        && github.event_name == 'pull_request'
+        && github.event.pull_request.head.repo.full_name == github.repository
+      shell: nu {0}
+      run: |
+        # On pull_request events actions/checkout provides the merge commit
+        # (refs/pull/N/merge), detached. A fix committed on top of it would carry
+        # that merge into the PR branch, so format the head commit instead.
+        # Nothing is forced: git refuses to switch over conflicting local changes.
+        # Any other checkout (e.g. the workflow set `ref`) is left alone.
+        if (^git rev-parse HEAD | str trim) != $env.GITHUB_SHA {
+          exit 0
+        }
+        let head_sha = '${{ github.event.pull_request.head.sha }}'
+        print $"(ansi purple)Checking out pull request head ($head_sha) for auto-fix(ansi reset)"
+        # The default shallow clone only holds the merge commit. Fetch the head
+        # commit only when it is missing: --depth would truncate a full clone.
+        if (^git cat-file -e $head_sha | complete).exit_code != 0 {
+          let fetched = (^git fetch origin --depth=1 $head_sha | complete)
+          if $fetched.exit_code != 0 { print $fetched.stderr }
+        }
+        let checked_out = (^git checkout --detach $head_sha | complete)
+        if $checked_out.exit_code != 0 {
+          let reason = ($checked_out.stderr | str replace --all "\n" " " | str trim)
+          print $"::warning title=Auto-fix checkout failed::Could not check out the pull request head ($head_sha): ($reason)"
+        }
+
     - name: Run cpp-linter
       id: cpp-linter
       shell: nu {0}
@@ -546,25 +575,33 @@ runs:
           exit 0
         }
 
-        # On pull_request events actions/checkout provides the merge commit
-        # (refs/pull/N/merge) unless the workflow sets `ref` to the head SHA.
-        # A commit made on the merge commit would carry that merge into the
-        # branch, so only commit when the head commit is what is checked out.
+        # Only commit on the pull request head (see the checkout step above).
         let head_sha = '${{ github.event.pull_request.head.sha }}'
         if ($head_sha | is-not-empty) {
           let current = (^git rev-parse HEAD | str trim)
           if $current != $head_sha {
-            print $"::warning title=Auto-fix skipped::HEAD is ($current), not the pull request head ($head_sha). actions/checkout checks out the merge commit by default; set its `ref` input to the pull request head SHA \(github.event.pull_request.head.sha\) so auto-fix can commit on the branch. See https://cpp-linter.github.io/cpp-linter-action/permissions/#auto-fix"
+            print $"::warning title=Auto-fix skipped::HEAD is ($current), not the pull request head ($head_sha), so no formatting commit was made. auto-fix runs on `push` and `pull_request` events; see https://cpp-linter.github.io/cpp-linter-action/permissions/#auto-fix"
             exit 0
           }
         }
 
-        # Refresh stat info so untouched files don't show as modified, then stage
-        # only source files (the configured extensions): anything else an earlier
-        # step modified stays out of the commit.
-        ^git update-index -q --refresh
-        let pathspecs = ('${{ inputs.extensions }}' | split row ',' | each { |ext| $"*.($ext | str trim)" })
-        let changed = (^git ls-files --modified -- ...$pathspecs | lines | where { |line| ($line | str trim | is-not-empty) })
+        # Stage only source files (the configured extensions), so anything else an
+        # earlier step modified stays out of the commit. `git add` aborts on a
+        # pathspec that matches nothing, which most of the default extensions do,
+        # so resolve them to modified tracked files first. Untracked sources
+        # (generated code, CMake's compiler-id files) stay out as well.
+        let path_specs = ('${{ inputs.extensions }}' | split row ',' | each { |ext| $"*.($ext | str trim)" })
+        let modified = (^git ls-files --modified -- ...$path_specs | lines)
+        if ($modified | is-not-empty) {
+          ^git add -- ...$modified
+        }
+        # Count what got staged: .gitattributes rules (LF/CRLF) can normalize a
+        # modified file back to its committed content.
+        let changed = (
+          ^git status --short --untracked-files=no -- ...$path_specs
+          | lines
+          | each { |line| $line | str substring 3.. }
+        )
         if ($changed | is-not-empty) {
           print $"(ansi purple)Committing ($changed | length) formatted file\(s\)(ansi reset)"
           for file in $changed { print $"  ($file)" }
@@ -580,7 +617,6 @@ runs:
           }
           let git_user = $"user.name=($git_user_name)"
           let git_email = $"user.email=($git_user_email)"
-          ^git add -- ...$changed
           let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
             'style: apply clang-format fixes'
           } else {
