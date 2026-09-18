@@ -8,6 +8,8 @@
 
 [io-doc]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs
 [recipes-doc]: https://cpp-linter.github.io/cpp-linter-action/examples
+[permissions-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions
+[app-token-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions/#github-app-token
 
 [format-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png
 [tidy-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png
@@ -66,6 +68,50 @@ For all explanations of our available input parameters and output variables, see
 [Inputs and Outputs document][io-doc].
 
 See also our [example recipes][recipes-doc].
+
+### Auto-fix clang-format issues
+
+Set `auto-fix: 'true'` and the action applies `clang-format -i` to the files with style
+issues and commits the result to the branch:
+
+```yaml
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: 'file'
+          auto-fix: 'true'  # automatically fix format issues
+```
+
+On `pull_request` events `actions/checkout` checks out the merge commit, so the action switches
+the workspace to the pull request's head commit before it lints and commits.
+
+> [!TIP]
+> Commits pushed with the default `GITHUB_TOKEN` do not start new workflow runs,
+> so CI does not re-check the auto-fix commit. To change that, check out and run
+> the action with a [GitHub App token][app-token-doc]. To keep a particular
+> auto-fix commit from re-running CI, add `[skip ci]` to its message:
+>
+> ```yaml
+>     with:
+>       auto-fix: 'true'
+>       auto-fix-commit-msg: 'style: apply clang-format fixes [skip ci]'
+> ```
+>
+> See [our documented permissions][permissions-doc] for the required scopes.
+
+### Use your own GitHub App
+
+Every feature above can run with a token minted from a GitHub App that you own
+instead of the default `GITHUB_TOKEN`. Comments and reviews are then posted
+under your App's name rather than `github-actions[bot]`, and commits pushed by
+`auto-fix` do start new workflow runs. The token is minted inside the job, so
+there is no server or webhook handling to host.
+
+See [GitHub App token][app-token-doc] for the setup steps.
 
 ## Used By
 
