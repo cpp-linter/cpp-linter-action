@@ -1,0 +1,20 @@
+action.yml
+  s_e064bc09b2d49f::t_c8ef84d086db6c 475
+  s_e064bc09b2d49f::t_86d93ab9208d34 585
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "adbb9f08cafa1e60d327583bdcb3376fae43d916",
+  "prompts": {},
+  "sessions": {
+    "s_e064bc09b2d49f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "58065765-ffca-4a5c-9a85-234199eda825",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
