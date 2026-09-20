@@ -472,6 +472,7 @@ runs:
         # that merge into the PR branch, so format the head commit instead.
         # Nothing is forced: git refuses to switch over conflicting local changes.
         # Any other checkout (e.g. the workflow set `ref`) is left alone.
+        cd '${{ inputs.repo-root }}'  # where the repository is checked out
         if (^git rev-parse HEAD | str trim) != $env.GITHUB_SHA {
           exit 0
         }
@@ -581,6 +582,7 @@ runs:
         }
 
         # Only commit on the pull request head (see the checkout step above).
+        cd '${{ inputs.repo-root }}'  # where the repository is checked out
         if ($head_sha | is-not-empty) {
           let current = (^git rev-parse HEAD | str trim)
           if $current != $head_sha {
