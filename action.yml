@@ -554,8 +554,13 @@ runs:
       if: inputs.auto-fix == 'true' || inputs.auto-fix == true
       shell: nu {0}
       run: |
-        # The token cannot push to a third-party fork's branch.
-        if '${{ github.event_name }}' == 'pull_request' and '${{ github.event.pull_request.head.repo.full_name }}' != '${{ github.repository }}' {
+        # The token cannot push to a third-party fork's branch. Check every event
+        # that carries a pull request: under pull_request_target the push below
+        # would otherwise send the fork's commits to this repository, to a branch
+        # named after the fork's branch.
+        let head_sha = '${{ github.event.pull_request.head.sha }}'
+        let head_repo = '${{ github.event.pull_request.head.repo.full_name }}'
+        if ($head_sha | is-not-empty) and $head_repo != '${{ github.repository }}' {
           print "::warning title=Auto-fix skipped::auto-fix cannot push to a third-party fork's branch, so no formatting commit was made. Apply clang-format fixes from within the fork or run cpp-linter locally."
           exit 0
         }
@@ -576,7 +581,6 @@ runs:
         }
 
         # Only commit on the pull request head (see the checkout step above).
-        let head_sha = '${{ github.event.pull_request.head.sha }}'
         if ($head_sha | is-not-empty) {
           let current = (^git rev-parse HEAD | str trim)
           if $current != $head_sha {

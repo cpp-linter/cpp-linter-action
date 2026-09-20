@@ -112,7 +112,9 @@ in addition to any other permissions needed for other features:
 
     Pull requests from forks are skipped with a warning: `GITHUB_TOKEN` cannot
     push to the fork's branch, and fork pull requests receive no secrets, so an
-    App token or PAT is not available there either.
+    App token or PAT is not available there either. They are skipped on
+    `pull_request_target` as well, where the token could push, but only to this
+    repository.
 
 ## GitHub App token
 
