@@ -81,3 +81,104 @@ jobs:
           echo "clang-format checks-failed: ${{ steps.linter.outputs.clang-format-checks-failed }}"
         # for actual deployment
         # run: exit 1
+
+  test-auto-fix:
+    # Runs the real action with auto-fix and checks the commit it makes. The
+    # job never gets push credentials (persist-credentials: false, contents:
+    # read), so the push is rejected on purpose and the demo sources stay
+    # mis-formatted for the other jobs; the last step proves nothing left the
+    # runner. pull_request only: on a push the target branch would be main.
+    # Not on forks: auto-fix skips them, so there would be no commit to check.
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    env:
+      EXPECTED_MSG: 'style: apply clang-format fixes [self-test]'
+      EXPECTED_AUTHOR: 'cpp-linter-self-test <self-test@users.noreply.github.com>'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Self test auto-fix
+        uses: ./
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file
+          auto-fix: 'true'
+          auto-fix-commit-msg: ${{ env.EXPECTED_MSG }}
+          auto-fix-git-user: cpp-linter-self-test
+          auto-fix-git-email: self-test@users.noreply.github.com
+          tidy-checks: '-*'  # no clang-tidy, no compilation database needed
+          files-changed-only: false
+          lines-changed-only: false
+          ignore: build|venv
+          version: '16'
+          verbosity: debug
+          thread-comments: false
+          file-annotations: false
+          step-summary: false
+
+      - name: Assert auto-fix committed the formatting changes
+        run: |
+          set -euo pipefail
+
+          echo "::group::Tip commit after auto-fix"
+          git --no-pager log -1 --pretty=fuller --stat
+          echo "::endgroup::"
+
+          subject="$(git log -1 --pretty=%s)"
+          if [ "$subject" != "$EXPECTED_MSG" ]; then
+            echo "::error title=auto-fix::tip commit is '$subject', expected the auto-fix commit '$EXPECTED_MSG'"
+            exit 1
+          fi
+
+          author="$(git log -1 --pretty='%an <%ae>')"
+          if [ "$author" != "$EXPECTED_AUTHOR" ]; then
+            echo "::error title=auto-fix::commit author is '$author', expected '$EXPECTED_AUTHOR'"
+            exit 1
+          fi
+
+          changed="$(git show --pretty=format: --name-only HEAD | sed '/^$/d')"
+          if [ -z "$changed" ]; then
+            echo "::error title=auto-fix::the auto-fix commit is empty; clang-format changed nothing"
+            exit 1
+          fi
+
+          if stray="$(printf '%s\n' "$changed" | grep -v '^docs/examples/demo/')"; then
+            echo "::error title=auto-fix::commit touched files outside docs/examples/demo:"
+            printf '%s\n' "$stray"
+            exit 1
+          fi
+
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo "::error title=auto-fix::tracked files are still modified after the commit:"
+            git status --porcelain --untracked-files=no
+            exit 1
+          fi
+
+          failed='${{ steps.linter.outputs.clang-format-checks-failed }}'
+          if [ "${failed:-0}" != "0" ]; then
+            echo "::error title=auto-fix::clang-format still reports $failed issue(s) after auto-fix"
+            exit 1
+          fi
+
+          echo "auto-fix committed $(printf '%s\n' "$changed" | wc -l) file(s) as expected"
+
+      - name: Assert the commit never reached the PR branch
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags --depth=1 origin "$GITHUB_HEAD_REF"
+          if [ "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)" ]; then
+            echo "::error title=auto-fix::the auto-fix commit reached the PR branch; this job must never push"
+            exit 1
+          fi
+          echo "PR branch is untouched, as expected"
