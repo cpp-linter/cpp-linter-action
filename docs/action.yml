@@ -48,6 +48,7 @@ inputs:
     minimum-version: '2.12.0'
     required-permission: 'pull-requests: write #pull-request-reviews'
   auto-fix:
+    experimental: true
     minimum-version: '2.23.0'
     required-permission: 'contents: write #auto-fix'
   auto-fix-commit-msg:
