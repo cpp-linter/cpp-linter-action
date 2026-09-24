@@ -18,6 +18,7 @@ words:
   - pymdown
   - pyyaml
   - superfences
+  - stylesheet
   - twemoji
   - venv
   - Zondax
