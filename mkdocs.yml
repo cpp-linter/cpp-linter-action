@@ -11,7 +11,7 @@ nav:
   - permissions.md
   - examples/index.md
   - contributing-guidelines.md
-  - "← cpp-linter org": https://cpp-linter.github.io/
+  - "← cpp-linter hub": https://cpp-linter.github.io/
 
 theme:
   name: material
@@ -64,7 +64,7 @@ extra:
       link: https://github.com/cpp-linter/cpp-linter
 
 extra_css:
-  - stylesheets/extra.css
+  - https://cpp-linter.github.io/stylesheets/shared.css
 
 plugins:
   - search
