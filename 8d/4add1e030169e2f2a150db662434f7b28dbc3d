@@ -1,0 +1,19 @@
+mkdocs.yml
+  s_0da9b18608c2a0::t_fbef25fdbe1728 14,67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8d4add1e030169e2f2a150db662434f7b28dbc3d",
+  "prompts": {},
+  "sessions": {
+    "s_0da9b18608c2a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c1ae0c79-9ddb-4e6b-a8e1-2213cfd3c2b6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
