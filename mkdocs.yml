@@ -30,6 +30,8 @@ theme:
     - toc.follow
   logo: images/logo.png
   favicon: images/favicon.ico
+  # The fonts come with the shared styles loaded from cpp-linter.github.io (extra_css).
+  font: false
   icon:
     repo: fontawesome/brands/github
   palette:
