@@ -1,3 +1,9 @@
+ci:
+  autofix_prs: true
+  autofix_commit_msg: 'chore: auto fixes from pre-commit.com hooks'
+  autoupdate_commit_msg: 'chore: pre-commit autoupdate'
+  autoupdate_schedule: quarterly
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
