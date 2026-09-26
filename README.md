@@ -48,8 +48,17 @@ Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows
 The content of the file should be in the following format.
 
 ```yaml
+name: cpp-linter
+on: pull_request
+
+jobs:
+  cpp-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write  # to post the thread comment
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
@@ -58,7 +67,8 @@ The content of the file should be in the following format.
           style: 'file'  # Use .clang-format config file
           tidy-checks: '' # Use .clang-tidy config file
           # only 'update' a single comment in a pull request thread.
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+          # Pull requests from forks get a read-only token, so skip the comment there.
+          thread-comments: ${{ github.event.pull_request.head.repo.full_name == github.repository && 'update' }}
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
@@ -92,14 +102,11 @@ the workspace to the pull request's head commit before it lints and commits.
 > [!TIP]
 > Commits pushed with the default `GITHUB_TOKEN` do not start new workflow runs,
 > so CI does not re-check the auto-fix commit. To change that, check out and run
-> the action with a [GitHub App token][app-token-doc]. To keep a particular
-> auto-fix commit from re-running CI, add `[skip ci]` to its message:
+> the action with a [GitHub App token][app-token-doc].
 >
-> ```yaml
->     with:
->       auto-fix: 'true'
->       auto-fix-commit-msg: 'style: apply clang-format fixes [skip ci]'
-> ```
+> Do not add `[skip ci]` to `auto-fix-commit-msg`. The auto-fix commit becomes the
+> head of the pull request, so its required checks would stay pending and block the
+> merge, and a squash merge can carry the marker into your default branch.
 >
 > See [our documented permissions][permissions-doc] for the required scopes.
 
@@ -116,38 +123,29 @@ See [GitHub App token][app-token-doc] for the setup steps.
 ## Used By
 
 <p align="center">
-  <a href="https://github.com/Microsoft"><img src="https://avatars.githubusercontent.com/u/6154722?s=200&v=4" alt="Microsoft" width="28"/></a>
-  <strong>Microsoft</strong>&nbsp;&nbsp;
   <a href="https://github.com/apache"><img src="https://avatars.githubusercontent.com/u/47359?s=200&v=4" alt="Apache" width="28"/></a>
   <strong>Apache</strong>&nbsp;&nbsp;
-  <a href="https://github.com/nasa"><img src="https://avatars.githubusercontent.com/u/848102?s=200&v=4" alt="NASA" width="28"/></a>
-  <strong>NASA</strong>&nbsp;&nbsp;
   <a href="https://github.com/samsung"><img src="https://avatars.githubusercontent.com/u/6210390?s=200&v=4" alt="Samsung" width="28"/></a>
   <strong>Samsung</strong>&nbsp;&nbsp;
-  <a href="https://github.com/TheAlgorithms"><img src="https://avatars.githubusercontent.com/u/20487725?s=200&v=4" alt="TheAlgorithms" width="28"/></a>
-  <strong>TheAlgorithms</strong>&nbsp;&nbsp;
+  <a href="https://github.com/bloomberg"><img src="https://avatars.githubusercontent.com/u/1416818?s=200&v=4" alt="Bloomberg" width="28"/></a>
+  <strong>Bloomberg</strong>&nbsp;&nbsp;
+  <a href="https://github.com/qualcomm"><img src="https://avatars.githubusercontent.com/u/55295994?s=200&v=4" alt="Qualcomm" width="28"/></a>
+  <strong>Qualcomm</strong>&nbsp;&nbsp;
+  <a href="https://github.com/nextcloud"><img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/></a>
+  <strong>Nextcloud</strong>&nbsp;&nbsp;
   <a href="https://github.com/CachyOS"><img src="https://avatars.githubusercontent.com/u/85452089?s=200&v=4" alt="CachyOS" width="28"/></a>
   <strong>CachyOS</strong>&nbsp;&nbsp;
   </br>
-  <a href="https://github.com/nextcloud"><img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/></a>
-  <strong>Nextcloud</strong>&nbsp;&nbsp;
   <a href="https://github.com/jupyter-xeus"><img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/></a>
   <strong>Jupyter</strong>&nbsp;&nbsp;
   <a href="https://github.com/nnstreamer"><img src="https://avatars.githubusercontent.com/u/60992508?s=200&v=4" alt="NNStreamer" width="28"/></a>
   <strong>NNStreamer</strong>&nbsp;&nbsp;
-  <a href="https://github.com/imgproxy"><img src="https://avatars.githubusercontent.com/u/48099924?s=200&v=4" alt="imgproxy" width="28"/></a>
-  <strong>imgproxy</strong>&nbsp;&nbsp;
   <a href="https://github.com/Zondax"><img src="https://avatars.githubusercontent.com/u/34372050?s=200&v=4" alt="Zondax" width="28"/></a>
   <strong>Zondax</strong>&nbsp;&nbsp;
   <a href="https://github.com/AppNeta"><img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/></a>
   <strong>AppNeta</strong>&nbsp;&nbsp;
-  </br>
   <a href="https://github.com/chocolate-doom"><img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/></a>
-  <strong>Chocolate Doom</strong>
-  <a href="https://github.com/bloomberg"><img src="https://avatars.githubusercontent.com/u/1416818?s=200&v=4" alt="Bloomberg" width="28"/></a>
-  <strong>Bloomberg</strong>
-  <a href="https://github.com/qualcomm"><img src="https://avatars.githubusercontent.com/u/55295994?s=200&v=4" alt="Qualcomm" width="28"/></a>
-  <strong>Qualcomm</strong>
+  <strong>Chocolate Doom</strong>&nbsp;&nbsp;
   <strong> and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more</a>.</strong>
 </p>
 
