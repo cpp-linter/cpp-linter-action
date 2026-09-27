@@ -10,6 +10,7 @@
 [recipes-doc]: https://cpp-linter.github.io/cpp-linter-action/examples
 [permissions-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions
 [app-token-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions/#github-app-token
+[skip-doc]: https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs
 
 [format-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png
 [tidy-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png
@@ -104,9 +105,11 @@ the workspace to the pull request's head commit before it lints and commits.
 > so CI does not re-check the auto-fix commit. To change that, check out and run
 > the action with a [GitHub App token][app-token-doc].
 >
-> Do not add `[skip ci]` to `auto-fix-commit-msg`. The auto-fix commit becomes the
-> head of the pull request, so its required checks would stay pending and block the
-> merge, and a squash merge can carry the marker into your default branch.
+> Do not add `[skip ci]` or any other [skip instruction][skip-doc] to
+> `auto-fix-commit-msg`. The auto-fix commit becomes the head of the pull request,
+> so its required checks skipped for `push` or `pull_request` events would stay
+> pending and may cause a gap in quality control. A squash merge can also carry
+> the instruction into your default branch.
 >
 > See [our documented permissions][permissions-doc] for the required scopes.
 
