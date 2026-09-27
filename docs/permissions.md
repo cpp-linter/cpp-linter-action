@@ -106,9 +106,12 @@ in addition to any other permissions needed for other features:
     Commits pushed with the default `GITHUB_TOKEN` do not start new workflow
     runs, so CI does not re-check the auto-fix commit. To change that, push
     with a [GitHub App token](#github-app-token) or a personal access token
-    that has `contents: write`; add `[skip ci]` to
-    [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg) if a
-    particular auto-fix commit should not start a run.
+    that has `contents: write`. Do not add `[skip ci]` or any other
+    [skip instruction](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs)
+    to [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg): the
+    auto-fix commit becomes the head of the pull request, so its required
+    checks skipped for `push` or `pull_request` events would stay
+    pending and may cause a gap in quality control.
 
     Pull requests from forks are skipped with a warning: `GITHUB_TOKEN` cannot
     push to the fork's branch, and fork pull requests receive no secrets, so an
