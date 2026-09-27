@@ -109,7 +109,8 @@ in addition to any other permissions needed for other features:
     that has `contents: write`. Do not add `[skip ci]` to
     [`auto-fix-commit-msg`](./inputs-outputs.md#auto-fix-commit-msg): the
     auto-fix commit becomes the head of the pull request, so its required
-    checks would stay pending and block the merge.
+    checks skipped for `push` or `pull_request` events would stay
+    pending and may cause loss of quality control.
 
     Pull requests from forks are skipped with a warning: `GITHUB_TOKEN` cannot
     push to the fork's branch, and fork pull requests receive no secrets, so an
