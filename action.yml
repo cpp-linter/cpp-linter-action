@@ -121,9 +121,6 @@ inputs:
       !!! info "Important"
           This feature requires special permissions to perform successfully.
           See our [documented permissions](permissions.md)
-
-      > [!NOTE]
-      > If run on a private repository, then this feature is disabled because the GitHub REST API behaves differently for thread comments on a private repository.
     required: false
     default: 'false'
   no-lgtm:
