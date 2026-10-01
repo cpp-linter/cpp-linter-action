@@ -1,0 +1,25 @@
+.github/workflows/cpp-linter.yml
+  s_66212c309e21f0::t_7add2076c2f1d9 11,16-17
+.github/workflows/mkdocs-deploy.yml
+  s_66212c309e21f0::t_fa39f7443031a7 10-11,14-18
+.github/workflows/pre-commit.yml
+  s_66212c309e21f0::t_ff1c325c522d53 9-10,13-14
+.github/workflows/release.yml
+  s_66212c309e21f0::t_ec4b7401a1b279 34-35,38-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "95eba1a321207a99e697be14914e1b5b050c38d1",
+  "prompts": {},
+  "sessions": {
+    "s_66212c309e21f0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8763d161-5362-48a1-ae9b-11f7bcd83469",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
