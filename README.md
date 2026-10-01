@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD033 MD041-->
+<!-- markdownlint-disable MD041 -->
 
 [file-annotations]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs/#file-annotations
 [thread-comments]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs/#thread-comments
@@ -10,7 +10,7 @@
 [recipes-doc]: https://cpp-linter.github.io/cpp-linter-action/examples
 [permissions-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions
 [app-token-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions/#github-app-token
-[skip-doc]: https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs
+[tools-doc]: https://cpp-linter.github.io/cpp-linter-action/required-tools
 
 [format-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png
 [tidy-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png
@@ -22,31 +22,26 @@
 
 <!--README-start-->
 
-# C/C++ Linter Action <sub><sup>| clang-format & clang-tidy</sup></sub>
+# cpp-linter-action
 
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cpp-linter/cpp-linter-action)
-[![GitHub marketplace](https://img.shields.io/badge/marketplace-C%2FC%2B%2B%20Linter-blue?logo=github)](https://github.com/marketplace/actions/c-c-linter)
-[![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
-[![MkDocs Deploy](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/mkdocs-deploy.yml)
-[![cpp-linter hub](https://img.shields.io/badge/%F0%9F%8F%A0_cpp--linter_hub-%E2%86%90_home-22863a)](https://cpp-linter.github.io/)
+[![release](https://img.shields.io/github/v/release/cpp-linter/cpp-linter-action?label=release&labelColor=454a63&color=007ec6)](https://github.com/cpp-linter/cpp-linter-action/releases)
+[![ci](https://img.shields.io/github/actions/workflow/status/cpp-linter/cpp-linter-action/self-test.yml?branch=main&label=ci&labelColor=454a63)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/self-test.yml)
+[![part of cpp-linter](https://img.shields.io/badge/part%20of-cpp--linter-ffc20a?labelColor=454a63)](https://cpp-linter.github.io/)
 
-A Github Action for linting C/C++ code integrating clang-tidy and clang-format
-to collect feedback provided in the form of
-[`file-annotations`][file-annotations], [`thread-comments`][thread-comments],
-workflow [`step-summary`][step-summary], and Pull Request reviews (with
-[`tidy-review`][tidy-review] or [`format-review`][format-review]).
+A GitHub Action that checks the C and C++ files a pull request changes with clang-format and
+clang-tidy, and reports the findings as [`file-annotations`][file-annotations],
+[`thread-comments`][thread-comments], a workflow [`step-summary`][step-summary] and pull request
+reviews (with [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
-> [!TIP]
-> Prefer pre-commit hooks over GitHub Actions? Check out
-> [**cpp-linter-hooks**](https://github.com/cpp-linter/cpp-linter-hooks) —
-> a pre-commit hook repository that runs `clang-format` and `clang-tidy`
-> consistently on developer machines and in CI, with no manual LLVM installs.
+[Website](https://cpp-linter.github.io/) ·
+[Documentation](https://cpp-linter.github.io/cpp-linter-action/) ·
+[Marketplace](https://github.com/marketplace/actions/c-c-linter) ·
+[Get started](https://cpp-linter.github.io/getting-started/#on-every-pull-request) ·
+[Discussions](https://github.com/orgs/cpp-linter/discussions)
 
-## Usage
+## Quick start
 
-Create a new GitHub Actions workflow in your project, e.g. at [.github/workflows/cpp-linter.yml](https://github.com/cpp-linter/cpp-linter-action/blob/main/.github/workflows/cpp-linter.yml)
-
-The content of the file should be in the following format.
+Save this as `.github/workflows/cpp-linter.yml`:
 
 ```yaml
 name: cpp-linter
@@ -57,9 +52,46 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write  # to post the thread comment
+      pull-requests: write
     steps:
       - uses: actions/checkout@v7
+      - uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          version: '21'
+          style: file
+          tidy-checks: ''
+          format-review: true
+      - name: Fail on lint errors
+        if: steps.linter.outputs.checks-failed > 0
+        run: exit 1
+```
+
+- `style: file` and `tidy-checks: ''` use your `.clang-format` and `.clang-tidy`. `version` takes
+  an LLVM major from 12 to 23; `21` is the default.
+- Annotations in the diff view are on by default. `format-review`, `tidy-review` and
+  `thread-comments` are opt-in and need `pull-requests: write`; turn on one of the two reviews, not
+  both. `auto-fix` commits the clang-format fixes to the branch and needs `contents: write`.
+- The action does not fail the job by itself; the last step does, using the `checks-failed`
+  output.
+- Pull requests from forks get a read-only token: annotations still appear, but reviews are not
+  posted, and `thread-comments` would fail the step. Draft pull requests get no review.
+
+## Usage
+
+For all explanations of our available input parameters and output variables, see our
+[Inputs and Outputs document][io-doc].
+
+See also our [example recipes][recipes-doc].
+
+### Post a thread comment
+
+Set `thread-comments` to post the findings as a comment in the pull request thread. With
+`update`, the action updates its existing comment instead of posting a new one:
+
+```yaml
       - uses: cpp-linter/cpp-linter-action@v2
         id: linter
         env:
@@ -70,15 +102,7 @@ jobs:
           # only 'update' a single comment in a pull request thread.
           # Pull requests from forks get a read-only token, so skip the comment there.
           thread-comments: ${{ github.event.pull_request.head.repo.full_name == github.repository && 'update' }}
-      - name: Fail fast?!
-        if: steps.linter.outputs.checks-failed > 0
-        run: exit 1
 ```
-
-For all explanations of our available input parameters and output variables, see our
-[Inputs and Outputs document][io-doc].
-
-See also our [example recipes][recipes-doc].
 
 ### Auto-fix clang-format issues
 
@@ -123,35 +147,6 @@ there is no server or webhook handling to host.
 
 See [GitHub App token][app-token-doc] for the setup steps.
 
-## Used By
-
-<p align="center">
-  <a href="https://github.com/apache"><img src="https://avatars.githubusercontent.com/u/47359?s=200&v=4" alt="Apache" width="28"/></a>
-  <strong>Apache</strong>&nbsp;&nbsp;
-  <a href="https://github.com/samsung"><img src="https://avatars.githubusercontent.com/u/6210390?s=200&v=4" alt="Samsung" width="28"/></a>
-  <strong>Samsung</strong>&nbsp;&nbsp;
-  <a href="https://github.com/bloomberg"><img src="https://avatars.githubusercontent.com/u/1416818?s=200&v=4" alt="Bloomberg" width="28"/></a>
-  <strong>Bloomberg</strong>&nbsp;&nbsp;
-  <a href="https://github.com/qualcomm"><img src="https://avatars.githubusercontent.com/u/55295994?s=200&v=4" alt="Qualcomm" width="28"/></a>
-  <strong>Qualcomm</strong>&nbsp;&nbsp;
-  <a href="https://github.com/nextcloud"><img src="https://avatars.githubusercontent.com/u/19211038?s=200&v=4" alt="Nextcloud" width="28"/></a>
-  <strong>Nextcloud</strong>&nbsp;&nbsp;
-  <a href="https://github.com/CachyOS"><img src="https://avatars.githubusercontent.com/u/85452089?s=200&v=4" alt="CachyOS" width="28"/></a>
-  <strong>CachyOS</strong>&nbsp;&nbsp;
-  </br>
-  <a href="https://github.com/jupyter-xeus"><img src="https://avatars.githubusercontent.com/u/58793052?s=200&v=4" alt="Jupyter" width="28"/></a>
-  <strong>Jupyter</strong>&nbsp;&nbsp;
-  <a href="https://github.com/nnstreamer"><img src="https://avatars.githubusercontent.com/u/60992508?s=200&v=4" alt="NNStreamer" width="28"/></a>
-  <strong>NNStreamer</strong>&nbsp;&nbsp;
-  <a href="https://github.com/Zondax"><img src="https://avatars.githubusercontent.com/u/34372050?s=200&v=4" alt="Zondax" width="28"/></a>
-  <strong>Zondax</strong>&nbsp;&nbsp;
-  <a href="https://github.com/AppNeta"><img src="https://avatars.githubusercontent.com/u/3374594?s=200&v=4" alt="AppNeta" width="28"/></a>
-  <strong>AppNeta</strong>&nbsp;&nbsp;
-  <a href="https://github.com/chocolate-doom"><img src="https://avatars.githubusercontent.com/u/6140118?s=200&v=4" alt="Chocolate Doom" width="28"/></a>
-  <strong>Chocolate Doom</strong>&nbsp;&nbsp;
-  <strong> and <a href="https://github.com/cpp-linter/cpp-linter-action/network/dependents">many more</a>.</strong>
-</p>
-
 ## Example
 
 ### Annotations
@@ -194,86 +189,41 @@ Using [`format-review`][format-review]:
 
 ![sample format-suggestion][format-suggestion-preview]
 
-## Add C/C++ Linter Action badge in README
+## Supported runners
 
-You can show C/C++ Linter Action status with a badge in your repository README
+Linux, macOS and Windows runners are supported. On Linux, we only support a Debian-based Linux OS
+(like Ubuntu and many others), because we first try to use the `apt` package manager to install
+clang tools. Linux workflows that use a specific [`container`][gh-container-syntax] need a few
+packages installed first. [Required tools][tools-doc] lists them and the sources each runner
+installs the clang tools from.
 
-Example
+## Used by
 
-```markdown
-[![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
-```
+Projects from these organizations run cpp-linter-action on their default branch:
 
-[![cpp-linter](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/cpp-linter/cpp-linter-action/actions/workflows/cpp-linter.yml)
+[<img src="https://avatars.githubusercontent.com/u/47359?s=40&v=4" width="20" height="20" alt=""> Apache](https://github.com/apache) ·
+[<img src="https://avatars.githubusercontent.com/u/6210390?s=40&v=4" width="20" height="20" alt=""> Samsung](https://github.com/samsung) ·
+[<img src="https://avatars.githubusercontent.com/u/1416818?s=40&v=4" width="20" height="20" alt=""> Bloomberg](https://github.com/bloomberg) ·
+[<img src="https://avatars.githubusercontent.com/u/55295994?s=40&v=4" width="20" height="20" alt=""> Qualcomm](https://github.com/qualcomm) ·
+[<img src="https://avatars.githubusercontent.com/u/19211038?s=40&v=4" width="20" height="20" alt=""> Nextcloud](https://github.com/nextcloud) ·
+[<img src="https://avatars.githubusercontent.com/u/85452089?s=40&v=4" width="20" height="20" alt=""> CachyOS](https://github.com/CachyOS) ·
+[<img src="https://avatars.githubusercontent.com/u/58793052?s=40&v=4" width="20" height="20" alt=""> Jupyter Xeus](https://github.com/jupyter-xeus) ·
+[<img src="https://avatars.githubusercontent.com/u/60992508?s=40&v=4" width="20" height="20" alt=""> NNStreamer](https://github.com/nnstreamer) ·
+[<img src="https://avatars.githubusercontent.com/u/34372050?s=40&v=4" width="20" height="20" alt=""> Zondax](https://github.com/Zondax) ·
+[<img src="https://avatars.githubusercontent.com/u/3374594?s=40&v=4" width="20" height="20" alt=""> AppNeta](https://github.com/AppNeta) ·
+[<img src="https://avatars.githubusercontent.com/u/6140118?s=40&v=4" width="20" height="20" alt=""> Chocolate Doom](https://github.com/chocolate-doom)
 
-## Have question or feedback?
+The [showcase](https://cpp-linter.github.io/showcase/) lists more projects that use it.
 
-To provide feedback (requesting a feature or reporting a bug) please post to [issues](https://github.com/cpp-linter/cpp-linter-action/issues).
+## Contributing
 
-## Required tools installed
-
-As of v2.16.0, this action uses
-
-- [nushell] for cross-platform compatible scripting
-- [uv] for driving a Python virtual environment
-
-This action installs [nushell] and [uv] automatically.
-Only [nushell] is added to the PATH environment variable.
-[uv], and any standalone Python distribution it downloads, are not added to the PATH environment variable.
-
-### On Linux runners
-
-We only support Linux runners using a Debian-based Linux OS (like Ubuntu and many others).
-This is because we first try to use the `apt` package manager to install clang tools.
-
-Linux workflows that use a specific [`container`][gh-container-syntax] should ensure that
-the following are installed:
-
-- GLIBC (v2.32 or later)
-- `wget` or `curl`
-- `lsb-release` (required by LLVM-provided install script)
-- `software-properties-common` (required by LLVM-provided install script)
-- `gnupg` (required by LLVM-provided install script)
-
-```shell
-apt-get update
-apt-get install -y libc6 wget lsb-release software-properties-common gnupg
-```
-
-Otherwise, [nushell] and/or the LLVM-provided bash script will fail to run.
-
-If installing clang tools fails using the `apt` package manager, then
-we alternatively try the following sources in order:
-
-1. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
-2. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
-
-### On macOS runners
-
-The specified `version` of `clang-format` and `clang-tidy` is installed via
-the following sources in order (whichever succeeds first):
-
-1. Homebrew
-2. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
-3. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
-
-### On Windows runners
-
-For Windows runners, we use clang tools installed via
-the following sources in order (whichever succeeds first):
-
-1. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
-2. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
+Read [CONTRIBUTING.md](https://github.com/cpp-linter/cpp-linter-action/blob/main/CONTRIBUTING.md) before you open a pull request, and report bugs or request features in [issues](https://github.com/cpp-linter/cpp-linter-action/issues).
 
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](https://github.com/cpp-linter/cpp-linter-action/blob/main/LICENSE)
 
-[nushell]: https://www.nushell.sh/
-[uv]: https://docs.astral.sh/uv/
-[cpp-linter/clang-tools-pip]: https://github.com/cpp-linter/clang-tools-pip
 [gh-container-syntax]: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer
-[clang-tidy-wheel]: https://pypi.org/project/clang-tidy
-[clang-format-wheel]: https://pypi.org/project/clang-format
+[skip-doc]: https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs
 
 <!--README-end-->
