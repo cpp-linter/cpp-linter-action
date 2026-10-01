@@ -9,6 +9,7 @@ nav:
   - inputs-outputs.md
   - pr-review-caveats.md
   - permissions.md
+  - required-tools.md
   - examples/index.md
   - contributing-guidelines.md
   - "← cpp-linter hub": https://cpp-linter.github.io/
