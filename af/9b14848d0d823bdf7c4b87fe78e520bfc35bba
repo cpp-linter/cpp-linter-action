@@ -1,0 +1,27 @@
+.github/workflows/run-tests.yml
+  s_66212c309e21f0::t_158b78b4b02994 1-47
+pyproject.toml
+  s_66212c309e21f0::t_f21441a83c4c31 25-44
+tests/test_badge_hook.py
+  s_66212c309e21f0::t_2a30b5e659311f 1-115
+tests/test_gen_io_doc.py
+  s_66212c309e21f0::t_970030c9c78fc2 1-252
+uv.lock
+  s_66212c309e21f0::t_2bb12e38596d42 250-377,415-424,446-455,466-477,517-525,929-937,1051-1068
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "af9b14848d0d823bdf7c4b87fe78e520bfc35bba",
+  "prompts": {},
+  "sessions": {
+    "s_66212c309e21f0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8763d161-5362-48a1-ae9b-11f7bcd83469",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
