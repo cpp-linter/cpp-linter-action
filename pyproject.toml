@@ -22,3 +22,23 @@ docs = [
     "mkdocs-material>=9.7.7",
     "pyyaml>=6.0.3",
 ]
+test = [
+    # the tests exercise the scripts in docs/, so they need the docs dependencies
+    { include-group = "docs" },
+    "coverage>=7.16.2",
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# the docs scripts are not a package; let the tests import them by module name
+pythonpath = ["docs"]
+addopts = ["-ra", "--strict-config", "--strict-markers"]
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+branch = true
+source = ["docs"]
+
+[tool.coverage.report]
+show_missing = true
