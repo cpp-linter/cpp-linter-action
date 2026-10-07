@@ -218,8 +218,8 @@ The [showcase](https://cpp-linter.github.io/showcase/) lists more projects that 
 ## Sponsors
 
 cpp-linter is maintained by two volunteers. [Sponsor the project](https://cpp-linter.github.io/sponsor/)
-through [Open Collective](https://opencollective.com/cpp-linter). Silver and Gold sponsors get their logo
-here.
+through [Open Collective](https://opencollective.com/cpp-linter). [Silver and Gold sponsors](https://cpp-linter.github.io/sponsor/#sponsor-tiers)
+get their logo here.
 
 ## Contributing
 
