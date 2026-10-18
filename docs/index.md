@@ -1,3 +1,8 @@
+---
+title: clang-format and clang-tidy GitHub Action
+description: Run clang-format and clang-tidy on the C/C++ files a pull request changes, with annotations, review suggestions and a thread comment.
+---
+
 [file-annotations]: inputs-outputs.md#file-annotations
 [thread-comments]: inputs-outputs.md#thread-comments
 [step-summary]: inputs-outputs.md#step-summary

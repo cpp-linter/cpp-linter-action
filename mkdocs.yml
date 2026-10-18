@@ -4,6 +4,9 @@ site_url: "https://cpp-linter.github.io/cpp-linter-action"
 repo_url: "https://github.com/cpp-linter/cpp-linter-action"
 repo_name: "cpp-linter/cpp-linter-action"
 edit_uri: "edit/main/docs/"
+# Theme overrides live in docs/ but are not pages.
+exclude_docs: |
+  overrides/
 nav:
   - index.md
   - inputs-outputs.md
@@ -16,6 +19,7 @@ nav:
 
 theme:
   name: material
+  custom_dir: docs/overrides
   features:
     - navigation.top
     - content.tabs.link
@@ -65,6 +69,11 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/cpp-linter/cpp-linter
+  # The same Google Analytics property as cpp-linter.github.io and the other
+  # cpp-linter docs, which all share that origin.
+  analytics:
+    provider: google
+    property: G-JKH4SXC7HC
 
 extra_css:
   - https://cpp-linter.github.io/stylesheets/shared.css
