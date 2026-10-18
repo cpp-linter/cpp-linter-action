@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{#-
+  Visits from the maintainers are tagged so that the Internal Traffic data
+  filter in Google Analytics can drop them. These docs share the
+  cpp-linter.github.io origin with the organization site, which sets the flag:
+  opening any page there or here with ?internal=1 stores it in localStorage and
+  ?internal=0 removes it. While it is there, every event carries
+  traffic_type=internal. It runs before Material's own snippet, so the setting
+  is queued ahead of the first page_view.
+-#}
+
+{% block analytics %}
+  {% if config.extra.analytics %}
+    <script>
+      try {
+        var param = new URLSearchParams(location.search).get("internal");
+        if (param === "1") localStorage.setItem("cpp-linter-internal", "1");
+        if (param === "0") localStorage.removeItem("cpp-linter-internal");
+        if (localStorage.getItem("cpp-linter-internal") === "1") {
+          window.dataLayer = window.dataLayer || [];
+          (function () { dataLayer.push(arguments); })("set", { traffic_type: "internal" });
+        }
+      } catch (e) {
+        // localStorage is unavailable when storage is blocked; the visit is then not tagged.
+      }
+    </script>
+  {% endif %}
+  {{ super() }}
+{% endblock %}
