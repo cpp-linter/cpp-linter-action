@@ -1,0 +1,27 @@
+docs/overrides/404.html
+  s_ecbcf0356d5867::t_7ccbdffd195406 1-14
+docs/overrides/main.html
+  s_ecbcf0356d5867::t_b1e5632cde374e 1-28
+mkdocs.yml
+  s_ecbcf0356d5867::t_b1e5632cde374e 7-9,22,72-76
+docs/index.md
+  s_ecbcf0356d5867::t_b1e5632cde374e 1-5
+cspell.config.yml
+  s_ecbcf0356d5867::t_b6e0c3d4ab014b 7,19,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "542b603a999563da0863853ce9a3be726a710f49",
+  "prompts": {},
+  "sessions": {
+    "s_ecbcf0356d5867": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54458110-7b12-4460-9e64-673c40eaacb1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
