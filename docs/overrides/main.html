@@ -21,7 +21,9 @@
           window.dataLayer = window.dataLayer || [];
           (function () { dataLayer.push(arguments); })("set", { traffic_type: "internal" });
         }
-      } catch (e) {}
+      } catch (e) {
+        // localStorage is unavailable when storage is blocked; the visit is then not tagged.
+      }
     </script>
   {% endif %}
   {{ super() }}
