@@ -21,9 +21,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: 'file'  # Use .clang-format config file
-          tidy-checks: '-*'  # disable clang-tidy
-          auto-fix: 'true'  # auto-apply clang-format fixes
+          style: 'file'  # Use .clang-format config file. (2)
+          tidy-checks: '-*'  # disable clang-tidy. (3)
+          auto-fix: 'true'  # auto-apply clang-format fixes. (1)
 
       - name: Fail fast?!
         if: steps.linter.outputs.clang-format-checks-failed > 0
