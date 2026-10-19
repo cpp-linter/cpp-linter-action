@@ -8,7 +8,9 @@ edit_uri: "edit/main/docs/"
 exclude_docs: |
   overrides/
 nav:
-  - index.md
+  # An explicit label: the home page's front-matter title is the longer, search-facing
+  # "clang-format and clang-tidy GitHub Action", which only <title> should use.
+  - cpp-linter-action: index.md
   - inputs-outputs.md
   - pr-review-caveats.md
   - permissions.md
