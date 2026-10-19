@@ -53,13 +53,11 @@ The [`thread-comments`](inputs-outputs.md#thread-comments) feature requires the 
 
     ```yaml
         permissions:
-          metadata: read # (1)!
-          contents: write # (2)!
+          contents: write # (1)!
     ```
 
-    1. needed to fetch existing comments
-    2. needed to post or update a commit comment. This also allows us to delete
-       an outdated comment if needed.
+    1. needed to fetch existing comments and to post or update a commit comment.
+       This also allows us to delete an outdated comment if needed.
 
 === "`#!yaml on: pull_request`"
 

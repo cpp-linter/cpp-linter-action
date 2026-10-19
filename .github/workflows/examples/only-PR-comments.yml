@@ -11,6 +11,7 @@ jobs:
   cpp-linter:
     runs-on: ubuntu-latest
     permissions: # (1)!
+      contents: read
       pull-requests: write
     steps:
       - uses: actions/checkout@v7
@@ -25,7 +26,8 @@ jobs:
           style: 'file'  # Use .clang-format config file. (2)
           tidy-checks: '' # Use .clang-tidy config file. (3)
           # only 'update' a single comment in a pull request's thread. (4)
-          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+          # Pull requests from forks get a read-only token, so skip the comment there.
+          thread-comments: ${{ github.event.pull_request.head.repo.full_name == github.repository && 'update' }}
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0
