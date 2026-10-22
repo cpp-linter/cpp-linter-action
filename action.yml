@@ -314,11 +314,23 @@ runs:
     - name: Install Linux clang dependencies
       if: runner.os == 'Linux'
       shell: nu {0}
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
       run: |
+        # An empty input can reach the shell as an unset variable, so default those to ""
+        load-env (
+          [
+            INPUT_VERSION
+          ]
+          | where {|n| $n not-in $env }
+          | reduce --fold {} {|n, acc| $acc | insert $n "" }
+        )
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         let apt_install_args = [
-            install -y clang-format-${{ inputs.version }} clang-tidy-${{ inputs.version }}
+            install -y $"clang-format-($env.INPUT_VERSION)" $"clang-tidy-($env.INPUT_VERSION)"
         ]
+        # llvm.sh installs its default version when no version is given
+        let llvm_installer_args = if ($env.INPUT_VERSION | is-empty) { [] } else { [$env.INPUT_VERSION] }
         let has_sudo = not ((which 'sudo') | is-empty)
 
         # First try installing from default Ubuntu repositories before trying LLVM script
@@ -341,9 +353,9 @@ runs:
 
           let llvm_installer_result = (
             if $has_sudo {
-                ^sudo $"($action_path)/llvm_install.sh" ${{ inputs.version }}
+                ^sudo $"($action_path)/llvm_install.sh" ...$llvm_installer_args
             } else {
-                ^bash $"($action_path)/llvm_install.sh" ${{ inputs.version }}
+                ^bash $"($action_path)/llvm_install.sh" ...$llvm_installer_args
             }
           ) | complete
           print $llvm_installer_result
@@ -363,15 +375,25 @@ runs:
     - name: Install MacOS clang dependencies
       if: runner.os == 'macOS'
       shell: nu {0}
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
       run: |-
+        # An empty input can reach the shell as an unset variable, so default those to ""
+        load-env (
+          [
+            INPUT_VERSION
+          ]
+          | where {|n| $n not-in $env }
+          | reduce --fold {} {|n, acc| $acc | insert $n "" }
+        )
         ^brew update
-        let brew_install_arg = 'llvm@${{ inputs.version }}'
+        let brew_install_arg = $"llvm@($env.INPUT_VERSION)"
         let result = (^brew install $brew_install_arg) | complete
         print $result
         if ($result.exit_code == 0) {
           let brew_prefix = ^brew --prefix $brew_install_arg
-          ^ln -s $"($brew_prefix)/bin/clang-format" "/usr/local/bin/clang-format-${{ inputs.version }}"
-          ^ln -s $"($brew_prefix)/bin/clang-tidy" "/usr/local/bin/clang-tidy-${{ inputs.version }}"
+          ^ln -s $"($brew_prefix)/bin/clang-format" $"/usr/local/bin/clang-format-($env.INPUT_VERSION)"
+          ^ln -s $"($brew_prefix)/bin/clang-tidy" $"/usr/local/bin/clang-tidy-($env.INPUT_VERSION)"
         }
 
     - name: Setup cpp-linter dependencies
@@ -379,7 +401,22 @@ runs:
       env:
         UV_NO_MODIFY_PATH: 1
         UV_VERSION: '0.9.5'
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_VERBOSITY: ${{ inputs.verbosity }}
+        INPUT_TIDY_CHECKS: ${{ inputs.tidy-checks }}
+        INPUT_STYLE: ${{ inputs.style }}
       run: |-
+        # An empty input can reach the shell as an unset variable, so default those to ""
+        load-env (
+          [
+            INPUT_VERSION
+            INPUT_VERBOSITY
+            INPUT_TIDY_CHECKS
+            INPUT_STYLE
+          ]
+          | where {|n| $n not-in $env }
+          | reduce --fold {} {|n, acc| $acc | insert $n "" }
+        )
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
 
@@ -403,7 +440,7 @@ runs:
         }
 
         let gh_action_debug = $env | get --optional 'ACTIONS_STEP_DEBUG'
-        let action_verbosity = '${{ inputs.verbosity }}' == 'debug'
+        let action_verbosity = $env.INPUT_VERBOSITY == 'debug'
         let verbosity = (
           $action_verbosity
           or ($gh_action_debug == true)
@@ -417,7 +454,7 @@ runs:
         }
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args
 
-        let version_str = '${{ inputs.version }}'
+        let version_str = $env.INPUT_VERSION
         if ($version_str | is-empty) {
           print $"(ansi yellow)Using platform default clang tools \(version not specified)(ansi reset)"
           exit 0
@@ -441,11 +478,11 @@ runs:
         }
 
         mut tools = []
-        if ("${{ inputs.tidy-checks }}" != "-*") {
+        if ($env.INPUT_TIDY_CHECKS != "-*") {
           # clang-tidy is being used
           $tools = $tools | append "clang-tidy"
         }
-        if ("${{ inputs.style }}" | is-not-empty) {
+        if ($env.INPUT_STYLE | is-not-empty) {
           # clang-format is being used
           $tools = $tools | append "clang-format"
         }
@@ -463,17 +500,29 @@ runs:
         && github.event_name == 'pull_request'
         && github.event.pull_request.head.repo.full_name == github.repository
       shell: nu {0}
+      env:
+        INPUT_REPO_ROOT: ${{ inputs.repo-root }}
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       run: |
+        # An empty input can reach the shell as an unset variable, so default those to ""
+        load-env (
+          [
+            INPUT_REPO_ROOT
+            PR_HEAD_SHA
+          ]
+          | where {|n| $n not-in $env }
+          | reduce --fold {} {|n, acc| $acc | insert $n "" }
+        )
         # On pull_request events actions/checkout provides the merge commit
         # (refs/pull/N/merge), detached. A fix committed on top of it would carry
         # that merge into the PR branch, so format the head commit instead.
         # Nothing is forced: git refuses to switch over conflicting local changes.
         # Any other checkout (e.g. the workflow set `ref`) is left alone.
-        cd '${{ inputs.repo-root }}'  # where the repository is checked out
+        cd $env.INPUT_REPO_ROOT  # where the repository is checked out
         if (^git rev-parse HEAD | str trim) != $env.GITHUB_SHA {
           exit 0
         }
-        let head_sha = '${{ github.event.pull_request.head.sha }}'
+        let head_sha = $env.PR_HEAD_SHA
         print $"(ansi purple)Checking out pull request head ($head_sha) for auto-fix(ansi reset)"
         # The default shallow clone only holds the merge commit. Fetch the head
         # commit only when it is missing: --depth would truncate a full clone.
@@ -490,42 +539,96 @@ runs:
     - name: Run cpp-linter
       id: cpp-linter
       shell: nu {0}
+      env:
+        INPUT_STYLE: ${{ inputs.style }}
+        INPUT_EXTENSIONS: ${{ inputs.extensions }}
+        INPUT_TIDY_CHECKS: ${{ inputs.tidy-checks }}
+        INPUT_REPO_ROOT: ${{ inputs.repo-root }}
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_VERBOSITY: ${{ inputs.verbosity }}
+        INPUT_LINES_CHANGED_ONLY: ${{ inputs.lines-changed-only }}
+        INPUT_FILES_CHANGED_ONLY: ${{ inputs.files-changed-only }}
+        INPUT_THREAD_COMMENTS: ${{ inputs.thread-comments }}
+        INPUT_NO_LGTM: ${{ inputs.no-lgtm }}
+        INPUT_STEP_SUMMARY: ${{ inputs.step-summary }}
+        INPUT_IGNORE: ${{ inputs.ignore }}
+        INPUT_IGNORE_TIDY: ${{ inputs.ignore-tidy }}
+        INPUT_IGNORE_FORMAT: ${{ inputs.ignore-format }}
+        INPUT_DATABASE: ${{ inputs.database }}
+        INPUT_FILE_ANNOTATIONS: ${{ inputs.file-annotations }}
+        INPUT_EXTRA_ARGS: ${{ inputs.extra-args }}
+        INPUT_TIDY_REVIEW: ${{ inputs.tidy-review }}
+        INPUT_FORMAT_REVIEW: ${{ inputs.format-review }}
+        INPUT_PASSIVE_REVIEWS: ${{ inputs.passive-reviews }}
+        INPUT_JOBS: ${{ inputs.jobs }}
+        INPUT_SUMMARY_OUTPUT_FILE: ${{ inputs.summary-output-file }}
+        INPUT_AUTO_FIX: ${{ inputs.auto-fix }}
       run: |-
+        # An empty input can reach the shell as an unset variable, so default those to ""
+        load-env (
+          [
+            INPUT_STYLE
+            INPUT_EXTENSIONS
+            INPUT_TIDY_CHECKS
+            INPUT_REPO_ROOT
+            INPUT_VERSION
+            INPUT_VERBOSITY
+            INPUT_LINES_CHANGED_ONLY
+            INPUT_FILES_CHANGED_ONLY
+            INPUT_THREAD_COMMENTS
+            INPUT_NO_LGTM
+            INPUT_STEP_SUMMARY
+            INPUT_IGNORE
+            INPUT_IGNORE_TIDY
+            INPUT_IGNORE_FORMAT
+            INPUT_DATABASE
+            INPUT_FILE_ANNOTATIONS
+            INPUT_EXTRA_ARGS
+            INPUT_TIDY_REVIEW
+            INPUT_FORMAT_REVIEW
+            INPUT_PASSIVE_REVIEWS
+            INPUT_JOBS
+            INPUT_SUMMARY_OUTPUT_FILE
+            INPUT_AUTO_FIX
+          ]
+          | where {|n| $n not-in $env }
+          | reduce --fold {} {|n, acc| $acc | insert $n "" }
+        )
         let action_path = $env.GITHUB_ACTION_PATH | path expand
         $env.UV_INSTALL_DIR = $action_path | path join 'bin'
         $env.UV_CACHE_DIR = $env.RUNNER_TEMP | path join 'cpp-linter-action-cache'
 
         mut args = [
-          '--style=${{ inputs.style }}'
-          '--extensions=${{ inputs.extensions }}'
-          '--tidy-checks=${{ inputs.tidy-checks }}'
-          '--repo-root=${{ inputs.repo-root }}'
-          '--version=${{ inputs.version }}'
-          '--verbosity=${{ inputs.verbosity }}'
-          '--lines-changed-only=${{ inputs.lines-changed-only }}'
-          '--files-changed-only=${{ inputs.files-changed-only }}'
-          '--thread-comments=${{ inputs.thread-comments }}'
-          '--no-lgtm=${{ inputs.no-lgtm }}'
-          '--step-summary=${{ inputs.step-summary }}'
-          '--ignore=${{ inputs.ignore }}'
-          '--ignore-tidy=${{ inputs.ignore-tidy }}'
-          '--ignore-format=${{ inputs.ignore-format }}'
-          '--database=${{ inputs.database }}'
-          '--file-annotations=${{ inputs.file-annotations }}'
-          '--extra-arg=${{ inputs.extra-args }}'
-          '--tidy-review=${{ inputs.tidy-review }}'
-          '--format-review=${{ inputs.format-review }}'
-          '--passive-reviews=${{ inputs.passive-reviews }}'
-          '--jobs=${{ inputs.jobs }}'
-          '--summary-output-file=${{ inputs.summary-output-file }}'
+          $"--style=($env.INPUT_STYLE)"
+          $"--extensions=($env.INPUT_EXTENSIONS)"
+          $"--tidy-checks=($env.INPUT_TIDY_CHECKS)"
+          $"--repo-root=($env.INPUT_REPO_ROOT)"
+          $"--version=($env.INPUT_VERSION)"
+          $"--verbosity=($env.INPUT_VERBOSITY)"
+          $"--lines-changed-only=($env.INPUT_LINES_CHANGED_ONLY)"
+          $"--files-changed-only=($env.INPUT_FILES_CHANGED_ONLY)"
+          $"--thread-comments=($env.INPUT_THREAD_COMMENTS)"
+          $"--no-lgtm=($env.INPUT_NO_LGTM)"
+          $"--step-summary=($env.INPUT_STEP_SUMMARY)"
+          $"--ignore=($env.INPUT_IGNORE)"
+          $"--ignore-tidy=($env.INPUT_IGNORE_TIDY)"
+          $"--ignore-format=($env.INPUT_IGNORE_FORMAT)"
+          $"--database=($env.INPUT_DATABASE)"
+          $"--file-annotations=($env.INPUT_FILE_ANNOTATIONS)"
+          $"--extra-arg=($env.INPUT_EXTRA_ARGS)"
+          $"--tidy-review=($env.INPUT_TIDY_REVIEW)"
+          $"--format-review=($env.INPUT_FORMAT_REVIEW)"
+          $"--passive-reviews=($env.INPUT_PASSIVE_REVIEWS)"
+          $"--jobs=($env.INPUT_JOBS)"
+          $"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"
         ]
-        if '${{ inputs.auto-fix }}' == 'true' {
+        if $env.INPUT_AUTO_FIX == 'true' {
           $args = ($args | append ['--fix'])
         }
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
 
         let gh_action_debug = $env | get --optional 'ACTIONS_STEP_DEBUG'
-        let action_verbosity = '${{ inputs.verbosity }}' == 'debug'
+        let action_verbosity = $env.INPUT_VERBOSITY == 'debug'
         let verbosity = (
           $action_verbosity
           or ($gh_action_debug == true)
@@ -537,7 +640,7 @@ runs:
 
         let local_bin = '~/.local/bin' | path expand
         if (
-          ('${{ runner.os }}' == 'Linux')
+          ($env.RUNNER_OS == 'Linux')
           and ($local_bin | path exists)
           and (not ($env.PATH | any {$in == $local_bin}))
         ) {
@@ -551,14 +654,36 @@ runs:
     - name: Auto-commit clang-format fixes
       if: inputs.auto-fix == 'true' || inputs.auto-fix == true
       shell: nu {0}
+      env:
+        INPUT_REPO_ROOT: ${{ inputs.repo-root }}
+        INPUT_EXTENSIONS: ${{ inputs.extensions }}
+        INPUT_AUTO_FIX_GIT_USER: ${{ inputs.auto-fix-git-user }}
+        INPUT_AUTO_FIX_GIT_EMAIL: ${{ inputs.auto-fix-git-email }}
+        INPUT_AUTO_FIX_COMMIT_MSG: ${{ inputs.auto-fix-commit-msg }}
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
       run: |
+        # An empty input can reach the shell as an unset variable, so default those to ""
+        load-env (
+          [
+            INPUT_REPO_ROOT
+            INPUT_EXTENSIONS
+            INPUT_AUTO_FIX_GIT_USER
+            INPUT_AUTO_FIX_GIT_EMAIL
+            INPUT_AUTO_FIX_COMMIT_MSG
+            PR_HEAD_SHA
+            PR_HEAD_REPO
+          ]
+          | where {|n| $n not-in $env }
+          | reduce --fold {} {|n, acc| $acc | insert $n "" }
+        )
         # The token cannot push to a third-party fork's branch. Check every event
         # that carries a pull request: under pull_request_target the push below
         # would otherwise send the fork's commits to this repository, to a branch
         # named after the fork's branch.
-        let head_sha = '${{ github.event.pull_request.head.sha }}'
-        let head_repo = '${{ github.event.pull_request.head.repo.full_name }}'
-        if ($head_sha | is-not-empty) and $head_repo != '${{ github.repository }}' {
+        let head_sha = $env.PR_HEAD_SHA
+        let head_repo = $env.PR_HEAD_REPO
+        if ($head_sha | is-not-empty) and $head_repo != $env.GITHUB_REPOSITORY {
           print "::warning title=Auto-fix skipped::auto-fix cannot push to a third-party fork's branch, so no formatting commit was made. Apply clang-format fixes from within the fork or run cpp-linter locally."
           exit 0
         }
@@ -579,7 +704,7 @@ runs:
         }
 
         # Only commit on the pull request head (see the checkout step above).
-        cd '${{ inputs.repo-root }}'  # where the repository is checked out
+        cd $env.INPUT_REPO_ROOT  # where the repository is checked out
         if ($head_sha | is-not-empty) {
           let current = (^git rev-parse HEAD | str trim)
           if $current != $head_sha {
@@ -593,7 +718,7 @@ runs:
         # pathspec that matches nothing, which most of the default extensions do,
         # so resolve them to modified tracked files first. Untracked sources
         # (generated code, CMake's compiler-id files) stay out as well.
-        let path_specs = ('${{ inputs.extensions }}' | split row ',' | each { |ext| $"*.($ext | str trim)" })
+        let path_specs = ($env.INPUT_EXTENSIONS | split row ',' | each { |ext| $"*.($ext | str trim)" })
         let modified = (^git ls-files --modified -- ...$path_specs | lines)
         if ($modified | is-not-empty) {
           ^git add -- ...$modified
@@ -608,22 +733,22 @@ runs:
         if ($changed | is-not-empty) {
           print $"(ansi purple)Committing ($changed | length) formatted file\(s\)(ansi reset)"
           for file in $changed { print $"  ($file)" }
-          let git_user_name = if ('${{ inputs.auto-fix-git-user }}' | is-empty) {
+          let git_user_name = if ($env.INPUT_AUTO_FIX_GIT_USER | is-empty) {
             $env.GITHUB_ACTOR
           } else {
-            '${{ inputs.auto-fix-git-user }}'
+            $env.INPUT_AUTO_FIX_GIT_USER
           }
-          let git_user_email = if ('${{ inputs.auto-fix-git-email }}' | is-empty) {
+          let git_user_email = if ($env.INPUT_AUTO_FIX_GIT_EMAIL | is-empty) {
             $"($env.GITHUB_ACTOR_ID)+($env.GITHUB_ACTOR)@users.noreply.github.com"
           } else {
-            '${{ inputs.auto-fix-git-email }}'
+            $env.INPUT_AUTO_FIX_GIT_EMAIL
           }
           let git_user = $"user.name=($git_user_name)"
           let git_email = $"user.email=($git_user_email)"
-          let commit_msg = if ('${{ inputs.auto-fix-commit-msg }}' | is-empty) {
+          let commit_msg = if ($env.INPUT_AUTO_FIX_COMMIT_MSG | is-empty) {
             'style: apply clang-format fixes'
           } else {
-            '${{ inputs.auto-fix-commit-msg }}'
+            $env.INPUT_AUTO_FIX_COMMIT_MSG
           }
           ^git -c $git_user -c $git_email commit -m $commit_msg
           let push_result = (^git push origin $"HEAD:refs/heads/($branch)") | complete
