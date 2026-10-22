@@ -8,10 +8,13 @@ on:
     paths:
       - "docs/examples/demo/*"
 
+permissions: {}
 
 jobs:
   cpp-linter:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -28,7 +31,9 @@ jobs:
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed != 0
+        env:
+          CHECKS_FAILED: ${{ steps.linter.outputs.checks-failed }}
         run: |
-          echo "some linter checks failed. ${{ steps.linter.outputs.checks-failed }}"
+          echo "some linter checks failed. ${CHECKS_FAILED}"
         # for actual deployment
         # run: exit 1
