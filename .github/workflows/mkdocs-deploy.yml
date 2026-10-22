@@ -7,6 +7,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   build-docs:
+    permissions:
+      contents: read
+      # to deploy to Pages (only on the main branch)
+      pages: write
+      id-token: write
     uses: cpp-linter/.github/.github/workflows/mkdocs.yml@main
