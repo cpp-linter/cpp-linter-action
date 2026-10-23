@@ -1,0 +1,43 @@
+# Lints the demo files with the action from this checkout.
+# Keep this file: older READMEs told users to add the status badge of this
+# workflow (actions/workflows/cpp-linter.yml/badge.svg) to their own README,
+# and those badges break if the workflow is removed or renamed.
+name: cpp-linter
+
+on:
+  push:
+    paths:
+      - "docs/examples/demo/*"
+  pull_request:
+    paths:
+      - "docs/examples/demo/*"
+
+permissions: {}
+
+jobs:
+  cpp-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./
+        id: linter
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file
+          files-changed-only: false
+          thread-comments: false
+
+      - name: Fail fast?!
+        if: steps.linter.outputs.checks-failed != 0
+        env:
+          CHECKS_FAILED: ${{ steps.linter.outputs.checks-failed }}
+        run: |
+          echo "some linter checks failed. ${CHECKS_FAILED}"
+        # for actual deployment
+        # run: exit 1
