@@ -197,6 +197,23 @@ clang tools. Linux workflows that use a specific [`container`][gh-container-synt
 packages installed first. [Required tools][tools-doc] lists them and the sources each runner
 installs the clang tools from.
 
+## Add a badge
+
+Show that your project is linted with cpp-linter by adding this badge to your README:
+
+[![C/C++ lint: cpp-linter](https://img.shields.io/badge/C%2FC%2B%2B%20lint-cpp--linter-ffc20a?labelColor=454a63)](https://github.com/cpp-linter/cpp-linter-action)
+
+```markdown
+[![C/C++ lint: cpp-linter](https://img.shields.io/badge/C%2FC%2B%2B%20lint-cpp--linter-ffc20a?labelColor=454a63)](https://github.com/cpp-linter/cpp-linter-action)
+```
+
+To also show the result of your own lint runs, add the status badge of the workflow from
+[Quick start](#quick-start), replacing `OWNER/REPO` with your repository:
+
+```markdown
+[![cpp-linter](https://github.com/OWNER/REPO/actions/workflows/cpp-linter.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/cpp-linter.yml)
+```
+
 ## Used by
 
 Projects from these organizations run cpp-linter-action on their default branch:
