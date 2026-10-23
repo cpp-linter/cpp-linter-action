@@ -1,4 +1,5 @@
-# Lints the demo files with the action from this checkout.
+# Runs the latest release on the demo files, the way users run the action.
+# Changes to the action itself are tested by self-test.yml.
 # Keep this file: older READMEs told users to add the status badge of this
 # workflow (actions/workflows/cpp-linter.yml/badge.svg) to their own README,
 # and those badges break if the workflow is removed or renamed.
@@ -23,7 +24,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./
+      - uses: cpp-linter/cpp-linter-action@8120e05c7fbd25fa09fa93424ec49f55f7b304ab  # v2.23.1
         id: linter
         continue-on-error: true
         env:
