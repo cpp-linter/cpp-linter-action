@@ -3,6 +3,7 @@ words:
   - bugprone
   - Cachy
   - cppcoreguidelines
+  - filelock
   - fontawesome
   - htmltitle
   - hustcer
