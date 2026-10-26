@@ -96,6 +96,16 @@ inputs:
         a submodule's path (if desired) but not hidden directories.
       - **As of v2.12**, glob patterns are supported here.
         All asterisk characters (`*`) were previously literal.
+      - **As of v2.24**, a path only matches relative to the [`repo-root`](#repo-root).
+        For example, `build` ignores `build/` but not `src/build/`.
+        Use `**/` to ignore a folder at any depth.
+
+      !!! example
+
+          ``` yaml
+          # ignore every folder named build, and the .github folder
+          ignore: '**/build|.github'
+          ```
     required: false
     default: '.github'
   ignore-tidy:
@@ -153,7 +163,11 @@ inputs:
     required: false
     default: 'true'
   database:
-    description: The directory containing compilation database (like compile_commands.json) file.
+    description: |
+      The directory containing compilation database (like compile_commands.json) file.
+
+      **As of v2.24**, a relative path is relative to the runner's `GITHUB_WORKSPACE`,
+      not to the [`repo-root`](#repo-root).
     required: false
     default: ""
   extra-args:
