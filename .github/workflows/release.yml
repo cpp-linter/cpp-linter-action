@@ -2,7 +2,6 @@ name: Release
 
 on:
   release:
-    branches: [main]
     types: [released]
   workflow_dispatch:
     inputs:

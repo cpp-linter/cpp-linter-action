@@ -74,11 +74,15 @@ jobs:
 
       - name: Fail fast?!
         # if: steps.linter.outputs.checks-failed > 0
+        env:
+          CHECKS_FAILED: ${{ steps.linter.outputs.checks-failed }}
+          TIDY_CHECKS_FAILED: ${{ steps.linter.outputs.clang-tidy-checks-failed }}
+          FORMAT_CHECKS_FAILED: ${{ steps.linter.outputs.clang-format-checks-failed }}
         run: |
           echo "some linter checks failed"
-          echo "total checks-failed: ${{ steps.linter.outputs.checks-failed }}"
-          echo "clang-tidy checks-failed: ${{ steps.linter.outputs.clang-tidy-checks-failed }}"
-          echo "clang-format checks-failed: ${{ steps.linter.outputs.clang-format-checks-failed }}"
+          echo "total checks-failed: $CHECKS_FAILED"
+          echo "clang-tidy checks-failed: $TIDY_CHECKS_FAILED"
+          echo "clang-format checks-failed: $FORMAT_CHECKS_FAILED"
         # for actual deployment
         # run: exit 1
 
@@ -127,6 +131,8 @@ jobs:
           step-summary: false
 
       - name: Assert auto-fix committed the formatting changes
+        env:
+          FORMAT_CHECKS_FAILED: ${{ steps.linter.outputs.clang-format-checks-failed }}
         run: |
           set -euo pipefail
 
@@ -164,7 +170,7 @@ jobs:
             exit 1
           fi
 
-          failed='${{ steps.linter.outputs.clang-format-checks-failed }}'
+          failed="$FORMAT_CHECKS_FAILED"
           if [ "${failed:-0}" != "0" ]; then
             echo "::error title=auto-fix::clang-format still reports $failed issue(s) after auto-fix"
             exit 1
