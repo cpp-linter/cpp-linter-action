@@ -187,9 +187,8 @@ jobs:
           echo "PR branch is untouched, as expected"
 
   test-format:
-    # Runs the format/ sub-action. A pull request or push to this repo changes no C/C++
-    # files, so the default run checks nothing and passes; the full run checks the
-    # mis-formatted demo sources and must fail.
+    # Runs the format/ sub-action. The changed-lines run skips the mis-formatted demo
+    # sources and passes; the full run checks them and must fail.
     permissions:
       contents: read
     strategy:
@@ -214,6 +213,8 @@ jobs:
         id: changed
         with:
           version: ${{ matrix.clang-version }}
+          # The demo is mis-formatted on purpose; the next step covers it.
+          ignore: docs/examples/demo
 
       - name: Check every file (expected to fail)
         uses: ./format

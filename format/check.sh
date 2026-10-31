@@ -102,10 +102,15 @@ if is_true "$files_changed_only"; then
   event_file="${GITHUB_EVENT_PATH:-/dev/null}"
   case "${GITHUB_EVENT_NAME:-}" in
     pull_request | pull_request_target)
-      # actions/checkout checks out the merge commit; its first parent is the base.
+      # actions/checkout checks out the merge commit: its first parent is the base
+      # branch, its second the pull request head.
+      head_sha="$(jq -r '.pull_request.head.sha // empty' "$event_file")"
       read -r -a parents <<<"$(parents_of_head | tr '\n' ' ')"
-      if [ "${#parents[@]}" -eq 2 ]; then
+      if [ "${#parents[@]}" -eq 2 ] && [ "${parents[1]}" = "$head_sha" ]; then
         base="${parents[0]}"
+      elif [ "$GITHUB_EVENT_NAME" = pull_request_target ] && [ "$(git rev-parse HEAD)" != "$head_sha" ]; then
+        # The default pull_request_target checkout is the base branch: nothing to check.
+        fail "on pull_request_target the checkout is the base branch, not the pull request; use the pull_request event, or check out refs/pull/<number>/merge"
       else
         base="$(jq -r '.pull_request.base.sha // empty' "$event_file")"
       fi
@@ -171,7 +176,8 @@ diffs="$work_dir/diffs.patch"
 : >"$diffs"
 
 while IFS=$'\t' read -r file ranges; do
-  [ -n "$file" ] && [ -f "$file" ] || continue
+  # Skip symlinks: a tracked link could point clang-format at a file outside the checkout.
+  [ -n "$file" ] && [ -f "$file" ] && [ ! -L "$file" ] || continue
   checked=$((checked + 1))
   args=("--style=$style")
   for range in $ranges; do

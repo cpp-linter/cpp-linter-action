@@ -33,6 +33,9 @@ jobs:
       first parent (the base branch).
     - `push`: the pushed commits, compared with the commit before the push (for a new branch,
       with the parent of the last commit).
+    - `pull_request_target`: the same, but only when the job checks out the pull request
+      (`ref: refs/pull/<number>/merge`); with the default checkout of the base branch the step
+      fails and asks for `pull_request` instead.
     - `merge_group`: the merge queue's base commit.
     - Any other event, such as `workflow_dispatch` or `schedule`: every file.
 
@@ -100,6 +103,8 @@ Those actions check the whole repository by default. To get the same, set
   use the [main action](index.md).
 - `--style=file` reads `.clang-format` files from the checked-out pull request, as
   clang-format does locally.
+- Symbolic links are skipped, so a pull request cannot point clang-format at a file outside
+  the checkout.
 
 [cpp-linter/clang-tools-static-binaries]: https://github.com/cpp-linter/clang-tools-static-binaries
 [clang-format-ignore]: https://clang.llvm.org/docs/ClangFormat.html#clang-format-ignore
