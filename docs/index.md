@@ -14,6 +14,7 @@ description: A GitHub Action that runs clang-format and clang-tidy on the C/C++ 
 [permissions-doc]: permissions.md
 [app-token-doc]: permissions.md#github-app-token
 [tools-doc]: required-tools.md
+[format-check-doc]: format-check.md
 
 [format-annotations-preview]: images/annotations-clang-format.png
 [tidy-annotations-preview]: images/annotations-clang-tidy.png

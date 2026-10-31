@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'action.yml'
+      - 'format/**'
       - '.python-version'
       - 'uv.lock'
       - 'docs/examples/demo/**'
@@ -13,6 +14,7 @@ on:
     branches: [main]
     paths:
       - 'action.yml'
+      - 'format/**'
       - '.python-version'
       - 'uv.lock'
       - 'docs/examples/demo/**'
@@ -21,6 +23,7 @@ on:
   #   branches: [main]
   #   paths:
   #     - 'action.yml'
+  #     - 'format/**'
   #     - '.python-version'
   #     - 'uv.lock'
   #     - 'docs/examples/demo/**'
@@ -182,3 +185,66 @@ jobs:
             exit 1
           fi
           echo "PR branch is untouched, as expected"
+
+  test-format:
+    # Runs the format/ sub-action. A pull request or push to this repo changes no C/C++
+    # files, so the default run checks nothing and passes; the full run checks the
+    # mis-formatted demo sources and must fail.
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
+        clang-version: ['21']
+        include:
+          - os: ubuntu-latest
+            clang-version: '12'
+          - os: ubuntu-latest
+            clang-version: '23'
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check the changed lines (expected to pass)
+        uses: ./format
+        id: changed
+        with:
+          version: ${{ matrix.clang-version }}
+
+      - name: Check every file (expected to fail)
+        uses: ./format
+        id: all
+        continue-on-error: true
+        with:
+          version: ${{ matrix.clang-version }}
+          files-changed-only: false
+
+      - name: Check every file except the demo (expected to pass)
+        uses: ./format
+        id: ignored
+        with:
+          version: ${{ matrix.clang-version }}
+          files-changed-only: false
+          ignore: docs/examples/demo
+
+      - name: Assert the results
+        shell: bash
+        env:
+          CHANGED_FAILED: ${{ steps.changed.outputs.checks-failed }}
+          ALL_OUTCOME: ${{ steps.all.outcome }}
+          ALL_FAILED: ${{ steps.all.outputs.checks-failed }}
+          IGNORED_FAILED: ${{ steps.ignored.outputs.checks-failed }}
+          USED_VERSION: ${{ steps.all.outputs.clang-format-version }}
+          WANTED_VERSION: ${{ matrix.clang-version }}
+        run: |
+          set -euo pipefail
+          [ "$CHANGED_FAILED" = "0" ] || { echo "::error::changed-lines run reported $CHANGED_FAILED file(s)"; exit 1; }
+          [ "$ALL_OUTCOME" = "failure" ] || { echo "::error::full run should fail, got $ALL_OUTCOME"; exit 1; }
+          [ "$ALL_FAILED" = "2" ] || { echo "::error::full run should report 2 files, got $ALL_FAILED"; exit 1; }
+          [ "$IGNORED_FAILED" = "0" ] || { echo "::error::ignore did not skip the demo"; exit 1; }
+          case "$USED_VERSION" in "$WANTED_VERSION".*) ;; *) echo "::error::used clang-format $USED_VERSION, wanted $WANTED_VERSION"; exit 1 ;; esac
+          echo "format sub-action OK with clang-format $USED_VERSION"

@@ -9,6 +9,7 @@ exclude_docs: |
   overrides/
 nav:
   - index.md
+  - format-check.md
   - inputs-outputs.md
   - pr-review-caveats.md
   - permissions.md
