@@ -11,6 +11,7 @@
 [permissions-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions
 [app-token-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions/#github-app-token
 [tools-doc]: https://cpp-linter.github.io/cpp-linter-action/required-tools
+[format-check-doc]: https://cpp-linter.github.io/cpp-linter-action/format-check
 
 [format-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-format.png
 [tidy-annotations-preview]: https://raw.githubusercontent.com/cpp-linter/cpp-linter-action/main/docs/images/annotations-clang-tidy.png
@@ -41,7 +42,38 @@ reviews (with [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 
 ## Quick start
 
+### Check formatting
+
 Save this as `.github/workflows/cpp-linter.yml`:
+
+```yaml
+name: cpp-linter
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cpp-linter/cpp-linter-action/format@v2
+```
+
+- Checks the lines the pull request or push changes against your `.clang-format`, with
+  clang-format 21. Set `version` for another major from 12 to 23.
+- Fails the job when a line is not formatted, marks the line in the diff view, and puts the
+  change clang-format would make in the step summary.
+- Needs no token or extra permissions, so pull requests from forks get the same result.
+  Linux, macOS and Windows runners work.
+- [Format check][format-check-doc] lists the inputs and how to move over from other
+  clang-format actions.
+
+### Add clang-tidy and pull request reviews
+
+Use the main action to also run clang-tidy and to post review suggestions or a comment.
+Save this as `.github/workflows/cpp-linter.yml` instead:
 
 ```yaml
 name: cpp-linter
