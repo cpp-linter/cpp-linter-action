@@ -74,6 +74,7 @@ jobs:
 
       - name: Fail fast?!
         # if: steps.linter.outputs.checks-failed > 0
+        shell: bash
         env:
           CHECKS_FAILED: ${{ steps.linter.outputs.checks-failed }}
           TIDY_CHECKS_FAILED: ${{ steps.linter.outputs.clang-tidy-checks-failed }}
