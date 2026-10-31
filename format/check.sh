@@ -32,11 +32,12 @@ escape_property() {
   printf '%s' "${value//,/%2C}"
 }
 
+# Read from stdin: with a Windows path (backslashes) sha512sum puts a "\" before the hash.
 sha512() {
   if command -v sha512sum >/dev/null; then
-    sha512sum "$1" | cut -d' ' -f1
+    sha512sum <"$1" | cut -d' ' -f1
   else
-    shasum -a 512 "$1" | cut -d' ' -f1
+    shasum -a 512 <"$1" | cut -d' ' -f1
   fi
 }
 
