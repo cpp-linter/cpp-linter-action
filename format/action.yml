@@ -1,0 +1,70 @@
+name: C/C++ format check
+description: >-
+  Check that the C/C++ lines a pull request or push changes follow clang-format.
+  One line to set up, fails the job on style issues, no token needed.
+author: cpp-linter
+branding:
+  icon: "check-circle"
+  color: "green"
+inputs:
+  version:
+    description: |
+      The clang-format major version to use, from 12 to 23.
+      The newest patch release of that major from
+      [cpp-linter/clang-tools-static-binaries](https://github.com/cpp-linter/clang-tools-static-binaries)
+      is downloaded and its SHA-512 checked.
+    required: false
+    default: '21'
+  style:
+    description: |
+      The style passed to `clang-format --style`.
+      The default `file` uses the closest `.clang-format` file, and LLVM style when there is none.
+    required: false
+    default: file
+  extensions:
+    description: The file extensions to check, comma-separated.
+    required: false
+    default: "c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx"
+  ignore:
+    description: |
+      Paths to skip, separated by `|` or new lines, as git pathspecs relative to the
+      repository root: `build` skips the build directory, `*.pb.cc` skips matching files
+      anywhere. Files listed in `.clang-format-ignore` are skipped too (clang-format 18+).
+    required: false
+    default: ''
+  files-changed-only:
+    description: |
+      Check only the files the pull request or push changes.
+      Set to `false` to check every tracked file with a matching extension.
+      Other events (for example `workflow_dispatch`) always check every file.
+    required: false
+    default: 'true'
+  lines-changed-only:
+    description: |
+      Check only the lines the pull request or push adds or changes.
+      Set to `false` to check the whole of each changed file.
+    required: false
+    default: 'true'
+outputs:
+  checks-failed:
+    description: The number of files with style issues.
+    value: ${{ steps.check.outputs.checks-failed }}
+  clang-format-version:
+    description: The full clang-format version that was used, for example `21.1.8`.
+    value: ${{ steps.check.outputs.clang-format-version }}
+runs:
+  using: composite
+  steps:
+    - name: Check C/C++ format
+      id: check
+      shell: bash
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_STYLE: ${{ inputs.style }}
+        INPUT_EXTENSIONS: ${{ inputs.extensions }}
+        INPUT_IGNORE: ${{ inputs.ignore }}
+        INPUT_FILES_CHANGED_ONLY: ${{ inputs.files-changed-only }}
+        INPUT_LINES_CHANGED_ONLY: ${{ inputs.lines-changed-only }}
+        # Only used to fetch the base commit when actions/checkout did not keep its credentials.
+        INPUT_TOKEN: ${{ github.token }}
+      run: bash "$GITHUB_ACTION_PATH/check.sh"
