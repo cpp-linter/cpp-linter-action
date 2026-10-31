@@ -171,6 +171,7 @@ fi
 
 checked=0
 failed=0
+errors=0
 failed_files=()
 diffs="$work_dir/diffs.patch"
 : >"$diffs"
@@ -187,16 +188,16 @@ while IFS=$'\t' read -r file ranges; do
   if output="$("$bin" "${args[@]}" --dry-run --Werror -- "$file" 2>&1)"; then
     continue
   fi
-  failed=$((failed + 1))
-  failed_files+=("$file")
-
   violations="$(grep -F -e '[-Wclang-format-violations]' <<<"$output" || true)"
   if [ -z "$violations" ]; then
     # Not a style issue: a bad .clang-format, an unreadable file, ...
+    errors=$((errors + 1))
     echo "::error file=$(escape_property "$file"),title=clang-format failed::$(head -n 1 <<<"$output")"
     echo "$output"
     continue
   fi
+  failed=$((failed + 1))
+  failed_files+=("$file")
   # One annotation per line, however many places on it clang-format would change.
   last_line=""
   while IFS= read -r line; do
@@ -225,8 +226,12 @@ if [ "$failed" -gt 0 ]; then
 fi
 
 {
+  if [ "$errors" -gt 0 ]; then
+    echo "### clang-format failed on $errors file(s); see the job log"
+    echo
+  fi
   if [ "$failed" -eq 0 ]; then
-    echo "### clang-format: all $checked checked file(s) are formatted"
+    [ "$errors" -gt 0 ] || echo "### clang-format: all $checked checked file(s) are formatted"
   else
     echo "### clang-format: $failed of $checked checked file(s) need formatting"
   fi
@@ -255,8 +260,7 @@ fi
   fi
 } >>"$summary_file"
 
-if [ "$failed" -gt 0 ]; then
-  echo "$failed of $checked file(s) need formatting."
-  exit 1
-fi
+[ "$errors" -eq 0 ] || echo "clang-format failed on $errors file(s)."
+[ "$failed" -eq 0 ] || echo "$failed of $checked file(s) need formatting."
+[ "$errors" -eq 0 ] && [ "$failed" -eq 0 ] || exit 1
 echo "All $checked checked file(s) are formatted."

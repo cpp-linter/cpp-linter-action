@@ -71,8 +71,9 @@ clang-format 18 or later.
 | `checks-failed` | The number of files with style issues. |
 | `clang-format-version` | The full clang-format version used, for example `21.1.8`. |
 
-The step fails when `checks-failed` is not 0. To report without failing, set
-`continue-on-error: true` on the step.
+The step fails when `checks-failed` is not 0, and also when clang-format itself fails, for
+example on a broken `.clang-format` (those files are not counted in `checks-failed`). To
+report without failing, set `continue-on-error: true` on the step.
 
 ## Moving from another clang-format action
 
