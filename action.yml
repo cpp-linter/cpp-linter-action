@@ -476,6 +476,7 @@ runs:
             INPUT_EXTRA_ARGS
             INPUT_TIDY_REVIEW
             INPUT_FORMAT_REVIEW
+            INPUT_PR_REVIEW
             INPUT_PASSIVE_REVIEWS
             INPUT_JOBS
             INPUT_SUMMARY_OUTPUT_FILE
@@ -508,13 +509,20 @@ runs:
           $"--ignore=($env.INPUT_IGNORE)"
           $"--ignore-tidy=($env.INPUT_IGNORE_TIDY)"
           $"--ignore-format=($env.INPUT_IGNORE_FORMAT)"
-          $"--database=($env.INPUT_DATABASE)"
           $"--file-annotations=($env.INPUT_FILE_ANNOTATIONS)"
-          $"--extra-arg=($env.INPUT_EXTRA_ARGS)"
-          $"--pr-review=($env.INPUT_PR_REVIEW)"
+          $"--pr-review=($pr_review)"
           $"--passive-reviews=($env.INPUT_PASSIVE_REVIEWS)"
-          $"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"
         ]
+        # Path options reject an empty value, so only pass them when set.
+        if ($env.INPUT_DATABASE | is-not-empty) {
+          $args = ($args | append $"--database=($env.INPUT_DATABASE)")
+        }
+        if ($env.INPUT_SUMMARY_OUTPUT_FILE | is-not-empty) {
+          $args = ($args | append $"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)")
+        }
+        if ($env.INPUT_EXTRA_ARGS | is-not-empty) {
+          $args = ($args | append $"--extra-arg=($env.INPUT_EXTRA_ARGS)")
+        }
         if $env.INPUT_AUTO_FIX == 'true' {
           $args = ($args | append ['--fix'])
         }
@@ -604,9 +612,10 @@ runs:
         # so resolve them to modified tracked files first. Untracked sources
         # (generated code, CMake's compiler-id files) stay out as well.
         let path_specs = ($env.INPUT_EXTENSIONS | split row ',' | each { |ext| $"*.($ext | str trim)" })
+        # cpp-linter v2 leaves the worktree untouched and writes a patch instead.
+        ^git apply $env.FIX_PATCH_PATH
         let modified = (^git ls-files --modified -- ...$path_specs | lines)
         if ($modified | is-not-empty) {
-          ^git apply $env.FIX_PATCH_PATH ...$modified
           ^git add -- ...$modified
         }
         # Count what got staged: .gitattributes rules (LF/CRLF) can normalize a
