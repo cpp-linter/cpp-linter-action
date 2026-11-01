@@ -513,7 +513,6 @@ runs:
           $"--extra-arg=($env.INPUT_EXTRA_ARGS)"
           $"--pr-review=($env.INPUT_PR_REVIEW)"
           $"--passive-reviews=($env.INPUT_PASSIVE_REVIEWS)"
-          $"--jobs=($env.INPUT_JOBS)"
           $"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"
         ]
         if $env.INPUT_AUTO_FIX == 'true' {
