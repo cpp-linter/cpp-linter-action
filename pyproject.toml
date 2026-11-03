@@ -6,7 +6,7 @@ dependencies = []
 
 [dependency-groups]
 action = [
-    "cpp-linter==2.0.0rc23",
+    "cpp-linter==2.0.0rc24",
 ]
 dev = [
     "mypy>=2.4.0",
