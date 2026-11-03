@@ -535,7 +535,7 @@ runs:
         print $"\n(ansi purple)Running cpp-linter(ansi reset)"
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args cpp-linter ...$args
 
-    - name: Auto-commit clang-format fixes
+    - name: Auto-commit clang fixes
       if: (inputs.auto-fix == 'true' || inputs.auto-fix == true) && steps.cpp-linter.outputs.fix-patch-path != ''
       shell: nu {0}
       env:
@@ -605,7 +605,7 @@ runs:
         # so resolve them to modified tracked files first. Untracked sources
         # (generated code, CMake's compiler-id files) stay out as well.
         let path_specs = ($env.INPUT_EXTENSIONS | split row ',' | each { |ext| $"*.($ext | str trim)" })
-        let modified = (^git ls-files --modified -- ...$path_specs | lines)
+        let modified = (^git ls-files -- ...$path_specs | lines)
         if ($modified | is-not-empty) {
           ^git apply $env.FIX_PATCH_PATH ...$modified
           ^git add -- ...$modified
