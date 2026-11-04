@@ -97,6 +97,12 @@ the read-only token and uploads the comment as an artifact, the other runs on
     compilation database with CMake, code from the pull request runs with that token.
     Lint in `pull_request`, and post the comment from `workflow_run`.
 
+    From December 2, 2026, GitHub
+    [blocks `pull_request_target` by default](https://github.blog/changelog/2026-11-02-pull_request_target-blocked-by-default-december-2/)
+    in public repositories: such workflows do not run unless an Actions policy allows the
+    event. A workflow that posts cpp-linter comments that way stops commenting on that date.
+    The recipe above does not use `pull_request_target`.
+
 ## Auto-fix
 
 The [`auto-fix`](inputs-outputs.md#auto-fix) feature requires `contents: write` permission
