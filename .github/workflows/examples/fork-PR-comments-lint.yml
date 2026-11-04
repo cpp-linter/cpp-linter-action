@@ -1,0 +1,47 @@
+name: cpp-linter # (1)!
+on:
+  pull_request:
+    branches: [main, master, develop]
+    paths: ['**.c', '**.cpp', '**.h', '**.hpp', '**.cxx', '**.hxx', '**.cc', '**.hh', '**CMakeLists.txt', 'meson.build', '**.cmake']
+
+permissions: {}
+
+jobs:
+  cpp-linter:
+    runs-on: ubuntu-latest
+    permissions: # (2)!
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # ... optionally setup build env to create a compilation database
+
+      - uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: 'file'  # Use .clang-format config file. (3)
+          tidy-checks: '' # Use .clang-tidy config file. (4)
+          # No thread-comments here: this job's token is read-only. (5)
+          summary-output-file: ${{ runner.temp }}/cpp-linter-comment/comment.md
+
+      - name: Save the pull request number
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/cpp-linter-comment"
+          echo "$PR_NUMBER" > "$RUNNER_TEMP/cpp-linter-comment/pr-number.txt"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cpp-linter-comment
+          path: ${{ runner.temp }}/cpp-linter-comment/
+          retention-days: 1
+
+      - name: Fail fast?!
+        if: steps.linter.outputs.checks-failed > 0
+        run: exit 1

@@ -77,6 +77,25 @@ The [`tidy-review`](inputs-outputs.md#tidy-review), [`format-review`](inputs-out
       pull-requests: write
 ```
 
+## Pull requests from forks
+
+GitHub gives a pull request from a fork a read-only `GITHUB_TOKEN`, whatever the
+`permissions` of the workflow say. File annotations, the step summary and the outputs
+still work. Reviews are not posted, and [`thread-comments`](inputs-outputs.md#thread-comments)
+fails the step with `403 Resource not accessible by integration`.
+
+To comment on those pull requests too, split the work into two workflows: one lints with
+the read-only token and uploads the comment as an artifact, the other runs on
+`workflow_run` with `pull-requests: write` and posts it. See the
+[PR comments from forks](examples/index.md) recipe.
+
+!!! warning "Do not lint pull requests in `pull_request_target`"
+
+    `pull_request_target` runs with a write token and the repository's secrets. If that
+    workflow checks out the pull request's code and builds it, for example to create a
+    compilation database with CMake, code from the pull request runs with that token.
+    Lint in `pull_request`, and post the comment from `workflow_run`.
+
 ## Auto-fix
 
 The [`auto-fix`](inputs-outputs.md#auto-fix) feature requires `contents: write` permission
