@@ -76,8 +76,8 @@ jobs:
   both. `auto-fix` commits the clang-format fixes to the branch and needs `contents: write`.
 - The action does not fail the job by itself; the last step does, using the `checks-failed`
   output.
-- Pull requests from forks get a read-only token: annotations still appear, but reviews are not
-  posted, and `thread-comments` would fail the step. To comment on them anyway, see the
+- Pull requests from forks get a read-only token: annotations still appear, but `thread-comments`
+  and reviews need a write token and would fail the step. To comment on them anyway, see the
   [PR comments from forks recipe][recipes-doc]. Draft pull requests get no review.
 
 ## Usage
