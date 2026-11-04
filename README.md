@@ -77,8 +77,9 @@ jobs:
 - The action does not fail the job by itself; the last step does, using the `checks-failed`
   output.
 - Pull requests from forks get a read-only token: annotations still appear, but `thread-comments`
-  and reviews need a write token and would fail the step. To comment on them anyway, see the
-  [PR comments from forks recipe][recipes-doc]. Draft pull requests get no review.
+  and reviews need a write token, so they are not posted (the log shows a 403 error). To comment
+  on them anyway, see the [PR comments from forks recipe][recipes-doc]. Draft pull requests get no
+  review.
 
 ## Usage
 

@@ -40,7 +40,7 @@ jobs:
         with:
           name: cpp-linter-comment
           path: ${{ runner.temp }}/cpp-linter-comment/
-          retention-days: 1
+          retention-days: 7
 
       - name: Fail fast?!
         if: steps.linter.outputs.checks-failed > 0

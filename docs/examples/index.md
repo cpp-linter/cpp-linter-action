@@ -78,5 +78,6 @@ Here are some example workflows to get started quickly.
     2. Needed to download the artifact of the first workflow's run.
     3. This workflow has a write token, so it must not check out or run anything from the
        pull request. It only reads two files from the artifact.
-    4. The artifact can be written by the pull request's code, so the pull request number in
-       it is checked against the commit that the first workflow linted.
+    4. Anyone who opens a pull request can change the first workflow and so the artifact.
+       The pull request number in it is checked against the commit and the fork that the
+       first workflow linted.
