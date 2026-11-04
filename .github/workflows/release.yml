@@ -48,6 +48,11 @@ jobs:
           echo "::error title=Major version mismatch::$TAG cannot point at $RELEASE"
           exit 1
         fi
+        # A branch named like the tag would be checked out instead of the tag
+        if [ "$(git rev-parse HEAD)" != "$(git rev-parse --verify --quiet "refs/tags/$RELEASE^{commit}")" ]; then
+          echo "::error title=Commit mismatch::tag $RELEASE is missing or not the checked out commit"
+          exit 1
+        fi
         echo "Moving $TAG to $RELEASE ($(git rev-parse --short HEAD))"
         git tag --force --annotate "$TAG" --message "Retag $TAG"
         git push origin "$TAG" --force
