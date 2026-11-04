@@ -31,12 +31,13 @@ jobs:
     - name: Update rolling tag
       env:
         INPUT_TAG: ${{ inputs.tag }}
+        INPUT_REF: ${{ inputs.ref }}
         RELEASE_TAG: ${{ github.event.release.tag_name }}
       run: |
-        # The rolling tag follows the major version of the release tag on the
-        # checked out commit, not of the newest tag in the repository: a v2
-        # patch published after v3 must move v2, not v3.
-        RELEASE="${RELEASE_TAG:-$(git describe --tags --exact-match --match 'v[0-9]*.*' --exclude '*-*' HEAD || true)}"
+        # The rolling tag follows the major version of the published release
+        # (or the release tag given as ref), not of the newest tag in the
+        # repository: a v2 patch published after v3 must move v2, not v3.
+        RELEASE="${RELEASE_TAG:-$INPUT_REF}"
         if ! [[ "$RELEASE" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
           echo "::error title=Not a release tag::'${RELEASE}' is not a vX.Y.Z release tag; give the release tag as ref"
           exit 1
