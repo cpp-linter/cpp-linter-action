@@ -5,14 +5,12 @@ on:
     types: [released]
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'which tag to update to'
-        default: 'v2'
-        required: true
       ref:
-        description: 'which branch to update the tag on'
-        default: 'main'
+        description: 'release tag to point the rolling tag at, e.g. v2.24.1'
         required: true
+      tag:
+        description: 'rolling tag to update, e.g. v2 (blank = major version of ref)'
+        required: false
 
 permissions:
   contents: write
@@ -33,8 +31,22 @@ jobs:
     - name: Update rolling tag
       env:
         INPUT_TAG: ${{ inputs.tag }}
+        RELEASE_TAG: ${{ github.event.release.tag_name }}
       run: |
-        # Use the tag given by hand, else the major version of the latest tag
-        TAG="${INPUT_TAG:-$(git tag --list --sort=-v:refname | head -n1 | cut -d. -f1)}"
+        # The rolling tag follows the major version of the release tag on the
+        # checked out commit, not of the newest tag in the repository: a v2
+        # patch published after v3 must move v2, not v3.
+        RELEASE="${RELEASE_TAG:-$(git describe --tags --exact-match --match 'v[0-9]*.*' --exclude '*-*' HEAD || true)}"
+        if ! [[ "$RELEASE" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "::error title=Not a release tag::'${RELEASE}' is not a vX.Y.Z release tag; give the release tag as ref"
+          exit 1
+        fi
+        MAJOR="${RELEASE%%.*}"
+        TAG="${INPUT_TAG:-$MAJOR}"
+        if [ "$TAG" != "$MAJOR" ]; then
+          echo "::error title=Major version mismatch::$TAG cannot point at $RELEASE"
+          exit 1
+        fi
+        echo "Moving $TAG to $RELEASE ($(git rev-parse --short HEAD))"
         git tag --force --annotate "$TAG" --message "Retag $TAG"
         git push origin "$TAG" --force
