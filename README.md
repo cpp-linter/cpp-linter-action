@@ -220,6 +220,7 @@ To also show the result of your own lint runs, add the status badge of the workf
 
 Projects from these organizations run cpp-linter-action on their default branch:
 
+[<img src="https://avatars.githubusercontent.com/u/2232217?s=40&v=4" width="20" height="20" alt=""> AWS](https://github.com/aws) ·
 [<img src="https://avatars.githubusercontent.com/u/47359?s=40&v=4" width="20" height="20" alt=""> Apache](https://github.com/apache) ·
 [<img src="https://avatars.githubusercontent.com/u/6210390?s=40&v=4" width="20" height="20" alt=""> Samsung](https://github.com/samsung) ·
 [<img src="https://avatars.githubusercontent.com/u/1416818?s=40&v=4" width="20" height="20" alt=""> Bloomberg](https://github.com/bloomberg) ·
