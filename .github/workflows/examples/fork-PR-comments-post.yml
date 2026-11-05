@@ -1,0 +1,73 @@
+name: cpp-linter comment
+on:
+  workflow_run:
+    workflows: [cpp-linter] # (1)!
+    types: [completed]
+
+permissions: {}
+
+# Post one run at a time per branch, so two runs cannot both add a new comment.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  comment:
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read # (2)!
+      pull-requests: write
+    steps:
+      # No checkout: this job never runs code from the pull request. (3)
+      - uses: actions/download-artifact@v8
+        id: download
+        continue-on-error: true # The lint run may have stopped before uploading.
+        with:
+          name: cpp-linter-comment
+          path: ${{ runner.temp }}/cpp-linter-comment
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Post or update the comment
+        if: steps.download.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          dir="$RUNNER_TEMP/cpp-linter-comment"
+          # The artifact was made while linting the pull request: use it only as data.
+          if [ ! -f "$dir/pr-number.txt" ] || [ ! -f "$dir/comment.md" ]; then
+            echo "::warning::The artifact has no pull request number or no comment"
+            exit 0
+          fi
+          pr="$(tr -cd '0-9' < "$dir/pr-number.txt" | head -c 10)"
+          if [ -z "$pr" ]; then
+            echo "::warning::The artifact has no pull request number"
+            exit 0
+          fi
+          # Only comment on the pull request whose head the lint run checked. (4)
+          if [ "$(gh api "repos/$GH_REPO/pulls/$pr" --jq '.head.sha + " " + .head.repo.full_name')" != "$HEAD_SHA $HEAD_REPO" ]; then
+            echo "::notice::Pull request #$pr has new commits since this run; not commenting"
+            exit 0
+          fi
+          marker='<!-- cpp-linter-action workflow_run comment -->'
+          body="$RUNNER_TEMP/body.md"
+          if [ "$(wc -c < "$dir/comment.md")" -gt 60000 ]; then
+            # A comment holds at most 65536 characters.
+            printf '%s\nToo many findings to show here. See the [workflow run](%s).\n' "$marker" "$RUN_URL" > "$body"
+          else
+            { echo "$marker"; cat "$dir/comment.md"; } > "$body"
+          fi
+          # Update the comment from an earlier run instead of adding another one.
+          id="$(gh api --paginate "repos/$GH_REPO/issues/$pr/comments" \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$marker\"))) | .id" \
+            | head -n 1)"
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GH_REPO/issues/comments/$id" -F "body=@$body" > /dev/null
+          else
+            gh api "repos/$GH_REPO/issues/$pr/comments" -F "body=@$body" > /dev/null
+          fi

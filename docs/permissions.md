@@ -77,6 +77,33 @@ The [`tidy-review`](inputs-outputs.md#tidy-review), [`format-review`](inputs-out
       pull-requests: write
 ```
 
+## Pull requests from forks
+
+GitHub gives a pull request from a fork a read-only `GITHUB_TOKEN`, whatever the
+`permissions` of the workflow say, unless a private or internal repository turns on
+**Send write tokens to workflows from pull requests**. File annotations, the step summary
+and the outputs still work. [`thread-comments`](inputs-outputs.md#thread-comments) and the
+pull request reviews need `pull-requests: write`, so they are not posted, and the log shows
+`403 Resource not accessible by integration`.
+
+To comment on those pull requests too, split the work into two workflows: one lints with
+the read-only token and uploads the comment as an artifact, the other runs on
+`workflow_run` with `pull-requests: write` and posts it. See the
+[PR comments from forks](examples/index.md) recipe.
+
+!!! warning "Do not lint pull requests in `pull_request_target`"
+
+    `pull_request_target` runs with a write token and the repository's secrets. If that
+    workflow checks out the pull request's code and builds it, for example to create a
+    compilation database with CMake, code from the pull request runs with that token.
+    Lint in `pull_request`, and post the comment from `workflow_run`.
+
+    From December 2, 2026, GitHub
+    [blocks `pull_request_target` by default](https://github.blog/changelog/2026-11-02-pull_request_target-blocked-by-default-december-2/)
+    in public repositories: such workflows do not run unless an Actions policy allows the
+    event. A workflow that posts cpp-linter comments that way stops commenting on that date.
+    The recipe above does not use `pull_request_target`.
+
 ## Auto-fix
 
 The [`auto-fix`](inputs-outputs.md#auto-fix) feature requires `contents: write` permission
