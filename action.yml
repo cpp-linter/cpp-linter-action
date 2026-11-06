@@ -508,16 +508,19 @@ runs:
           $"--ignore=($env.INPUT_IGNORE)"
           $"--ignore-tidy=($env.INPUT_IGNORE_TIDY)"
           $"--ignore-format=($env.INPUT_IGNORE_FORMAT)"
-          $"--database=($env.INPUT_DATABASE)"
           $"--file-annotations=($env.INPUT_FILE_ANNOTATIONS)"
           $"--extra-arg=($env.INPUT_EXTRA_ARGS)"
-          $"--pr-review=($env.INPUT_PR_REVIEW)"
+          $"--pr-review=($pr_review)"
           $"--passive-reviews=($env.INPUT_PASSIVE_REVIEWS)"
-          $"--jobs=($env.INPUT_JOBS)"
-          $"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"
         ]
         if $env.INPUT_AUTO_FIX == 'true' {
           $args = ($args | append ['--fix'])
+        }
+        if $env.INPUT_SUMMARY_OUTPUT_FILE | is-not-empty {
+          $args = $args | append [$"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"]
+        }
+        if $env.INPUT_DATABASE | is-not-empty {
+          $args = $args | append [$"--database=($env.INPUT_DATABASE)"]
         }
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
 
@@ -605,11 +608,9 @@ runs:
         # so resolve them to modified tracked files first. Untracked sources
         # (generated code, CMake's compiler-id files) stay out as well.
         let path_specs = ($env.INPUT_EXTENSIONS | split row ',' | each { |ext| $"*.($ext | str trim)" })
-        let modified = (^git ls-files -- ...$path_specs | lines)
-        if ($modified | is-not-empty) {
-          ^git apply $env.FIX_PATCH_PATH ...$modified
-          ^git add -- ...$modified
-        }
+        ^git apply $env.FIX_PATCH_PATH
+        let modified = (^git ls-files --modified -- ...$path_specs | lines)
+        ^git add -- ...$modified
         # Count what got staged: .gitattributes rules (LF/CRLF) can normalize a
         # modified file back to its committed content.
         let changed = (
