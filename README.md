@@ -39,6 +39,14 @@ reviews (with [`tidy-review`][tidy-review] or [`format-review`][format-review]).
 [Get started](https://cpp-linter.github.io/getting-started/#on-every-pull-request) ·
 [Discussions](https://github.com/orgs/cpp-linter/discussions)
 
+> [!NOTE]
+> `cpp-linter/cpp-linter-action@v2` runs cpp-linter v1 (Python) and gets bug fixes only.
+> v3 will run cpp-linter v2, a rewrite in Rust that is in release candidate stage
+> ([what changes in cpp-linter v2](https://cpp-linter.github.io/cpp-linter-rs/migration/)).
+> Workflows that use `@v2` keep working as they are, and nothing changes until you move to `@v3`.
+> Follow [the v3 tracking issue](https://github.com/cpp-linter/cpp-linter-action/issues/283) for
+> progress.
+
 ## Quick start
 
 Save this as `.github/workflows/cpp-linter.yml`:
