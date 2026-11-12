@@ -516,10 +516,10 @@ runs:
         if $env.INPUT_AUTO_FIX == 'true' {
           $args = ($args | append ['--fix'])
         }
-        if $env.INPUT_SUMMARY_OUTPUT_FILE | is-not-empty {
+        if ($env.INPUT_SUMMARY_OUTPUT_FILE | is-not-empty) {
           $args = $args | append [$"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"]
         }
-        if $env.INPUT_DATABASE | is-not-empty {
+        if ($env.INPUT_DATABASE | is-not-empty) {
           $args = $args | append [$"--database=($env.INPUT_DATABASE)"]
         }
         mut uv_args = [run --no-sync --project $action_path --directory (pwd)]
