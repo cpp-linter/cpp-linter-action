@@ -144,6 +144,14 @@ in addition to any other permissions needed for other features:
     `pull_request_target` as well, where the token could push, but only to this
     repository.
 
+    On events that carry no pull request (`issue_comment`, `workflow_run`,
+    `schedule`, `workflow_dispatch`), the fix is pushed to the branch the
+    workflow runs for, which is usually the default branch. So it is only
+    committed when the checked out commit is the one that triggered the
+    workflow (`GITHUB_SHA`). If the workflow checked out another commit, for
+    example a pull request's head, auto-fix is skipped with a warning.
+    Otherwise that pull request's commits would land on the default branch.
+
 ## GitHub App token
 
 A token minted from a GitHub App you own replaces the default `GITHUB_TOKEN`
