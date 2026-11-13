@@ -16,6 +16,7 @@ words:
   - Neta
   - Nextcloud
   - nushell
+  - pacman
   - pymdownx
   - pymdown
   - pyyaml
@@ -23,6 +24,7 @@ words:
   - stylesheet
   - twemoji
   - venv
+  - winget
   - Zondax
 ignorePaths:
   - .gitattributes

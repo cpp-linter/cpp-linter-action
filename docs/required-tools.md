@@ -30,32 +30,23 @@ apt-get install -y libc6 wget lsb-release software-properties-common gnupg
 
 Otherwise, [nushell] and/or the LLVM-provided bash script will fail to run.
 
-If installing clang tools fails using the `apt` package manager, then
-we alternatively try the following sources in order:
+## Where clang tools come from
 
-1. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
-2. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
+The `version` input is resolved on every runner by trying these sources in order
+(whichever succeeds first):
 
-## On macOS runners
-
-The specified `version` of `clang-format` and `clang-tidy` is installed via
-the following sources in order (whichever succeeds first):
-
-1. Homebrew
-2. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
-3. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
-
-## On Windows runners
-
-For Windows runners, we use clang tools installed via
-the following sources in order (whichever succeeds first):
-
-1. Static binaries that we built ourselves; see [cpp-linter/clang-tools-pip] project for more detail.
-2. PyPI Packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
+1. A `clang-format`/`clang-tidy` already installed on the runner whose version satisfies `version`.
+2. A version that cpp-linter downloaded earlier and kept in its cache.
+3. The system package manager:
+    - Linux: `apt` (falling back to LLVM's official apt repository), `dnf`, `pacman`, or Homebrew
+    - macOS: Homebrew
+    - Windows: Chocolatey or winget
+4. PyPI packages [clang-tidy][clang-tidy-wheel] and/or [clang-format][clang-format-wheel]
+5. Static binaries that we build ourselves; see the [cpp-linter/clang-tools-static-binaries] project.
 
 [nushell]: https://www.nushell.sh/
 [uv]: https://docs.astral.sh/uv/
-[cpp-linter/clang-tools-pip]: https://github.com/cpp-linter/clang-tools-pip
+[cpp-linter/clang-tools-static-binaries]: https://github.com/cpp-linter/clang-tools-static-binaries
 [gh-container-syntax]: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idcontainer
 [clang-tidy-wheel]: https://pypi.org/project/clang-tidy
 [clang-format-wheel]: https://pypi.org/project/clang-format

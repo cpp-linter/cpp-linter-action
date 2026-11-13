@@ -38,9 +38,13 @@ inputs:
     default: '.'
   version:
     description: |
-      The desired version of the [clang-tools](https://github.com/cpp-linter/clang-tools-pip) to use.
-      Accepted options are strings which can be 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13 or 12.
+      The desired version of the clang tools (`clang-format` and `clang-tidy`) to use.
+      Clang tools from version 12 through 23 are supported.
 
+      - A major version, like `18`, accepts any 18.x release.
+      - A full version, like `18.1.8`, accepts 18.1.8 or a newer 18.x release.
+        Use `=18.1.8` to require exactly that version.
+      - Other semantic version requirements also work, like `>=17, <20`.
       - Set this option to a blank string (`''`) to use the platform's default installed version.
       - This value can also be a path to where the clang tools are installed (if using a custom install location).
     required: false
