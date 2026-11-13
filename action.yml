@@ -228,6 +228,11 @@ inputs:
       committed on it would carry that merge into the branch. Pull requests from
       forks are skipped.
 
+      On other events the fix is committed only when the checked out commit is
+      the one that triggered the workflow (`GITHUB_SHA`). If the workflow checked
+      out another commit, for example a pull request's head on an
+      `issue_comment` event, auto-fix is skipped with a warning.
+
       This option has no effect on clang-tidy issues.
     default: 'false'
     required: false
@@ -592,14 +597,23 @@ runs:
           exit 0
         }
 
-        # Only commit on the pull request head (see the checkout step above).
+        # Only commit on the commit that the destination branch points at: the
+        # pull request head (see the checkout step above), or else the commit
+        # that triggered the workflow. Events without a pull request
+        # (issue_comment, workflow_run, schedule, ...) run for the default
+        # branch. If the workflow checked out something else there, such as a
+        # pull request's head, the push below would put those commits on the
+        # default branch.
         cd $env.INPUT_REPO_ROOT  # where the repository is checked out
+        let current = (^git rev-parse HEAD | str trim)
         if ($head_sha | is-not-empty) {
-          let current = (^git rev-parse HEAD | str trim)
           if $current != $head_sha {
             print $"::warning title=Auto-fix skipped::HEAD is ($current), not the pull request head ($head_sha), so no formatting commit was made. auto-fix runs on `push` and `pull_request` events; see https://cpp-linter.github.io/cpp-linter-action/permissions/#auto-fix"
             exit 0
           }
+        } else if $current != $env.GITHUB_SHA {
+          print $"::warning title=Auto-fix skipped::HEAD is ($current), not ($env.GITHUB_SHA), the commit that triggered this workflow, so no formatting commit was made. Pushing it would add the checked out commits to ($branch). auto-fix runs on `push` and `pull_request` events; see https://cpp-linter.github.io/cpp-linter-action/permissions/#auto-fix"
+          exit 0
         }
 
         # Stage only source files (the configured extensions), so anything else an
