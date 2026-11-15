@@ -222,10 +222,16 @@ inputs:
     required: false
   auto-fix:
     description: |
-      Set this option to `true` to apply clang-format fixes (`clang-format -i`)
-      and commit them to the branch. Fixes respect
-      [`lines-changed-only`](#lines-changed-only): Only the changed lines are
-      reformatted accordingly.
+      Set this option to `true` to apply the fixes from clang-format and
+      clang-tidy and commit them to the branch. The fixes are the same patch
+      that is set as the [`fix-patch-path`](#fix-patch-path) output. Fixes
+      respect [`lines-changed-only`](#lines-changed-only): only the changed
+      lines are reformatted, and clang-tidy only fixes the issues it reports
+      on those lines.
+
+      clang-tidy fixes come from the checks that offer one. They can change
+      what the code does, so review the commit. To commit only clang-format
+      fixes, disable clang-tidy with [`tidy-checks: '-*'`](#tidy-checks).
 
       On `pull_request` events the action checks out the pull request's head
       commit before linting: the default checkout is the merge commit, and a fix
@@ -236,15 +242,13 @@ inputs:
       the one that triggered the workflow (`GITHUB_SHA`). If the workflow checked
       out another commit, for example a pull request's head on an
       `issue_comment` event, auto-fix is skipped with a warning.
-
-      This option has no effect on clang-tidy issues.
     default: 'false'
     required: false
   auto-fix-commit-msg:
     description: |
       Custom commit message for the auto-fix commit.
       Only used when ``auto-fix`` is ``true``.
-    default: 'style: apply clang-format fixes'
+    default: 'style: apply clang-format and clang-tidy fixes'
     required: false
   auto-fix-git-user:
     description: |-
@@ -658,7 +662,7 @@ runs:
           let git_user = $"user.name=($git_user_name)"
           let git_email = $"user.email=($git_user_email)"
           let commit_msg = if ($env.INPUT_AUTO_FIX_COMMIT_MSG | is-empty) {
-            'style: apply clang-format fixes'
+            'style: apply clang-format and clang-tidy fixes'
           } else {
             $env.INPUT_AUTO_FIX_COMMIT_MSG
           }
