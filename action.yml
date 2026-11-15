@@ -300,6 +300,12 @@ outputs:
   clang-format-checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-format only.
     value: ${{ steps.cpp-linter.outputs.clang-format-checks-failed }}
+  fix-patch-path:
+    description: |
+      The path to the patch file with the fixes from clang-tidy and clang-format,
+      which can be applied with `git apply`.
+      Only set when [`auto-fix`](#auto-fix) is `true` and a patch was generated.
+    value: ${{ steps.cpp-linter.outputs.fix-patch-path }}
 runs:
   using: "composite"
   steps:
