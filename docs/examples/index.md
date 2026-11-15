@@ -12,7 +12,7 @@ Here are some example workflows to get started quickly.
 === "auto-fix clang-format"
 
     ``` yaml
-    --8<-- ".github/workflows/examples/auto-fix.yml"
+    {% include "../../.github/workflows/examples/auto-fix.yml" %}
     ```
 
     1. See also [`auto-fix`][auto-fix]
@@ -22,7 +22,7 @@ Here are some example workflows to get started quickly.
 === "only clang-tidy"
 
     ``` yaml
-    --8<-- ".github/workflows/examples/only-clang-tidy.yml"
+    {% include "../../.github/workflows/examples/only-clang-tidy.yml" %}
     ```
 
     1. See also [`style`][style]
@@ -31,7 +31,7 @@ Here are some example workflows to get started quickly.
 === "only clang-format"
 
     ``` yaml
-    --8<-- ".github/workflows/examples/only-clang-format.yml"
+    {% include "../../.github/workflows/examples/only-clang-format.yml" %}
     ```
 
     1. See also [`style`][style]
@@ -40,7 +40,7 @@ Here are some example workflows to get started quickly.
 === "only PR comments"
 
     ``` yaml
-    --8<-- ".github/workflows/examples/only-PR-comments.yml"
+    {% include "../../.github/workflows/examples/only-PR-comments.yml" %}
     ```
 
     1. See also our [token permissions document](../permissions.md)
@@ -58,7 +58,7 @@ Here are some example workflows to get started quickly.
     `.github/workflows/cpp-linter.yml`
 
     ``` yaml
-    --8<-- ".github/workflows/examples/fork-PR-comments-lint.yml"
+    {% include "../../.github/workflows/examples/fork-PR-comments-lint.yml" %}
     ```
 
     1. The second workflow finds this one by its `name`.
@@ -70,7 +70,7 @@ Here are some example workflows to get started quickly.
     `.github/workflows/cpp-linter-comment.yml`
 
     ``` yaml
-    --8<-- ".github/workflows/examples/fork-PR-comments-post.yml"
+    {% include "../../.github/workflows/examples/fork-PR-comments-post.yml" %}
     ```
 
     1. Must match the `name` of the first workflow. GitHub runs this workflow from the
