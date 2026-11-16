@@ -102,7 +102,7 @@ jobs:
       pull-requests: read
     runs-on: ubuntu-latest
     env:
-      EXPECTED_MSG: 'style: apply clang-format fixes [self-test]'
+      EXPECTED_MSG: 'style: apply clang-format and clang-tidy fixes [self-test]'
       EXPECTED_AUTHOR: 'cpp-linter-self-test <self-test@users.noreply.github.com>'
     steps:
       - name: Checkout

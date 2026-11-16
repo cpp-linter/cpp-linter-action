@@ -73,7 +73,8 @@ jobs:
   an LLVM major from 12 to 23; `21` is the default.
 - Annotations in the diff view are on by default. `format-review`, `tidy-review` and
   `thread-comments` are opt-in and need `pull-requests: write`; turn on one of the two reviews, not
-  both. `auto-fix` commits the clang-format fixes to the branch and needs `contents: write`.
+  both. `auto-fix` commits the clang-format and clang-tidy fixes to the branch and needs
+  `contents: write`.
 - The action does not fail the job by itself; the last step does, using the `checks-failed`
   output.
 - Pull requests from forks get a read-only token: annotations still appear, but `thread-comments`
@@ -106,10 +107,12 @@ Set `thread-comments` to post the findings as a comment in the pull request thre
           thread-comments: ${{ github.event.pull_request.head.repo.full_name == github.repository && 'update' }}
 ```
 
-### Auto-fix clang-format issues
+### Auto-fix clang-format and clang-tidy issues
 
-Set `auto-fix: 'true'` and the action applies `clang-format -i` to the files with style
-issues and commits the result to the branch:
+Set `auto-fix: 'true'` and the action applies the clang-format fixes and the clang-tidy fixes
+(from the checks that offer one) and commits the result to the branch. clang-tidy fixes can
+change what the code does, so review the commit; set `tidy-checks: '-*'` to commit only
+formatting fixes:
 
 ```yaml
     steps:
@@ -120,7 +123,7 @@ issues and commits the result to the branch:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           style: 'file'
-          auto-fix: 'true'  # automatically fix format issues
+          auto-fix: 'true'  # automatically fix format and tidy issues
 ```
 
 On `pull_request` events `actions/checkout` checks out the merge commit, so the action switches

@@ -70,3 +70,5 @@ outputs:
     minimum-version: '2.7.2'
   clang-format-checks-failed:
     minimum-version: '2.7.2'
+  fix-patch-path:
+    minimum-version: '3.0.0'
