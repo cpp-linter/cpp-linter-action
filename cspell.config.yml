@@ -11,6 +11,7 @@ words:
   - inlinehilite
   - libc
   - linenums
+  - llms
   - mkdocs
   - mypy
   - Neta

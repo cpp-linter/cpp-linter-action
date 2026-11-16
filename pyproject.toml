@@ -16,9 +16,15 @@ dev = [
 ]
 docs = [
     "markdown-gfm-admonition>=0.1.1",
-    "mkdocs>=1.6.1",
+    "mkdocs-ng>=1.11.2",
     "mkdocs-gen-files>=0.6.1",
     "mkdocs-include-markdown-plugin>=7.3.1",
-    "mkdocs-material>=9.8.1",
+    "mkdocs-ng-material>=9.8.1",
     "pyyaml>=6.0.3",
 ]
+
+[tool.uv]
+# mkdocs-ng and mkdocs-ng-material replace mkdocs and mkdocs-material, which
+# are no longer maintained. The plugins still depend on "mkdocs"; mkdocs-ng
+# provides it, so keep the upstream package out.
+override-dependencies = ["mkdocs; sys_platform == 'never'"]

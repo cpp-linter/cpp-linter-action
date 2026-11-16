@@ -1,5 +1,5 @@
 site_name: C/C++ Linter Action
-site_description: "Developer documentation from sources."
+site_description: "A GitHub Action that runs clang-format and clang-tidy on the C/C++ files a pull request changes."
 site_url: "https://cpp-linter.github.io/cpp-linter-action"
 repo_url: "https://github.com/cpp-linter/cpp-linter-action"
 repo_name: "cpp-linter/cpp-linter-action"
@@ -80,6 +80,8 @@ extra_css:
 
 plugins:
   - search
+  # llms.txt and a Markdown copy of every page, for AI agents (MkDocs NG).
+  - llms_txt
   - include-markdown
   - gen-files:
       scripts:
