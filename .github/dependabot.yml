@@ -28,6 +28,11 @@ updates:
       exclude:
         - "cpp-linter"
         - "clang-tools"
+    ignore:
+      # cpp-linter 2.x is the Rust rewrite with a different CLI. Action v2 (this
+      # branch) stays on cpp-linter 1.x; action v3 moves to 2.x on its own branch.
+      - dependency-name: "cpp-linter"
+        update-types: ["version-update:semver-major"]
     groups:
       org:
         # org-maintained packages (the "action" dependency group)
