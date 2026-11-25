@@ -45,10 +45,12 @@ inputs:
       - A full version, like `18.1.8`, accepts 18.1.8 or a newer 18.x release.
         Use `=18.1.8` to require exactly that version.
       - Other semantic version requirements also work, like `>=17, <20`.
+      - `latest` (the default) uses the newest major version that cpp-linter can install
+        (23 with cpp-linter 2.0). It moves to a new major version when a cpp-linter release adds one.
       - Set this option to a blank string (`''`) to use the platform's default installed version.
       - This value can also be a path to where the clang tools are installed (if using a custom install location).
     required: false
-    default: '21'
+    default: 'latest'
   verbosity:
     description: |
       This controls the action's verbosity in the workflow's logs.

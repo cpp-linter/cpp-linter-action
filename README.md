@@ -70,7 +70,7 @@ jobs:
 ```
 
 - `style: file` and `tidy-checks: ''` use your `.clang-format` and `.clang-tidy`. `version` takes
-  an LLVM major from 12 to 23; `21` is the default.
+  an LLVM major from 12 to 23, or `latest` (the default).
 - Annotations in the diff view are on by default. `format-review`, `tidy-review` and
   `thread-comments` are opt-in and need `pull-requests: write`; turn on one of the two reviews, not
   both. `auto-fix` commits the clang-format and clang-tidy fixes to the branch and needs
