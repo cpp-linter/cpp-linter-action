@@ -20,6 +20,7 @@ words:
   - pymdownx
   - pymdown
   - pyyaml
+  - sarif
   - superfences
   - stylesheet
   - twemoji

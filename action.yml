@@ -168,6 +168,29 @@ inputs:
       Set this option to false to disable the use of file annotations as feedback.
     required: false
     default: 'true'
+  sarif-file:
+    description: |-
+      A path to write the clang-tidy findings to, as a
+      [SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) file.
+      Leave empty (the default) to not write one.
+
+      Upload the file with `github/codeql-action/upload-sarif` to show the findings as
+      [code scanning](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github)
+      alerts in the repository's Security tab and on pull requests.
+      See the "GitHub code scanning" recipe in the [examples](examples/index.md).
+
+      The file is written even when there are no findings, and it holds only the findings that
+      the other feedback reports, so filters such as [`lines-changed-only`](#lines-changed-only)
+      and [`ignore-tidy`](#ignore-tidy) apply. Code scanning treats each upload for a branch as
+      the full state of that branch, so set `lines-changed-only: false` when you upload the file,
+      and also `files-changed-only: false` on pushes.
+
+      clang-format findings are not part of the SARIF file.
+
+      > [!NOTE]
+      > A relative path is relative to the workspace, where the step runs.
+    required: false
+    default: ''
   database:
     description: |
       The directory containing compilation database (like compile_commands.json) file.
@@ -296,6 +319,16 @@ inputs:
       > Any relative path shall be relative to the [`repo-root`](#repo-root) path.
     required: false
     default: ''
+  strict:
+    description: |-
+      Set this to `true` to fail the step when any check fails.
+
+      By default, the step passes even when checks fail, and a workflow reads the
+      [`checks-failed`](#checks-failed) output to decide what to do. With `strict: true`,
+      the outputs are still set before the step fails, so a later step that runs
+      `if: always()` or `if: failure()` can read them.
+    required: false
+    default: 'false'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
@@ -474,6 +507,8 @@ runs:
         INPUT_JOBS: ${{ inputs.jobs }}
         INPUT_SUMMARY_OUTPUT_FILE: ${{ inputs.summary-output-file }}
         INPUT_AUTO_FIX: ${{ inputs.auto-fix }}
+        INPUT_SARIF_FILE: ${{ inputs.sarif-file }}
+        INPUT_STRICT: ${{ inputs.strict }}
       run: |-
         # An empty input can reach the shell as an unset variable, so default those to ""
         load-env (
@@ -501,6 +536,9 @@ runs:
             INPUT_JOBS
             INPUT_SUMMARY_OUTPUT_FILE
             INPUT_AUTO_FIX
+            INPUT_PR_REVIEW
+            INPUT_SARIF_FILE
+            INPUT_STRICT
           ]
           | where {|n| $n not-in $env }
           | reduce --fold {} {|n, acc| $acc | insert $n "" }
@@ -533,12 +571,16 @@ runs:
           $"--extra-arg=($env.INPUT_EXTRA_ARGS)"
           $"--pr-review=($pr_review)"
           $"--passive-reviews=($env.INPUT_PASSIVE_REVIEWS)"
+          $"--strict=($env.INPUT_STRICT)"
         ]
         if $env.INPUT_AUTO_FIX == 'true' {
           $args = ($args | append ['--fix'])
         }
         if ($env.INPUT_SUMMARY_OUTPUT_FILE | is-not-empty) {
           $args = $args | append [$"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"]
+        }
+        if ($env.INPUT_SARIF_FILE | is-not-empty) {
+          $args = $args | append [$"--sarif-file=($env.INPUT_SARIF_FILE)"]
         }
         if ($env.INPUT_DATABASE | is-not-empty) {
           $args = $args | append [$"--database=($env.INPUT_DATABASE)"]

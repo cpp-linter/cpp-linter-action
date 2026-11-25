@@ -17,6 +17,9 @@ description: What changes when a workflow moves from cpp-linter-action v2 (or v1
 [lines-changed-only]: inputs-outputs.md#lines-changed-only
 [verbosity]: inputs-outputs.md#verbosity
 [style]: inputs-outputs.md#style
+[sarif-file]: inputs-outputs.md#sarif-file
+[strict]: inputs-outputs.md#strict
+[checks-failed]: inputs-outputs.md#checks-failed
 [cli-migration]: https://cpp-linter.github.io/cpp-linter-rs/migration/
 
 # Migrating to v3
@@ -61,6 +64,13 @@ The old names can still be given together. Reviews are enabled if any of them is
 | v2 input | v3 behavior | What to do |
 |---|---|---|
 | [`jobs`][jobs] | Files are always analyzed in parallel. The value is ignored with a deprecation warning. | Remove the input. |
+
+## New inputs
+
+| Input | What it does |
+|---|---|
+| [`strict`][strict] | `true` fails the step when any check fails. The outputs are still set, so a step that reads [`checks-failed`][checks-failed] only to fail the job can be removed. |
+| [`sarif-file`][sarif-file] | Writes the clang-tidy findings to a SARIF file. Upload it with `github/codeql-action/upload-sarif` to see them in the Security tab. See the "GitHub code scanning" [recipe](examples/index.md). |
 
 ## Changed defaults
 

@@ -4,6 +4,8 @@
 [thread-comments]: ../inputs-outputs.md#thread-comments
 [auto-fix]: ../inputs-outputs.md#auto-fix
 [summary-output-file]: ../inputs-outputs.md#summary-output-file
+[sarif-file]: ../inputs-outputs.md#sarif-file
+[lines-changed-only]: ../inputs-outputs.md#lines-changed-only
 
 # Recipes
 
@@ -36,6 +38,22 @@ Here are some example workflows to get started quickly.
 
     1. See also [`style`][style]
     2. See also [`tidy-checks`][tidy-checks]
+
+=== "GitHub code scanning"
+
+    Show the clang-tidy findings as code scanning alerts in the repository's Security tab,
+    and as a `clang-tidy` check on pull requests that annotates new alerts.
+
+    ``` yaml
+    --8<-- ".github/workflows/examples/code-scanning.yml"
+    ```
+
+    1. Needed by `upload-sarif`. The cpp-linter step itself doesn't need it.
+    2. Code scanning treats each upload for a branch as the full state of that branch, so
+       scan whole files. On pushes, scan every file. See also [`lines-changed-only`][lines-changed-only]
+    3. See also [`sarif-file`][sarif-file]. clang-format findings are not part of the file.
+    4. Keep the same `category` in every run, so that code scanning compares each upload with
+       the earlier ones.
 
 === "only PR comments"
 
