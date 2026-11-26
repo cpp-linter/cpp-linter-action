@@ -18,6 +18,9 @@ description: What changes when a workflow moves from cpp-linter-action v2 (or v1
 [verbosity]: inputs-outputs.md#verbosity
 [style]: inputs-outputs.md#style
 [sarif-file]: inputs-outputs.md#sarif-file
+[thread-comments]: inputs-outputs.md#thread-comments
+[step-summary]: inputs-outputs.md#step-summary
+[permissions]: permissions.md#thread-comments
 [strict]: inputs-outputs.md#strict
 [checks-failed]: inputs-outputs.md#checks-failed
 [cli-migration]: https://cpp-linter.github.io/cpp-linter-rs/migration/
@@ -76,8 +79,23 @@ The old names can still be given together. Reviews are enabled if any of them is
 
 | Input | v2 default | v3 default |
 |---|---|---|
+| [`style`][style] | `llvm` | `file`, the repository's `.clang-format` file (the LLVM style if there is none) |
+| [`tidy-checks`][tidy-checks] | a fixed list of check groups | `''`, the repository's `.clang-tidy` files (clang-tidy's own defaults if there are none) |
+| [`lines-changed-only`][lines-changed-only] | `false` | `true`: only the lines a pull request or push adds are checked |
+| [`thread-comments`][thread-comments] | `false` | `update` on pull requests, one comment that is edited in place; `false` on other events |
+| [`step-summary`][step-summary] | `false` | `true` |
 | [`version`][version] | `21` | `latest`, the newest major version that cpp-linter can install (23 with cpp-linter 2.0) |
 | [`auto-fix-commit-msg`][auto-fix-commit-msg] | `style: apply clang-format fixes` | `style: apply clang-format and clang-tidy fixes` |
+
+To keep the v2 behavior of an input, set it to its v2 default. A workflow that already sets an
+input is not affected by its new default.
+
+`style` and `tidy-checks` now follow the configuration in your repository, which is what most
+projects set them to. If you have no `.clang-format` or `.clang-tidy` file, the findings can differ
+from v2: set `style: llvm`, or the v2 list of checks, to keep them.
+
+The thread comment needs the `pull-requests: write` [permission][permissions]. Without it, v3 logs
+a warning and the step still passes. Set `thread-comments: false` if you don't want the comment.
 
 With `latest`, the clang tools move to a new major version when a cpp-linter release adds one, and
 a new major version can report new findings. To keep the results stable, set

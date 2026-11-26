@@ -9,11 +9,12 @@ inputs:
     description: |
       The style rules to use.
 
-      - Set this to `file` to have clang-format use the closest relative .clang-format file.
+      - Set this to `file` (the default) to have clang-format use the closest relative .clang-format file.
+        Without one, clang-format falls back to the LLVM style.
       - Set this to a blank string (`''`) to disable the use of clang-format entirely.
       - Any code style supported by the specified version of clang-format.
     required: false
-    default: "llvm"
+    default: 'file'
   extensions:
     description: The file extensions to run the action against. This is a comma-separated string.
     required: false
@@ -27,9 +28,10 @@ inputs:
       This option's value is appended to the value of the 'Checks' option in a .clang-tidy file (if any).
 
       - It is possible to disable clang-tidy entirely by setting this option to `'-*'`.
-      - It is also possible to rely solely on a .clang-tidy config file by specifying this option as a blank string (`''`).
+      - A blank string (`''`, the default) relies solely on .clang-tidy config files.
+        Without one, clang-tidy uses its own default checks.
     required: false
-    default: "boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*"
+    default: ''
   repo-root:
     description: >
       The relative path to the repository root directory.
@@ -66,14 +68,14 @@ inputs:
       This controls what part of the files are analyzed. The following values are accepted:
 
       - `false`: All lines in a file are analyzed.
-      - `true`: Only lines in the diff that contain additions are analyzed.
+      - `true` (the default): Only lines in the diff that contain additions are analyzed.
       - `diff`: All lines in the diff are analyzed (including unchanged lines but not subtractions).
 
       !!! info "Important"
           This feature requires special permissions to perform successfully.
           See our [documented permissions](permissions.md)
     required: false
-    default: 'false'
+    default: 'true'
   files-changed-only:
     description: |
       Set this option to false to analyze any source files in the repo.
@@ -134,11 +136,14 @@ inputs:
       - `update`: update an existing thread comment if one already exists. This option does not trigger a new notification for every thread comment update.
       - `false`: disable the use of thread comments.
 
+      The default is `update` on `pull_request` events and `false` on all other events,
+      so a push does not post a commit comment unless you ask for one.
+
       !!! info "Important"
           This feature requires special permissions to perform successfully.
           See our [documented permissions](permissions.md)
     required: false
-    default: 'false'
+    default: ${{ github.event_name == 'pull_request' && 'update' || 'false' }}
   no-lgtm:
     description: |
       Set this option to true or false to enable or disable the use of a
@@ -151,7 +156,8 @@ inputs:
     default: 'true'
   step-summary:
     description: |
-      Set this option to true to append content as part of workflow's job summary.
+      Set this option to false to not append content to the workflow's job summary.
+      It is on by default.
 
       See implementation details in GitHub's documentation about
       [Adding a job summary](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary).
@@ -162,7 +168,7 @@ inputs:
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is _not_ applied to step summaries.
     required: false
-    default: 'false'
+    default: 'true'
   file-annotations:
     description: |
       Set this option to false to disable the use of file annotations as feedback.
