@@ -608,7 +608,12 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args cpp-linter ...$args
 
     - name: Auto-commit clang fixes
-      if: (inputs.auto-fix == 'true' || inputs.auto-fix == true) && steps.cpp-linter.outputs.fix-patch-path != ''
+      # `!cancelled()`: with `strict: true` the step above fails whenever there is
+      # something to fix, and the fixes must still be committed.
+      if: >-
+        !cancelled()
+        && (inputs.auto-fix == 'true' || inputs.auto-fix == true)
+        && steps.cpp-linter.outputs.fix-patch-path != ''
       shell: nu {0}
       env:
         INPUT_REPO_ROOT: ${{ inputs.repo-root }}
