@@ -79,7 +79,8 @@ inputs:
   files-changed-only:
     description: |
       Set this option to false to analyze any source files in the repo.
-      This is automatically enabled if [`lines-changed-only`](#lines-changed-only) is enabled.
+      This is automatically enabled if [`lines-changed-only`](#lines-changed-only) is enabled,
+      which is the default. So to analyze every file, also set `lines-changed-only: false`.
 
       !!! info "Important"
           This feature requires special permissions to perform successfully.

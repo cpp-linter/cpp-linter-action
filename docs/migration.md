@@ -90,6 +90,10 @@ The old names can still be given together. Reviews are enabled if any of them is
 To keep the v2 behavior of an input, set it to its v2 default. A workflow that already sets an
 input is not affected by its new default.
 
+`files-changed-only: false` alone no longer analyzes every file: `lines-changed-only: true`
+turns `files-changed-only` back on. A workflow that scans the whole repository, for example on a
+schedule, must also set `lines-changed-only: false`.
+
 `style` and `tidy-checks` now follow the configuration in your repository, which is what most
 projects set them to. If you have no `.clang-format` or `.clang-tidy` file, the findings can differ
 from v2: set `style: llvm`, or the v2 list of checks, to keep them.
