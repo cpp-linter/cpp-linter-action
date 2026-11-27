@@ -8,6 +8,7 @@
 
 [io-doc]: https://cpp-linter.github.io/cpp-linter-action/inputs-outputs
 [recipes-doc]: https://cpp-linter.github.io/cpp-linter-action/examples
+[migration-doc]: https://cpp-linter.github.io/cpp-linter-action/migration
 [permissions-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions
 [app-token-doc]: https://cpp-linter.github.io/cpp-linter-action/permissions/#github-app-token
 [tools-doc]: https://cpp-linter.github.io/cpp-linter-action/required-tools
@@ -55,32 +56,27 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v7
-      - uses: cpp-linter/cpp-linter-action@v2
-        id: linter
+      - uses: cpp-linter/cpp-linter-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          version: '21'
-          style: file
-          tidy-checks: ''
-          format-review: true
-      - name: Fail on lint errors
-        if: steps.linter.outputs.checks-failed > 0
-        run: exit 1
+          pr-review: true
+          strict: true
 ```
 
-- `style: file` and `tidy-checks: ''` use your `.clang-format` and `.clang-tidy`. `version` takes
-  an LLVM major from 12 to 23, or `latest` (the default).
-- Annotations in the diff view are on by default. `format-review`, `tidy-review` and
-  `thread-comments` are opt-in and need `pull-requests: write`; turn on one of the two reviews, not
-  both. `auto-fix` commits the clang-format and clang-tidy fixes to the branch and needs
+- The action uses your `.clang-format` and `.clang-tidy`, the newest clang tools (`version:
+  latest`), and checks only the lines the pull request changes. See
+  [Migrating to v3][migration-doc] for every default that changed.
+- On pull requests it posts one thread comment and updates it on each push, writes a step
+  summary, and adds annotations to the diff view. `pr-review` also posts the fixes as review
+  suggestions. The comment and the review need `pull-requests: write`.
+- `strict: true` fails the step when any check fails. Without it the step passes, and a later
+  step can read the `checks-failed` output instead.
+- `auto-fix` commits the clang-format and clang-tidy fixes to the branch and needs
   `contents: write`.
-- The action does not fail the job by itself; the last step does, using the `checks-failed`
-  output.
-- Pull requests from forks get a read-only token: annotations still appear, but `thread-comments`
-  and reviews need a write token, so they are not posted (the log shows a 403 error). To comment
-  on them anyway, see the [PR comments from forks recipe][recipes-doc]. Draft pull requests get no
-  review.
+- Pull requests from forks get a read-only token: annotations still appear, but the thread
+  comment and the review are not posted (the log shows a 403 error). To comment on them anyway,
+  see the [PR comments from forks recipe][recipes-doc]. Draft pull requests get no review.
 
 ## Usage
 
@@ -95,7 +91,7 @@ Set `thread-comments` to post the findings as a comment in the pull request thre
 `update`, the action updates its existing comment instead of posting a new one:
 
 ```yaml
-      - uses: cpp-linter/cpp-linter-action@v2
+      - uses: cpp-linter/cpp-linter-action@v3
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -117,7 +113,7 @@ formatting fixes:
 ```yaml
     steps:
       - uses: actions/checkout@v7
-      - uses: cpp-linter/cpp-linter-action@v2
+      - uses: cpp-linter/cpp-linter-action@v3
         id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
