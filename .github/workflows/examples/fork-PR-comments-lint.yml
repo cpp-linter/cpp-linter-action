@@ -26,7 +26,7 @@ jobs:
         with:
           style: 'file'  # Use .clang-format config file. (3)
           tidy-checks: '' # Use .clang-tidy config file. (4)
-          # No thread-comments here: this job's token is read-only. (5)
+          thread-comments: false # this job's token is read-only. (5)
           summary-output-file: ${{ runner.temp }}/cpp-linter-comment/comment.md
 
       - name: Save the pull request number

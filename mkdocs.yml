@@ -13,6 +13,7 @@ nav:
   - pr-review-caveats.md
   - permissions.md
   - required-tools.md
+  - migration.md
   - examples/index.md
   - contributing-guidelines.md
   - "← cpp-linter hub": https://cpp-linter.github.io/

@@ -1,0 +1,36 @@
+name: cpp-linter
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  cpp-linter:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      security-events: write # (1)!
+      actions: read # only needed in a private repository
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: cpp-linter/cpp-linter-action@v3
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file
+          tidy-checks: '' # Use .clang-tidy config file.
+          lines-changed-only: false # (2)!
+          files-changed-only: ${{ github.event_name == 'pull_request' }}
+          sarif-file: cpp-linter.sarif # (3)!
+          thread-comments: false # the token can't comment (pull-requests: read)
+
+      - name: Upload to code scanning
+        if: ${{ !cancelled() }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: cpp-linter.sarif
+          category: cpp-linter # (4)!

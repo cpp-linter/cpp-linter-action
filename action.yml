@@ -9,11 +9,12 @@ inputs:
     description: |
       The style rules to use.
 
-      - Set this to `file` to have clang-format use the closest relative .clang-format file.
+      - Set this to `file` (the default) to have clang-format use the closest relative .clang-format file.
+        Without one, clang-format falls back to the LLVM style.
       - Set this to a blank string (`''`) to disable the use of clang-format entirely.
       - Any code style supported by the specified version of clang-format.
     required: false
-    default: "llvm"
+    default: 'file'
   extensions:
     description: The file extensions to run the action against. This is a comma-separated string.
     required: false
@@ -27,9 +28,10 @@ inputs:
       This option's value is appended to the value of the 'Checks' option in a .clang-tidy file (if any).
 
       - It is possible to disable clang-tidy entirely by setting this option to `'-*'`.
-      - It is also possible to rely solely on a .clang-tidy config file by specifying this option as a blank string (`''`).
+      - A blank string (`''`, the default) relies solely on .clang-tidy config files.
+        Without one, clang-tidy uses its own default checks.
     required: false
-    default: "boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*"
+    default: ''
   repo-root:
     description: >
       The relative path to the repository root directory.
@@ -45,10 +47,12 @@ inputs:
       - A full version, like `18.1.8`, accepts 18.1.8 or a newer 18.x release.
         Use `=18.1.8` to require exactly that version.
       - Other semantic version requirements also work, like `>=17, <20`.
+      - `latest` (the default) uses the newest major version that cpp-linter can install
+        (23 with cpp-linter 2.0). It moves to a new major version when a cpp-linter release adds one.
       - Set this option to a blank string (`''`) to use the platform's default installed version.
       - This value can also be a path to where the clang tools are installed (if using a custom install location).
     required: false
-    default: '21'
+    default: 'latest'
   verbosity:
     description: |
       This controls the action's verbosity in the workflow's logs.
@@ -64,18 +68,19 @@ inputs:
       This controls what part of the files are analyzed. The following values are accepted:
 
       - `false`: All lines in a file are analyzed.
-      - `true`: Only lines in the diff that contain additions are analyzed.
+      - `true` (the default): Only lines in the diff that contain additions are analyzed.
       - `diff`: All lines in the diff are analyzed (including unchanged lines but not subtractions).
 
       !!! info "Important"
           This feature requires special permissions to perform successfully.
           See our [documented permissions](permissions.md)
     required: false
-    default: 'false'
+    default: 'true'
   files-changed-only:
     description: |
       Set this option to false to analyze any source files in the repo.
-      This is automatically enabled if [`lines-changed-only`](#lines-changed-only) is enabled.
+      This is automatically enabled if [`lines-changed-only`](#lines-changed-only) is enabled,
+      which is the default. So to analyze every file, also set `lines-changed-only: false`.
 
       !!! info "Important"
           This feature requires special permissions to perform successfully.
@@ -132,11 +137,14 @@ inputs:
       - `update`: update an existing thread comment if one already exists. This option does not trigger a new notification for every thread comment update.
       - `false`: disable the use of thread comments.
 
+      The default is `update` on `pull_request` events and `false` on all other events,
+      so a push does not post a commit comment unless you ask for one.
+
       !!! info "Important"
           This feature requires special permissions to perform successfully.
           See our [documented permissions](permissions.md)
     required: false
-    default: 'false'
+    default: ${{ github.event_name == 'pull_request' && 'update' || 'false' }}
   no-lgtm:
     description: |
       Set this option to true or false to enable or disable the use of a
@@ -149,7 +157,8 @@ inputs:
     default: 'true'
   step-summary:
     description: |
-      Set this option to true to append content as part of workflow's job summary.
+      Set this option to false to not append content to the workflow's job summary.
+      It is on by default.
 
       See implementation details in GitHub's documentation about
       [Adding a job summary](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary).
@@ -160,12 +169,35 @@ inputs:
       > [!NOTE]
       > The [`no-lgtm`](#no-lgtm) option is _not_ applied to step summaries.
     required: false
-    default: 'false'
+    default: 'true'
   file-annotations:
     description: |
       Set this option to false to disable the use of file annotations as feedback.
     required: false
     default: 'true'
+  sarif-file:
+    description: |-
+      A path to write the clang-tidy findings to, as a
+      [SARIF 2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html) file.
+      Leave empty (the default) to not write one.
+
+      Upload the file with `github/codeql-action/upload-sarif` to show the findings as
+      [code scanning](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github)
+      alerts in the repository's Security tab and on pull requests.
+      See the "GitHub code scanning" recipe in the [examples](examples/index.md).
+
+      The file is written even when there are no findings, and it holds only the findings that
+      the other feedback reports, so filters such as [`lines-changed-only`](#lines-changed-only)
+      and [`ignore-tidy`](#ignore-tidy) apply. Code scanning treats each upload for a branch as
+      the full state of that branch, so set `lines-changed-only: false` when you upload the file,
+      and also `files-changed-only: false` on pushes.
+
+      clang-format findings are not part of the SARIF file.
+
+      > [!NOTE]
+      > A relative path is relative to the workspace, where the step runs.
+    required: false
+    default: ''
   database:
     description: |
       The directory containing compilation database (like compile_commands.json) file.
@@ -294,6 +326,16 @@ inputs:
       > Any relative path shall be relative to the [`repo-root`](#repo-root) path.
     required: false
     default: ''
+  strict:
+    description: |-
+      Set this to `true` to fail the step when any check fails.
+
+      By default, the step passes even when checks fail, and a workflow reads the
+      [`checks-failed`](#checks-failed) output to decide what to do. With `strict: true`,
+      the outputs are still set before the step fails, so a later step that runs
+      `if: always()` or `if: failure()` can read them.
+    required: false
+    default: 'false'
 outputs:
   checks-failed:
     description: An integer that can be used as a boolean value to indicate if any checks failed by clang-tidy and clang-format.
@@ -472,6 +514,8 @@ runs:
         INPUT_JOBS: ${{ inputs.jobs }}
         INPUT_SUMMARY_OUTPUT_FILE: ${{ inputs.summary-output-file }}
         INPUT_AUTO_FIX: ${{ inputs.auto-fix }}
+        INPUT_SARIF_FILE: ${{ inputs.sarif-file }}
+        INPUT_STRICT: ${{ inputs.strict }}
       run: |-
         # An empty input can reach the shell as an unset variable, so default those to ""
         load-env (
@@ -499,6 +543,9 @@ runs:
             INPUT_JOBS
             INPUT_SUMMARY_OUTPUT_FILE
             INPUT_AUTO_FIX
+            INPUT_PR_REVIEW
+            INPUT_SARIF_FILE
+            INPUT_STRICT
           ]
           | where {|n| $n not-in $env }
           | reduce --fold {} {|n, acc| $acc | insert $n "" }
@@ -531,12 +578,16 @@ runs:
           $"--extra-arg=($env.INPUT_EXTRA_ARGS)"
           $"--pr-review=($pr_review)"
           $"--passive-reviews=($env.INPUT_PASSIVE_REVIEWS)"
+          $"--strict=($env.INPUT_STRICT)"
         ]
         if $env.INPUT_AUTO_FIX == 'true' {
           $args = ($args | append ['--fix'])
         }
         if ($env.INPUT_SUMMARY_OUTPUT_FILE | is-not-empty) {
           $args = $args | append [$"--summary-output-file=($env.INPUT_SUMMARY_OUTPUT_FILE)"]
+        }
+        if ($env.INPUT_SARIF_FILE | is-not-empty) {
+          $args = $args | append [$"--sarif-file=($env.INPUT_SARIF_FILE)"]
         }
         if ($env.INPUT_DATABASE | is-not-empty) {
           $args = $args | append [$"--database=($env.INPUT_DATABASE)"]
@@ -558,7 +609,12 @@ runs:
         ^$'($env.UV_INSTALL_DIR)/uv' ...$uv_args cpp-linter ...$args
 
     - name: Auto-commit clang fixes
-      if: (inputs.auto-fix == 'true' || inputs.auto-fix == true) && steps.cpp-linter.outputs.fix-patch-path != ''
+      # `!cancelled()`: with `strict: true` the step above fails whenever there is
+      # something to fix, and the fixes must still be committed.
+      if: >-
+        !cancelled()
+        && (inputs.auto-fix == 'true' || inputs.auto-fix == true)
+        && steps.cpp-linter.outputs.fix-patch-path != ''
       shell: nu {0}
       env:
         INPUT_REPO_ROOT: ${{ inputs.repo-root }}

@@ -80,7 +80,7 @@ with mkdocs_gen_files.open(FILENAME, "w") as io_doc:
 
     assert "outputs" in b_dict
     doc += (
-        "\n## Outputs\n\nThis action creates 3 output variables. Even if the linting "
+        "\n## Outputs\n\nThis action creates 4 output variables. Even if the linting "
         "checks fail for source files this action will still pass, but users' CI "
         "workflows can use this action's outputs to exit the workflow early if that is "
         "desired.\n"
