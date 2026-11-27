@@ -24,6 +24,7 @@ jobs:
           style: 'file'  # Use .clang-format config file. (2)
           tidy-checks: '-*'  # disable clang-tidy. (3)
           auto-fix: 'true'  # auto-apply clang-format fixes. (1)
+          thread-comments: false  # the token can't comment (pull-requests: read)
 
       - name: Fail fast?!
         if: steps.linter.outputs.clang-format-checks-failed > 0

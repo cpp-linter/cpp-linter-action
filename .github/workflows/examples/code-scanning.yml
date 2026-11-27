@@ -26,6 +26,7 @@ jobs:
           lines-changed-only: false # (2)!
           files-changed-only: ${{ github.event_name == 'pull_request' }}
           sarif-file: cpp-linter.sarif # (3)!
+          thread-comments: false # the token can't comment (pull-requests: read)
 
       - name: Upload to code scanning
         if: ${{ !cancelled() }}
